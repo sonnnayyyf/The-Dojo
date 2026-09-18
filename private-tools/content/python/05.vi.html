@@ -1,0 +1,201 @@
+<h3>Bài 5 — Danh sách (list) & chỉ số</h3>
+<p>Đến giờ mỗi biến chỉ giữ <b>một</b> giá trị. Nhưng đời thật đầy những <b>bộ sưu tập</b>: danh sách học viên, giỏ hàng, điểm số của một lớp. <b>List</b> (danh sách/mảng) là cách Python lưu <b>nhiều</b> giá trị trong một biến — và <b>chỉ số (index)</b> là cách bạn với tới từng phần tử. Đây là một trong những kỹ năng quan trọng nhất của cả khóa.</p>
+
+<h4>1. Tạo một danh sách</h4>
+<p>Đặt các giá trị trong dấu ngoặc vuông <code>[ ]</code>, cách nhau bằng dấu phẩy:</p>
+<pre class="run">diem = [8, 6, 9, 7]
+ten = ["An", "Binh", "Chi"]
+rong = [1, "hai", 3.0, True]   # co the tron kieu, nhung thuong nen cung kieu
+print(diem)
+print(len(diem))               # 4 — so phan tu</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Tạo danh sách <code>nums</code> gồm bốn số <code>10, 20, 30, 40</code>. Tạo <code>count</code> = số phần tử (dùng <code>len</code>).</span>
+<template class="st"># tao nums va count
+</template>
+<template class="ts">assert nums == [10, 20, 30, 40]
+assert count == 4
+</template></div>
+
+<h4>2. Chỉ số (index) — với tới từng phần tử</h4>
+<p>Giống chuỗi: mỗi phần tử có một <b>chỉ số đếm từ 0</b>. Chỉ số âm đếm ngược từ cuối.</p>
+<figure class="diagram">
+<svg viewBox="0 0 470 165" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="13">
+  <text x="235" y="18" text-anchor="middle" fill="#8FA0BC">nums = [10, 20, 30, 40]</text>
+  <g>
+    <rect x="20" y="38" width="95" height="48" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+    <text x="67" y="68" text-anchor="middle" fill="#E8E4D8" font-size="16">10</text>
+    <text x="67" y="108" text-anchor="middle" fill="#F5B942">0</text>
+    <text x="67" y="130" text-anchor="middle" fill="#E2604C">-4</text>
+  </g>
+  <g>
+    <rect x="125" y="38" width="95" height="48" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+    <text x="172" y="68" text-anchor="middle" fill="#E8E4D8" font-size="16">20</text>
+    <text x="172" y="108" text-anchor="middle" fill="#F5B942">1</text>
+    <text x="172" y="130" text-anchor="middle" fill="#E2604C">-3</text>
+  </g>
+  <g>
+    <rect x="230" y="38" width="95" height="48" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+    <text x="277" y="68" text-anchor="middle" fill="#E8E4D8" font-size="16">30</text>
+    <text x="277" y="108" text-anchor="middle" fill="#F5B942">2</text>
+    <text x="277" y="130" text-anchor="middle" fill="#E2604C">-2</text>
+  </g>
+  <g>
+    <rect x="335" y="38" width="95" height="48" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+    <text x="382" y="68" text-anchor="middle" fill="#E8E4D8" font-size="16">40</text>
+    <text x="382" y="108" text-anchor="middle" fill="#F5B942">3</text>
+    <text x="382" y="130" text-anchor="middle" fill="#E2604C">-1</text>
+  </g>
+  <text x="18" y="112" text-anchor="end" fill="#F5B942" font-size="11">index →</text>
+  <text x="18" y="132" text-anchor="end" fill="#E2604C" font-size="11">âm →</text>
+</svg>
+<figcaption>Chỉ số dương đếm từ 0 (trái sang); chỉ số âm đếm từ -1 (phải sang). <code>nums[0]</code> = 10, <code>nums[-1]</code> = 40.</figcaption>
+</figure>
+<pre class="run">nums = [10, 20, 30, 40]
+print(nums[0])    # 10 — phan tu dau
+print(nums[2])    # 30
+print(nums[-1])   # 40 — phan tu cuoi
+# print(nums[4])  # LOI: IndexError — khong co chi so 4</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>nums = [10, 20, 30, 40]</code>. Lấy phần tử đầu vào <code>first</code> và phần tử cuối vào <code>last</code> (dùng chỉ số).</span>
+<template class="st">nums = [10, 20, 30, 40]
+# tao first va last
+</template>
+<template class="ts">assert first == 10
+assert last == 40
+</template></div>
+
+<h4>3. Cắt danh sách (slicing)</h4>
+<p>Giống chuỗi: <code>lst[bat_dau:ket_thuc]</code> lấy từ <code>bat_dau</code> đến <b>ngay trước</b> <code>ket_thuc</code>, trả về một <b>danh sách mới</b>.</p>
+<pre class="run">nums = [10, 20, 30, 40, 50]
+print(nums[1:3])   # [20, 30]
+print(nums[:2])    # [10, 20]
+print(nums[-2:])   # [40, 50]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>nums = [10, 20, 30, 40]</code>. Lấy hai phần tử đầu vào <code>first_two</code>.</span>
+<template class="st">nums = [10, 20, 30, 40]
+# tao first_two = hai phan tu dau
+</template>
+<template class="ts">assert first_two == [10, 20]
+</template></div>
+
+<h4>4. Danh sách có thể SỬA (mutable)</h4>
+<p>Khác với chuỗi, bạn <b>được phép</b> đổi một phần tử bằng cách gán vào chỉ số của nó:</p>
+<pre class="run">nums = [10, 20, 30]
+nums[0] = 99
+print(nums)        # [99, 20, 30]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>nums = [10, 20, 30, 40]</code>. Đổi phần tử <b>đầu tiên</b> thành <code>99</code> (gán vào <code>nums[0]</code>).</span>
+<template class="st">nums = [10, 20, 30, 40]
+# doi phan tu dau thanh 99
+</template>
+<template class="ts">assert nums == [99, 20, 30, 40]
+</template></div>
+
+<h4>5. Thêm & xóa phần tử</h4>
+<pre class="run">gio_hang = ["ao", "quan"]
+gio_hang.append("mu")      # them vao CUOI -> ["ao","quan","mu"]
+gio_hang.insert(0, "giay") # chen vao vi tri 0
+print(gio_hang)            # ["giay","ao","quan","mu"]
+lay_ra = gio_hang.pop()    # lay & bo phan tu CUOI -> "mu"
+gio_hang.remove("ao")      # xoa phan tu co gia tri "ao"
+print(gio_hang, lay_ra)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>fruits = ["apple", "banana"]</code>. Thêm <code>"cherry"</code> vào cuối (dùng <code>append</code>).</span>
+<template class="st">fruits = ["apple", "banana"]
+# them "cherry" vao cuoi
+</template>
+<template class="ts">assert fruits == ["apple", "banana", "cherry"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>colors = ["red", "green", "blue"]</code>. Dùng <code>pop()</code> lấy phần tử cuối ra biến <code>removed</code> (danh sách còn lại 2 phần tử).</span>
+<template class="st">colors = ["red", "green", "blue"]
+# tao removed = colors.pop()
+</template>
+<template class="ts">assert removed == "blue"
+assert colors == ["red", "green"]
+</template></div>
+
+<h4>6. Kiểm tra "thuộc về" với <code>in</code></h4>
+<pre class="run">mau = ["red", "green"]
+print("red" in mau)      # True
+print("black" in mau)    # False</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>colors = ["red", "green"]</code>. Tạo <code>has_red</code> = <code>True</code> nếu <code>"red"</code> có trong danh sách.</span>
+<template class="st">colors = ["red", "green"]
+# tao has_red
+</template>
+<template class="ts">assert has_red is True
+</template></div>
+
+<h4>7. Vài hàm dựng sẵn cực tiện</h4>
+<pre class="run">diem = [8, 6, 9, 7]
+print(sum(diem))    # 30 — tong
+print(max(diem))    # 9  — lon nhat
+print(min(diem))    # 6  — nho nhat
+print(len(diem))    # 4  — so phan tu</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>scores = [8, 6, 9, 7]</code>. Tạo <code>total</code> = tổng (dùng <code>sum</code>) và <code>best</code> = điểm cao nhất (dùng <code>max</code>).</span>
+<template class="st">scores = [8, 6, 9, 7]
+# tao total va best
+</template>
+<template class="ts">assert total == 30
+assert best == 9
+</template></div>
+
+<h4>8. Vài mẹo & luyện tập tổng hợp</h4>
+<p>Hai mẹo nhỏ rất hay dùng với danh sách:</p>
+<ul>
+<li>Nối hai danh sách bằng <code>+</code>: <code>[1, 2] + [3, 4]</code> → <code>[1, 2, 3, 4]</code>.</li>
+<li>Đảo ngược bằng lát cắt <code>[::-1]</code>: <code>[1, 2, 3][::-1]</code> → <code>[3, 2, 1]</code>.</li>
+</ul>
+<pre class="run">a = [1, 2]
+b = [3, 4]
+print(a + b)             # [1, 2, 3, 4]
+print([1, 2, 3][::-1])   # [3, 2, 1]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>nums = [4, 2, 7, 1]</code>. Tạo <code>avg</code> = giá trị trung bình (tổng chia số phần tử) → <code>3.5</code>.</span>
+<template class="st">nums = [4, 2, 7, 1]
+# tao avg = trung binh cong
+</template>
+<template class="ts">assert avg == 3.5
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>a = [1, 2]</code> và <code>b = [3, 4]</code>. Tạo <code>combined</code> = nối hai danh sách → <code>[1, 2, 3, 4]</code>.</span>
+<template class="st">a = [1, 2]
+b = [3, 4]
+# tao combined
+</template>
+<template class="ts">assert combined == [1, 2, 3, 4]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 11.</b> Cho <code>nums = [1, 2, 3, 4]</code>. Tạo <code>reversed_list</code> = danh sách đảo ngược (dùng <code>[::-1]</code>) → <code>[4, 3, 2, 1]</code>.</span>
+<template class="st">nums = [1, 2, 3, 4]
+# tao reversed_list bang [::-1]
+</template>
+<template class="ts">assert reversed_list == [4, 3, 2, 1]
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Thử thách.</b> Cho <code>scores = [5, 3, 9, 1, 7]</code>. Đếm bao nhiêu điểm <b>cao hơn trung bình</b> vào <code>above_avg</code>. Trung bình = 5; các điểm &gt; 5 là 9 và 7 → <code>above_avg = 2</code>. (Gợi ý: tính trung bình trước, rồi đếm.)</span>
+<template class="st">scores = [5, 3, 9, 1, 7]
+# tinh trung binh, roi dem so diem cao hon trung binh
+</template>
+<template class="ts">assert above_avg == 2
+</template></div>
+
+<div class="recap">Ghi nhớ bài 5: <code>[ ]</code> tạo danh sách · <code>len()</code> đếm phần tử · chỉ số từ 0, âm đếm từ cuối, quá tay → <code>IndexError</code> · <code>[a:b]</code> cắt ra danh sách mới · danh sách <b>sửa được</b>: <code>lst[i] = x</code> · <code>.append/.insert/.pop/.remove</code> thêm xóa · <code>in</code> kiểm tra chứa · <code>sum/max/min/len</code>. Bài sau: dùng vòng lặp <code>for</code> để duyệt qua từng phần tử.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm ở nhà, không tính vào 2 giờ trên lớp. Bốn câu, câu cuối là thử thách.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>nums = [5, 3, 8, 1]</code>. Tạo <code>sorted_nums</code> = danh sách đã sắp xếp tăng dần (dùng hàm <code>sorted()</code>, không đổi danh sách gốc).</span>
+<template class="st">nums = [5, 3, 8, 1]
+# tao sorted_nums
+</template>
+<template class="ts">assert sorted_nums == [1, 3, 5, 8]
+assert nums == [5, 3, 8, 1]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>words = ["banana", "apple", "cherry"]</code>. Tạo <code>joined</code> = các từ đã sắp xếp, nối bằng dấu phẩy → <code>"apple,banana,cherry"</code> (gợi ý: <code>sorted()</code> rồi <code>",".join(...)</code>).</span>
+<template class="st">words = ["banana", "apple", "cherry"]
+# tao joined
+</template>
+<template class="ts">assert joined == "apple,banana,cherry"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>nums = [5, 3, 8, 1, 9]</code>. Tạo <code>second_largest</code> = số lớn thứ nhì (gợi ý: sắp xếp rồi lấy <code>[-2]</code>).</span>
+<template class="st">nums = [5, 3, 8, 1, 9]
+# tao second_largest
+</template>
+<template class="ts">assert second_largest == 8
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (thử thách).</b> Cho <code>scores = [8, 6, 9, 7]</code>. Tính <code>avg_no_min</code> = điểm trung bình sau khi <b>bỏ điểm thấp nhất</b>. Với dữ liệu này: bỏ 6, còn <code>(8+9+7)/3 = 8.0</code>. (Gợi ý: <code>sum</code>, <code>min</code>, <code>len</code>.)</span>
+<template class="st">scores = [8, 6, 9, 7]
+# tao avg_no_min = trung binh sau khi bo diem thap nhat
+</template>
+<template class="ts">assert avg_no_min == 8.0
+</template></div>

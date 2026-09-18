@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dojo — học thật, ngay trong trình duyệt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section class="hero"><div class="wrap">
+  <h1 data-t-html="hero_h1"></h1>
+  <p data-t="hero_p"></p>
+  <div class="cta">
+    <a class="btn" href="python.html" data-t="hero_cta1"></a>
+    <a class="btn ghost" href="pricing.html" data-t="hero_cta2"></a>
+  </div>
+  <div class="proof">
+    <span data-t-html="hero_proof1"></span>
+    <span data-t-html="hero_proof2"></span>
+    <span data-t-html="hero_proof3"></span>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="courses_eyebrow"></div>
+    <h2 data-t="courses_h2"></h2>
+    <p data-t="courses_p"></p>
+  </div>
+  <div class="courses" id="courseCards"></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="how_eyebrow"></div>
+    <h2 data-t="how_h2"></h2>
+    <p data-t="how_p"></p>
+  </div>
+  <div class="courses" id="stepCards"></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="why_eyebrow"></div>
+    <h2 data-t="why_h2"></h2>
+    <p data-t="why_p"></p>
+  </div>
+  <div class="courses" id="featureCards"></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line);text-align:center"><div class="wrap">
+  <h2 data-t="cta_h2" style="font-family:var(--disp);font-size:27px"></h2>
+  <p data-t="cta_p" style="color:var(--muted);max-width:580px;margin:12px auto 24px"></p>
+  <div class="cta" style="justify-content:center">
+    <a class="btn" href="python.html" data-t="cta_btn1"></a>
+    <a class="btn ghost" href="pricing.html" data-t="cta_btn2"></a>
+  </div>
+</div></section>
+
+<script src="app.js"></script>
+<script>
+const COURSES=[
+ {id:'python', href:'python.html', n:20, live:false},
+ {id:'qa', href:'qa.html', n:12, live:false},
+ {id:'sql', href:'sql.html', n:20, live:false},
+];
+const PAGE_I18N={
+vi:{
+ hero_h1:'Học lập trình <em>bằng cách gõ code thật</em> — ngay trong trình duyệt.',
+ hero_p:'Ba khóa tự học: Python, Kiểm thử phần mềm (QA), SQL. Mỗi khóa có bài 1 miễn phí, bài tập chấm điểm tự động, và một người thật để hỏi khi kẹt.',
+ hero_cta1:'Học thử Python — miễn phí', hero_cta2:'Xem học phí',
+ hero_proof1:'<b>52</b> bài học', hero_proof2:'<b>3</b> khóa tự học', hero_proof3:'<b>0đ</b> để bắt đầu',
+ courses_eyebrow:'Khóa học', courses_h2:'Chọn một khóa để bắt đầu',
+ courses_p:'Bài 1 của mọi khóa đều miễn phí và làm được ngay — không cần đăng ký.',
+ c_python_t:'Python căn bản', c_python_d:'20 bài — biến, vòng lặp, danh sách, dictionary, hàm, file. Python thật chạy trong trình duyệt.',
+ c_qa_t:'Kiểm thử phần mềm căn bản', c_qa_d:'12 bài — tư duy tester thật: lớp tương đương, giá trị biên, severity/priority, smoke test, tự động hóa.',
+ c_sql_t:'SQL cho công việc dữ liệu', c_sql_d:'20 bài — SELECT, JOIN, GROUP BY, subquery. Cơ sở dữ liệu thật chạy trong trình duyệt.',
+ c_go:'Học thử →',
+ how_eyebrow:'Cách học', how_h2:'Học bằng cách làm, không phải xem',
+ how_p:'Không video dài lê thê, không slide. Bạn đọc phần kiến thức ngắn gọn rồi bắt tay code ngay.',
+ s1_t:'1 · Đọc & hiểu', s1_d:'Mỗi bài giải thích khái niệm bằng ví dụ chạy được, sơ đồ trực quan và bảng theo dõi — dễ hiểu cho người mới hoàn toàn.',
+ s2_t:'2 · Code & chấm điểm', s2_d:'Gõ code vào trình soạn thảo có tô màu cú pháp, bấm Chạy. Bài tập được chấm ngay, báo lỗi cụ thể (biến nào sai, cần giá trị gì).',
+ s3_t:'3 · Hỏi sensei khi kẹt', s3_d:'Kẹt ở đâu, bấm "Hỏi sensei" để gửi thẳng câu hỏi kèm code cho giáo viên. Không bị bỏ lại một mình.',
+ why_eyebrow:'Vì sao khác biệt', why_h2:'Không chỉ là tài liệu miễn phí',
+ why_p:'Điều tạo nên khác biệt so với các trang học free ngoài kia:',
+ f1_t:'Chấm điểm tự động', f1_d:'Không chỉ đọc rồi thôi — bạn phải làm đúng mới qua. Phản hồi cụ thể như khi có gia sư ngồi cạnh.',
+ f2_t:'Có người thật kèm', f2_d:'Mỗi học viên có một giáo viên để nhắn khi bí. Đây là lớp học có người đứng sau, không phải khóa "mua xong biến mất".',
+ f3_t:'Theo dõi tiến độ & đai', f3_d:'Hoàn thành bài để lên đai (trắng → đen) qua 5 chặng. Thấy rõ mình đang ở đâu và còn bao xa tới đích.',
+ f4_t:'Dự án thật', f4_d:'Kết thúc bằng các đồ án nhỏ và đồ án tốt nghiệp — bạn xây được thứ chạy được, không chỉ học lý thuyết.',
+ cta_h2:'Sẵn sàng gõ dòng code đầu tiên?', cta_p:'Bài 1 của cả ba khóa đều miễn phí, chạy ngay trong trình duyệt — không cần cài đặt, không cần đăng ký.',
+ cta_btn1:'Học thử Python — miễn phí', cta_btn2:'Xem học phí',
+},
+en:{
+ hero_h1:'Learn to code <em>by writing real code</em> — right in your browser.',
+ hero_p:'Three self-paced courses: Python, Software Testing (QA), SQL. Each has a free lesson 1, auto-graded exercises, and a real human to ask when you get stuck.',
+ hero_cta1:'Try Python free', hero_cta2:'See pricing',
+ hero_proof1:'<b>52</b> lessons', hero_proof2:'<b>3</b> self-paced courses', hero_proof3:'<b>$0</b> to start',
+ courses_eyebrow:'Courses', courses_h2:'Pick a course to start',
+ courses_p:'Lesson 1 of every course is free and works instantly — no signup needed.',
+ c_python_t:'Python Foundations', c_python_d:'20 lessons — variables, loops, lists, dicts, functions, files. Real Python runs in your browser.',
+ c_qa_t:'QA & Testing Fundamentals', c_qa_d:'12 lessons — real tester thinking: equivalence classes, boundary values, severity/priority, smoke testing, automation.',
+ c_sql_t:'SQL for Data Work', c_sql_d:'20 lessons — SELECT, JOIN, GROUP BY, subqueries. A real database runs in your browser.',
+ c_go:'Try free →',
+ how_eyebrow:'How it works', how_h2:'Learn by doing, not watching',
+ how_p:'No long videos, no slides. You read a short, clear explanation and then start coding immediately.',
+ s1_t:'1 · Read & understand', s1_d:'Every lesson explains the concept with runnable examples, visual diagrams and trace tables — clear for total beginners.',
+ s2_t:'2 · Code & get graded', s2_d:'Type into a syntax-highlighted editor and hit Run. Exercises are graded instantly with specific feedback (which variable is wrong, what value it needs).',
+ s3_t:'3 · Ask your sensei', s3_d:'Stuck? Hit "Ask sensei" to send your question and your code straight to your teacher. You are never left alone.',
+ why_eyebrow:'Why it is different', why_h2:'More than a free tutorial',
+ why_p:'What sets this apart from the free sites out there:',
+ f1_t:'Auto-graded', f1_d:'Not just reading — you have to get it right to pass. Specific feedback, like a tutor sitting next to you.',
+ f2_t:'A real human mentor', f2_d:'Every student has a teacher to message when stuck. A class with someone behind it, not a "buy and vanish" course.',
+ f3_t:'Progress & belts', f3_d:'Complete lessons to earn belts (white → black) across 5 stages. See exactly where you are and how far to go.',
+ f4_t:'Real projects', f4_d:'You finish with mini-projects and a capstone — you build something that runs, not just theory.',
+ cta_h2:'Ready to type your first line of code?', cta_p:'Lesson 1 of all three courses is free and runs right in your browser — nothing to install, no signup.',
+ cta_btn1:'Try Python free', cta_btn2:'See pricing',
+}};
+window.onLang=function(){
+  const d=PAGE_I18N[LANG];
+  document.getElementById('courseCards').innerHTML=COURSES.map(c=>`
+   <div class="course">
+     <h3>${d['c_'+c.id+'_t']}</h3>
+     <div class="meta">${c.n} ${LANG==='vi'?'bài':'lessons'}</div>
+     <p>${d['c_'+c.id+'_d']}</p>
+     <a class="btn ghost" href="${c.href}">${d.c_go}</a>
+   </div>`).join('');
+  const card=(t,x)=>`<div class="course"><h3>${d[t]}</h3><p>${d[x]}</p></div>`;
+  document.getElementById('stepCards').innerHTML=card('s1_t','s1_d')+card('s2_t','s2_d')+card('s3_t','s3_d');
+  document.getElementById('featureCards').innerHTML=card('f1_t','f1_d')+card('f2_t','f2_d')+card('f3_t','f3_d')+card('f4_t','f4_d');
+};
+</script>
+</body>
+</html>

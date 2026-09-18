@@ -1,0 +1,226 @@
+<h3>Lesson 1 — Getting started with Python: values, variables and print()</h3>
+<p>Welcome to your very first lesson. If you've never written a line of code before — <b>perfect</b>, this lesson is written exactly for you. We'll go slowly: understand what programming is, what Python is, and only then type our first lines of code.</p>
+
+<h4>1. What is programming? What is Python?</h4>
+<p><b>Programming</b> is simply writing a list of <b>instructions</b> for a computer to follow — like writing a recipe: step by step, clear, in order. Computers are fast and precise, but they <i>only do exactly what you tell them</i> and never guess your intent. Learning to program is mostly learning to <b>express ideas very clearly</b> so the machine understands.</p>
+<p><b>Python</b> is a <b>programming language</b> — the vocabulary and grammar for writing those instructions. People pick Python to start because it reads close to plain English, has few confusing symbols, and is used everywhere: web, data analysis, automation, artificial intelligence… Writing <code>print("Hello")</code> in Python is far more readable than in many other languages.</p>
+<p>In this course you'll run <b>real</b> Python — the same Python professional developers use — right in your browser, with nothing to install.</p>
+
+<h4>2. How learning works at The Dojo</h4>
+<p>Whenever you see a dark box like the one below, that's <b>where you write code</b>. Under it are two buttons:</p>
+<ul>
+<li><b>Run:</b> sends your code to real Python. The <i>first run</i> downloads the Python engine (~10MB), which can take 10–30 seconds — be patient; after that it's instant.</li>
+<li><b>Reset:</b> restores the code box to its starting state if you want to start over.</li>
+</ul>
+<p>After you click Run, you'll see a result area with two parts:</p>
+<ul>
+<li><b>Output:</b> everything your program <i>prints to the screen</i> appears here — it's your program's "screen". This panel always shows, whether your answer is right or wrong.</li>
+<li><b>Verdict:</b> <span style="color:var(--jade)">Pass</span> if your answer is correct, or <span style="color:var(--ember)">Fail</span> with a specific hint (e.g. which variable is wrong, what its value is and what it should be).</li>
+</ul>
+<p>You can edit your code and click Run as many times as you like — being wrong is normal and the fastest way to learn.</p>
+
+<h4>3. Your first command: <code>print()</code></h4>
+<p>A program runs its instructions <b>top to bottom, one at a time</b>. The first and most-used one is <code>print()</code> — it tells the computer to <b>show (display) something on screen</b>.</p>
+<pre class="run">print("Hello")
+print("I am learning Python")</pre>
+<p>Let's read the line <code>print("Hello")</code> part by part:</p>
+<ul>
+<li><code>print</code> — the name of the command (show on screen).</li>
+<li><code>( )</code> — round parentheses; inside them goes the thing you want to print.</li>
+<li><code>"Hello"</code> — a piece of <b>text</b>. In programming, text is called a <b>string</b> and <u>must be wrapped in quotes</u> <code>"..."</code>. The quotes tell the computer "this is literal text to print", not a command.</li>
+</ul>
+<p>If you forget the quotes — e.g. <code>print(Hello)</code> — the computer errors, because it thinks <code>Hello</code> is the name of some command it doesn't know.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Use <code>print()</code> to print exactly the line <code>Hello Dojo</code>. (Remember the quotes around the text.)</span>
+<template class="st"># Type your print command below:
+</template>
+<template class="ts">assert _OUT_.strip() == "Hello Dojo", "must print exactly: Hello Dojo"
+</template></div>
+<p><i>Note: this exercise checks <b>what you print to the screen</b> (see the Output panel). Most later exercises check <b>the value of a variable</b> — we'll learn "variables" just below.</i></p>
+
+<h4>4. Comments with <code>#</code></h4>
+<p>Did you notice the line <code># Type your print command below:</code> in the exercise above? That's a <b>comment</b>. Everything after a <code>#</code> on a line is <b>completely ignored</b> by Python — it's a note for <i>humans to read</i>, not an instruction for the machine to run.</p>
+<pre># This is a comment — Python doesn't run this line
+print("This line does run")   # a comment can also sit at the end of a line</pre>
+<p>Comments explain the code to you (and others) reading it later. In exercises we often leave a <code>#</code> line hinting where you should write.</p>
+
+<h4>5. Values and data types</h4>
+<p>Every piece of data in Python has a <b>type</b>. The four foundational ones you meet first:</p>
+<pre>10          # whole number -> int    (no decimal part)
+3.14        # decimal      -> float  (has a decimal point)
+"hello"     # text         -> str    (letters in quotes)
+True        # true/false   -> bool   (only True or False)</pre>
+<p>You can ask the computer "what type is this?" with <code>type()</code>:</p>
+<pre>print(type(10))       # &lt;class 'int'&gt;
+print(type(3.14))     # &lt;class 'float'&gt;
+print(type("hi"))     # &lt;class 'str'&gt;
+print(type(True))     # &lt;class 'bool'&gt;</pre>
+<p>Why do types matter? Because the computer <b>behaves differently</b> per type: <code>3 + 4</code> gives <code>7</code> (adding numbers), but <code>"3" + "4"</code> gives <code>"34"</code> (joining text). Mixing up types is one of the most common beginner bugs.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Create four variables: <code>a</code> = integer 42, <code>b</code> = float 3.5, <code>c</code> = string <code>"Python"</code> (capital P), <code>d</code> = boolean <code>True</code>.</span>
+<template class="st"># create 4 variables a, b, c, d
+</template>
+<template class="ts">assert a == 42 and isinstance(a, int)
+assert b == 3.5 and isinstance(b, float)
+assert c == "Python" and isinstance(c, str)
+assert d is True
+</template></div>
+
+<h4>6. Variables — named boxes</h4>
+<p>A <b>variable</b> is a name attached to a value so you can reuse it later. The <code>=</code> sign means <b>assign</b>: take the value on the right and put it in the named box on the left.</p>
+<pre>age = 15
+name = "Minh"
+print(name, "is", age, "years old")   # Minh is 15 years old</pre>
+<p>Variables can be <b>reassigned</b> — the new value replaces the old:</p>
+<pre>score = 5
+score = score + 3     # take old score (5), add 3, store back into score -> 8
+print(score)           # 8</pre>
+<h4>Naming rules</h4>
+<ul>
+<li>Only letters, digits and underscore <code>_</code>; must <b>not</b> start with a digit.</li>
+<li>No spaces. Use <code>snake_case</code> to join words: <code>quantity</code>, <code>user_name</code>.</li>
+<li>Case-sensitive: <code>age</code> and <code>Age</code> are two different variables.</li>
+<li>Use <b>meaningful</b> names: <code>price</code> beats <code>x</code>.</li>
+</ul>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Create <code>quantity</code> = 4 and <code>unit_price</code> = 25000. Create <code>subtotal</code> as their product (write the multiplication <code>*</code>, don't hard-code the result).</span>
+<template class="st">quantity = 4
+unit_price = 25000
+# create subtotal = quantity times unit_price
+</template>
+<template class="ts">assert subtotal == 100000
+</template></div>
+
+<h4>7. <code>print()</code> in more detail</h4>
+<p><code>print()</code> can print several things at once, separated by commas — the computer inserts a space between them:</p>
+<pre>name = "Minh"
+print("Hello,", name)     # Hello, Minh</pre>
+<p>You can change the separator with <code>sep</code>, and the line-ending character with <code>end</code>:</p>
+<pre>print("2024", "09", "18", sep="-")   # 2024-09-18
+print("Loading", end="...")           # no newline, then prints "..."</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>year = 2026</code>, <code>month = 9</code>, <code>day = 18</code>, use <code>print()</code> with <code>sep</code> to print exactly <code>2026/9/18</code>. (Note: these are three <i>number variables</i> — don't put them in quotes.)</span>
+<template class="st">year = 2026
+month = 9
+day = 18
+# print 2026/9/18 using print(..., sep=...)
+</template>
+<template class="ts">assert _OUT_.strip() == "2026/9/18", "must print 2026/9/18"
+</template></div>
+
+<h4>8. Reading input from a user — <code>input()</code></h4>
+<p>The <code>input()</code> function pauses the program, waits for the user to type, then returns what they typed. <b>Critically important:</b> <code>input()</code> <u>always returns a string (str)</u>, even when the person types a number.</p>
+<pre>name = input("What's your name? ")
+print("Hi", name)
+
+age_str = input("Your age? ")   # e.g. typing "15" -> age_str = "15" (a string!)
+print(type(age_str))            # &lt;class 'str'&gt;</pre>
+<p>Because the result is a string, to do math you must <b>convert</b> it to a number first.</p>
+
+<h4>9. Type conversion</h4>
+<pre>int("15")     # 15   (string -> integer)
+float("3.5")  # 3.5  (string -> float)
+str(15)       # "15" (number -> string)</pre>
+<p>This is why the line below is a classic logic bug: it joins two strings instead of adding two numbers.</p>
+<pre>a = input("Number a: ")   # "7"
+b = input("Number b: ")   # "3"
+print(a + b)              # "73"  (WRONG! string join)
+print(int(a) + int(b))    # 10    (RIGHT, convert to int first)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given two strings <code>a = "7"</code> and <code>b = "3"</code> (simulating <code>input()</code> results), create <code>total</code> = their <i>numeric</i> sum (result must be <code>10</code>, not <code>"73"</code>).</span>
+<template class="st">a = "7"
+b = "3"
+# create total = numeric sum of a and b
+</template>
+<template class="ts">assert total == 10, "remember to int() before adding"
+</template></div>
+
+<h4>10. Arithmetic operators</h4>
+<pre>7 + 3     # 10   add
+7 - 3     # 4    subtract
+7 * 3     # 21   multiply
+7 / 2     # 3.5  divide (ALWAYS a float)
+7 // 2    # 3    floor division (whole part)
+7 % 2     # 1    remainder (modulo)
+2 ** 10   # 1024 power (2 to the 10)</pre>
+<p><code>//</code> and <code>%</code> are very handy: <code>//</code> tells you "how many whole times it divides", <code>%</code> tells you "how much is left over". E.g. turn 100 minutes into hours:minutes → <code>100 // 60 = 1</code> hour, <code>100 % 60 = 40</code> minutes.</p>
+<p>Precedence follows math: <code>**</code> first, then <code>* / // %</code>, then <code>+ -</code>. Use parentheses <code>( )</code> to force order:</p>
+<pre>2 + 3 * 4       # 14  (multiply first)
+(2 + 3) * 4     # 20  (parentheses first)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>total_minutes = 100</code>, compute <code>hours</code> = whole hours and <code>minutes</code> = leftover minutes (use <code>//</code> and <code>%</code> with 60).</span>
+<template class="st">total_minutes = 100
+# create hours and minutes
+</template>
+<template class="ts">assert hours == 1, "use // 60"
+assert minutes == 40, "use % 60"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Compute the average of three numbers <code>8</code>, <code>9</code>, <code>10</code> into <code>average</code>. Watch precedence — use parentheses!</span>
+<template class="st"># create average = average of 8, 9, 10
+</template>
+<template class="ts">assert average == 9, "use parentheses: (8+9+10)/3"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>age = 20</code> (a number), build the string <code>label = "Age: 20"</code> by joining <code>"Age: "</code> with <code>age</code> — remember to convert the number with <code>str()</code>.</span>
+<template class="st">age = 20
+# create label = "Age: 20" by string concatenation
+</template>
+<template class="ts">assert label == "Age: 20", "use 'Age: ' + str(age)"
+</template></div>
+
+<h4>11. Augmented assignment (+=, -=, *=)</h4>
+<p>When you update a variable using itself, Python has a shorthand — used constantly for counting and accumulating:</p>
+<pre class="run">score = 5
+score += 3     # same as: score = score + 3  -> 8
+score *= 2     # same as: score = score * 2  -> 16
+score -= 1     # -> 15
+print(score)   # 15</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>diem = 10</code>, use augmented assignment: add 5 (<code>+= 5</code>), then double it (<code>*= 2</code>). Final value stays in <code>diem</code>.</span>
+<template class="st">diem = 10
+# use += and *= to reach 30
+</template>
+<template class="ts">assert diem == 30, "10 + 5 = 15, then *2 = 30"
+</template></div>
+
+<h4>12. Common beginner mistakes</h4>
+<ul>
+<li><b>Missing quotes:</b> <code>print(hello)</code> → error. Text must be <code>"hello"</code>.</li>
+<li><b>Confusing <code>=</code> and <code>==</code>:</b> <code>=</code> assigns, <code>==</code> compares (lesson 3).</li>
+<li><b>Adding a string to a number:</b> <code>"Age: " + 20</code> → error. Use <code>"Age: " + str(20)</code>.</li>
+<li><b>Forgetting to convert after <code>input()</code>:</b> the result is a string, you can't do math on it directly.</li>
+</ul>
+
+<div class="recap">Recap of lesson 1: programming is writing instructions for a machine · Python is a beginner-friendly language · <code>print()</code> shows output, text goes in quotes · <code>#</code> is a comment (ignored) · data has a <b>type</b> (int/float/str/bool) · a variable is a named box, <code>=</code> assigns · <code>input()</code> always returns a string → remember to convert with <code>int()/float()</code> · operators <code>+ - * / // % **</code> and precedence · <code>+= -= *=</code> shorthand. Next: mastering strings and f-strings.</div>
+
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch.</b> Given <code>price_str = "120000"</code> and <code>qty_str = "3"</code> (simulating <code>input()</code>), compute the total with <b>10% VAT</b> added, rounded to a whole number, into <code>total</code>. (Hint: convert to numbers, multiply, then times <code>1.1</code>, use <code>round()</code>.)</span>
+<template class="st">price_str = "120000"
+qty_str = "3"
+# create total = amount + 10% VAT, rounded to an integer
+</template>
+<template class="ts">assert total == 396000, "120000 * 3 = 360000, plus 10% = 396000"
+</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Do this at home, outside the 2-hour class. Four questions; the last is a stretch.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>vnd_str = "260000"</code> (a string), convert to USD at a rate of 26000: create <code>usd</code> (a float) = the VND amount divided by 26000, then create <code>message</code> with an f-string in the exact form <code>"260000 VND = 10.0 USD"</code>.</span>
+<template class="st">vnd_str = "260000"
+rate = 26000
+# create usd and message
+</template>
+<template class="ts">assert usd == 10.0, "int(vnd_str) then divide by rate"
+assert message == "260000 VND = 10.0 USD", 'use f"{vnd_str} VND = {usd} USD"'
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>celsius = 25</code> (a number), convert to Fahrenheit: <code>fahrenheit = celsius * 9 / 5 + 32</code> → <code>77.0</code>.</span>
+<template class="st">celsius = 25
+# create fahrenheit
+</template>
+<template class="ts">assert fahrenheit == 77.0
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> For a rectangle with <code>width = 4</code>, <code>height = 5</code>, create <code>area</code> = the area (<code>width * height</code>) and <code>perimeter</code> = the perimeter (<code>2 * (width + height)</code>).</span>
+<template class="st">width = 4
+height = 5
+# create area and perimeter
+</template>
+<template class="ts">assert area == 20
+assert perimeter == 18
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given <code>total_seconds = 3661</code>, split it into hours/minutes/seconds, then create a string <code>time_str</code> in the form <code>"01:01:01"</code> (each part 2 digits). Hint: <code>// 3600</code>, <code>% 3600 // 60</code>, <code>% 60</code>, and f-string <code>{h:02d}</code>.</span>
+<template class="st">total_seconds = 3661
+# create time_str in "HH:MM:SS" form
+</template>
+<template class="ts">assert time_str == "01:01:01"
+</template></div>
+

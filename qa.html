@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiểm thử phần mềm căn bản — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<section><div class="wrap">
+  <div class="shead"><div class="eyebrow">The Dojo</div>
+  <div class="courseTop" id="courseTop"></div>
+  <p id="courseSub"></p></div>
+  <div id="lessonList"></div>
+  <div class="viewer" id="viewer"></div>
+</div></section>
+
+<script src="app.js"></script>
+<script>
+const COURSE={"id":"qa","ls":"mk:qa","title":{"vi":"Kiểm thử phần mềm căn bản","en":"QA & Testing Fundamentals"},"sub":{"vi":"12 bài · ~4 giờ tự học · Bài 1 miễn phí. Tư duy nghề thật, kiểm tra hiểu bài bằng câu hỏi tương tác.","en":"12 lessons · ~4 hours self-study · Lesson 1 free. Real-job thinking, checked with interactive questions."},"lessons":[{"t":{"vi":"Kiểm thử là gì (và không phải là gì)","en":"What testing is (and is not)"},"kind":"free","html":"<h3>Bài 1 — Kiểm thử là gì (và không phải là gì)</h3>\n<p>Kiểm thử phần mềm (QA/testing) không phải là \"bấm thử xem có chạy không\". Đó là một <b>kỹ năng tư duy</b>: so sánh có hệ thống giữa <i>điều phần mềm nên làm</i> và <i>điều nó thực sự làm</i>.</p>\n<h4>Công thức lõi của cả nghề</h4>\n<pre>Ky vong (expected)  vs  Thuc te (actual)</pre>\n<p>Một lỗi (bug) tồn tại khi hai điều này lệch nhau. Nghe đơn giản — nhưng để biết \"kỳ vọng\" là gì, bạn phải đọc đặc tả, hỏi đúng câu hỏi, và nghĩ đến những trường hợp người viết code chưa nghĩ tới. Đó là giá trị của tester.</p>\n<h4>Ví dụ 30 giây</h4>\n<p>Đặc tả: \"Ô nhập tuổi nhận số từ 1 đến 120.\" Người bấm thử nhập 25 → chạy → \"ổn rồi\". Tester nghĩ khác:</p>\n<ul>\n<li>Nhập 0 thì sao? 121? Số âm?</li>\n<li>Nhập chữ \"abc\"? Bỏ trống? Nhập 25.5?</li>\n<li>Nhập 1 và 120 — đúng hai đầu ranh giới?</li>\n</ul>\n<p>Cùng một ô nhập, người thường thấy 1 trường hợp, tester thấy 8. Khóa học này dạy bạn <b>cách nhìn ra 8 trường hợp đó một cách có hệ thống</b> — không phải nhờ may mắn.</p>\n<div class=\"ex\" data-kind=\"quiz\" data-a=\"2\"><p><b>Câu hỏi 1.</b> Một lỗi (bug) được định nghĩa đúng nhất là:</p>\n<ol class=\"opts\"><li>Chương trình bị treo hoặc văng</li><li>Code viết xấu, khó đọc</li><li>Hành vi thực tế lệch khỏi hành vi kỳ vọng</li><li>Tính năng chạy chậm</li></ol></div>\n<div class=\"ex\" data-kind=\"quiz\" data-a=\"1\"><p><b>Câu hỏi 2.</b> Đặc tả nói \"giảm giá 10% cho đơn từ 500k\". Đơn 500k không được giảm. Đây là:</p>\n<ol class=\"opts\"><li>Không phải lỗi — 500k chưa \"trên\" 500k</li><li>Lỗi — \"từ 500k\" bao gồm cả 500k, thực tế lệch kỳ vọng</li><li>Lỗi giao diện</li><li>Không đủ thông tin để nói</li></ol></div>\n<h4>Tư duy đúng về nghề</h4>\n<p>Tester giỏi không phải người \"ghét dev\" hay \"bới lông tìm vết\". Họ là người <b>đại diện cho người dùng</b> và cho mọi tình huống đời thực mà bàn phím lập trình viên chưa chạm tới. Mục tiêu: lỗi được tìm thấy ở phòng dev, không phải ở khách hàng.</p>\n<div class=\"hw\"><b>Bài tập về nhà:</b> Chọn một app bạn dùng hằng ngày (đặt xe, nhắn tin…). Viết ra 5 \"kỳ vọng\" của bạn về một màn hình của nó — càng cụ thể càng tốt. Bài sau ta sẽ học cách biến kỳ vọng thành test.</div>\n"},{"t":{"vi":"Đọc đặc tả như một tester","en":"Reading a spec like a tester"},"html":"<h3>Bài 2 — Đọc đặc tả như một tester</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Lớp tương đương","en":"Equivalence classes"},"html":"<h3>Bài 3 — Lớp tương đương</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Giá trị biên — nơi lỗi trú ẩn","en":"Boundary values — where bugs hide"},"html":"<h3>Bài 4 — Giá trị biên — nơi lỗi trú ẩn</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Viết test case người khác chạy được","en":"Writing runnable test cases"},"html":"<h3>Bài 5 — Viết test case người khác chạy được</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Báo cáo lỗi khiến dev cảm ơn bạn","en":"Bug reports devs thank you for"},"html":"<h3>Bài 6 — Báo cáo lỗi khiến dev cảm ơn bạn</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Kiểm thử tích cực vs tiêu cực","en":"Positive vs negative testing"},"html":"<h3>Bài 7 — Kiểm thử tích cực vs tiêu cực</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Bảng quyết định","en":"Decision tables"},"html":"<h3>Bài 8 — Bảng quyết định</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Kiểm thử chuyển trạng thái","en":"State transition testing"},"html":"<h3>Bài 9 — Kiểm thử chuyển trạng thái</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Severity vs Priority","en":"Severity vs Priority"},"html":"<h3>Bài 10 — Severity vs Priority</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Smoke test & hồi quy","en":"Smoke & regression testing"},"html":"<h3>Bài 11 — Smoke test & hồi quy</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"},{"t":{"vi":"Tự động hóa & đồ án tốt nghiệp","en":"Automation intro & capstone"},"html":"<h3>Bài 12 — Tự động hóa & đồ án tốt nghiệp</h3>\n<p><i>(Nội dung đang được biên soạn.)</i></p>"}]};
+const KEYRING=[];
+window.onLang=function(){
+  document.getElementById('courseSub').textContent=COURSE.sub[LANG];
+  document.getElementById('courseSub').style.color='var(--muted)';
+};
+</script>
+</body>
+</html>

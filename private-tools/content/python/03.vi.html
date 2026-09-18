@@ -1,0 +1,193 @@
+<h3>Bài 3 — Điều kiện: if / elif / else</h3>
+<p>Đến giờ chương trình của chúng ta chạy thẳng một mạch từ trên xuống. Nhưng phần mềm thật phải <b>ra quyết định</b>: đủ tuổi thì cho vào, sai mật khẩu thì báo lỗi, đơn từ 500k thì giảm giá. Bài này dạy máy tính <b>chọn đường đi</b> dựa trên điều kiện.</p>
+
+<h4>1. So sánh — nền tảng của mọi quyết định</h4>
+<p>Một <b>phép so sánh</b> luôn cho kết quả kiểu <code>bool</code>: <code>True</code> (đúng) hoặc <code>False</code> (sai).</p>
+<pre class="run">print(7 &gt; 3)      # True
+print(7 &lt; 3)      # False
+print(5 == 5)     # True  — BANG NHAU? (hai sign bang)
+print(5 != 4)     # True  — KHAC NHAU?
+print(5 &gt;= 5)     # True  — lon hon hoac bang
+print(5 &lt;= 4)     # False — nho hon hoac bang</pre>
+<p><b>Cực kỳ quan trọng:</b> <code>=</code> là <i>gán</i> (bỏ giá trị vào biến), còn <code>==</code> là <i>so sánh</i> (hỏi có bằng nhau không). Nhầm hai cái này là lỗi kinh điển của người mới.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Cho <code>a = 7</code> và <code>b = 10</code>. Tạo biến <code>a_is_smaller</code> = kết quả so sánh <code>a</code> có nhỏ hơn <code>b</code> hay không (kết quả là <code>True</code>/<code>False</code>).</span>
+<template class="st">a = 7
+b = 10
+# tao a_is_smaller = a co nho hon b khong?
+</template>
+<template class="ts">assert a_is_smaller is True
+</template></div>
+
+<h4>2. <code>if</code> — làm gì đó KHI điều kiện đúng</h4>
+<p>Cấu trúc: từ khóa <code>if</code>, một điều kiện, dấu hai chấm <code>:</code>, rồi <b>khối lệnh thụt vào</b> bên dưới.</p>
+<pre class="run">temperature = 39
+if temperature &gt; 37.5:
+    print("Ban bi sot!")     # dong nay THUT VAO -> thuoc if
+print("Da kiem tra xong")    # dong nay KHONG thut -> luon chay</pre>
+<p><b>Thụt lề (indentation) quyết định mọi thứ trong Python.</b> Những dòng thụt vào cùng một mức tạo thành một <b>khối</b> chạy chung. Quy ước: thụt <b>4 dấu cách</b>. Thụt sai → lỗi hoặc chạy sai ý.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Biến <code>alert</code> ban đầu là <code>False</code>. Nếu <code>temperature</code> lớn hơn <code>37.5</code> thì đổi <code>alert</code> thành <code>True</code>.</span>
+<template class="st">temperature = 38
+alert = False
+# neu temperature > 37.5 thi alert = True
+</template>
+<template class="ts">assert alert is True
+</template></div>
+
+<h4>3. <code>else</code> — ngược lại thì làm gì</h4>
+<pre class="run">age = 15
+if age &gt;= 18:
+    print("Duoc vao")
+else:
+    print("Chua du age")   # chay khi dieu kien if SAI</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>score = 4</code>. Tạo biến <code>result</code> = <code>"Pass"</code> nếu <code>score &gt;= 5</code>, ngược lại là <code>"Fail"</code>.</span>
+<template class="st">score = 4
+# tao result bang if/else
+</template>
+<template class="ts">assert result == "Fail"
+</template></div>
+
+<h4>4. <code>elif</code> — nhiều nhánh</h4>
+<p>Khi có hơn hai trường hợp, dùng <code>elif</code> (viết tắt của "else if"). Python kiểm tra <b>từ trên xuống</b> và chạy <b>nhánh ĐÚNG đầu tiên</b>, rồi bỏ qua phần còn lại.</p>
+<pre class="run">score = 7
+if score &gt;= 8:
+    grade = "Excellent"
+elif score &gt;= 6.5:
+    grade = "Good"
+elif score &gt;= 5:
+    grade = "Average"
+else:
+    grade = "Weak"
+print(grade)      # Kha</pre>
+<figure class="diagram">
+<svg viewBox="0 0 470 340" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="13">
+  <defs>
+    <marker id="arr3" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#8FA0BC"/>
+    </marker>
+  </defs>
+  <polygon points="150,18 250,66 150,114 50,66" fill="#0E1626" stroke="#F5B942"/>
+  <text x="150" y="62" text-anchor="middle" fill="#F5B942">score &gt;= 8 ?</text>
+  <text x="150" y="80" text-anchor="middle" fill="#8FA0BC">if</text>
+  <line x1="250" y1="66" x2="330" y2="66" stroke="#8FA0BC" marker-end="url(#arr3)"/>
+  <text x="272" y="58" fill="#7FD1C0">Đúng</text>
+  <rect x="330" y="48" width="120" height="36" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="390" y="71" text-anchor="middle" fill="#E8E4D8">grade = "Excellent"</text>
+  <line x1="150" y1="114" x2="150" y2="152" stroke="#8FA0BC" marker-end="url(#arr3)"/>
+  <text x="158" y="138" fill="#E2604C">Sai</text>
+  <polygon points="150,152 250,200 150,248 50,200" fill="#0E1626" stroke="#F5B942"/>
+  <text x="150" y="196" text-anchor="middle" fill="#F5B942">score &gt;= 5 ?</text>
+  <text x="150" y="214" text-anchor="middle" fill="#8FA0BC">elif</text>
+  <line x1="250" y1="200" x2="330" y2="200" stroke="#8FA0BC" marker-end="url(#arr3)"/>
+  <text x="272" y="192" fill="#7FD1C0">Đúng</text>
+  <rect x="330" y="182" width="120" height="36" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="390" y="205" text-anchor="middle" fill="#E8E4D8">grade = "Good/Avg"</text>
+  <line x1="150" y1="248" x2="150" y2="286" stroke="#8FA0BC" marker-end="url(#arr3)"/>
+  <text x="158" y="272" fill="#E2604C">Sai (else)</text>
+  <rect x="90" y="286" width="120" height="34" rx="6" fill="#121C30" stroke="#22304C"/>
+  <text x="150" y="308" text-anchor="middle" fill="#E8E4D8">grade = "Weak"</text>
+</svg>
+<figcaption>Máy kiểm tra từng điều kiện từ trên xuống; gặp nhánh đúng đầu tiên là chạy rồi dừng.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>score = 7</code>. Tạo <code>grade</code> theo thang: <code>&gt;= 8</code> → <code>"Excellent"</code>; <code>&gt;= 6.5</code> → <code>"Good"</code>; <code>&gt;= 5</code> → <code>"Average"</code>; còn lại → <code>"Weak"</code>.</span>
+<template class="st">score = 7
+# tao grade bang if/elif/else
+</template>
+<template class="ts">assert grade == "Good"
+</template></div>
+
+<h4>5. Thứ tự các nhánh RẤT quan trọng</h4>
+<p>Vì Python dừng ở nhánh đúng đầu tiên, viết sai thứ tự sẽ cho kết quả sai. Ví dụ nếu để <code>&gt;= 5</code> lên trước <code>&gt;= 8</code>, thì điểm 9 cũng bị xếp "Average" vì nó khớp <code>&gt;= 5</code> trước. <b>Luôn xếp điều kiện chặt nhất (hẹp nhất) lên trên.</b></p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>age = 20</code>. Tạo <code>group</code>: <code>&lt; 13</code> → <code>"child"</code>; <code>&lt; 20</code> → <code>"teen"</code>; còn lại → <code>"adult"</code>.</span>
+<template class="st">age = 20
+# tao group bang if/elif/else
+</template>
+<template class="ts">assert group == "adult"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>number = -4</code>. Tạo <code>sign</code>: <code>"positive"</code> nếu <code>number &gt; 0</code>; <code>"negative"</code> nếu <code>number &lt; 0</code>; <code>"zero"</code> nếu bằng 0.</span>
+<template class="st">number = -4
+# tao sign bang if/elif/else
+</template>
+<template class="ts">assert sign == "negative"
+</template></div>
+
+<h4>6. Dùng số dư <code>%</code> để kiểm tra chẵn/lẻ</h4>
+<p>Một số chẵn khi chia 2 dư 0. Vậy <code>n % 2 == 0</code> nghĩa là "n chẵn".</p>
+<pre class="run">n = 10
+if n % 2 == 0:
+    print("even")
+else:
+    print("odd")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>n = 7</code>. Tạo <code>kind</code> = <code>"even"</code> nếu <code>n</code> chẵn, ngược lại <code>"odd"</code> (gợi ý: dùng <code>% 2</code>).</span>
+<template class="st">n = 7
+# tao kind dua vao n % 2
+</template>
+<template class="ts">assert kind == "odd"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>hours = 14</code> (giờ trong ngày, 0–23). Tạo <code>part_of_day</code>: <code>&lt; 12</code> → <code>"morning"</code>; <code>&lt; 18</code> → <code>"afternoon"</code>; còn lại → <code>"evening"</code>.</span>
+<template class="st">hours = 14
+# tao part_of_day bang if/elif/else
+</template>
+<template class="ts">assert part_of_day == "afternoon"
+</template></div>
+
+<h4>7. So sánh chuỗi & kiểm tra "thuộc về" (<code>in</code>)</h4>
+<p>Điều kiện không chỉ dùng cho số. Bạn có thể so sánh chuỗi bằng <code>==</code>, và kiểm tra một giá trị có nằm trong một nhóm bằng <code>in</code> (danh sách <code>[...]</code> sẽ học kỹ ở bài 5).</p>
+<pre class="run">role = "admin"
+if role == "admin":
+    print("Toan quyen")
+
+day = "T7"
+if day in ["T7", "CN"]:
+    print("Cuoi tuan")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>day = "CN"</code>. Tạo <code>is_weekend</code> = <code>True</code> nếu <code>day</code> là <code>"T7"</code> hoặc <code>"CN"</code> (gợi ý: dùng <code>day in ["T7", "CN"]</code>).</span>
+<template class="st">day = "CN"
+# tao is_weekend = day thuoc ["T7", "CN"]?
+</template>
+<template class="ts">assert is_weekend is True
+</template></div>
+
+<h4>8. Những lỗi thường gặp</h4>
+<ul>
+<li><b>Quên dấu hai chấm <code>:</code></b> sau điều kiện → lỗi cú pháp.</li>
+<li><b>Quên thụt lề</b> hoặc thụt không đều → lỗi <code>IndentationError</code>.</li>
+<li><b>Dùng <code>=</code> thay vì <code>==</code></b> trong điều kiện → lỗi.</li>
+<li><b>Xếp sai thứ tự elif</b> → chương trình chạy nhưng cho kết quả sai (loại lỗi khó phát hiện nhất).</li>
+</ul>
+
+<div class="recap">Ghi nhớ bài 3: so sánh cho <code>True/False</code> (<code>== != &lt; &gt; &lt;= &gt;=</code>) · <code>if dieu_kien:</code> + khối thụt lề chạy khi đúng · <code>else</code> cho trường hợp còn lại · <code>elif</code> cho nhiều nhánh, chạy nhánh đúng <b>đầu tiên</b> · thứ tự nhánh quan trọng · so sánh chuỗi & <code>in</code> · <code>=</code> gán ≠ <code>==</code> so sánh. Bài sau: kết hợp nhiều điều kiện (and/or/not) và điều kiện lồng nhau.</div>
+
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Thử thách (FizzBuzz).</b> Cho <code>n = 15</code>. Tạo <code>result</code>: chia hết cho <b>cả</b> 3 và 5 → <code>"FizzBuzz"</code>; chỉ chia hết 3 → <code>"Fizz"</code>; chỉ chia hết 5 → <code>"Buzz"</code>; còn lại → chuỗi của số đó (<code>str(n)</code>). <i>Nhớ: xét "cả 3 và 5" TRƯỚC.</i></span>
+<template class="st">n = 15
+# tao result theo luat FizzBuzz
+</template>
+<template class="ts">assert result == "FizzBuzz"
+</template></div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm ở nhà, không tính vào 2 giờ trên lớp. Bốn câu, câu cuối là thử thách.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>income = 15</code> (triệu đồng). Tạo <code>rate</code> (thuế suất, số thực): <code>&lt;= 11</code> → <code>0.0</code>; <code>&lt;= 20</code> → <code>0.1</code>; còn lại → <code>0.2</code>.</span>
+<template class="st">income = 15
+# tao rate bang if/elif/else
+</template>
+<template class="ts">assert rate == 0.1
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>score = 72</code>. Tạo <code>letter</code> (điểm chữ): <code>&gt;= 90</code> → <code>"A"</code>; <code>&gt;= 80</code> → <code>"B"</code>; <code>&gt;= 70</code> → <code>"C"</code>; <code>&gt;= 60</code> → <code>"D"</code>; còn lại → <code>"F"</code>.</span>
+<template class="st">score = 72
+# tao letter bang if/elif/else
+</template>
+<template class="ts">assert letter == "C"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>month = 4</code>. Tạo <code>days</code> = số ngày trong tháng: tháng 2 → <code>28</code>; tháng 4, 6, 9, 11 → <code>30</code>; còn lại → <code>31</code> (gợi ý: <code>month in [4, 6, 9, 11]</code>).</span>
+<template class="st">month = 4
+# tao days bang if/elif/else
+</template>
+<template class="ts">assert days == 30
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (thử thách).</b> Cho ba cạnh <code>a = 3</code>, <code>b = 3</code>, <code>c = 5</code> của một tam giác. Tạo <code>kind</code>: nếu cả ba cạnh bằng nhau → <code>"deu"</code>; nếu <b>đúng hai</b> cạnh bằng nhau → <code>"can"</code>; còn lại → <code>"thuong"</code>. Với dữ liệu này (a=b) → <code>"can"</code>.</span>
+<template class="st">a = 3
+b = 3
+c = 5
+# tao kind: "deu" / "can" / "thuong"
+</template>
+<template class="ts">assert kind == "can"
+</template></div>

@@ -1,0 +1,7 @@
+Key/code management has moved to private-tools/ (see private-tools/README.md).
+
+- Content keys: private-tools/keys/<course>.ck  (never publish)
+- Issued-code ledger: private-tools/ledger.csv  (never publish)
+
+To lock a finished course:   node private-tools/lock-course.mjs <course-id>
+To issue a student a code:   node private-tools/issue-code.mjs <course-id> "<student label>"

@@ -1,0 +1,201 @@
+<h3>Lesson 5 — Lists & indexing</h3>
+<p>So far each variable holds <b>one</b> value. But real life is full of <b>collections</b>: a list of students, a shopping cart, a class's scores. A <b>list</b> (array) is how Python stores <b>many</b> values in one variable — and the <b>index</b> is how you reach each element. This is one of the most important skills in the whole course.</p>
+
+<h4>1. Creating a list</h4>
+<p>Put values inside square brackets <code>[ ]</code>, separated by commas:</p>
+<pre class="run">diem = [8, 6, 9, 7]
+ten = ["An", "Binh", "Chi"]
+rong = [1, "hai", 3.0, True]   # types can mix, but usually keep them the same
+print(diem)
+print(len(diem))               # 4 — number of elements</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Create a list <code>nums</code> of four numbers <code>10, 20, 30, 40</code>. Create <code>count</code> = the number of elements (use <code>len</code>).</span>
+<template class="st"># create nums and count
+</template>
+<template class="ts">assert nums == [10, 20, 30, 40]
+assert count == 4
+</template></div>
+
+<h4>2. Indexing — reaching each element</h4>
+<p>Just like strings: each element has an <b>index counting from 0</b>. Negative indexes count back from the end.</p>
+<figure class="diagram">
+<svg viewBox="0 0 470 165" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="13">
+  <text x="235" y="18" text-anchor="middle" fill="#8FA0BC">nums = [10, 20, 30, 40]</text>
+  <g>
+    <rect x="20" y="38" width="95" height="48" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+    <text x="67" y="68" text-anchor="middle" fill="#E8E4D8" font-size="16">10</text>
+    <text x="67" y="108" text-anchor="middle" fill="#F5B942">0</text>
+    <text x="67" y="130" text-anchor="middle" fill="#E2604C">-4</text>
+  </g>
+  <g>
+    <rect x="125" y="38" width="95" height="48" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+    <text x="172" y="68" text-anchor="middle" fill="#E8E4D8" font-size="16">20</text>
+    <text x="172" y="108" text-anchor="middle" fill="#F5B942">1</text>
+    <text x="172" y="130" text-anchor="middle" fill="#E2604C">-3</text>
+  </g>
+  <g>
+    <rect x="230" y="38" width="95" height="48" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+    <text x="277" y="68" text-anchor="middle" fill="#E8E4D8" font-size="16">30</text>
+    <text x="277" y="108" text-anchor="middle" fill="#F5B942">2</text>
+    <text x="277" y="130" text-anchor="middle" fill="#E2604C">-2</text>
+  </g>
+  <g>
+    <rect x="335" y="38" width="95" height="48" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+    <text x="382" y="68" text-anchor="middle" fill="#E8E4D8" font-size="16">40</text>
+    <text x="382" y="108" text-anchor="middle" fill="#F5B942">3</text>
+    <text x="382" y="130" text-anchor="middle" fill="#E2604C">-1</text>
+  </g>
+  <text x="18" y="112" text-anchor="end" fill="#F5B942" font-size="11">index →</text>
+  <text x="18" y="132" text-anchor="end" fill="#E2604C" font-size="11">neg →</text>
+</svg>
+<figcaption>Positive indexes count from 0 (left to right); negative from -1 (right to left). <code>nums[0]</code> = 10, <code>nums[-1]</code> = 40.</figcaption>
+</figure>
+<pre class="run">nums = [10, 20, 30, 40]
+print(nums[0])    # 10 — first element
+print(nums[2])    # 30
+print(nums[-1])   # 40 — last element
+# print(nums[4])  # ERROR: IndexError — there is no index 4</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>nums = [10, 20, 30, 40]</code>, take the first element into <code>first</code> and the last into <code>last</code> (use indexing).</span>
+<template class="st">nums = [10, 20, 30, 40]
+# create first and last
+</template>
+<template class="ts">assert first == 10
+assert last == 40
+</template></div>
+
+<h4>3. Slicing a list</h4>
+<p>Like strings: <code>lst[start:stop]</code> takes from <code>start</code> up to <b>just before</b> <code>stop</code>, returning a <b>new list</b>.</p>
+<pre class="run">nums = [10, 20, 30, 40, 50]
+print(nums[1:3])   # [20, 30]
+print(nums[:2])    # [10, 20]
+print(nums[-2:])   # [40, 50]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>nums = [10, 20, 30, 40]</code>, take the first two elements into <code>first_two</code>.</span>
+<template class="st">nums = [10, 20, 30, 40]
+# create first_two = the first two elements
+</template>
+<template class="ts">assert first_two == [10, 20]
+</template></div>
+
+<h4>4. Lists are MUTABLE</h4>
+<p>Unlike strings, you <b>are allowed</b> to change an element by assigning to its index:</p>
+<pre class="run">nums = [10, 20, 30]
+nums[0] = 99
+print(nums)        # [99, 20, 30]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>nums = [10, 20, 30, 40]</code>, change the <b>first</b> element to <code>99</code> (assign to <code>nums[0]</code>).</span>
+<template class="st">nums = [10, 20, 30, 40]
+# change the first element to 99
+</template>
+<template class="ts">assert nums == [99, 20, 30, 40]
+</template></div>
+
+<h4>5. Adding & removing elements</h4>
+<pre class="run">cart = ["ao", "quan"]
+cart.append("mu")      # add to the END -> ["ao","quan","mu"]
+cart.insert(0, "giay") # insert at position 0
+print(cart)            # ["giay","ao","quan","mu"]
+taken = cart.pop()     # take & remove the LAST -> "mu"
+cart.remove("ao")      # remove the element equal to "ao"
+print(cart, taken)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>fruits = ["apple", "banana"]</code>, add <code>"cherry"</code> to the end (use <code>append</code>).</span>
+<template class="st">fruits = ["apple", "banana"]
+# add "cherry" to the end
+</template>
+<template class="ts">assert fruits == ["apple", "banana", "cherry"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>colors = ["red", "green", "blue"]</code>, use <code>pop()</code> to take the last element into <code>removed</code> (the list is left with 2 elements).</span>
+<template class="st">colors = ["red", "green", "blue"]
+# create removed = colors.pop()
+</template>
+<template class="ts">assert removed == "blue"
+assert colors == ["red", "green"]
+</template></div>
+
+<h4>6. Membership with <code>in</code></h4>
+<pre class="run">mau = ["red", "green"]
+print("red" in mau)      # True
+print("black" in mau)    # False</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>colors = ["red", "green"]</code>, create <code>has_red</code> = <code>True</code> if <code>"red"</code> is in the list.</span>
+<template class="st">colors = ["red", "green"]
+# create has_red
+</template>
+<template class="ts">assert has_red is True
+</template></div>
+
+<h4>7. Handy built-in functions</h4>
+<pre class="run">diem = [8, 6, 9, 7]
+print(sum(diem))    # 30 — total
+print(max(diem))    # 9  — largest
+print(min(diem))    # 6  — smallest
+print(len(diem))    # 4  — count</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>scores = [8, 6, 9, 7]</code>, create <code>total</code> = the sum (use <code>sum</code>) and <code>best</code> = the highest score (use <code>max</code>).</span>
+<template class="st">scores = [8, 6, 9, 7]
+# create total and best
+</template>
+<template class="ts">assert total == 30
+assert best == 9
+</template></div>
+
+<h4>8. A few tips & mixed practice</h4>
+<p>Two handy list tricks:</p>
+<ul>
+<li>Join two lists with <code>+</code>: <code>[1, 2] + [3, 4]</code> → <code>[1, 2, 3, 4]</code>.</li>
+<li>Reverse with the slice <code>[::-1]</code>: <code>[1, 2, 3][::-1]</code> → <code>[3, 2, 1]</code>.</li>
+</ul>
+<pre class="run">a = [1, 2]
+b = [3, 4]
+print(a + b)             # [1, 2, 3, 4]
+print([1, 2, 3][::-1])   # [3, 2, 1]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>nums = [4, 2, 7, 1]</code>, create <code>avg</code> = the average (sum divided by count) → <code>3.5</code>.</span>
+<template class="st">nums = [4, 2, 7, 1]
+# create avg = the average
+</template>
+<template class="ts">assert avg == 3.5
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>a = [1, 2]</code> and <code>b = [3, 4]</code>, create <code>combined</code> = the two lists joined → <code>[1, 2, 3, 4]</code>.</span>
+<template class="st">a = [1, 2]
+b = [3, 4]
+# create combined
+</template>
+<template class="ts">assert combined == [1, 2, 3, 4]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 11.</b> Given <code>nums = [1, 2, 3, 4]</code>, create <code>reversed_list</code> = the reversed list (use <code>[::-1]</code>) → <code>[4, 3, 2, 1]</code>.</span>
+<template class="st">nums = [1, 2, 3, 4]
+# create reversed_list with [::-1]
+</template>
+<template class="ts">assert reversed_list == [4, 3, 2, 1]
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch.</b> Given <code>scores = [5, 3, 9, 1, 7]</code>, count how many scores are <b>above the average</b> into <code>above_avg</code>. The average is 5; scores &gt; 5 are 9 and 7 → <code>above_avg = 2</code>. (Hint: compute the average first, then count.)</span>
+<template class="st">scores = [5, 3, 9, 1, 7]
+# compute the average, then count scores above it
+</template>
+<template class="ts">assert above_avg == 2
+</template></div>
+
+<div class="recap">Recap of lesson 5: <code>[ ]</code> makes a list · <code>len()</code> counts · index from 0, negatives from the end, out of range → <code>IndexError</code> · <code>[a:b]</code> slices into a new list · lists are <b>mutable</b>: <code>lst[i] = x</code> · <code>.append/.insert/.pop/.remove</code> · <code>in</code> tests membership · <code>sum/max/min/len</code>. Next: the <code>for</code> loop to visit every element.</div>
+
+<h4>🏠 Homework</h4>
+<p>Do this at home, outside the 2-hour class. Four questions; the last is a stretch.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>nums = [5, 3, 8, 1]</code>, create <code>sorted_nums</code> = the list sorted ascending (use the <code>sorted()</code> function, don't change the original).</span>
+<template class="st">nums = [5, 3, 8, 1]
+# create sorted_nums
+</template>
+<template class="ts">assert sorted_nums == [1, 3, 5, 8]
+assert nums == [5, 3, 8, 1]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>words = ["banana", "apple", "cherry"]</code>, create <code>joined</code> = the words sorted, joined by commas → <code>"apple,banana,cherry"</code> (hint: <code>sorted()</code> then <code>",".join(...)</code>).</span>
+<template class="st">words = ["banana", "apple", "cherry"]
+# create joined
+</template>
+<template class="ts">assert joined == "apple,banana,cherry"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>nums = [5, 3, 8, 1, 9]</code>, create <code>second_largest</code> = the second-highest number (hint: sort then take <code>[-2]</code>).</span>
+<template class="st">nums = [5, 3, 8, 1, 9]
+# create second_largest
+</template>
+<template class="ts">assert second_largest == 8
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given <code>scores = [8, 6, 9, 7]</code>, compute <code>avg_no_min</code> = the average <b>after dropping the lowest score</b>. For this data: drop 6, leaving <code>(8+9+7)/3 = 8.0</code>. (Hint: <code>sum</code>, <code>min</code>, <code>len</code>.)</span>
+<template class="st">scores = [8, 6, 9, 7]
+# create avg_no_min = average after dropping the lowest score
+</template>
+<template class="ts">assert avg_no_min == 8.0
+</template></div>

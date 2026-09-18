@@ -1,0 +1,182 @@
+<h3>Bài 8 — Vòng lặp lồng nhau</h3>
+<p>Cho tới giờ mỗi vòng lặp đi qua một dãy <b>một chiều</b>. Nhưng rất nhiều thứ trong đời là <b>hai chiều</b>: bảng tính (hàng × cột), bàn cờ, bảng cửu chương, mọi cặp học viên trong lớp. Để xử lý chúng, ta đặt <b>một vòng lặp bên trong một vòng lặp khác</b> — gọi là <b>vòng lặp lồng nhau (nested loops)</b>. Đây là phần khó nhất của chương vòng lặp, nên ta sẽ đi thật kỹ.</p>
+<p>Ý tưởng cốt lõi: với <b>mỗi</b> vòng của lặp ngoài, lặp trong chạy <b>trọn vẹn</b> từ đầu đến cuối. Nếu lặp ngoài chạy 3 lần và mỗi lần lặp trong chạy 3 lần, thân trong cùng chạy tổng cộng 3 × 3 = <b>9</b> lần.</p>
+
+<h4>1. Một vòng lặp bên trong một vòng lặp</h4>
+<pre class="run">for i in range(3):          # lap NGOAI: i = 0, 1, 2
+    for j in range(3):      # lap TRONG: moi lan i, j chay 0,1,2
+        print(i, j)
+# in ra 9 dong: 0 0 / 0 1 / 0 2 / 1 0 / 1 1 / 1 2 / 2 0 / 2 1 / 2 2</pre>
+<p>Chú ý <b>hai mức thụt lề</b>: <code>for j</code> nằm trong thân của <code>for i</code>, còn <code>print</code> nằm trong thân của <code>for j</code> (thụt 2 lần). Biến ngoài <code>i</code> "đứng yên" trong khi biến trong <code>j</code> chạy hết một vòng.</p>
+
+<h4>2. Hình dung thứ tự chạy</h4>
+<figure class="diagram">
+<svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <text x="160" y="20" text-anchor="middle" fill="#8FA0BC">i = hàng (ngoài) · j = cột (trong)</text>
+  <text x="90" y="46" fill="#F5B942">j=0</text><text x="160" y="46" fill="#F5B942">j=1</text><text x="230" y="46" fill="#F5B942">j=2</text>
+  <text x="30" y="86" fill="#7FD1C0">i=0</text><text x="30" y="156" fill="#7FD1C0">i=1</text><text x="30" y="226" fill="#7FD1C0">i=2</text>
+  <g fill="#121C30" stroke="#22304C">
+    <rect x="70" y="60" width="56" height="46" rx="5"/><rect x="140" y="60" width="56" height="46" rx="5"/><rect x="210" y="60" width="56" height="46" rx="5"/>
+    <rect x="70" y="130" width="56" height="46" rx="5"/><rect x="140" y="130" width="56" height="46" rx="5"/><rect x="210" y="130" width="56" height="46" rx="5"/>
+    <rect x="70" y="200" width="56" height="46" rx="5"/><rect x="140" y="200" width="56" height="46" rx="5"/><rect x="210" y="200" width="56" height="46" rx="5"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle" font-size="13">
+    <text x="98" y="88">1</text><text x="168" y="88">2</text><text x="238" y="88">3</text>
+    <text x="98" y="158">4</text><text x="168" y="158">5</text><text x="238" y="158">6</text>
+    <text x="98" y="228">7</text><text x="168" y="228">8</text><text x="238" y="228">9</text>
+  </g>
+</svg>
+<figcaption>Số trong ô là thứ tự chạy: hết cột của hàng 0 (1→2→3), rồi mới xuống hàng 1 (4→5→6), rồi hàng 2. Lặp trong chạy trọn vẹn cho mỗi giá trị của lặp ngoài.</figcaption>
+</figure>
+<p>Bảng theo dõi cho <code>range(2)</code> lồng <code>range(2)</code>:</p>
+<table class="res">
+<thead><tr><th>Bước</th><th>i</th><th>j</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>2</td><td>0</td><td>1</td></tr>
+<tr><td>3</td><td>1</td><td>0</td></tr>
+<tr><td>4</td><td>1</td><td>1</td></tr>
+</tbody>
+</table>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Dùng hai vòng lặp lồng nhau đếm tổng số lần thân trong cùng chạy, với <code>i</code> trong <code>range(3)</code> và <code>j</code> trong <code>range(3)</code>. Lưu vào <code>count</code> (bắt đầu <code>count = 0</code>). Kết quả <code>9</code>.</span>
+<template class="st">count = 0
+# hai vong lap long nhau, moi vong tang count
+</template>
+<template class="ts">assert count == 9
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Tạo <code>coords</code> = danh sách các cặp <code>[i, j]</code> với <code>i</code> trong <code>range(2)</code> và <code>j</code> trong <code>range(2)</code> → <code>[[0, 0], [0, 1], [1, 0], [1, 1]]</code> (dùng <code>append([i, j])</code>).</span>
+<template class="st">coords = []
+# tao danh sach cac cap [i, j]
+</template>
+<template class="ts">assert coords == [[0, 0], [0, 1], [1, 0], [1, 1]]
+</template></div>
+
+<h4>3. Xây một "lưới" (danh sách của các danh sách)</h4>
+<p>Mẫu rất hay gặp: lặp ngoài tạo từng <b>hàng</b> (một danh sách rỗng), lặp trong <code>append</code> các <b>ô</b> vào hàng đó, rồi cuối mỗi hàng ta <code>append</code> cả hàng vào lưới.</p>
+<pre class="run">table = []
+for i in range(1, 4):
+    row = []                     # bat dau mot hang moi
+    for j in range(1, 4):
+        row.append(i * j)        # them o vao hang
+    table.append(row)            # them ca hang vao bang
+print(table)   # [[1, 2, 3], [2, 4, 6], [3, 6, 9]]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Tạo bảng cửu chương <code>table</code> cho 1..3: mỗi hàng <code>i</code> chứa <code>i*1, i*2, i*3</code> → <code>[[1, 2, 3], [2, 4, 6], [3, 6, 9]]</code>.</span>
+<template class="st">table = []
+# tao bang cuu chuong 1..3
+</template>
+<template class="ts">assert table == [[1, 2, 3], [2, 4, 6], [3, 6, 9]]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Tạo lưới <code>grid</code> 3×3 với ô ở hàng <code>i</code>, cột <code>j</code> bằng <code>i + j</code> (i, j từ 0..2) → <code>[[0, 1, 2], [1, 2, 3], [2, 3, 4]]</code>.</span>
+<template class="st">grid = []
+# tao luoi 3x3 voi o = i + j
+</template>
+<template class="ts">assert grid == [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
+</template></div>
+
+<h4>4. Duyệt một lưới có sẵn</h4>
+<p>Khi đã có lưới (danh sách của các danh sách), duyệt nó cũng bằng hai vòng: vòng ngoài lấy từng <b>hàng</b>, vòng trong lấy từng <b>ô</b> trong hàng đó.</p>
+<pre class="run">grid = [[1, 2], [3, 4]]
+total = 0
+for row in grid:           # row lan luot la [1,2] roi [3,4]
+    for cell in row:       # cell lan luot la tung so
+        total += cell
+print(total)               # 1 + 2 + 3 + 4 = 10</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>grid = [[1, 2], [3, 4]]</code>. Tính tổng tất cả các ô vào <code>total</code>. Kết quả <code>10</code>.</span>
+<template class="st">grid = [[1, 2], [3, 4]]
+total = 0
+# tinh tong tat ca cac o
+</template>
+<template class="ts">assert total == 10
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>grid = [[1, 2, 3], [4, 5, 6]]</code>. Đếm số ô có giá trị <b>chẵn</b> vào <code>even_cells</code>. Kết quả <code>3</code>.</span>
+<template class="st">grid = [[1, 2, 3], [4, 5, 6]]
+even_cells = 0
+# dem so o chan
+</template>
+<template class="ts">assert even_cells == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>grid = [[3, 7], [2, 9], [5, 1]]</code>. Tìm giá trị <b>lớn nhất</b> trong toàn lưới vào <code>biggest</code> (bắt đầu <code>biggest = grid[0][0]</code>). Kết quả <code>9</code>.</span>
+<template class="st">grid = [[3, 7], [2, 9], [5, 1]]
+biggest = grid[0][0]
+# tim gia tri lon nhat trong luoi
+</template>
+<template class="ts">assert biggest == 9
+</template></div>
+
+<h4>5. Vẽ hình bằng vòng lặp</h4>
+<p>Nhân chuỗi (<code>"*" * i</code>) kết hợp vòng lặp cho ra các mẫu hình — một bài tập kinh điển để luyện tư duy lồng nhau.</p>
+<pre class="run">lines = []
+for i in range(1, 4):
+    lines.append("*" * i)
+print(lines)   # ['*', '**', '***']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Tạo <code>lines</code> = <code>["*", "**", "***", "****"]</code> (tam giác sao 4 hàng) bằng vòng lặp và <code>"*" * i</code>.</span>
+<template class="st">lines = []
+# tao tam giac sao 4 hang
+</template>
+<template class="ts">assert lines == ["*", "**", "***", "****"]
+</template></div>
+
+<h4>6. So khớp các cặp</h4>
+<p>Vòng lồng cũng dùng để xét <b>mọi cặp</b> phần tử — ví dụ tìm hai số cộng lại bằng một mục tiêu.</p>
+<pre class="run">nums = [1, 2, 3, 4]
+target = 5
+pairs = 0
+for a in range(len(nums)):
+    for b in range(a + 1, len(nums)):   # b > a de khong lap cap
+        if nums[a] + nums[b] == target:
+            pairs += 1
+print(pairs)   # (1,4) va (2,3) -> 2</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>nums = [1, 2, 3, 4]</code> và <code>target = 5</code>. Đếm số <b>cặp</b> (vị trí khác nhau, không lặp lại) có tổng bằng <code>target</code> vào <code>pairs</code>. Kết quả <code>2</code>.</span>
+<template class="st">nums = [1, 2, 3, 4]
+target = 5
+pairs = 0
+# dem so cap co tong bang target
+</template>
+<template class="ts">assert pairs == 2
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>grid = [[1, 2], [3, 4], [5, 6]]</code>. Tạo <code>row_sums</code> = danh sách tổng của từng hàng → <code>[3, 7, 11]</code>.</span>
+<template class="st">grid = [[1, 2], [3, 4], [5, 6]]
+row_sums = []
+# tao danh sach tong tung hang
+</template>
+<template class="ts">assert row_sums == [3, 7, 11]
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Thử thách (tổng đường chéo).</b> Cho <code>grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]</code> (ma trận vuông). Tính tổng đường chéo chính (các ô <code>grid[i][i]</code>) vào <code>diag</code>. Kết quả <code>1 + 5 + 9 = 15</code>.</span>
+<template class="st">grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+diag = 0
+# tinh tong duong cheo chinh grid[i][i]
+</template>
+<template class="ts">assert diag == 15
+</template></div>
+
+<div class="recap">Ghi nhớ bài 8: vòng lặp lồng nhau = loop trong loop · với mỗi vòng ngoài, vòng trong chạy <b>trọn vẹn</b> → tổng số lần = ngoài × trong · hai mức thụt lề · mẫu xây lưới: hàng mới → thêm ô → thêm hàng · duyệt lưới: <code>for row in grid: for cell in row</code> · xét mọi cặp bằng hai chỉ số (b bắt đầu từ a+1). Bài sau: chuẩn bị công cụ thật (Python + VS Code) và luyện tập cho đồ án nhỏ.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm ở nhà, không tính vào 2 giờ trên lớp. Bốn câu, câu cuối là thử thách.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>grid = [[1, 2, 3], [4, 5, 6]]</code>. Tính tổng tất cả các ô vào <code>total</code>. Kết quả <code>21</code>.</span>
+<template class="st">grid = [[1, 2, 3], [4, 5, 6]]
+total = 0
+# tinh tong tat ca cac o
+</template>
+<template class="ts">assert total == 21
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>grid = [[2, 3], [4, 5], [6, 7]]</code>. Đếm số ô <b>lớn hơn 3</b> vào <code>big_cells</code>. Kết quả <code>4</code>.</span>
+<template class="st">grid = [[2, 3], [4, 5], [6, 7]]
+big_cells = 0
+# dem so o > 3
+</template>
+<template class="ts">assert big_cells == 4
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Tạo lưới <code>grid</code> 3×3 với ô ở hàng <code>i</code>, cột <code>j</code> bằng <code>i * j</code> (i, j từ 0..2) → <code>[[0, 0, 0], [0, 1, 2], [0, 2, 4]]</code>.</span>
+<template class="st">grid = []
+# tao luoi 3x3 voi o = i * j
+</template>
+<template class="ts">assert grid == [[0, 0, 0], [0, 1, 2], [0, 2, 4]]
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (thử thách).</b> Cho <code>grid = [[1, 2], [9, 1], [3, 3]]</code>. Tìm <b>chỉ số của hàng có tổng lớn nhất</b> vào <code>max_row</code>. Các tổng là 3, 10, 6 → hàng chỉ số <code>1</code>.</span>
+<template class="st">grid = [[1, 2], [9, 1], [3, 3]]
+max_row = 0
+# tim chi so hang co tong lon nhat
+</template>
+<template class="ts">assert max_row == 1
+</template></div>

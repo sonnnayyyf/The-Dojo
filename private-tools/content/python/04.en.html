@@ -1,0 +1,177 @@
+<h3>Lesson 4 — Boolean logic & nested conditions</h3>
+<p>Last lesson you made decisions with <b>one</b> condition. Real life is messier: "at least 18 <b>and</b> has a license", "weekend <b>or</b> holiday". This lesson covers <b>combining conditions</b> and <b>nesting</b> them.</p>
+
+<h4>1. Three logical operators: <code>and</code>, <code>or</code>, <code>not</code></h4>
+<ul>
+<li><code>and</code> — true when <b>both</b> sides are true.</li>
+<li><code>or</code> — true when <b>at least one</b> side is true.</li>
+<li><code>not</code> — <b>flips</b> it: <code>not True</code> → <code>False</code>.</li>
+</ul>
+<pre class="run">print(True and False)   # False — needs BOTH true
+print(True or False)    # True  — needs just ONE true
+print(not True)         # False — flipped</pre>
+
+<h4>2. Truth table (see it, remember it)</h4>
+<table class="res">
+<thead><tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th></tr></thead>
+<tbody>
+<tr><td>True</td><td>True</td><td>True</td><td>True</td></tr>
+<tr><td>True</td><td>False</td><td>False</td><td>True</td></tr>
+<tr><td>False</td><td>True</td><td>False</td><td>True</td></tr>
+<tr><td>False</td><td>False</td><td>False</td><td>False</td></tr>
+</tbody>
+</table>
+<p>Memory tip: <code>and</code> is picky (true only when everything is true), <code>or</code> is easy-going (one true is enough).</p>
+<pre class="run">age = 25
+has_ticket = True
+if age &gt;= 18 and has_ticket:
+    print("Come into the cinema")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Given <code>age = 25</code> and <code>has_ticket = True</code>, create <code>can_enter</code> = <code>True</code> if <b>both</b> at least 18 <b>and</b> has a ticket (use <code>and</code>).</span>
+<template class="st">age = 25
+has_ticket = True
+# create can_enter = age >= 18 AND has_ticket
+</template>
+<template class="ts">assert can_enter is True
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>is_weekend = False</code> and <code>is_holiday = True</code>, create <code>day_off</code> = <code>True</code> if <b>weekend</b> or <b>holiday</b> (use <code>or</code>).</span>
+<template class="st">is_weekend = False
+is_holiday = True
+# create day_off = weekend OR holiday
+</template>
+<template class="ts">assert day_off is True
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>is_busy = False</code>, create <code>is_free</code> = the opposite of <code>is_busy</code> (use <code>not</code>).</span>
+<template class="st">is_busy = False
+# create is_free = not is_busy
+</template>
+<template class="ts">assert is_free is True
+</template></div>
+
+<h4>3. Chained comparisons: <code>0 &lt;= x &lt;= 100</code></h4>
+<p>Python lets you write ranges compactly, like in math. Handy for checking a value is within a valid range.</p>
+<pre class="run">score = 75
+print(0 &lt;= score &lt;= 100)   # True — score is in [0, 100]
+# same as: score &gt;= 0 and score &lt;= 100</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>score = 75</code>, create <code>is_valid</code> = <code>True</code> if <code>score</code> is between 0 and 100 (use a chained comparison or <code>and</code>).</span>
+<template class="st">score = 75
+# create is_valid = 0 <= score <= 100
+</template>
+<template class="ts">assert is_valid is True
+</template></div>
+
+<h4>4. Combining in a real problem</h4>
+<pre class="run">n = 15
+if n % 3 == 0 and n % 5 == 0:
+    print("FizzBuzz")     # divisible by BOTH 3 and 5</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>age = 20</code> and <code>has_license = True</code>, create <code>can_drive</code> = <code>True</code> if at least 18 <b>and</b> has a license.</span>
+<template class="st">age = 20
+has_license = True
+# create can_drive
+</template>
+<template class="ts">assert can_drive is True
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>user = "admin"</code> and <code>pw = "1234"</code>, create <code>message</code> = <code>"OK"</code> if <code>user</code> is exactly <code>"admin"</code> <b>and</b> <code>pw</code> is exactly <code>"1234"</code>, otherwise <code>"Wrong"</code>.</span>
+<template class="st">user = "admin"
+pw = "1234"
+# create message with if/else and 'and'
+</template>
+<template class="ts">assert message == "OK"
+</template></div>
+
+<h4>5. Nested conditions (nested if)</h4>
+<p>You can put an <code>if</code> <b>inside</b> another <code>if</code> — each nesting level indents 4 more spaces. Use it when the second question only makes sense <i>after</i> the first is true.</p>
+<pre class="run">score = 8
+attendance = True
+if score &gt;= 8:
+    if attendance:
+        scholarship = "Full scholarship"
+    else:
+        scholarship = "Review attendance"
+else:
+    scholarship = "Score too low"
+print(scholarship)    # Full scholarship</pre>
+<p><b>When to nest vs. use <code>and</code>?</b> If you just need "both true", <code>and</code> is cleaner. Nest when each level needs its <b>own handling</b> (like above: score high enough but low attendance still gets its own branch).</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>score = 8</code> and <code>attendance = True</code>, use a <b>nested if</b> to create <code>scholarship</code>: if <code>score &gt;= 8</code> then — if <code>attendance</code> is true → <code>"yes"</code>, else → <code>"review"</code>; if score too low → <code>"no"</code>.</span>
+<template class="st">score = 8
+attendance = True
+# use a nested if to create scholarship ("yes"/"review"/"no")
+</template>
+<template class="ts">assert scholarship == "yes"
+</template></div>
+
+<h4>6. Boolean variables as flags</h4>
+<p>Storing a condition's result in a <code>bool</code> variable makes code much more readable:</p>
+<pre class="run">age = 20
+income = 8
+loan_ok = age &gt;= 18 and income &gt;= 5
+if loan_ok:
+    print("Loan approved")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>hours = 10</code> and <code>is_member = True</code>, create a flag <code>gets_discount</code> = <code>True</code> if (open hours: <code>8 &lt;= hours &lt;= 22</code>) <b>and</b> a member.</span>
+<template class="st">hours = 10
+is_member = True
+# create flag gets_discount
+</template>
+<template class="ts">assert gets_discount is True
+</template></div>
+
+<h4>7. "Falsy" values & shortcuts</h4>
+<p>In a condition, some values count as <b>false (falsy)</b> even though they aren't <code>False</code>: the number <code>0</code>, the empty string <code>""</code>, an empty list <code>[]</code>, and <code>None</code>. Everything else is <b>truthy</b>.</p>
+<pre class="run">name = ""
+if name:
+    print("Has a name")
+else:
+    print("No name yet")   # runs, because "" is falsy</pre>
+<p>This lets you write <code>if name:</code> instead of <code>if name != "":</code>.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>cart = []</code> (an empty list), create <code>is_empty</code> = <code>True</code> if the cart is empty (hint: <code>not cart</code> — an empty list is falsy).</span>
+<template class="st">cart = []
+# create is_empty = is the cart empty?
+</template>
+<template class="ts">assert is_empty is True
+</template></div>
+
+<h4>8. Common mistakes</h4>
+<ul>
+<li><b>Using <code>&amp;&amp;</code>, <code>||</code>, <code>!</code></b> like other languages — Python uses the words <code>and</code>, <code>or</code>, <code>not</code>.</li>
+<li><b>Forgetting <code>and</code> is "pickier" than <code>or</code>:</b> when mixing both, use parentheses for clarity: <code>(a and b) or c</code>.</li>
+<li><b>Nesting too deep</b> (3–4 levels of if) → hard to read; often you can merge with <code>and</code> or split into functions (later lesson).</li>
+</ul>
+
+<div class="recap">Recap of lesson 4: <code>and</code> (both true) · <code>or</code> (at least one) · <code>not</code> (flip) · chained comparison <code>0 &lt;= x &lt;= 100</code> · nested <code>if</code> when each level needs its own handling · falsy values (<code>0, "", [], None</code>) · store conditions in bool variables (flags). Next: lists and indexing — how to store <b>many</b> values.</div>
+
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch.</b> Given <code>age = 70</code>, create <code>price</code> (ticket price): under 6 → <code>0</code>; under 18 <b>or</b> 60 and above → <code>50</code>; otherwise → <code>100</code>. <i>Check young children first, then the discount group.</i></span>
+<template class="st">age = 70
+# create price with if/elif/else (use 'or')
+</template>
+<template class="ts">assert price == 50
+</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Do this at home, outside the 2-hour class. Four questions; the last is a stretch.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>year = 2000</code>, create <code>is_leap</code> = <code>True</code> if it's a leap year: divisible by 4 <b>and</b> (not divisible by 100 <b>or</b> divisible by 400). Use parentheses to get the order right.</span>
+<template class="st">year = 2000
+# create is_leap = is it a leap year?
+</template>
+<template class="ts">assert is_leap is True
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>temp = 25</code>, create <code>comfortable</code> = <code>True</code> if the temperature is comfortable, i.e. in the range <code>20 &lt;= temp &lt;= 26</code>.</span>
+<template class="st">temp = 25
+# create comfortable
+</template>
+<template class="ts">assert comfortable is True
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>age = 20</code>, <code>has_ticket = True</code>, <code>is_vip = False</code>, create <code>can_enter</code> = <code>True</code> if at least 18 <b>and</b> (has a ticket <b>or</b> is a VIP). Remember the parentheses.</span>
+<template class="st">age = 20
+has_ticket = True
+is_vip = False
+# create can_enter
+</template>
+<template class="ts">assert can_enter is True
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given sides <code>a = 5</code>, <code>b = 5</code>, <code>c = 8</code>, create <code>can_form</code> = <code>True</code> if they can form a triangle: <b>the sum of any two sides must be greater than the third</b> (all three conditions true). For this data → <code>True</code>.</span>
+<template class="st">a = 5
+b = 5
+c = 8
+# create can_form: sum of any two sides > the third
+</template>
+<template class="ts">assert can_form is True
+</template></div>

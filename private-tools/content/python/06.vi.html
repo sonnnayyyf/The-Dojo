@@ -1,0 +1,243 @@
+<h3>Bài 6 — Vòng lặp for & range</h3>
+<p>Máy tính không thông minh hơn bạn — nó chỉ <b>nhanh và không biết chán</b>. Sức mạnh thật sự của lập trình đến từ việc bảo máy làm <b>một việc lặp đi lặp lại</b> hàng nghìn lần mà không mệt, không sai. Công cụ để làm điều đó gọi là <b>vòng lặp (loop)</b>, và đây là bước nhảy lớn nhất trong tư duy lập trình của bạn cho tới giờ.</p>
+<p>Hãy tưởng tượng phải chào 100 học viên. Viết 100 dòng <code>print</code> vừa mệt vừa dễ sai, và nếu danh sách thay đổi thì phải sửa tay từng dòng. Có một nguyên tắc vàng: <b>DRY — Don't Repeat Yourself</b> (đừng lặp lại chính mình). Khi bạn thấy mình sắp copy–paste cùng một đoạn code nhiều lần, gần như chắc chắn nên thay bằng một vòng lặp.</p>
+<p>Bài này đi thật chậm: ta sẽ <b>mổ xẻ từng bộ phận</b> của vòng lặp <code>for</code>, xem máy <b>chạy từng bước</b> ra sao, rồi mới bắt tay luyện tập. Hiểu kỹ phần này, những bài sau (danh sách lồng nhau, dictionary, đọc file) sẽ nhẹ nhàng hơn nhiều.</p>
+
+<h4>1. Vấn đề: khi phải lặp lại bằng tay</h4>
+<p>Giả sử có ba cái tên và ta muốn chào từng người:</p>
+<pre class="run"># cach thu cong: lap lai, de sai, kho sua
+print("Xin chao An")
+print("Xin chao Binh")
+print("Xin chao Chi")</pre>
+<p>Nó chạy được — nhưng hãy tự hỏi: nếu có <b>100</b> tên thì sao? Nếu danh sách được đọc từ một file mà <i>lúc viết code còn chưa biết</i> có bao nhiêu tên? Ta cần một cách nói với máy: "làm việc này cho <b>mỗi</b> tên, dù có bao nhiêu đi nữa". Đó chính xác là việc vòng lặp <code>for</code> sinh ra để làm.</p>
+
+<h4>2. Giải phẫu một vòng lặp for</h4>
+<p>Cùng một việc trên, viết bằng vòng lặp:</p>
+<pre class="run">ten = ["An", "Binh", "Chi"]
+for t in ten:
+    print("Xin chao", t)</pre>
+<p>Chỉ một dòng thân vòng thay cho ba dòng lặp lại. Hãy đọc kỹ <b>bốn bộ phận</b> của nó:</p>
+<ul>
+<li><code>for</code> — từ khóa mở đầu, báo cho máy "chuẩn bị lặp".</li>
+<li><code>t</code> — <b>biến lặp</b>, do bạn tự đặt tên. Ở <b>mỗi vòng</b>, máy tự bỏ một phần tử của danh sách vào biến này.</li>
+<li><code>in ten</code> — <b>bộ dữ liệu</b> cần duyệt: có thể là danh sách, chuỗi, hay <code>range</code> (học ở mục 4).</li>
+<li><code>:</code> và khối <b>thụt lề</b> bên dưới — <b>thân vòng lặp</b>, tức phần code được lặp lại mỗi vòng.</li>
+</ul>
+<p>Giống như <code>if</code>, <b>thụt lề quyết định</b> dòng nào nằm trong vòng lặp. Chỉ những dòng thụt vào mới được lặp; dòng không thụt sẽ chạy <i>một lần</i>, sau khi vòng lặp kết thúc.</p>
+<pre class="run">for t in ["An", "Binh"]:
+    print("Trong vong:", t)   # thut vao  -> chay moi vong
+    print("  (van trong vong)")
+print("Xong het!")            # khong thut -> chay 1 lan, sau cung</pre>
+
+<h4>3. Máy chạy vòng lặp thế nào?</h4>
+<p>Bên trong, máy lặp lại đúng <b>ba bước</b>: (1) hỏi "còn phần tử nào chưa lấy không?"; (2) nếu còn, lấy phần tử <b>tiếp theo</b> gán vào biến lặp rồi chạy thân vòng; (3) quay lại bước 1. Khi không còn phần tử, vòng lặp dừng.</p>
+<figure class="diagram">
+<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12.5">
+  <defs>
+    <marker id="a6" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8FA0BC"/></marker>
+  </defs>
+  <rect x="180" y="10" width="120" height="30" rx="15" fill="#121C30" stroke="#22304C"/>
+  <text x="240" y="30" text-anchor="middle" fill="#E8E4D8">bắt đầu vòng lặp</text>
+  <line x1="240" y1="40" x2="240" y2="66" stroke="#8FA0BC" marker-end="url(#a6)"/>
+  <polygon points="240,68 340,110 240,152 140,110" fill="#0E1626" stroke="#F5B942"/>
+  <text x="240" y="108" text-anchor="middle" fill="#F5B942">còn phần tử?</text>
+  <line x1="340" y1="110" x2="392" y2="110" stroke="#8FA0BC" marker-end="url(#a6)"/>
+  <text x="366" y="102" text-anchor="middle" fill="#E2604C">hết</text>
+  <rect x="392" y="94" width="80" height="32" rx="6" fill="#121C30" stroke="#E2604C"/>
+  <text x="432" y="114" text-anchor="middle" fill="#E8E4D8">kết thúc</text>
+  <line x1="240" y1="152" x2="240" y2="176" stroke="#8FA0BC" marker-end="url(#a6)"/>
+  <text x="252" y="168" fill="#7FD1C0">còn</text>
+  <rect x="120" y="176" width="240" height="34" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="240" y="197" text-anchor="middle" fill="#E8E4D8">phần tử tiếp theo → biến lặp</text>
+  <line x1="240" y1="210" x2="240" y2="232" stroke="#8FA0BC" marker-end="url(#a6)"/>
+  <rect x="150" y="232" width="180" height="34" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="240" y="253" text-anchor="middle" fill="#E8E4D8">chạy thân vòng lặp</text>
+  <path d="M150,249 L60,249 L60,110 L138,110" fill="none" stroke="#8FA0BC" marker-end="url(#a6)"/>
+  <text x="64" y="180" fill="#8FA0BC">lặp lại</text>
+</svg>
+<figcaption>Vòng lặp = hỏi "còn không?" → lấy phần tử tiếp theo → chạy thân → quay lại hỏi. Hết phần tử thì dừng.</figcaption>
+</figure>
+<p>Cách tốt nhất để hiểu một vòng lặp là <b>lập bảng theo dõi</b> biến lặp qua từng vòng. Với <code>for t in ["An", "Binh", "Chi"]</code>:</p>
+<table class="res">
+<thead><tr><th>Vòng</th><th>t nhận giá trị</th><th>In ra</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>"An"</td><td>Xin chao An</td></tr>
+<tr><td>2</td><td>"Binh"</td><td>Xin chao Binh</td></tr>
+<tr><td>3</td><td>"Chi"</td><td>Xin chao Chi</td></tr>
+<tr><td>—</td><td>(hết)</td><td>vòng lặp dừng</td></tr>
+</tbody>
+</table>
+<p>Kỹ năng "chạy code trong đầu" này — tự nhẩm biến thay đổi ra sao qua từng vòng — là thứ mọi lập trình viên giỏi đều làm. Cứ mỗi vòng lặp bạn gặp, hãy thử vẽ bảng như trên.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Cho <code>nums = [1, 2, 3, 4]</code>. Dùng vòng lặp cộng dồn tất cả vào <code>total</code> (bắt đầu <code>total = 0</code>, mỗi vòng <code>total += n</code>).</span>
+<template class="st">nums = [1, 2, 3, 4]
+total = 0
+# dung for cong don vao total
+</template>
+<template class="ts">assert total == 10
+</template></div>
+
+<h4>4. <code>range()</code> — sinh ra một dãy số để lặp</h4>
+<p>Nhiều khi bạn không có sẵn danh sách, mà chỉ muốn lặp một <b>số lần</b> nhất định — ví dụ "làm 10 lần" hay "chạy từ 1 đến 100". <code>range</code> sinh ra đúng dãy số đó. Có ba dạng:</p>
+<table class="res">
+<thead><tr><th>Cách viết</th><th>Sinh ra</th><th>Ý nghĩa</th></tr></thead>
+<tbody>
+<tr><td><code>range(5)</code></td><td>0, 1, 2, 3, 4</td><td>từ 0, dừng <b>trước</b> 5</td></tr>
+<tr><td><code>range(1, 6)</code></td><td>1, 2, 3, 4, 5</td><td>từ 1, dừng trước 6</td></tr>
+<tr><td><code>range(0, 10, 2)</code></td><td>0, 2, 4, 6, 8</td><td>bước nhảy 2</td></tr>
+</tbody>
+</table>
+<p>Vì sao dừng <b>trước</b> số cuối chứ không phải tới số đó? Đây là quy ước chung của Python (giống cắt chuỗi <code>[a:b]</code>). Nhờ vậy <code>range(len(danh_sach))</code> cho đúng bộ chỉ số hợp lệ 0..n-1.</p>
+<pre class="run">for i in range(5):
+    print(i, end=" ")   # 0 1 2 3 4
+print()
+for i in range(1, 6):
+    print(i, end=" ")   # 1 2 3 4 5</pre>
+<p>Bạn cũng có thể duyệt danh sách <b>theo chỉ số</b> bằng cách kết hợp <code>range</code> và <code>len</code> — hữu ích khi cần biết vị trí phần tử:</p>
+<pre class="run">ten = ["An", "Binh", "Chi"]
+for i in range(len(ten)):
+    print(i, ten[i])    # 0 An / 1 Binh / 2 Chi</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Dùng <code>range</code> và <code>append</code> để tạo <code>doubles</code> = <code>[2, 4, 6, 8, 10]</code> (gấp đôi các số 1..5). Bắt đầu <code>doubles = []</code>.</span>
+<template class="st">doubles = []
+# for i in range(1, 6): them i*2 vao doubles
+</template>
+<template class="ts">assert doubles == [2, 4, 6, 8, 10]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Dùng <code>range</code> tính tổng các số từ 1 đến 100 vào <code>total</code> (bắt đầu <code>total = 0</code>).</span>
+<template class="st">total = 0
+# cong don 1..100 vao total
+</template>
+<template class="ts">assert total == 5050
+</template></div>
+
+<h4>5. Mẫu "tích lũy" (accumulator) — khuôn mẫu quan trọng nhất</h4>
+<p>Rất nhiều bài toán vòng lặp theo cùng một khuôn: bạn muốn gộp nhiều giá trị thành <b>một</b> kết quả (tổng, số đếm, chuỗi ghép, giá trị lớn nhất…). Công thức luôn gồm ba phần:</p>
+<ol>
+<li><b>Khởi tạo</b> một biến chứa kết quả <i>trước</i> vòng lặp (thường là <code>0</code>, <code>""</code>, hoặc <code>[]</code>).</li>
+<li><b>Cập nhật</b> biến đó trong <i>mỗi</i> vòng.</li>
+<li><b>Dùng</b> kết quả <i>sau</i> vòng lặp.</li>
+</ol>
+<pre class="run">nums = [4, 8, 2, 6]
+tong = 0            # 1) khoi tao
+for n in nums:
+    tong += n       # 2) cap nhat moi vong
+print(tong)         # 3) dung ket qua -> 20</pre>
+<p>Theo dõi <code>tong</code> qua từng vòng: 0 → 4 → 12 → 14 → 20. Nếu bạn <b>quên</b> dòng khởi tạo <code>tong = 0</code>, máy sẽ báo lỗi "chưa định nghĩa <code>tong</code>" ngay vòng đầu — một lỗi rất hay gặp.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>word = "banana"</code>. Đếm xem có bao nhiêu ký tự <code>"a"</code>, lưu vào <code>count</code> (duyệt từng ký tự, gặp <code>"a"</code> thì <code>count += 1</code>).</span>
+<template class="st">word = "banana"
+count = 0
+# dem so ky tu "a"
+</template>
+<template class="ts">assert count == 3
+</template></div>
+
+<h4>6. Lọc & đếm: đặt <code>if</code> bên trong vòng lặp</h4>
+<p>Ghép hai kỹ năng bạn đã có — vòng lặp (bài này) và điều kiện (bài 3–4) — cho ra một trong những mẫu code phổ biến nhất: <b>duyệt qua và chỉ xử lý phần tử thỏa điều kiện</b>.</p>
+<pre class="run">nums = [1, 2, 3, 4, 5, 6]
+so_chan = 0
+for n in nums:
+    if n % 2 == 0:      # if nam TRONG for (thut 2 lan)
+        so_chan += 1
+print(so_chan)          # 3</pre>
+<p>Chú ý hai mức thụt lề: <code>for</code> ở mức 0, thân <code>for</code> thụt 1 lần, thân <code>if</code> thụt 2 lần. Đọc code có nhiều mức thụt, hãy luôn hỏi "dòng này thuộc khối nào?".</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>nums = [1, 2, 3, 4, 5, 6]</code>. Đếm số phần tử <b>chẵn</b> vào <code>even_count</code> (dùng <code>if n % 2 == 0</code> trong vòng lặp).</span>
+<template class="st">nums = [1, 2, 3, 4, 5, 6]
+even_count = 0
+# dem so phan tu chan
+</template>
+<template class="ts">assert even_count == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>nums = [3, 7, 2, 9, 4]</code>. Tự tìm số lớn nhất vào <code>biggest</code> (bắt đầu <code>biggest = nums[0]</code>, gặp số lớn hơn thì cập nhật). <i>Không dùng <code>max()</code> để luyện tư duy tích lũy.</i></span>
+<template class="st">nums = [3, 7, 2, 9, 4]
+biggest = nums[0]
+# duyet va cap nhat biggest
+</template>
+<template class="ts">assert biggest == 9
+</template></div>
+
+<h4>7. Xây một danh sách mới bằng vòng lặp</h4>
+<p>Một biến thể của accumulator: khởi tạo danh sách rỗng, rồi <code>append</code> dần trong vòng lặp. Đây là cách bạn "biến đổi" một danh sách thành danh sách khác — rất hay dùng.</p>
+<pre class="run">squares = []
+for i in range(1, 6):
+    squares.append(i ** 2)
+print(squares)      # [1, 4, 9, 16, 25]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Tạo <code>squares</code> = <code>[1, 4, 9, 16, 25]</code> (bình phương của 1..5) bằng vòng lặp và <code>append</code>.</span>
+<template class="st">squares = []
+# tao squares bang for + append
+</template>
+<template class="ts">assert squares == [1, 4, 9, 16, 25]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Tính tổng các <b>bội của 3</b> nhỏ hơn 20 (tức 3, 6, 9, 12, 15, 18) vào <code>total</code> (gợi ý: <code>range(3, 20, 3)</code>).</span>
+<template class="st">total = 0
+# cong don cac boi cua 3 duoi 20
+</template>
+<template class="ts">assert total == 63
+</template></div>
+
+<h4>8. Những nhầm lẫn thường gặp</h4>
+<ul>
+<li><b>Quên khởi tạo biến tích lũy</b> trước vòng lặp → lỗi "chưa định nghĩa".</li>
+<li><b>Đặt dòng dùng kết quả vào TRONG vòng lặp</b> (thụt nhầm) → in/tính sai mỗi vòng thay vì một lần cuối.</li>
+<li><b>Nhầm <code>range(1, 5)</code> là tới 5</b> — thực ra dừng ở 4. Muốn tới 5 phải <code>range(1, 6)</code>.</li>
+<li><b>Sửa danh sách <i>trong khi</i> đang duyệt nó</b> (thêm/xóa) → dễ sinh lỗi khó lường; tạm thời cứ tránh.</li>
+</ul>
+
+<h4>9. Luyện tập tổng hợp</h4>
+<p>Ghép các mẫu vừa học: duyệt, tích lũy, lọc, và xây danh sách mới.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>prices = [10, 20, 30]</code>. Tạo <code>discounted</code> = mỗi giá sau khi giảm 10% (nhân <code>0.9</code>), dùng vòng lặp và <code>append</code>. Kết quả: <code>[9.0, 18.0, 27.0]</code>.</span>
+<template class="st">prices = [10, 20, 30]
+discounted = []
+# giam 10% moi gia, them vao discounted
+</template>
+<template class="ts">assert discounted == [9.0, 18.0, 27.0]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>nums = [3, 8, 5, 12, 1, 7]</code>. Đếm số phần tử <b>lớn hơn 5</b> vào <code>over_five</code>.</span>
+<template class="st">nums = [3, 8, 5, 12, 1, 7]
+over_five = 0
+# dem phan tu > 5
+</template>
+<template class="ts">assert over_five == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 11.</b> Cho <code>words = ["hi", "hello", "hey"]</code>. Tạo <code>lengths</code> = danh sách độ dài từng từ → <code>[2, 5, 3]</code> (dùng <code>len(w)</code> trong vòng lặp).</span>
+<template class="st">words = ["hi", "hello", "hey"]
+lengths = []
+# tao danh sach do dai tung tu
+</template>
+<template class="ts">assert lengths == [2, 5, 3]
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Thử thách.</b> Cho <code>nums = [3, 1, 4, 1, 5, 9, 2]</code>. Tìm <b>chỉ số</b> (index) của phần tử lớn nhất vào <code>max_index</code> — dùng <code>range(len(nums))</code> và theo dõi cả giá trị lớn nhất lẫn vị trí của nó. Ở đây <code>max_index = 5</code>.</span>
+<template class="st">nums = [3, 1, 4, 1, 5, 9, 2]
+max_index = 0
+# tim chi so cua phan tu lon nhat
+</template>
+<template class="ts">assert max_index == 5
+</template></div>
+
+<div class="recap">Ghi nhớ bài 6: <code>for x in bo_du_lieu:</code> duyệt từng phần tử · thụt lề xác định thân vòng · máy chạy: hỏi "còn không?" → lấy phần tử → chạy thân → lặp lại · <code>range(n) / range(a,b) / range(a,b,buoc)</code>, dừng <b>trước</b> số cuối · mẫu <b>tích lũy</b>: khởi tạo → cập nhật → dùng · đặt <code>if</code> trong vòng để lọc/đếm · <code>append</code> để xây danh sách mới. Bài sau: <code>while</code>, <code>break</code>/<code>continue</code> và cách dừng vòng lặp giữa chừng.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm ở nhà, không tính vào 2 giờ trên lớp. Bốn câu, câu cuối là thử thách.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Tính tổng các số <b>lẻ</b> từ 1 đến 10 (1, 3, 5, 7, 9) vào <code>total</code>.</span>
+<template class="st">total = 0
+# cong don cac so le tu 1..10
+</template>
+<template class="ts">assert total == 25
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>word = "education"</code>. Đếm số nguyên âm (a, e, i, o, u) vào <code>vowels</code> (gợi ý: <code>if ch in "aeiou"</code>).</span>
+<template class="st">word = "education"
+vowels = 0
+# dem nguyen am
+</template>
+<template class="ts">assert vowels == 5
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Tạo danh sách đếm ngược <code>countdown</code> = <code>[5, 4, 3, 2, 1]</code> bằng vòng lặp (gợi ý: <code>range(5, 0, -1)</code>).</span>
+<template class="st">countdown = []
+# tao countdown bang for + append
+</template>
+<template class="ts">assert countdown == [5, 4, 3, 2, 1]
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (thử thách — FizzBuzz).</b> Tạo danh sách <code>result</code> cho các số 1..15: bội của cả 3 và 5 → <code>"FizzBuzz"</code>; bội 3 → <code>"Fizz"</code>; bội 5 → <code>"Buzz"</code>; còn lại → chuỗi của số đó. Kết quả có 15 phần tử, bắt đầu <code>["1", "2", "Fizz", "4", "Buzz", ...]</code>.</span>
+<template class="st">result = []
+# tao result theo luat FizzBuzz cho 1..15
+</template>
+<template class="ts">assert result == ["1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz"]
+</template></div>

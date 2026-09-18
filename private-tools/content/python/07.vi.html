@@ -1,0 +1,195 @@
+<h3>Bài 7 — Vòng lặp while, break & continue</h3>
+<p>Vòng lặp <code>for</code> ở bài trước hoàn hảo khi bạn <b>biết trước</b> sẽ lặp qua cái gì: một danh sách, một <code>range</code>. Nhưng đời thật đầy tình huống bạn <b>không biết trước bao nhiêu lần</b>: "cứ hỏi mật khẩu đến khi đúng", "cứ chia đôi cho tới khi nhỏ hơn 1", "lặp cho tới khi người dùng gõ 'thoát'". Cho những lúc đó, ta có <b>vòng lặp <code>while</code></b>.</p>
+<p>Điểm khác biệt cốt lõi: <code>for</code> lặp theo <b>một bộ dữ liệu</b>, còn <code>while</code> lặp theo <b>một điều kiện</b> — "cứ tiếp tục <i>chừng nào</i> điều kiện còn đúng". Sức mạnh này đi kèm một cái bẫy: nếu điều kiện <b>không bao giờ</b> thành sai, vòng lặp chạy mãi mãi. Bài này sẽ dạy bạn dùng <code>while</code> an toàn, cùng hai "công tắc" điều khiển vòng lặp là <code>break</code> và <code>continue</code>.</p>
+
+<h4>1. Khi <code>for</code> không đủ</h4>
+<p>Giả sử muốn tính: nhân đôi số 1 bao nhiêu lần thì vượt 100? Bạn <i>không biết trước</i> câu trả lời (là mấy lần), nên không viết được <code>range</code>. Bạn chỉ biết <b>điều kiện dừng</b>: "khi nào vượt 100 thì thôi". Đó là lúc dùng <code>while</code>.</p>
+
+<h4>2. Cấu trúc vòng lặp while</h4>
+<pre class="run">n = 5
+while n &gt; 0:          # lap CHUNG NAO n > 0 con dung
+    print(n)
+    n -= 1            # PHAI thay doi n, khong thi lap mai mai
+print("Xong!")</pre>
+<p>Đọc là: "<b>chừng nào</b> <code>n &gt; 0</code>, chạy khối thụt vào". Ba phần cần có:</p>
+<ul>
+<li>Một biến điều khiển được <b>khởi tạo trước</b> vòng lặp (<code>n = 5</code>).</li>
+<li>Một <b>điều kiện</b> sau <code>while</code> — vòng lặp chạy khi điều kiện đúng, dừng khi sai.</li>
+<li>Bên trong thân, <b>một dòng làm điều kiện tiến dần về sai</b> (<code>n -= 1</code>). Đây là dòng dễ quên nhất.</li>
+</ul>
+
+<h4>3. Máy chạy while thế nào?</h4>
+<p>Trước <b>mỗi</b> vòng, máy kiểm tra điều kiện. Đúng → chạy thân rồi kiểm tra lại. Sai → thoát ngay (có thể không chạy thân lần nào nếu điều kiện sai ngay từ đầu).</p>
+<figure class="diagram">
+<svg viewBox="0 0 460 250" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12.5">
+  <defs><marker id="w7" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8FA0BC"/></marker></defs>
+  <rect x="180" y="10" width="110" height="30" rx="15" fill="#121C30" stroke="#22304C"/>
+  <text x="235" y="30" text-anchor="middle" fill="#E8E4D8">bắt đầu</text>
+  <line x1="235" y1="40" x2="235" y2="60" stroke="#8FA0BC" marker-end="url(#w7)"/>
+  <polygon points="235,62 340,102 235,142 130,102" fill="#0E1626" stroke="#F5B942"/>
+  <text x="235" y="100" text-anchor="middle" fill="#F5B942">điều kiện đúng?</text>
+  <line x1="340" y1="102" x2="392" y2="102" stroke="#8FA0BC" marker-end="url(#w7)"/>
+  <text x="366" y="94" text-anchor="middle" fill="#E2604C">sai</text>
+  <rect x="392" y="86" width="66" height="32" rx="6" fill="#121C30" stroke="#E2604C"/>
+  <text x="425" y="106" text-anchor="middle" fill="#E8E4D8">thoát</text>
+  <line x1="235" y1="142" x2="235" y2="166" stroke="#8FA0BC" marker-end="url(#w7)"/>
+  <text x="247" y="158" fill="#7FD1C0">đúng</text>
+  <rect x="150" y="166" width="170" height="34" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="235" y="187" text-anchor="middle" fill="#E8E4D8">chạy thân vòng lặp</text>
+  <path d="M150,183 L60,183 L60,102 L128,102" fill="none" stroke="#8FA0BC" marker-end="url(#w7)"/>
+  <text x="64" y="140" fill="#8FA0BC">lặp lại</text>
+</svg>
+<figcaption>while = kiểm tra điều kiện TRƯỚC mỗi vòng. Sai là thoát ngay — có thể chạy 0 lần.</figcaption>
+</figure>
+<p>Theo dõi <code>n</code> trong ví dụ trên: 5 (in) → 4 (in) → 3 (in) → 2 (in) → 1 (in) → 0 (điều kiện <code>0 &gt; 0</code> sai → thoát).</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Dùng <code>while</code> tạo danh sách đếm ngược <code>countdown</code> = <code>[5, 4, 3, 2, 1]</code> (bắt đầu <code>n = 5</code>, mỗi vòng <code>append</code> rồi <code>n -= 1</code>).</span>
+<template class="st">n = 5
+countdown = []
+# dung while tao countdown
+</template>
+<template class="ts">assert countdown == [5, 4, 3, 2, 1]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Dùng <code>while</code> tính tổng các số từ 1 đến 100 vào <code>total</code> (bắt đầu <code>i = 1</code>, <code>total = 0</code>; mỗi vòng cộng <code>i</code> rồi <code>i += 1</code>).</span>
+<template class="st">i = 1
+total = 0
+# dung while cong don 1..100
+</template>
+<template class="ts">assert total == 5050
+</template></div>
+
+<h4>4. Cái bẫy: vòng lặp vô tận</h4>
+<p>Nếu điều kiện <b>không bao giờ</b> thành sai, chương trình treo mãi. Đây là lỗi <code>while</code> phổ biến nhất — thường do quên cập nhật biến điều khiển.</p>
+<pre># DUNG CHAY DOAN NAY — vong lap vo tan!
+n = 5
+while n &gt; 0:
+    print(n)      # quen dong n -= 1  ->  n mai la 5  ->  lap mai mai</pre>
+<p>Quy tắc vàng: mỗi khi viết <code>while</code>, hãy tự hỏi ngay <b>"điều gì làm điều kiện này thành sai, và nó có chắc xảy ra không?"</b></p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Nhân đôi <code>x</code> (bắt đầu <code>x = 1</code>) cho tới khi <code>x</code> vượt 100, đếm số lần nhân vào <code>count</code>. Kết thúc <code>x = 128</code>, <code>count = 7</code>. (Dùng <code>while x &lt;= 100</code>.)</span>
+<template class="st">x = 1
+count = 0
+# nhan doi x cho toi khi > 100, dem so lan
+</template>
+<template class="ts">assert count == 7
+assert x == 128
+</template></div>
+
+<h4>5. <code>break</code> — thoát khỏi vòng lặp ngay lập tức</h4>
+<p><code>break</code> dừng vòng lặp <b>ngay tại đó</b>, bỏ qua mọi vòng còn lại. Rất hữu ích để <b>tìm phần tử đầu tiên</b> thỏa điều kiện rồi dừng — không cần duyệt hết.</p>
+<pre class="run">nums = [3, 7, 4, 9, 2]
+first_even = None
+for n in nums:
+    if n % 2 == 0:
+        first_even = n
+        break            # tim thay roi -> thoat, khong xet 9, 2
+print(first_even)        # 4</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>nums = [3, 7, 4, 9, 2]</code>. Tìm số <b>chẵn đầu tiên</b> vào <code>first_even</code> rồi dừng ngay bằng <code>break</code>.</span>
+<template class="st">nums = [3, 7, 4, 9, 2]
+first_even = None
+# tim so chan dau tien roi break
+</template>
+<template class="ts">assert first_even == 4
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Dùng <code>while True</code> và <code>break</code>: nhân đôi <code>x</code> (bắt đầu <code>x = 1</code>) cho tới khi <code>x &gt;= 50</code> thì dừng. Kết thúc <code>x = 64</code>.</span>
+<template class="st">x = 1
+# while True: nhan doi, neu x >= 50 thi break
+</template>
+<template class="ts">assert x == 64
+</template></div>
+
+<h4>6. <code>continue</code> — bỏ qua phần còn lại của vòng hiện tại</h4>
+<p><code>continue</code> nhảy thẳng sang <b>vòng kế tiếp</b>, bỏ qua các dòng còn lại của vòng hiện tại. Dùng để "lọc bỏ" những phần tử không muốn xử lý.</p>
+<pre class="run">nums = [3, -1, 4, -2, 5]
+total = 0
+for n in nums:
+    if n &lt; 0:
+        continue         # gap so am -> bo qua, sang vong sau
+    total += n
+print(total)             # 3 + 4 + 5 = 12</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>nums = [3, -1, 4, -2, 5]</code>. Tính tổng chỉ các số <b>không âm</b> vào <code>total</code>, dùng <code>continue</code> để bỏ qua số âm. Kết quả <code>12</code>.</span>
+<template class="st">nums = [3, -1, 4, -2, 5]
+total = 0
+# dung continue bo qua so am
+</template>
+<template class="ts">assert total == 12
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>word = "programming"</code>. Đếm các ký tự <b>không phải</b> nguyên âm vào <code>consonants</code>, dùng <code>continue</code> để bỏ qua nguyên âm (<code>if ch in "aeiou": continue</code>). Kết quả <code>8</code>.</span>
+<template class="st">word = "programming"
+consonants = 0
+# dem phu am, dung continue bo qua nguyen am
+</template>
+<template class="ts">assert consonants == 8
+</template></div>
+
+<h4>7. Mẫu "xử lý cho tới khi xong"</h4>
+<p>Một khuôn rất hay gặp: xử lý một giá trị lặp đi lặp lại cho tới khi đạt trạng thái đích. Ví dụ dãy Collatz: nếu chẵn thì chia đôi, lẻ thì <code>3n + 1</code>, lặp tới khi về 1.</p>
+<pre class="run">n = 6
+steps = 0
+while n != 1:
+    if n % 2 == 0:
+        n = n // 2
+    else:
+        n = 3 * n + 1
+    steps += 1
+print(steps)    # 8 buoc: 6->3->10->5->16->8->4->2->1</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>n = 6</code>. Đếm số bước để dãy Collatz đưa <code>n</code> về 1 vào <code>steps</code> (chẵn → chia đôi, lẻ → <code>3n + 1</code>). Kết quả <code>8</code>.</span>
+<template class="st">n = 6
+steps = 0
+# dem so buoc Collatz dua n ve 1
+</template>
+<template class="ts">assert steps == 8
+</template></div>
+
+<h4>8. Luyện tập tổng hợp</h4>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>n = 12345</code>. Đếm số <b>chữ số</b> vào <code>digits</code> bằng <code>while</code> (mỗi vòng bỏ một chữ số: <code>n //= 10</code>, <code>digits += 1</code>, tới khi <code>n == 0</code>). Kết quả <code>5</code>.</span>
+<template class="st">n = 12345
+digits = 0
+# dem so chu so bang while
+</template>
+<template class="ts">assert digits == 5
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>nums = [4, 9, 15, 6, 21]</code>. Tìm số <b>đầu tiên chia hết cho 3</b> vào <code>first</code> rồi <code>break</code>. Kết quả <code>9</code>.</span>
+<template class="st">nums = [4, 9, 15, 6, 21]
+first = None
+# tim so dau tien chia het 3 roi break
+</template>
+<template class="ts">assert first == 9
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Thử thách.</b> Cho <code>n = 123</code>. Tạo <code>reversed_num</code> = số đảo ngược các chữ số → <code>321</code>, dùng <code>while</code> (mỗi vòng: lấy chữ số cuối <code>n % 10</code>, ghép vào kết quả <code>reversed_num = reversed_num * 10 + n % 10</code>, rồi <code>n //= 10</code>).</span>
+<template class="st">n = 123
+reversed_num = 0
+# dao nguoc cac chu so bang while
+</template>
+<template class="ts">assert reversed_num == 321
+</template></div>
+
+<div class="recap">Ghi nhớ bài 7: <code>while dieu_kien:</code> lặp <b>chừng nào</b> điều kiện đúng · luôn có dòng làm điều kiện tiến về sai, kẻo <b>lặp vô tận</b> · <code>break</code> thoát vòng lặp ngay · <code>continue</code> bỏ qua phần còn lại, sang vòng sau · <code>while True: ... break</code> khi điều kiện dừng nằm giữa thân. Bài sau: vòng lặp lồng nhau (loop trong loop).</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm ở nhà, không tính vào 2 giờ trên lớp. Bốn câu, câu cuối là thử thách.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Dùng <code>while</code> tính tổng các số <b>chẵn</b> từ 2 đến 20 (2, 4, …, 20) vào <code>total</code>. Kết quả <code>110</code>.</span>
+<template class="st">total = 0
+# dung while cong cac so chan 2..20
+</template>
+<template class="ts">assert total == 110
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>nums = [5, 8, 12, 3, 20]</code>. Tìm số <b>đầu tiên lớn hơn 10</b> vào <code>first_big</code> rồi <code>break</code>. Kết quả <code>12</code>.</span>
+<template class="st">nums = [5, 8, 12, 3, 20]
+first_big = None
+# tim so dau tien > 10 roi break
+</template>
+<template class="ts">assert first_big == 12
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>nums = [1, -3, 2, -5, 4, -1]</code>. Đếm số phần tử <b>âm</b> vào <code>neg_count</code>, dùng <code>continue</code> để bỏ qua số không âm. Kết quả <code>3</code>.</span>
+<template class="st">nums = [1, -3, 2, -5, 4, -1]
+neg_count = 0
+# dem so am, dung continue bo qua so khong am
+</template>
+<template class="ts">assert neg_count == 3
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (thử thách — ước chung lớn nhất).</b> Cho <code>a = 48</code>, <code>b = 36</code>. Dùng thuật toán Euclid tìm <code>gcd</code> (ước chung lớn nhất): lặp <code>while b != 0</code> với <code>a, b = b, a % b</code>; khi <code>b == 0</code> thì <code>a</code> là kết quả. Kết quả <code>12</code>.</span>
+<template class="st">a = 48
+b = 36
+# tim gcd bang thuat toan Euclid (while)
+</template>
+<template class="ts">assert gcd == 12
+</template></div>

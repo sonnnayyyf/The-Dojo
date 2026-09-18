@@ -1,0 +1,177 @@
+<h3>Bài 4 — Logic boolean & điều kiện lồng nhau</h3>
+<p>Bài trước bạn ra quyết định với <b>một</b> điều kiện. Đời thật phức tạp hơn: "đủ 18 tuổi <b>và</b> có bằng lái", "cuối tuần <b>hoặc</b> ngày lễ". Bài này học cách <b>kết hợp nhiều điều kiện</b> và <b>lồng</b> điều kiện vào nhau.</p>
+
+<h4>1. Ba toán tử logic: <code>and</code>, <code>or</code>, <code>not</code></h4>
+<ul>
+<li><code>and</code> — đúng khi <b>cả hai</b> vế đều đúng.</li>
+<li><code>or</code> — đúng khi <b>ít nhất một</b> vế đúng.</li>
+<li><code>not</code> — <b>đảo ngược</b>: <code>not True</code> → <code>False</code>.</li>
+</ul>
+<pre class="run">print(True and False)   # False — can CA HAI dung
+print(True or False)    # True  — chi can MOT dung
+print(not True)         # False — dao nguoc</pre>
+
+<h4>2. Bảng chân trị (nhìn là nhớ)</h4>
+<table class="res">
+<thead><tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th></tr></thead>
+<tbody>
+<tr><td>True</td><td>True</td><td>True</td><td>True</td></tr>
+<tr><td>True</td><td>False</td><td>False</td><td>True</td></tr>
+<tr><td>False</td><td>True</td><td>False</td><td>True</td></tr>
+<tr><td>False</td><td>False</td><td>False</td><td>False</td></tr>
+</tbody>
+</table>
+<p>Mẹo nhớ: <code>and</code> khó tính (chỉ đúng khi mọi thứ đúng), <code>or</code> dễ tính (chỉ cần một cái đúng).</p>
+<pre class="run">age = 25
+has_ticket = True
+if age &gt;= 18 and has_ticket:
+    print("Duoc vao rap")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Cho <code>age = 25</code> và <code>has_ticket = True</code>. Tạo <code>can_enter</code> = <code>True</code> nếu <b>vừa</b> đủ 18 tuổi trở lên <b>vừa</b> có vé (dùng <code>and</code>).</span>
+<template class="st">age = 25
+has_ticket = True
+# tao can_enter = age >= 18 VA has_ticket
+</template>
+<template class="ts">assert can_enter is True
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>is_weekend = False</code> và <code>is_holiday = True</code>. Tạo <code>day_off</code> = <code>True</code> nếu <b>cuối tuần</b> hoặc <b>ngày lễ</b> (dùng <code>or</code>).</span>
+<template class="st">is_weekend = False
+is_holiday = True
+# tao day_off = cuoi tuan HOAC ngay le
+</template>
+<template class="ts">assert day_off is True
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>is_busy = False</code>. Tạo <code>is_free</code> = đảo ngược của <code>is_busy</code> (dùng <code>not</code>).</span>
+<template class="st">is_busy = False
+# tao is_free = not is_busy
+</template>
+<template class="ts">assert is_free is True
+</template></div>
+
+<h4>3. So sánh nối chuỗi: <code>0 &lt;= x &lt;= 100</code></h4>
+<p>Python cho phép viết khoảng gọn như toán học. Rất tiện để kiểm tra một giá trị có nằm trong khoảng hợp lệ không.</p>
+<pre class="run">score = 75
+print(0 &lt;= score &lt;= 100)   # True — score nam trong [0, 100]
+# tuong duong: score &gt;= 0 and score &lt;= 100</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>score = 75</code>. Tạo <code>is_valid</code> = <code>True</code> nếu <code>score</code> nằm trong khoảng từ 0 đến 100 (dùng so sánh nối chuỗi hoặc <code>and</code>).</span>
+<template class="st">score = 75
+# tao is_valid = 0 <= score <= 100
+</template>
+<template class="ts">assert is_valid is True
+</template></div>
+
+<h4>4. Kết hợp trong bài toán thật</h4>
+<pre class="run">n = 15
+if n % 3 == 0 and n % 5 == 0:
+    print("FizzBuzz")     # chia het CA 3 va 5</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>age = 20</code> và <code>has_license = True</code>. Tạo <code>can_drive</code> = <code>True</code> nếu đủ 18 tuổi <b>và</b> có bằng lái.</span>
+<template class="st">age = 20
+has_license = True
+# tao can_drive
+</template>
+<template class="ts">assert can_drive is True
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>user = "admin"</code> và <code>pw = "1234"</code>. Tạo <code>message</code> = <code>"OK"</code> nếu <code>user</code> đúng là <code>"admin"</code> <b>và</b> <code>pw</code> đúng là <code>"1234"</code>, ngược lại <code>"Wrong"</code>.</span>
+<template class="st">user = "admin"
+pw = "1234"
+# tao message bang if/else voi and
+</template>
+<template class="ts">assert message == "OK"
+</template></div>
+
+<h4>5. Điều kiện lồng nhau (nested if)</h4>
+<p>Bạn có thể đặt một <code>if</code> <b>bên trong</b> một <code>if</code> khác — mỗi mức lồng thụt vào thêm 4 dấu cách. Dùng khi câu hỏi thứ hai chỉ có ý nghĩa <i>sau khi</i> câu hỏi đầu đã đúng.</p>
+<pre class="run">score = 8
+attendance = True
+if score &gt;= 8:
+    if attendance:
+        scholarship = "Full scholarship"
+    else:
+        scholarship = "Review attendance"
+else:
+    scholarship = "Score too low"
+print(scholarship)    # Duoc hoc bong</pre>
+<p><b>Khi nào lồng, khi nào dùng <code>and</code>?</b> Nếu chỉ cần "cả hai đúng" thì <code>and</code> gọn hơn. Lồng dùng khi mỗi tầng có <b>xử lý riêng</b> (như ví dụ trên: điểm đủ nhưng thiếu chuyên cần vẫn có nhánh riêng).</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>score = 8</code> và <code>attendance = True</code>. Dùng <b>if lồng nhau</b> tạo <code>scholarship</code>: nếu <code>score &gt;= 8</code> thì — nếu <code>attendance</code> đúng → <code>"yes"</code>, ngược lại → <code>"review"</code>; nếu điểm chưa đủ → <code>"no"</code>.</span>
+<template class="st">score = 8
+attendance = True
+# dung if long nhau tao scholarship ("yes"/"review"/"no")
+</template>
+<template class="ts">assert scholarship == "yes"
+</template></div>
+
+<h4>6. Biến boolean làm "cờ" (flag)</h4>
+<p>Lưu kết quả một điều kiện vào biến <code>bool</code> giúp code dễ đọc hơn nhiều:</p>
+<pre class="run">age = 20
+income = 8
+loan_ok = age &gt;= 18 and income &gt;= 5
+if loan_ok:
+    print("Duoc vay")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>hours = 10</code> và <code>is_member = True</code>. Tạo cờ <code>gets_discount</code> = <code>True</code> nếu (giờ mở cửa: <code>8 &lt;= hours &lt;= 22</code>) <b>và</b> là thành viên.</span>
+<template class="st">hours = 10
+is_member = True
+# tao co gets_discount
+</template>
+<template class="ts">assert gets_discount is True
+</template></div>
+
+<h4>7. Giá trị "giả" (falsy) & viết gọn</h4>
+<p>Trong điều kiện, một số giá trị được coi là <b>sai (falsy)</b> dù không phải <code>False</code>: số <code>0</code>, chuỗi rỗng <code>""</code>, danh sách rỗng <code>[]</code>, và <code>None</code>. Mọi thứ khác là <b>đúng (truthy)</b>.</p>
+<pre class="run">name = ""
+if name:
+    print("Co ten")
+else:
+    print("Chua nhap ten")   # chay, vi "" la falsy</pre>
+<p>Nhờ vậy có thể viết gọn <code>if name:</code> thay cho <code>if name != "":</code>.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>cart = []</code> (danh sách rỗng). Tạo <code>is_empty</code> = <code>True</code> nếu giỏ hàng rỗng (gợi ý: <code>not cart</code> — danh sách rỗng là falsy).</span>
+<template class="st">cart = []
+# tao is_empty = gio hang co rong khong?
+</template>
+<template class="ts">assert is_empty is True
+</template></div>
+
+<h4>8. Những lỗi thường gặp</h4>
+<ul>
+<li><b>Dùng <code>&amp;&amp;</code>, <code>||</code>, <code>!</code></b> như các ngôn ngữ khác — Python dùng chữ <code>and</code>, <code>or</code>, <code>not</code>.</li>
+<li><b>Quên rằng <code>and</code> "khó tính" hơn <code>or</code>:</b> khi trộn cả hai, dùng ngoặc cho rõ: <code>(a and b) or c</code>.</li>
+<li><b>Lồng quá sâu</b> (3–4 tầng if) → khó đọc; thường có thể gộp bằng <code>and</code> hoặc tách hàm (học ở bài về hàm).</li>
+</ul>
+
+<div class="recap">Ghi nhớ bài 4: <code>and</code> (cả hai đúng) · <code>or</code> (ít nhất một đúng) · <code>not</code> (đảo) · so sánh nối chuỗi <code>0 &lt;= x &lt;= 100</code> · <code>if</code> lồng nhau khi mỗi tầng cần xử lý riêng · giá trị falsy (<code>0, "", [], None</code>) · lưu điều kiện vào biến bool (cờ). Bài sau: danh sách (list) và chỉ số — cách lưu <b>nhiều</b> giá trị.</div>
+
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Thử thách.</b> Cho <code>age = 70</code>. Tạo <code>price</code> (giá vé): dưới 6 tuổi → <code>0</code>; dưới 18 <b>hoặc</b> từ 60 trở lên → <code>50</code>; còn lại → <code>100</code>. <i>Xét trẻ nhỏ trước, rồi nhóm ưu đãi.</i></span>
+<template class="st">age = 70
+# tao price bang if/elif/else (co dung 'or')
+</template>
+<template class="ts">assert price == 50
+</template></div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm ở nhà, không tính vào 2 giờ trên lớp. Bốn câu, câu cuối là thử thách.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>year = 2000</code>. Tạo <code>is_leap</code> = <code>True</code> nếu là năm nhuận: chia hết cho 4 <b>và</b> (không chia hết 100 <b>hoặc</b> chia hết 400). Nhớ dùng ngoặc cho đúng thứ tự.</span>
+<template class="st">year = 2000
+# tao is_leap = nam nhuan?
+</template>
+<template class="ts">assert is_leap is True
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>temp = 25</code>. Tạo <code>comfortable</code> = <code>True</code> nếu nhiệt độ dễ chịu, tức trong khoảng <code>20 &lt;= temp &lt;= 26</code>.</span>
+<template class="st">temp = 25
+# tao comfortable
+</template>
+<template class="ts">assert comfortable is True
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>age = 20</code>, <code>has_ticket = True</code>, <code>is_vip = False</code>. Tạo <code>can_enter</code> = <code>True</code> nếu đủ 18 tuổi <b>và</b> (có vé <b>hoặc</b> là VIP). Nhớ dùng ngoặc.</span>
+<template class="st">age = 20
+has_ticket = True
+is_vip = False
+# tao can_enter
+</template>
+<template class="ts">assert can_enter is True
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (thử thách).</b> Cho <code>a = 5</code>, <code>b = 5</code>, <code>c = 8</code> là ba cạnh. Tạo <code>can_form</code> = <code>True</code> nếu chúng tạo được tam giác: <b>tổng hai cạnh bất kỳ phải lớn hơn cạnh còn lại</b> (cả ba điều kiện đều đúng). Với dữ liệu này → <code>True</code>.</span>
+<template class="st">a = 5
+b = 5
+c = 8
+# tao can_form: tong hai canh bat ky > canh con lai
+</template>
+<template class="ts">assert can_form is True
+</template></div>

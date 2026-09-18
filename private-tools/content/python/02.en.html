@@ -1,0 +1,197 @@
+<h3>Lesson 2 — Strings and f-strings</h3>
+<p>Strings are the data type you meet most in programming: usernames, file names, paths, error messages, content read from the web… all strings. Mastering strings is mastering half of everyday programming. This lesson covers how to <b>measure, access, slice, transform, join</b> and <b>format</b> them.</p>
+
+<h4>1. A string is a sequence of characters</h4>
+<pre>name = "python"
+print(len(name))   # 6 — len() gives the length (number of characters)</pre>
+<p>Strings can use single or double quotes, as long as they match:</p>
+<pre>a = "hello"
+b = 'hello'   # equivalent</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Create <code>filename</code> = <code>"bao_cao.txt"</code> and <code>length</code> equal to its length (use <code>len</code>).</span>
+<template class="st"># create the two variables
+</template>
+<template class="ts">assert filename == "bao_cao.txt"
+assert length == 11, "use len() to count the length"
+</template></div>
+
+<h4>2. Indexing — accessing individual characters</h4>
+<p>Each character has an <b>index</b>, counting from 0. Negative indexes count back from the end:</p>
+<pre>s = "python"
+#     p  y  t  h  o  n
+#     0  1  2  3  4  5
+#    -6 -5 -4 -3 -2 -1
+print(s[0])    # 'p' — first char
+print(s[-1])   # 'n' — last char</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>s = "python"</code>, take the first character into <code>first</code> and the last into <code>last</code> (use indexing).</span>
+<template class="st">s = "python"
+# create first and last
+</template>
+<template class="ts">assert first == "p"
+assert last == "n"
+</template></div>
+
+<h4>3. Slicing</h4>
+<p>The syntax <code>s[start:stop]</code> takes from index <code>start</code> up to <b>just before</b> <code>stop</code>:</p>
+<pre>s = "python"
+print(s[0:3])   # 'pyt' — index 0,1,2
+print(s[2:])    # 'thon' — from index 2 to the end
+print(s[:3])    # 'pyt' — from start to before 3
+print(s[-3:])   # 'hon' — last 3 chars</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>filename = "bao_cao.txt"</code>, take the last 3 characters (the extension) into <code>ext</code>.</span>
+<template class="st">filename = "bao_cao.txt"
+# create ext = last 3 characters
+</template>
+<template class="ts">assert ext == "txt"
+</template></div>
+
+<h4>4. Joining and repeating</h4>
+<pre>first = "Nguyen"
+last = "Minh"
+print(first + " " + last)   # 'Nguyen Minh' — join with +
+print("=" * 10)              # '==========' — repeat 10x with *</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>first_name = "Le"</code> and <code>last_name = "An"</code>, join into <code>full_name</code> = <code>"Le An"</code> (one space between).</span>
+<template class="st">first_name = "Le"
+last_name = "An"
+# create full_name = "Le An"
+</template>
+<template class="ts">assert full_name == "Le An"
+</template></div>
+
+<h4>5. Escape sequences</h4>
+<p>A few characters need "escaping" with a backslash <code>\</code>:</p>
+<pre>print("Line 1\nLine 2")      # \n = new line
+print("Col1\tCol2")           # \t = tab
+print("He said \"hi\"")       # \" = a quote inside a double-quoted string
+print("C:\\tmp\\a.txt")        # \\ = a single backslash</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Create <code>cau</code> holding exactly: <code>Anh ay noi "hello"</code> (with double quotes around hello).</span>
+<template class="st"># create cau = Anh ay noi "hello"
+</template>
+<template class="ts">assert cau == 'Anh ay noi "hello"'
+</template></div>
+
+<h4>6. Strings are immutable</h4>
+<p>You <b>cannot</b> change a character by assigning to an index. Every string method returns a <b>new</b> string and leaves the original untouched:</p>
+<pre>s = "python"
+# s[0] = "P"        # ERROR: 'str' object does not support item assignment
+s = "P" + s[1:]      # the right way: build a new string
+print(s)              # Python</pre>
+
+<h4>7. String methods</h4>
+<p>Strings come with built-in "tools" called with a dot:</p>
+<pre>"  hi  ".strip()            # 'hi'   — trim both ends
+"hello".upper()             # 'HELLO'
+"HELLO".lower()             # 'hello'
+"hello world".title()       # 'Hello World'
+"a-b-c".replace("-", "_")   # 'a_b_c'
+"python".startswith("py")   # True
+"a.txt".endswith(".txt")    # True
+"banana".count("a")         # 3
+"banana".find("na")         # 2   (first position, or -1 if not found)</pre>
+<p>Check whether one string is inside another with the <code>in</code> keyword:</p>
+<pre>print("py" in "python")     # True
+print("z" in "python")      # False</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>email = "  Minh@Example.COM  "</code>, normalize it: trim whitespace and lowercase, into <code>cleaned</code>.</span>
+<template class="st">email = "  Minh@Example.COM  "
+# create cleaned: trim + lowercase
+</template>
+<template class="ts">assert cleaned == "minh@example.com"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>path = "src/app/main"</code>, replace every <code>/</code> with <code>.</code> to get <code>src.app.main</code>, into <code>module</code>.</span>
+<template class="st">path = "src/app/main"
+# create module: replace "/" with "."
+</template>
+<template class="ts">assert module == "src.app.main"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>filename = "bao_cao.txt"</code>, create <code>is_txt</code> = whether the name ends with <code>".txt"</code> (use <code>.endswith</code>; the result is <code>True</code>/<code>False</code>).</span>
+<template class="st">filename = "bao_cao.txt"
+# create is_txt = does filename end with ".txt"?
+</template>
+<template class="ts">assert is_txt is True
+</template></div>
+
+<h4>8. f-strings — insert and format</h4>
+<p>The modern, most readable way to put values into a string: add <code>f</code> before the quote and put variables (or expressions) in <code>{ }</code>.</p>
+<pre>name = "Minh"
+age = 15
+print(f"Name is {name}, age {age}")   # Name is Minh, age 15
+print(f"Next year: {age + 1}")         # compute right inside { }</pre>
+<p>f-strings also <b>format</b> the value after a colon <code>:</code></p>
+<pre>price = 2500000
+print(f"{price:,} VND")     # 2,500,000 VND  — thousands separator
+score = 8.6666
+print(f"{score:.2f}")       # 8.67           — round to 2 decimals
+name = "Minh"
+print(f"|{name:&gt;10}|")     # |      Minh|   — right-align, width 10
+print(f"|{name:&lt;10}|")     # |Minh      |   — left-align
+print(f"|{name:^10}|")     # |   Minh   |   — center</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>price = 2500000</code>, use an f-string to create <code>display</code> = <code>"2,500,000 VND"</code> (with thousands separators).</span>
+<template class="st">price = 2500000
+# create display with an f-string using {price:,}
+</template>
+<template class="ts">assert display == "2,500,000 VND"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>score = 8.6666</code>, use an f-string to create <code>rounded</code> = <code>"8.67"</code> (rounded to 2 decimals).</span>
+<template class="st">score = 8.6666
+# create rounded with an f-string using {score:.2f}
+</template>
+<template class="ts">assert rounded == "8.67"
+</template></div>
+
+<h4>9. Splitting & joining (preview)</h4>
+<p>Two very useful methods (covered in depth in lesson 19):</p>
+<ul>
+<li><code>"a,b,c".split(",")</code> → <code>['a', 'b', 'c']</code> — <b>split</b> a string into a list.</li>
+<li><code>"-".join(["a", "b", "c"])</code> → <code>"a-b-c"</code> — <b>join</b> a list into a string.</li>
+</ul>
+<pre class="run">full_name = "Nguyen Van Minh"
+parts = full_name.split(" ")     # ['Nguyen', 'Van', 'Minh']
+print(parts)
+print(len(parts), "words")       # 3 words</pre>
+<p>You can also <b>chain methods</b> — they run left to right:</p>
+<pre class="run">raw = "  Hello WORLD  "
+print(raw.strip().lower())       # 'hello world'</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 11.</b> Given <code>sentence = "python la ngon ngu"</code>, split it into a list of words (by space), then store the <b>word count</b> in <code>word_count</code> (use <code>split</code> then <code>len</code>).</span>
+<template class="st">sentence = "python la ngon ngu"
+# split into words, count them -> word_count
+</template>
+<template class="ts">assert word_count == 4
+</template></div>
+
+<div class="recap">Recap of lesson 2: a string is a sequence of characters indexed from 0 (negatives from the end) · <code>len()</code> for length · <code>[a:b]</code> to slice · <code>+</code> joins, <code>*</code> repeats · <code>\n \t \" \\</code> escapes · strings are <b>immutable</b> — methods return new strings · <code>.strip/.lower/.upper/.title/.replace/.startswith/.endswith/.count/.find/.split</code> · <code>in</code> to test containment · f-string <code>f"{var:format}"</code> to insert and format. Next: making decisions with if/elif/else.</div>
+
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch.</b> Given <code>full = "  John.DOE@Company.com  "</code>, create <code>username</code> = the part <b>before</b> <code>@</code>, normalized (strip + lower), and <code>domain</code> = the part <b>after</b> <code>@</code>, normalized. Result: <code>username = "john.doe"</code>, <code>domain = "company.com"</code>. (Hint: <code>.strip().lower()</code> first, then <code>.find("@")</code> and slicing.)</span>
+<template class="st">full = "  John.DOE@Company.com  "
+# create username and domain
+</template>
+<template class="ts">assert username == "john.doe"
+assert domain == "company.com"
+</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Do this at home, outside the 2-hour class. Four questions; the last is a stretch.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>full = "  John.Doe@Company.com  "</code>: (1) create <code>email</code> = normalized (strip + lower); (2) create <code>username</code> = the part before <code>@</code>; (3) create <code>message</code> = <code>f"user: {username}"</code> → <code>"user: john.doe"</code>.</span>
+<template class="st">full = "  John.Doe@Company.com  "
+# create email, username, message
+</template>
+<template class="ts">assert email == "john.doe@company.com"
+assert username == "john.doe"
+assert message == "user: john.doe"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>name = "nguyen van a"</code>, create <code>proper</code> = the name with each word capitalized (use <code>.title()</code>) → <code>"Nguyen Van A"</code>.</span>
+<template class="st">name = "nguyen van a"
+# create proper with .title()
+</template>
+<template class="ts">assert proper == "Nguyen Van A"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>filename = "report.final.txt"</code>, create <code>ext</code> = the extension (after the last dot) → <code>"txt"</code> (hint: <code>.split(".")</code> then take <code>[-1]</code>).</span>
+<template class="st">filename = "report.final.txt"
+# create ext = the file extension
+</template>
+<template class="ts">assert ext == "txt"
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given <code>email = "john.doe@example.com"</code>, create <code>masked</code> = the login masked: keep the first character, replace the rest of the name before <code>@</code> with <code>"***"</code>, keep the part after <code>@</code> → <code>"j***@example.com"</code>. (Hint: <code>.find("@")</code> and slicing.)</span>
+<template class="st">email = "john.doe@example.com"
+# create masked = "j***@example.com"
+</template>
+<template class="ts">assert masked == "j***@example.com"
+</template></div>

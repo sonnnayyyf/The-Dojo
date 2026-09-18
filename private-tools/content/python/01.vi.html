@@ -1,0 +1,226 @@
+<h3>Bài 1 — Bắt đầu với Python: giá trị, biến và print()</h3>
+<p>Chào mừng bạn đến với bài học đầu tiên. Nếu bạn chưa từng viết một dòng code nào — <b>hoàn hảo</b>, bài này viết đúng cho bạn. Chúng ta sẽ đi thật chậm: hiểu lập trình là gì, Python là gì, rồi mới từ từ gõ những dòng code đầu tiên.</p>
+
+<h4>1. Lập trình là gì? Python là gì?</h4>
+<p><b>Lập trình</b> đơn giản là viết ra một danh sách <b>chỉ thị (lệnh)</b> để máy tính làm theo — giống như viết công thức nấu ăn: từng bước, rõ ràng, theo thứ tự. Máy tính rất nhanh và chính xác, nhưng nó <i>chỉ làm đúng những gì bạn bảo</i>, không tự đoán ý bạn. Học lập trình phần lớn là học cách <b>diễn đạt ý tưởng thật rõ ràng</b> để máy hiểu.</p>
+<p><b>Python</b> là một <b>ngôn ngữ lập trình</b> — bộ từ vựng và ngữ pháp để viết các chỉ thị đó. Người ta chọn Python để bắt đầu vì nó gần với tiếng Anh đời thường, ít ký hiệu rối rắm, và được dùng ở khắp nơi: web, phân tích dữ liệu, tự động hóa, trí tuệ nhân tạo… Viết <code>print("Xin chao")</code> trong Python dễ đọc hơn hẳn so với nhiều ngôn ngữ khác.</p>
+<p>Trong khóa này bạn sẽ chạy Python <b>thật</b> — chính là Python mà lập trình viên chuyên nghiệp dùng — ngay trong trình duyệt, không phải cài đặt gì cả.</p>
+
+<h4>2. Cách học ở The Dojo</h4>
+<p>Mỗi khi gặp một ô có nền tối như bên dưới, đó là <b>chỗ bạn viết code</b>. Bên dưới ô đó có hai nút:</p>
+<ul>
+<li><b>Chạy (Run):</b> gửi code của bạn cho Python chạy thật. <i>Lần chạy đầu tiên</i> trình duyệt tải bộ máy Python (~10MB), có thể mất 10–30 giây — hãy kiên nhẫn; các lần sau chạy tức thì.</li>
+<li><b>Đặt lại (Reset):</b> đưa ô code về trạng thái ban đầu nếu bạn muốn làm lại từ đầu.</li>
+</ul>
+<p>Sau khi bấm Chạy, bạn sẽ thấy một khung kết quả gồm hai phần:</p>
+<ul>
+<li><b>Kết quả in ra (Output):</b> mọi thứ chương trình của bạn <i>in ra màn hình</i> sẽ hiện ở đây — giống như "màn hình" của chương trình. Khung này luôn hiện, dù bài làm đúng hay sai.</li>
+<li><b>Kết luận:</b> <span style="color:var(--jade)">Đạt</span> nếu bài làm đúng, hoặc <span style="color:var(--ember)">Chưa đạt</span> kèm một lời gợi ý cụ thể (ví dụ: biến nào sai, giá trị đang là gì và cần là gì).</li>
+</ul>
+<p>Bạn có thể sửa code và bấm Chạy lại bao nhiêu lần tùy thích — sai là chuyện bình thường và là cách học nhanh nhất.</p>
+
+<h4>3. Lệnh đầu tiên: <code>print()</code></h4>
+<p>Chương trình chạy các lệnh <b>lần lượt từ trên xuống dưới</b>. Lệnh đầu tiên và hay dùng nhất là <code>print()</code> — bảo máy <b>in (hiển thị) một thứ gì đó ra màn hình</b>.</p>
+<pre class="run">print("Xin chao")
+print("Toi dang hoc Python")</pre>
+<p>Hãy đọc dòng <code>print("Xin chao")</code> theo từng phần:</p>
+<ul>
+<li><code>print</code> — tên của lệnh (in ra màn hình).</li>
+<li><code>( )</code> — cặp ngoặc tròn, bên trong đặt thứ bạn muốn in.</li>
+<li><code>"Xin chao"</code> — một đoạn <b>chữ</b>. Trong lập trình, chữ được gọi là <b>chuỗi (string)</b> và <u>bắt buộc đặt trong dấu nháy</u> <code>"..."</code>. Dấu nháy cho máy biết "đây là chữ để in nguyên văn", không phải một lệnh.</li>
+</ul>
+<p>Nếu quên dấu nháy — ví dụ <code>print(Xin chao)</code> — máy sẽ báo lỗi, vì nó tưởng <code>Xin</code> và <code>chao</code> là tên lệnh nào đó mà nó không biết.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Dùng <code>print()</code> in ra đúng dòng chữ <code>Hello Dojo</code>. (Nhớ dấu nháy quanh đoạn chữ.)</span>
+<template class="st"># Go lenh print cua ban o duoi day:
+</template>
+<template class="ts">assert _OUT_.strip() == "Hello Dojo", "phai in ra dung: Hello Dojo"
+</template></div>
+<p><i>Lưu ý: bài tập này kiểm tra <b>thứ bạn in ra màn hình</b> (xem khung Kết quả in ra). Đa số bài sau kiểm tra <b>giá trị của biến</b> — ta sẽ học "biến" ngay bên dưới.</i></p>
+
+<h4>4. Chú thích với dấu <code>#</code></h4>
+<p>Bạn có để ý dòng <code># Go lenh print cua ban o duoi day:</code> ở bài tập trên không? Đó là một <b>chú thích (comment)</b>. Mọi thứ sau dấu <code>#</code> trên một dòng sẽ bị Python <b>bỏ qua hoàn toàn</b> — nó là ghi chú dành cho <i>con người đọc</i>, không phải lệnh cho máy chạy.</p>
+<pre># Day la chu thich — Python khong chay dong nay
+print("Day moi la lenh duoc chay")   # chu thich cung co the year cuoi dong</pre>
+<p>Chú thích dùng để giải thích code cho chính bạn (và người khác) đọc lại sau này. Trong các bài tập, chúng tôi thường để sẵn một dòng <code>#</code> gợi ý chỗ bạn cần viết.</p>
+
+<h4>5. Giá trị và kiểu dữ liệu</h4>
+<p>Mọi dữ liệu trong Python đều có một <b>kiểu</b>. Bốn kiểu nền tảng bạn gặp đầu tiên:</p>
+<pre>10          # so nguyen  -> int    (khong co phan thap phan)
+3.14        # so thuc    -> float  (co dau cham thap phan)
+"xin chao"  # chuoi      -> str    (chu trong dau nhay)
+True        # dung/sai   -> bool   (chi True hoac False)</pre>
+<p>Bạn có thể hỏi máy "đây là kiểu gì?" bằng lệnh <code>type()</code>:</p>
+<pre>print(type(10))       # &lt;class 'int'&gt;
+print(type(3.14))     # &lt;class 'float'&gt;
+print(type("hi"))     # &lt;class 'str'&gt;
+print(type(True))     # &lt;class 'bool'&gt;</pre>
+<p>Vì sao kiểu lại quan trọng? Vì máy <b>cư xử khác nhau</b> tùy kiểu: <code>3 + 4</code> ra <code>7</code> (cộng số), nhưng <code>"3" + "4"</code> ra <code>"34"</code> (nối chữ lại với nhau). Nhầm kiểu là một trong những lỗi phổ biến nhất của người mới.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Tạo bốn biến: <code>a</code> = số nguyên 42, <code>b</code> = số thực 3.5, <code>c</code> = chuỗi <code>"Python"</code> (viết hoa chữ P), <code>d</code> = giá trị đúng/sai <code>True</code>.</span>
+<template class="st"># tao 4 bien a, b, c, d
+</template>
+<template class="ts">assert a == 42 and isinstance(a, int)
+assert b == 3.5 and isinstance(b, float)
+assert c == "Python" and isinstance(c, str)
+assert d is True
+</template></div>
+
+<h4>6. Biến — chiếc hộp có tên</h4>
+<p>Một <b>biến</b> là cái tên gắn với một giá trị, giúp bạn lưu lại để dùng sau. Dấu <code>=</code> nghĩa là <b>gán</b>: lấy giá trị bên phải, bỏ vào chiếc hộp có tên bên trái.</p>
+<pre>age = 15
+name = "Minh"
+print(name, "year nay", age, "age")   # Minh year nay 15 age</pre>
+<p>Biến có thể <b>gán lại</b> — giá trị mới thay giá trị cũ:</p>
+<pre>score = 5
+score = score + 3     # lay score cu (5) cong 3, cat lai vao score -> 8
+print(score)          # 8</pre>
+<h4>Quy tắc đặt tên biến</h4>
+<ul>
+<li>Chỉ gồm chữ cái, chữ số và dấu gạch dưới <code>_</code>; <b>không</b> bắt đầu bằng chữ số.</li>
+<li>Không dấu tiếng Việt, không khoảng trắng. Dùng <code>gach_duoi</code> để nối từ: <code>quantity</code>, <code>user_name</code>.</li>
+<li>Phân biệt hoa–thường: <code>age</code> và <code>Tuoi</code> là hai biến khác nhau.</li>
+<li>Đặt tên <b>có nghĩa</b>: <code>price</code> tốt hơn <code>x</code>.</li>
+</ul>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Tạo biến <code>quantity</code> = 4 và <code>unit_price</code> = 25000. Tạo biến <code>subtotal</code> bằng tích của chúng (viết phép nhân <code>*</code>, đừng ghi sẵn kết quả).</span>
+<template class="st">quantity = 4
+unit_price = 25000
+# tao subtotal = quantity nhan unit_price
+</template>
+<template class="ts">assert subtotal == 100000
+</template></div>
+
+<h4>7. <code>print()</code> kỹ hơn</h4>
+<p><code>print()</code> có thể in nhiều thứ một lúc, cách nhau bằng dấu phẩy — máy tự chèn một khoảng trắng giữa chúng:</p>
+<pre>name = "Minh"
+print("Xin chao,", name)     # Xin chao, Minh</pre>
+<p>Bạn có thể đổi ký tự ngăn cách bằng <code>sep</code>, và ký tự kết thúc dòng bằng <code>end</code>:</p>
+<pre>print("2024", "09", "18", sep="-")   # 2024-09-18
+print("Dang tai", end="...")          # khong xuong dong, in tiep "..."</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>year = 2026</code>, <code>month = 9</code>, <code>day = 18</code>. Dùng <code>print()</code> với <code>sep</code> để in đúng chuỗi <code>2026/9/18</code>. (Lưu ý: đây là ba <i>biến số</i>, đừng đặt chúng trong dấu nháy.)</span>
+<template class="st">year = 2026
+month = 9
+day = 18
+# in 2026/9/18 bang print(..., sep=...)
+</template>
+<template class="ts">assert _OUT_.strip() == "2026/9/18", "phai in ra 2026/9/18"
+</template></div>
+
+<h4>8. Nhận dữ liệu từ người dùng — <code>input()</code></h4>
+<p>Hàm <code>input()</code> dừng chương trình lại, chờ người dùng gõ, rồi trả về thứ họ gõ. <b>Điều cực kỳ quan trọng:</b> <code>input()</code> <u>luôn trả về một chuỗi (str)</u>, kể cả khi người ta gõ số.</p>
+<pre>name = input("Ten ban la gi? ")
+print("Chao", name)
+
+age_str = input("Tuoi cua ban? ")   # vi du go "15" -> age_str = "15" (chuoi!)
+print(type(age_str))                 # &lt;class 'str'&gt;</pre>
+<p>Vì kết quả là chuỗi, muốn tính toán bạn phải <b>ép kiểu</b> sang số trước.</p>
+
+<h4>9. Ép kiểu (type conversion)</h4>
+<pre>int("15")     # 15   (chuoi -> so nguyen)
+float("3.5")  # 3.5  (chuoi -> so thuc)
+str(15)       # "15" (so -> chuoi)</pre>
+<p>Đây là lý do dòng dưới bị lỗi logic kinh điển: nối hai chuỗi thay vì cộng hai số.</p>
+<pre>a = input("So a: ")   # "7"
+b = input("So b: ")   # "3"
+print(a + b)          # "73"  (SAI! noi chuoi)
+print(int(a) + int(b))# 10    (DUNG, ep sang int truoc)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho hai chuỗi <code>a = "7"</code> và <code>b = "3"</code> (giả lập kết quả của <code>input()</code>). Tạo biến <code>total</code> = tổng <i>số học</i> của chúng (kết quả phải là <code>10</code>, không phải <code>"73"</code>).</span>
+<template class="st">a = "7"
+b = "3"
+# tao total = total so hoc cua a va b
+</template>
+<template class="ts">assert total == 10, "nho ep kieu int() truoc khi cong"
+</template></div>
+
+<h4>10. Tính toán — các phép toán số học</h4>
+<pre>7 + 3     # 10   cong
+7 - 3     # 4    tru
+7 * 3     # 21   nhan
+7 / 2     # 3.5  chia (LUON ra float)
+7 // 2    # 3    chia lay phan nguyen
+7 % 2     # 1    chia lay so du (modulo)
+2 ** 10   # 1024 luy thua (2 mu 10)</pre>
+<p>Hai phép <code>//</code> và <code>%</code> rất hay dùng: <code>//</code> cho biết "chia được bao nhiêu lần trọn vẹn", <code>%</code> cho biết "còn dư bao nhiêu". Ví dụ đổi 100 phút ra giờ:phút → <code>100 // 60 = 1</code> giờ, <code>100 % 60 = 40</code> phút.</p>
+<p>Thứ tự ưu tiên giống toán học: <code>**</code> trước, rồi <code>* / // %</code>, rồi <code>+ -</code>. Dùng ngoặc <code>( )</code> khi muốn ép thứ tự:</p>
+<pre>2 + 3 * 4       # 14  (nhan truoc)
+(2 + 3) * 4     # 20  (ngoac truoc)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>total_minutes = 100</code>. Tính <code>hours</code> = số giờ trọn vẹn và <code>minutes</code> = số phút còn dư (dùng <code>//</code> và <code>%</code> với 60).</span>
+<template class="st">total_minutes = 100
+# tao hours va minutes
+</template>
+<template class="ts">assert hours == 1, "dung // 60"
+assert minutes == 40, "dung % 60"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Tính trung bình cộng của ba số <code>8</code>, <code>9</code>, <code>10</code> và lưu vào <code>average</code>. Cẩn thận thứ tự ưu tiên — nhớ dùng ngoặc!</span>
+<template class="st"># tao average = trung binh cong cua 8, 9, 10
+</template>
+<template class="ts">assert average == 9, "nho dung ngoac: (8+9+10)/3"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>age = 20</code> (một số). Tạo chuỗi <code>label = "Age: 20"</code> bằng cách nối chuỗi <code>"Age: "</code> với <code>age</code> — nhớ ép kiểu số về chuỗi bằng <code>str()</code>.</span>
+<template class="st">age = 20
+# tao label = "Age: 20" bang cach noi chuoi
+</template>
+<template class="ts">assert label == "Age: 20", "dung 'Age: ' + str(age)"
+</template></div>
+
+<h4>11. Gán rút gọn (+=, -=, *=)</h4>
+<p>Khi cập nhật một biến bằng chính nó, Python có cách viết ngắn gọn — rất hay dùng khi đếm hoặc cộng dồn:</p>
+<pre class="run">score = 5
+score += 3     # giong: score = score + 3  -> 8
+score *= 2     # giong: score = score * 2  -> 16
+score -= 1     # -> 15
+print(score)   # 15</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>diem = 10</code>. Dùng phép gán rút gọn: cộng thêm 5 (<code>+= 5</code>) rồi nhân đôi (<code>*= 2</code>). Kết quả cuối cùng lưu ở <code>diem</code>.</span>
+<template class="st">diem = 10
+# dùng += và *= để được 30
+</template>
+<template class="ts">assert diem == 30, "10 + 5 = 15, roi *2 = 30"
+</template></div>
+
+<h4>12. Những lỗi thường gặp của người mới</h4>
+<ul>
+<li><b>Quên dấu nháy:</b> <code>print(xin chao)</code> → lỗi. Chuỗi phải là <code>"xin chao"</code>.</li>
+<li><b>Nhầm <code>=</code> với <code>==</code>:</b> <code>=</code> là gán, <code>==</code> là so sánh (học ở bài 3).</li>
+<li><b>Cộng chuỗi với số:</b> <code>"Age: " + 20</code> → lỗi. Phải <code>"Age: " + str(20)</code>.</li>
+<li><b>Quên ép kiểu sau <code>input()</code>:</b> kết quả là chuỗi, không tính toán trực tiếp được.</li>
+</ul>
+
+<div class="recap">Ghi nhớ bài 1: lập trình là viết chỉ thị cho máy · Python là ngôn ngữ dễ đọc cho người mới · <code>print()</code> in ra màn hình, chữ đặt trong dấu nháy · <code>#</code> là chú thích (máy bỏ qua) · dữ liệu có <b>kiểu</b> (int/float/str/bool) · biến là hộp có tên, <code>=</code> là gán · <code>input()</code> luôn trả về chuỗi → nhớ ép kiểu <code>int()/float()</code> · các phép toán <code>+ - * / // % **</code> và thứ tự ưu tiên · <code>+= -= *=</code> gán rút gọn. Bài sau: làm chủ chuỗi và f-string.</div>
+
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Thử thách.</b> Cho <code>price_str = "120000"</code> và <code>qty_str = "3"</code> (giả lập <code>input()</code>). Tính tổng tiền có cộng thêm <b>10% VAT</b>, làm tròn về số nguyên, lưu vào <code>total</code>. (Gợi ý: ép kiểu số, nhân với nhau rồi nhân <code>1.1</code>, dùng <code>round()</code>.)</span>
+<template class="st">price_str = "120000"
+qty_str = "3"
+# tao total = tong tien + 10% VAT, lam tron ve so nguyen
+</template>
+<template class="ts">assert total == 396000, "120000 * 3 = 360000, them 10% = 396000"
+</template></div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm ở nhà, không tính vào 2 giờ trên lớp. Bốn câu, câu cuối là thử thách.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>vnd_str = "260000"</code> (chuỗi). Đổi sang USD với tỉ giá 26000: tạo <code>usd</code> (số thực) = số tiền VND chia cho 26000, rồi tạo <code>message</code> bằng f-string đúng dạng <code>"260000 VND = 10.0 USD"</code>.</span>
+<template class="st">vnd_str = "260000"
+rate = 26000
+# tao usd va message
+</template>
+<template class="ts">assert usd == 10.0, "ep kieu int(vnd_str) roi chia cho rate"
+assert message == "260000 VND = 10.0 USD", 'dung f"{vnd_str} VND = {usd} USD"'
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>celsius = 25</code> (một số). Đổi sang độ F: <code>fahrenheit = celsius * 9 / 5 + 32</code> → <code>77.0</code>.</span>
+<template class="st">celsius = 25
+# tao fahrenheit
+</template>
+<template class="ts">assert fahrenheit == 77.0
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho hình chữ nhật <code>width = 4</code>, <code>height = 5</code>. Tạo <code>area</code> = diện tích (<code>width * height</code>) và <code>perimeter</code> = chu vi (<code>2 * (width + height)</code>).</span>
+<template class="st">width = 4
+height = 5
+# tao area va perimeter
+</template>
+<template class="ts">assert area == 20
+assert perimeter == 18
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (thử thách).</b> Cho <code>total_seconds = 3661</code>. Tách thành giờ/phút/giây rồi tạo chuỗi <code>time_str</code> dạng <code>"01:01:01"</code> (mỗi phần 2 chữ số). Gợi ý: <code>// 3600</code>, <code>% 3600 // 60</code>, <code>% 60</code>, và f-string <code>{h:02d}</code>.</span>
+<template class="st">total_seconds = 3661
+# tao time_str dang "HH:MM:SS"
+</template>
+<template class="ts">assert time_str == "01:01:01"
+</template></div>
+

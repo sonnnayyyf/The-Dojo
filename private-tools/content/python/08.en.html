@@ -1,0 +1,182 @@
+<h3>Lesson 8 — Nested loops</h3>
+<p>So far each loop walks a <b>one-dimensional</b> sequence. But many things in life are <b>two-dimensional</b>: a spreadsheet (rows × columns), a chessboard, a multiplication table, every pair of students in a class. To handle them, we put <b>one loop inside another</b> — called <b>nested loops</b>. This is the hardest part of the loops chapter, so we'll go carefully.</p>
+<p>The core idea: for <b>each</b> pass of the outer loop, the inner loop runs <b>completely</b> from start to finish. If the outer runs 3 times and each time the inner runs 3 times, the innermost body runs 3 × 3 = <b>9</b> times total.</p>
+
+<h4>1. A loop inside a loop</h4>
+<pre class="run">for i in range(3):          # OUTER loop: i = 0, 1, 2
+    for j in range(3):      # INNER loop: for each i, j runs 0,1,2
+        print(i, j)
+# prints 9 lines: 0 0 / 0 1 / 0 2 / 1 0 / 1 1 / 1 2 / 2 0 / 2 1 / 2 2</pre>
+<p>Notice the <b>two indent levels</b>: <code>for j</code> is inside the body of <code>for i</code>, and <code>print</code> is inside the body of <code>for j</code> (indented twice). The outer variable <code>i</code> "stays still" while the inner variable <code>j</code> runs a full cycle.</p>
+
+<h4>2. Picturing the order</h4>
+<figure class="diagram">
+<svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <text x="160" y="20" text-anchor="middle" fill="#8FA0BC">i = row (outer) · j = column (inner)</text>
+  <text x="90" y="46" fill="#F5B942">j=0</text><text x="160" y="46" fill="#F5B942">j=1</text><text x="230" y="46" fill="#F5B942">j=2</text>
+  <text x="30" y="86" fill="#7FD1C0">i=0</text><text x="30" y="156" fill="#7FD1C0">i=1</text><text x="30" y="226" fill="#7FD1C0">i=2</text>
+  <g fill="#121C30" stroke="#22304C">
+    <rect x="70" y="60" width="56" height="46" rx="5"/><rect x="140" y="60" width="56" height="46" rx="5"/><rect x="210" y="60" width="56" height="46" rx="5"/>
+    <rect x="70" y="130" width="56" height="46" rx="5"/><rect x="140" y="130" width="56" height="46" rx="5"/><rect x="210" y="130" width="56" height="46" rx="5"/>
+    <rect x="70" y="200" width="56" height="46" rx="5"/><rect x="140" y="200" width="56" height="46" rx="5"/><rect x="210" y="200" width="56" height="46" rx="5"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle" font-size="13">
+    <text x="98" y="88">1</text><text x="168" y="88">2</text><text x="238" y="88">3</text>
+    <text x="98" y="158">4</text><text x="168" y="158">5</text><text x="238" y="158">6</text>
+    <text x="98" y="228">7</text><text x="168" y="228">8</text><text x="238" y="228">9</text>
+  </g>
+</svg>
+<figcaption>The number in each cell is the run order: finish all columns of row 0 (1→2→3), then move to row 1 (4→5→6), then row 2. The inner loop runs fully for each value of the outer loop.</figcaption>
+</figure>
+<p>Trace table for <code>range(2)</code> nested in <code>range(2)</code>:</p>
+<table class="res">
+<thead><tr><th>Step</th><th>i</th><th>j</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>2</td><td>0</td><td>1</td></tr>
+<tr><td>3</td><td>1</td><td>0</td></tr>
+<tr><td>4</td><td>1</td><td>1</td></tr>
+</tbody>
+</table>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Use two nested loops to count how many times the innermost body runs, with <code>i</code> in <code>range(3)</code> and <code>j</code> in <code>range(3)</code>. Store it in <code>count</code> (start <code>count = 0</code>). Result <code>9</code>.</span>
+<template class="st">count = 0
+# two nested loops, each pass increments count
+</template>
+<template class="ts">assert count == 9
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Create <code>coords</code> = a list of <code>[i, j]</code> pairs with <code>i</code> in <code>range(2)</code> and <code>j</code> in <code>range(2)</code> → <code>[[0, 0], [0, 1], [1, 0], [1, 1]]</code> (use <code>append([i, j])</code>).</span>
+<template class="st">coords = []
+# create a list of [i, j] pairs
+</template>
+<template class="ts">assert coords == [[0, 0], [0, 1], [1, 0], [1, 1]]
+</template></div>
+
+<h4>3. Building a "grid" (a list of lists)</h4>
+<p>A very common pattern: the outer loop creates each <b>row</b> (an empty list), the inner loop <code>append</code>s the <b>cells</b> into that row, and at the end of each row we <code>append</code> the whole row into the grid.</p>
+<pre class="run">table = []
+for i in range(1, 4):
+    row = []                     # start a new row
+    for j in range(1, 4):
+        row.append(i * j)        # add a cell to the row
+    table.append(row)            # add the whole row to the table
+print(table)   # [[1, 2, 3], [2, 4, 6], [3, 6, 9]]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Create a multiplication table <code>table</code> for 1..3: each row <code>i</code> holds <code>i*1, i*2, i*3</code> → <code>[[1, 2, 3], [2, 4, 6], [3, 6, 9]]</code>.</span>
+<template class="st">table = []
+# create the 1..3 multiplication table
+</template>
+<template class="ts">assert table == [[1, 2, 3], [2, 4, 6], [3, 6, 9]]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Create a 3×3 <code>grid</code> where the cell at row <code>i</code>, column <code>j</code> is <code>i + j</code> (i, j from 0..2) → <code>[[0, 1, 2], [1, 2, 3], [2, 3, 4]]</code>.</span>
+<template class="st">grid = []
+# create a 3x3 grid with cell = i + j
+</template>
+<template class="ts">assert grid == [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
+</template></div>
+
+<h4>4. Walking an existing grid</h4>
+<p>Once you have a grid (a list of lists), you walk it with two loops too: the outer loop takes each <b>row</b>, the inner loop takes each <b>cell</b> in that row.</p>
+<pre class="run">grid = [[1, 2], [3, 4]]
+total = 0
+for row in grid:           # row is [1,2] then [3,4]
+    for cell in row:       # cell is each number
+        total += cell
+print(total)               # 1 + 2 + 3 + 4 = 10</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>grid = [[1, 2], [3, 4]]</code>, sum all the cells into <code>total</code>. Result <code>10</code>.</span>
+<template class="st">grid = [[1, 2], [3, 4]]
+total = 0
+# sum all the cells
+</template>
+<template class="ts">assert total == 10
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>grid = [[1, 2, 3], [4, 5, 6]]</code>, count the cells with an <b>even</b> value into <code>even_cells</code>. Result <code>3</code>.</span>
+<template class="st">grid = [[1, 2, 3], [4, 5, 6]]
+even_cells = 0
+# count the even cells
+</template>
+<template class="ts">assert even_cells == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>grid = [[3, 7], [2, 9], [5, 1]]</code>, find the <b>largest</b> value in the whole grid into <code>biggest</code> (start <code>biggest = grid[0][0]</code>). Result <code>9</code>.</span>
+<template class="st">grid = [[3, 7], [2, 9], [5, 1]]
+biggest = grid[0][0]
+# find the largest value in the grid
+</template>
+<template class="ts">assert biggest == 9
+</template></div>
+
+<h4>5. Drawing shapes with loops</h4>
+<p>Repeating a string (<code>"*" * i</code>) together with a loop produces patterns — a classic exercise for building nested-loop intuition.</p>
+<pre class="run">lines = []
+for i in range(1, 4):
+    lines.append("*" * i)
+print(lines)   # ['*', '**', '***']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Create <code>lines</code> = <code>["*", "**", "***", "****"]</code> (a 4-row star triangle) using a loop and <code>"*" * i</code>.</span>
+<template class="st">lines = []
+# create a 4-row star triangle
+</template>
+<template class="ts">assert lines == ["*", "**", "***", "****"]
+</template></div>
+
+<h4>6. Comparing pairs</h4>
+<p>Nested loops also let you consider <b>every pair</b> of elements — e.g. finding two numbers that add up to a target.</p>
+<pre class="run">nums = [1, 2, 3, 4]
+target = 5
+pairs = 0
+for a in range(len(nums)):
+    for b in range(a + 1, len(nums)):   # b > a to avoid repeating a pair
+        if nums[a] + nums[b] == target:
+            pairs += 1
+print(pairs)   # (1,4) and (2,3) -> 2</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>nums = [1, 2, 3, 4]</code> and <code>target = 5</code>, count the <b>pairs</b> (different positions, no repeats) whose sum equals <code>target</code> into <code>pairs</code>. Result <code>2</code>.</span>
+<template class="st">nums = [1, 2, 3, 4]
+target = 5
+pairs = 0
+# count the pairs summing to target
+</template>
+<template class="ts">assert pairs == 2
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>grid = [[1, 2], [3, 4], [5, 6]]</code>, create <code>row_sums</code> = a list of each row's sum → <code>[3, 7, 11]</code>.</span>
+<template class="st">grid = [[1, 2], [3, 4], [5, 6]]
+row_sums = []
+# create a list of each row's sum
+</template>
+<template class="ts">assert row_sums == [3, 7, 11]
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (diagonal sum).</b> Given <code>grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]</code> (a square matrix), sum the main diagonal (cells <code>grid[i][i]</code>) into <code>diag</code>. Result <code>1 + 5 + 9 = 15</code>.</span>
+<template class="st">grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+diag = 0
+# sum the main diagonal grid[i][i]
+</template>
+<template class="ts">assert diag == 15
+</template></div>
+
+<div class="recap">Recap of lesson 8: nested loops = a loop inside a loop · for each outer pass, the inner runs <b>completely</b> → total runs = outer × inner · two indent levels · the grid-building pattern: new row → add cells → add row · walking a grid: <code>for row in grid: for cell in row</code> · consider every pair with two indexes (b starts at a+1). Next: get your real tools ready (Python + VS Code) and practice for the mini-project.</div>
+
+<h4>🏠 Homework</h4>
+<p>Do this at home, outside the 2-hour class. Four questions; the last is a stretch.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>grid = [[1, 2, 3], [4, 5, 6]]</code>, sum all the cells into <code>total</code>. Result <code>21</code>.</span>
+<template class="st">grid = [[1, 2, 3], [4, 5, 6]]
+total = 0
+# sum all the cells
+</template>
+<template class="ts">assert total == 21
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>grid = [[2, 3], [4, 5], [6, 7]]</code>, count the cells <b>greater than 3</b> into <code>big_cells</code>. Result <code>4</code>.</span>
+<template class="st">grid = [[2, 3], [4, 5], [6, 7]]
+big_cells = 0
+# count the cells > 3
+</template>
+<template class="ts">assert big_cells == 4
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Create a 3×3 <code>grid</code> where the cell at row <code>i</code>, column <code>j</code> is <code>i * j</code> (i, j from 0..2) → <code>[[0, 0, 0], [0, 1, 2], [0, 2, 4]]</code>.</span>
+<template class="st">grid = []
+# create a 3x3 grid with cell = i * j
+</template>
+<template class="ts">assert grid == [[0, 0, 0], [0, 1, 2], [0, 2, 4]]
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given <code>grid = [[1, 2], [9, 1], [3, 3]]</code>, find the <b>index of the row with the largest sum</b> into <code>max_row</code>. The sums are 3, 10, 6 → row index <code>1</code>.</span>
+<template class="st">grid = [[1, 2], [9, 1], [3, 3]]
+max_row = 0
+# find the index of the row with the largest sum
+</template>
+<template class="ts">assert max_row == 1
+</template></div>

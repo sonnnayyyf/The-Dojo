@@ -1,0 +1,193 @@
+<h3>Lesson 3 — Conditions: if / elif / else</h3>
+<p>So far our programs run straight through, top to bottom. But real software has to <b>make decisions</b>: old enough → let them in, wrong password → show an error, order over 500k → apply a discount. This lesson teaches the computer to <b>choose a path</b> based on a condition.</p>
+
+<h4>1. Comparisons — the basis of every decision</h4>
+<p>A <b>comparison</b> always produces a <code>bool</code>: <code>True</code> or <code>False</code>.</p>
+<pre class="run">print(7 &gt; 3)      # True
+print(7 &lt; 3)      # False
+print(5 == 5)     # True  — EQUAL? (two equals signs)
+print(5 != 4)     # True  — NOT equal?
+print(5 &gt;= 5)     # True  — greater or equal
+print(5 &lt;= 4)     # False — less or equal</pre>
+<p><b>Very important:</b> <code>=</code> is <i>assignment</i> (put a value into a variable), while <code>==</code> is <i>comparison</i> (ask whether two things are equal). Mixing them up is a classic beginner bug.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Given <code>a = 7</code> and <code>b = 10</code>, create <code>a_is_smaller</code> = whether <code>a</code> is less than <code>b</code> (result is <code>True</code>/<code>False</code>).</span>
+<template class="st">a = 7
+b = 10
+# create a_is_smaller = is a less than b?
+</template>
+<template class="ts">assert a_is_smaller is True
+</template></div>
+
+<h4>2. <code>if</code> — do something WHEN a condition is true</h4>
+<p>Structure: the keyword <code>if</code>, a condition, a colon <code>:</code>, then an <b>indented block</b> below.</p>
+<pre class="run">temperature = 39
+if temperature &gt; 37.5:
+    print("You have a fever!")   # this line is INDENTED -> belongs to if
+print("Check complete")          # NOT indented -> always runs</pre>
+<p><b>Indentation decides everything in Python.</b> Lines indented to the same level form a <b>block</b> that runs together. Convention: indent by <b>4 spaces</b>. Wrong indentation → an error, or the wrong behavior.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> <code>alert</code> starts as <code>False</code>. If <code>temperature</code> is greater than <code>37.5</code>, set <code>alert</code> to <code>True</code>.</span>
+<template class="st">temperature = 38
+alert = False
+# if temperature > 37.5 then alert = True
+</template>
+<template class="ts">assert alert is True
+</template></div>
+
+<h4>3. <code>else</code> — otherwise, do this</h4>
+<pre class="run">age = 15
+if age &gt;= 18:
+    print("Come in")
+else:
+    print("Too young")     # runs when the if condition is FALSE</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>score = 4</code>, create <code>result</code> = <code>"Pass"</code> if <code>score &gt;= 5</code>, otherwise <code>"Fail"</code>.</span>
+<template class="st">score = 4
+# create result with if/else
+</template>
+<template class="ts">assert result == "Fail"
+</template></div>
+
+<h4>4. <code>elif</code> — many branches</h4>
+<p>When there are more than two cases, use <code>elif</code> (short for "else if"). Python checks <b>top to bottom</b> and runs the <b>first TRUE branch</b>, skipping the rest.</p>
+<pre class="run">score = 7
+if score &gt;= 8:
+    grade = "Excellent"
+elif score &gt;= 6.5:
+    grade = "Good"
+elif score &gt;= 5:
+    grade = "Average"
+else:
+    grade = "Weak"
+print(grade)      # Kha</pre>
+<figure class="diagram">
+<svg viewBox="0 0 470 340" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="13">
+  <defs>
+    <marker id="arr3e" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#8FA0BC"/>
+    </marker>
+  </defs>
+  <polygon points="150,18 250,66 150,114 50,66" fill="#0E1626" stroke="#F5B942"/>
+  <text x="150" y="62" text-anchor="middle" fill="#F5B942">score &gt;= 8 ?</text>
+  <text x="150" y="80" text-anchor="middle" fill="#8FA0BC">if</text>
+  <line x1="250" y1="66" x2="330" y2="66" stroke="#8FA0BC" marker-end="url(#arr3e)"/>
+  <text x="272" y="58" fill="#7FD1C0">True</text>
+  <rect x="330" y="48" width="120" height="36" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="390" y="71" text-anchor="middle" fill="#E8E4D8">grade = "Excellent"</text>
+  <line x1="150" y1="114" x2="150" y2="152" stroke="#8FA0BC" marker-end="url(#arr3e)"/>
+  <text x="158" y="138" fill="#E2604C">False</text>
+  <polygon points="150,152 250,200 150,248 50,200" fill="#0E1626" stroke="#F5B942"/>
+  <text x="150" y="196" text-anchor="middle" fill="#F5B942">score &gt;= 5 ?</text>
+  <text x="150" y="214" text-anchor="middle" fill="#8FA0BC">elif</text>
+  <line x1="250" y1="200" x2="330" y2="200" stroke="#8FA0BC" marker-end="url(#arr3e)"/>
+  <text x="272" y="192" fill="#7FD1C0">True</text>
+  <rect x="330" y="182" width="120" height="36" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="390" y="205" text-anchor="middle" fill="#E8E4D8">grade = "Good/Avg"</text>
+  <line x1="150" y1="248" x2="150" y2="286" stroke="#8FA0BC" marker-end="url(#arr3e)"/>
+  <text x="158" y="272" fill="#E2604C">False (else)</text>
+  <rect x="90" y="286" width="120" height="34" rx="6" fill="#121C30" stroke="#22304C"/>
+  <text x="150" y="308" text-anchor="middle" fill="#E8E4D8">grade = "Weak"</text>
+</svg>
+<figcaption>The computer checks each condition top to bottom; it runs the first true branch, then stops.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>score = 7</code>, create <code>grade</code> by scale: <code>&gt;= 8</code> → <code>"Excellent"</code>; <code>&gt;= 6.5</code> → <code>"Good"</code>; <code>&gt;= 5</code> → <code>"Average"</code>; otherwise → <code>"Weak"</code>.</span>
+<template class="st">score = 7
+# create grade with if/elif/else
+</template>
+<template class="ts">assert grade == "Good"
+</template></div>
+
+<h4>5. Branch ORDER matters a lot</h4>
+<p>Because Python stops at the first true branch, wrong ordering gives wrong answers. If you put <code>&gt;= 5</code> before <code>&gt;= 8</code>, then a score of 9 would be labeled "Average" because it matches <code>&gt;= 5</code> first. <b>Always put the strictest (narrowest) condition on top.</b></p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>age = 20</code>, create <code>group</code>: <code>&lt; 13</code> → <code>"child"</code>; <code>&lt; 20</code> → <code>"teen"</code>; otherwise → <code>"adult"</code>.</span>
+<template class="st">age = 20
+# create group with if/elif/else
+</template>
+<template class="ts">assert group == "adult"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>number = -4</code>, create <code>sign</code>: <code>"positive"</code> if <code>number &gt; 0</code>; <code>"negative"</code> if <code>number &lt; 0</code>; <code>"zero"</code> if it is 0.</span>
+<template class="st">number = -4
+# create sign with if/elif/else
+</template>
+<template class="ts">assert sign == "negative"
+</template></div>
+
+<h4>6. Use remainder <code>%</code> to test even/odd</h4>
+<p>A number is even when divided by 2 with remainder 0. So <code>n % 2 == 0</code> means "n is even".</p>
+<pre class="run">n = 10
+if n % 2 == 0:
+    print("even")
+else:
+    print("odd")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>n = 7</code>, create <code>kind</code> = <code>"even"</code> if <code>n</code> is even, otherwise <code>"odd"</code> (hint: use <code>% 2</code>).</span>
+<template class="st">n = 7
+# create kind based on n % 2
+</template>
+<template class="ts">assert kind == "odd"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>hours = 14</code> (hour of day, 0–23), create <code>part_of_day</code>: <code>&lt; 12</code> → <code>"morning"</code>; <code>&lt; 18</code> → <code>"afternoon"</code>; otherwise → <code>"evening"</code>.</span>
+<template class="st">hours = 14
+# create part_of_day with if/elif/else
+</template>
+<template class="ts">assert part_of_day == "afternoon"
+</template></div>
+
+<h4>7. Comparing strings & membership (<code>in</code>)</h4>
+<p>Conditions aren't just for numbers. You can compare strings with <code>==</code>, and test whether a value is in a group with <code>in</code> (lists <code>[...]</code> are covered in depth in lesson 5).</p>
+<pre class="run">role = "admin"
+if role == "admin":
+    print("Full access")
+
+day = "T7"
+if day in ["T7", "CN"]:
+    print("Weekend")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>day = "CN"</code>, create <code>is_weekend</code> = <code>True</code> if <code>day</code> is <code>"T7"</code> or <code>"CN"</code> (hint: use <code>day in ["T7", "CN"]</code>).</span>
+<template class="st">day = "CN"
+# create is_weekend = is day in ["T7", "CN"]?
+</template>
+<template class="ts">assert is_weekend is True
+</template></div>
+
+<h4>8. Common mistakes</h4>
+<ul>
+<li><b>Forgetting the colon <code>:</code></b> after the condition → syntax error.</li>
+<li><b>Missing or uneven indentation</b> → <code>IndentationError</code>.</li>
+<li><b>Using <code>=</code> instead of <code>==</code></b> in a condition → error.</li>
+<li><b>Wrong elif order</b> → the program runs but gives wrong answers (the hardest bug to spot).</li>
+</ul>
+
+<div class="recap">Recap of lesson 3: comparisons give <code>True/False</code> (<code>== != &lt; &gt; &lt;= &gt;=</code>) · <code>if condition:</code> + indented block runs when true · <code>else</code> for the remaining case · <code>elif</code> for many branches, runs the <b>first</b> true one · branch order matters · string comparison & <code>in</code> · <code>=</code> assigns ≠ <code>==</code> compares. Next: combining conditions (and/or/not) and nesting them.</div>
+
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (FizzBuzz).</b> Given <code>n = 15</code>, create <code>result</code>: divisible by <b>both</b> 3 and 5 → <code>"FizzBuzz"</code>; only by 3 → <code>"Fizz"</code>; only by 5 → <code>"Buzz"</code>; otherwise → the number as a string (<code>str(n)</code>). <i>Remember: check "both 3 and 5" FIRST.</i></span>
+<template class="st">n = 15
+# create result following the FizzBuzz rule
+</template>
+<template class="ts">assert result == "FizzBuzz"
+</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Do this at home, outside the 2-hour class. Four questions; the last is a stretch.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>income = 15</code> (in millions), create <code>rate</code> (a float): <code>&lt;= 11</code> → <code>0.0</code>; <code>&lt;= 20</code> → <code>0.1</code>; otherwise → <code>0.2</code>.</span>
+<template class="st">income = 15
+# create rate with if/elif/else
+</template>
+<template class="ts">assert rate == 0.1
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>score = 72</code>, create <code>letter</code> (a letter grade): <code>&gt;= 90</code> → <code>"A"</code>; <code>&gt;= 80</code> → <code>"B"</code>; <code>&gt;= 70</code> → <code>"C"</code>; <code>&gt;= 60</code> → <code>"D"</code>; otherwise → <code>"F"</code>.</span>
+<template class="st">score = 72
+# create letter with if/elif/else
+</template>
+<template class="ts">assert letter == "C"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>month = 4</code>, create <code>days</code> = the number of days in the month: February → <code>28</code>; months 4, 6, 9, 11 → <code>30</code>; otherwise → <code>31</code> (hint: <code>month in [4, 6, 9, 11]</code>).</span>
+<template class="st">month = 4
+# create days with if/elif/else
+</template>
+<template class="ts">assert days == 30
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given a triangle's three sides <code>a = 3</code>, <code>b = 3</code>, <code>c = 5</code>, create <code>kind</code>: if all three sides are equal → <code>"deu"</code>; if <b>exactly two</b> are equal → <code>"can"</code>; otherwise → <code>"thuong"</code>. For this data (a=b) → <code>"can"</code>.</span>
+<template class="st">a = 3
+b = 3
+c = 5
+# create kind: "deu" / "can" / "thuong"
+</template>
+<template class="ts">assert kind == "can"
+</template></div>

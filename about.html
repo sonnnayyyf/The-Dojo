@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giới thiệu — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="a_eyebrow"></div><h2 data-t="a_h2"></h2>
+  <p data-t-html="a_intro"></p></div>
+  <div class="about2">
+    <div>
+      <p data-t-html="a_p1"></p>
+      <p class="fact" data-t-html="a_fact1"></p>
+    </div>
+    <div>
+      <p data-t-html="a_p2"></p>
+      <p class="fact" data-t-html="a_fact2"></p>
+    </div>
+  </div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="t_eyebrow"></div><h2 data-t="t_h2"></h2>
+  <p data-t-html="t_p"></p></div>
+  <div class="courses" id="teachCards"></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="me_eyebrow"></div><h2 data-t="me_h2"></h2></div>
+  <div class="about2">
+    <div>
+      <p data-t-html="me_p1"></p>
+      <p data-t-html="me_p2"></p>
+      <p class="fact"><span data-t="me_contact"></span> <a href="mailto:EDIT-ME@example.com" class="editme">EDIT-ME@example.com</a></p>
+    </div>
+    <div>
+      <p class="editme" data-t="me_placeholder" style="display:block"></p>
+    </div>
+  </div>
+</div></section>
+
+<script src="app.js"></script>
+<script>
+const TEACH=['t1','t2','t3'];
+const PAGE_I18N={
+vi:{
+ a_eyebrow:'Về The Dojo', a_h2:'The Dojo là gì',
+ a_intro:'The Dojo là nơi học lập trình <b>bằng cách làm thật</b>. Thay vì xem video hàng giờ, bạn đọc phần kiến thức ngắn gọn, gõ code thật ngay trong trình duyệt, và được chấm điểm tức thì. Triết lý rất đơn giản: <b>bạn chỉ thật sự học khi tự tay viết code và mắc lỗi</b>.',
+ a_p1:'Mọi bài học chạy <b>công cụ thật</b> — Python thật (Pyodide), cơ sở dữ liệu SQL thật (sql.js) — ngay trong trình duyệt, không cần cài đặt. Bài tập được chấm tự động với phản hồi cụ thể, kèm sơ đồ và ví dụ trực quan để người mới hoàn toàn cũng theo kịp.',
+ a_fact1:'Học bằng cách làm · chấm điểm tức thì · không cần cài đặt.',
+ a_p2:'Điều làm The Dojo khác các trang học miễn phí: <b>luôn có một người thật đứng sau</b>. Mỗi học viên có một giáo viên để hỏi khi kẹt — đây là một lớp học, không phải một sản phẩm "mua xong biến mất".',
+ a_fact2:'Tự học có định hướng · có người kèm · dự án thật.',
+ t_eyebrow:'Ai dạy', t_h2:'Một lớp học có người thật đứng sau',
+ t_p:'The Dojo kết hợp phần tự học có chấm điểm với sự kèm cặp của một giáo viên thật — bạn không bao giờ bị bỏ lại một mình.',
+ t1_t:'Tự học có định hướng', t1_d:'Bạn tự đi theo lộ trình đã thiết kế kỹ: mỗi bài xây trên bài trước, có bài tập chấm điểm và bài về nhà.',
+ t2_t:'Hỏi sensei khi kẹt', t2_d:'Ngay trong mỗi bài tập có nút "Hỏi sensei" — gửi thẳng câu hỏi kèm code của bạn cho giáo viên qua Zalo.',
+ t3_t:'Học kèm 1-1 (tùy chọn)', t3_d:'Cần đi sâu hơn? Đặt buổi kèm riêng 1-1 để chữa bài, gỡ rối và học theo tốc độ của bạn.',
+ me_eyebrow:'Về tôi', me_h2:'Người đứng sau The Dojo',
+ me_p1:'<span class="editme">CHỈNH SỬA — Chào bạn, tôi là [Tên của bạn].</span> Viết vài dòng giới thiệu: bạn là ai, làm về mảng gì, kinh nghiệm lập trình / giảng dạy.',
+ me_p2:'<span class="editme">CHỈNH SỬA</span> — Vì sao bạn tạo The Dojo, bạn tin vào cách dạy nào, và bạn muốn giúp học viên đạt được điều gì. (Bạn sẽ cập nhật phần này bằng hồ sơ thật của mình sau.)',
+ me_contact:'Liên hệ:',
+ me_placeholder:'CHỈNH SỬA — Thêm ảnh, đường link (LinkedIn/GitHub), hoặc vài dòng nổi bật về bạn ở đây.',
+},
+en:{
+ a_eyebrow:'About The Dojo', a_h2:'What The Dojo is',
+ a_intro:'The Dojo is where you learn programming <b>by actually doing it</b>. Instead of watching hours of video, you read a short explanation, write real code in your browser, and get graded instantly. The philosophy is simple: <b>you only truly learn by writing code and making mistakes yourself</b>.',
+ a_p1:'Every lesson runs <b>real tools</b> — real Python (Pyodide), a real SQL database (sql.js) — right in the browser, nothing to install. Exercises are auto-graded with specific feedback, plus diagrams and visual examples so total beginners can keep up.',
+ a_fact1:'Learn by doing · graded instantly · nothing to install.',
+ a_p2:'What sets The Dojo apart from free sites: <b>there is always a real human behind it</b>. Every student has a teacher to ask when stuck — this is a class, not a "buy and vanish" product.',
+ a_fact2:'Guided self-study · a mentor · real projects.',
+ t_eyebrow:'Who teaches', t_h2:'A class with a real human behind it',
+ t_p:'The Dojo blends graded self-study with the guidance of a real teacher — you are never left on your own.',
+ t1_t:'Guided self-study', t1_d:'You follow a carefully designed path: each lesson builds on the last, with graded exercises and homework.',
+ t2_t:'Ask your sensei', t2_d:'Right inside every exercise is an "Ask sensei" button — send your question and your code straight to your teacher on Zalo.',
+ t3_t:'1-on-1 tutoring (optional)', t3_d:'Need to go deeper? Book a private 1-on-1 session to review work, get unstuck, and learn at your own pace.',
+ me_eyebrow:'About me', me_h2:'The person behind The Dojo',
+ me_p1:'<span class="editme">EDIT — Hi, I\'m [Your Name].</span> Write a couple of lines: who you are, what you do, your programming / teaching background.',
+ me_p2:'<span class="editme">EDIT</span> — Why you created The Dojo, what you believe about teaching, and what you want to help students achieve. (You\'ll update this with your real profile later.)',
+ me_contact:'Contact:',
+ me_placeholder:'EDIT — Add a photo, links (LinkedIn/GitHub), or a few highlights about you here.',
+}};
+window.onLang=function(){
+  const d=PAGE_I18N[LANG];
+  document.getElementById('teachCards').innerHTML=TEACH.map(t=>`<div class="course"><h3>${d[t+'_t']}</h3><p>${d[t+'_d']}</p></div>`).join('');
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Học phí — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="p_eyebrow"></div><h2 data-t="p_h2"></h2>
+  <p data-t-html="p_p"></p></div>
+  <div class="plans" id="planCards"></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="b_eyebrow"></div><h2 data-t="b_h2"></h2></div>
+  <div class="about2">
+    <div>
+      <p><b style="color:var(--text)" data-t="b_buy_h"></b> <span data-t="b_buy_p"></span></p>
+      <p class="fact" data-t-html="b_bank"></p>
+      <p class="fact" data-t-html="b_msg"></p>
+    </div>
+    <div>
+      <p><b style="color:var(--text)" data-t="b_live_h"></b> <span data-t="b_live_p"></span></p>
+      <p class="fact"><span data-t="b_email"></span> <a href="mailto:EDIT-ME@example.com" class="editme">EDIT-ME@example.com</a></p>
+    </div>
+  </div>
+</div></section>
+
+<script src="app.js"></script>
+<script>
+const PAGE_I18N={
+vi:{
+ p_eyebrow:'Học phí', p_h2:'Cách thức hoạt động',
+ p_p:'Học thử Bài 1 của mọi khóa miễn phí. Nếu thấy phù hợp, thanh toán một lần cho khóa bạn chọn và tôi gửi <b>mã mở khóa cá nhân</b> — mã này giải khóa toàn bộ bài học ngay trên trang. Mỗi học viên một mã riêng: mã của bạn dùng được, chia sẻ cho người khác sẽ bị thu hồi.',
+ b_eyebrow:'Liên hệ', b_h2:'Thanh toán & đặt lịch',
+ b_buy_h:'Mua trọn khóa:', b_buy_p:'chuyển khoản ngân hàng / MoMo, nhắn tin kèm ảnh xác nhận, tôi sẽ gửi lại mã mở khóa cá nhân (thường trong vài giờ).',
+ b_bank:'Ngân hàng: <span class="editme">EDIT — tên NH / số TK / ảnh VietQR</span>',
+ b_msg:'Nhắn tin: <span class="editme">EDIT — Zalo / Discord / email</span>',
+ b_live_h:'Học kèm 1-1:', b_live_p:'nhắn cho tôi mục tiêu học và khung giờ thuận tiện — tôi sẽ báo giá trực tiếp tùy nhu cầu. 20 phút đầu miễn phí để xem có hợp không.',
+ b_email:'Email:',
+},
+en:{
+ p_eyebrow:'Pricing', p_h2:'How it works',
+ p_p:'Lesson 1 of every course is free. If it clicks, pay once for the course you want and I send you your <b>personal unlock code</b> — it decrypts every lesson right on the page. Codes are individual: yours works, sharing it gets it revoked.',
+ b_eyebrow:'Contact', b_h2:'Pay & book',
+ b_buy_h:'To buy a full course:', b_buy_p:'transfer via bank/MoMo, message me proof, and I reply with your personal unlock code (usually within a few hours).',
+ b_bank:'Bank: <span class="editme">EDIT — bank name / account / VietQR image</span>',
+ b_msg:'Message me: <span class="editme">EDIT — Zalo / Discord / email</span>',
+ b_live_h:'Live 1-on-1:', b_live_p:'message me your goal and available times — I will quote directly based on what you need. First 20 minutes free to see if we fit.',
+ b_email:'Email:',
+}};
+const PLANS={
+vi:[
+ {h:'Học thử',pr:'0',prs:'— mãi mãi',hot:false,cta:['Bắt đầu ngay','index.html'],
+  li:['Bài 1 của cả 3 khóa, trọn vẹn','Thực hành ngay trên trình duyệt','Bài tập có chấm điểm']},
+ {h:'Trọn khóa (tự học)',pr:'799k₫',prs:'một lần / mỗi khóa',hot:true,cta:['Nhận mã của bạn →','#contact'],
+  li:['Mở khóa toàn bộ bài học của khóa','Bài tập + file lời giải đã kiểm chứng','<b>Hỏi tôi trực tiếp khi kẹt</b> — Zalo/Discord, phản hồi trong 24h','1 buổi 30 phút chữa bài qua video khi hoàn thành khóa','Cập nhật nội dung miễn phí trọn đời','Mã mở khóa cá nhân riêng của bạn']},
+ {h:'Học kèm 1-1',pr:'Nhắn tin',prs:'để nhận báo giá',hot:false,cta:['Liên hệ','#contact'],
+  li:['Học qua video theo lịch của bạn','Giáo trình điều chỉnh theo người học','Chữa bài tập từng dòng','20 phút đầu miễn phí']},
+],
+en:[
+ {h:'Free taste',pr:'0',prs:'— forever',hot:false,cta:['Start now','index.html'],
+  li:['Lesson 1 of all 3 courses, complete','Practice right in the browser','Graded exercises']},
+ {h:'Full course (self-paced)',pr:'799k₫',prs:'one-time / per course',hot:true,cta:['Get your code →','#contact'],
+  li:['All lessons of the course unlocked','Homework + verified solution files','<b>Ask me directly when stuck</b> — Zalo/Discord, replies within 24h','One 30-min video review session when you finish','Free content updates for life','Your own personal unlock code']},
+ {h:'Live 1-on-1',pr:'DM me',prs:'for pricing',hot:false,cta:['Contact','#contact'],
+  li:['Video sessions on your schedule','Curriculum adapted to you','Homework reviewed line-by-line','First 20 minutes free']},
+]};
+window.onLang=function(){
+  document.getElementById('planCards').innerHTML=PLANS[LANG].map(p=>`
+   <div class="plan ${p.hot?'hot':''}">
+     <h3>${p.h}</h3>
+     <div class="pr">${p.pr}<small> ${p.prs}</small></div>
+     <ul>${p.li.map(x=>'<li>'+x+'</li>').join('')}</ul>
+     <a class="btn ${p.hot?'':'ghost'}" href="${p.cta[1]}">${p.cta[0]}</a>
+   </div>`).join('');
+};
+</script>
+</body>
+</html>

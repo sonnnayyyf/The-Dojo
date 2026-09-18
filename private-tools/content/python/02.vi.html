@@ -1,0 +1,197 @@
+<h3>Bài 2 — Chuỗi (string) và f-string</h3>
+<p>Chuỗi là kiểu dữ liệu bạn gặp nhiều nhất khi lập trình: tên người dùng, tên file, đường dẫn, thông báo lỗi, nội dung đọc từ web… tất cả đều là chuỗi. Làm chủ chuỗi là làm chủ một nửa công việc lập trình đời thường. Bài này học cách <b>đo, truy cập, cắt, biến đổi, ghép</b> và <b>định dạng</b> chuỗi.</p>
+
+<h4>1. Chuỗi là một dãy ký tự</h4>
+<pre>last_name = "python"
+print(len(last_name))   # 6 — len() cho biet do dai (so ky tu)</pre>
+<p>Chuỗi có thể dùng nháy đơn hay nháy kép, miễn là mở và đóng giống nhau:</p>
+<pre>a = "xin chao"
+b = 'xin chao'   # tuong duong</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Tạo biến <code>filename</code> = <code>"bao_cao.txt"</code> và biến <code>length</code> bằng độ dài của nó (dùng <code>len</code>).</span>
+<template class="st"># tao 2 bien theo yeu cau
+</template>
+<template class="ts">assert filename == "bao_cao.txt"
+assert length == 11, "dung len() de dem do dai"
+</template></div>
+
+<h4>2. Chỉ số (index) — truy cập từng ký tự</h4>
+<p>Mỗi ký tự có một <b>chỉ số</b>, đếm từ 0. Chỉ số âm đếm ngược từ cuối:</p>
+<pre>s = "python"
+#     p  y  t  h  o  n
+#     0  1  2  3  4  5
+#    -6 -5 -4 -3 -2 -1
+print(s[0])    # 'p' — ky tu first
+print(s[-1])   # 'n' — ky tu last</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>s = "python"</code>. Lấy ký tự đầu vào <code>first</code> và ký tự cuối vào <code>last</code> (dùng chỉ số).</span>
+<template class="st">s = "python"
+# tao first va last
+</template>
+<template class="ts">assert first == "p"
+assert last == "n"
+</template></div>
+
+<h4>3. Cắt chuỗi (slicing)</h4>
+<p>Cú pháp <code>s[start:stop]</code> lấy từ chỉ số <code>start</code> đến <b>ngay trước</b> <code>stop</code>:</p>
+<pre>s = "python"
+print(s[0:3])   # 'pyt' — index 0,1,2
+print(s[2:])    # 'thon' — tu index 2 den het
+print(s[:3])    # 'pyt' — tu first den truoc 3
+print(s[-3:])   # 'hon' — 3 ky tu last</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>filename = "bao_cao.txt"</code>. Lấy 3 ký tự cuối (phần mở rộng) vào <code>ext</code>.</span>
+<template class="st">filename = "bao_cao.txt"
+# tao ext = 3 ky tu last
+</template>
+<template class="ts">assert ext == "txt"
+</template></div>
+
+<h4>4. Ghép và lặp chuỗi</h4>
+<pre>first_name = "Nguyen"
+last_name = "Minh"
+print(first_name + " " + last_name)   # 'Nguyen Minh' — ghep bang +
+print("=" * 10)          # '==========' — lap 10 lan bang *</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>first_name = "Le"</code> và <code>last_name = "An"</code>. Ghép thành <code>full_name</code> = <code>"Le An"</code> (một dấu cách ở giữa).</span>
+<template class="st">first_name = "Le"
+last_name = "An"
+# tao full_name = "Le An"
+</template>
+<template class="ts">assert full_name == "Le An"
+</template></div>
+
+<h4>5. Ký tự đặc biệt (escape)</h4>
+<p>Vài ký tự cần "thoát" bằng dấu gạch chéo ngược <code>\</code>:</p>
+<pre>print("Dong 1\nDong 2")      # \n = xuong dong
+print("Cot1\tCot2")           # \t = tab
+print("Anh ay noi \"hi\"")   # \" = first nhay ben trong chuoi kep
+print("C:\\tmp\\a.txt")        # \\ = mot first gach cheo nguoc</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Tạo biến <code>cau</code> chứa đúng nội dung: <code>Anh ay noi "hello"</code> (có cặp dấu nháy kép quanh chữ hello).</span>
+<template class="st"># tao cau = Anh ay noi "hello"
+</template>
+<template class="ts">assert cau == 'Anh ay noi "hello"'
+</template></div>
+
+<h4>6. Chuỗi không sửa được tại chỗ (immutable)</h4>
+<p>Bạn <b>không</b> thể đổi một ký tự bằng cách gán vào chỉ số. Mọi phương thức chuỗi luôn trả về một chuỗi <b>mới</b>, không đụng vào chuỗi gốc:</p>
+<pre>s = "python"
+# s[0] = "P"        # LOI: 'str' object does not support item assignment
+s = "P" + s[1:]      # dung cach: tao chuoi moi
+print(s)              # Python</pre>
+
+<h4>7. Phương thức chuỗi (string methods)</h4>
+<p>Chuỗi có sẵn nhiều "công cụ" gọi bằng dấu chấm:</p>
+<pre>"  hi  ".strip()            # 'hi'   — bo khoang trang 2 first
+"hello".upper()             # 'HELLO'
+"HELLO".lower()             # 'hello'
+"hello world".title()       # 'Hello World'
+"a-b-c".replace("-", "_")   # 'a_b_c'
+"python".startswith("py")   # True
+"a.txt".endswith(".txt")    # True
+"banana".count("a")         # 3
+"banana".find("na")         # 2   (vi tri first tien, hoac -1 neu khong thay)</pre>
+<p>Kiểm tra một chuỗi có nằm trong chuỗi khác bằng từ khóa <code>in</code>:</p>
+<pre>print("py" in "python")     # True
+print("z" in "python")      # False</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>email = "  Minh@Example.COM  "</code>. Chuẩn hóa: bỏ khoảng trắng thừa và đổi về chữ thường, lưu vào <code>cleaned</code>.</span>
+<template class="st">email = "  Minh@Example.COM  "
+# tao cleaned: bo khoang trang + chu thuong
+</template>
+<template class="ts">assert cleaned == "minh@example.com"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>path = "src/app/main"</code>. Thay mọi dấu <code>/</code> bằng dấu <code>.</code> để được <code>src.app.main</code>, lưu vào <code>module</code>.</span>
+<template class="st">path = "src/app/main"
+# tao module: thay "/" bang "."
+</template>
+<template class="ts">assert module == "src.app.main"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>filename = "bao_cao.txt"</code>. Tạo biến <code>is_txt</code> = kết quả kiểm tra tên file có kết thúc bằng <code>".txt"</code> hay không (dùng <code>.endswith</code>, kết quả là <code>True</code>/<code>False</code>).</span>
+<template class="st">filename = "bao_cao.txt"
+# tao is_txt = filename co ket thuc bang ".txt"?
+</template>
+<template class="ts">assert is_txt is True
+</template></div>
+
+<h4>8. f-string — chèn và định dạng</h4>
+<p>Cách hiện đại và dễ đọc nhất để chèn giá trị vào chuỗi: thêm chữ <code>f</code> trước dấu nháy, đặt biến (hoặc biểu thức) trong <code>{ }</code>.</p>
+<pre>last_name = "Minh"
+tuoi = 15
+print(f"Ten la {last_name}, {tuoi} tuoi")   # Ten la Minh, 15 tuoi
+print(f"Sang nam {tuoi + 1} tuoi")     # tinh toan ngay trong { }</pre>
+<p>f-string còn <b>định dạng</b> giá trị sau dấu hai chấm <code>:</code></p>
+<pre>price = 2500000
+print(f"{price:,} VND")     # 2,500,000 VND  — first phay ngan cach hang nghin
+score = 8.6666
+print(f"{score:.2f}")       # 8.67           — lam tron 2 chu so thap phan
+last_name = "Minh"
+print(f"|{last_name:&gt;10}|")      # |      Minh|   — can le phai, rong 10
+print(f"|{last_name:&lt;10}|")      # |Minh      |   — can le trai
+print(f"|{last_name:^10}|")      # |   Minh   |   — can giua</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>price = 2500000</code>. Dùng f-string tạo <code>display</code> = <code>"2,500,000 VND"</code> (có dấu phẩy ngăn cách hàng nghìn).</span>
+<template class="st">price = 2500000
+# tao display bang f-string voi dinh dang {price:,}
+</template>
+<template class="ts">assert display == "2,500,000 VND"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>score = 8.6666</code>. Dùng f-string tạo <code>rounded</code> = <code>"8.67"</code> (làm tròn 2 chữ số thập phân).</span>
+<template class="st">score = 8.6666
+# tao rounded bang f-string voi dinh dang {score:.2f}
+</template>
+<template class="ts">assert rounded == "8.67"
+</template></div>
+
+<h4>9. Nối & tách chuỗi (xem trước)</h4>
+<p>Hai phương thức cực hữu ích (sẽ học kỹ ở bài 19):</p>
+<ul>
+<li><code>"a,b,c".split(",")</code> → <code>['a', 'b', 'c']</code> — <b>tách</b> chuỗi thành danh sách.</li>
+<li><code>"-".join(["a", "b", "c"])</code> → <code>"a-b-c"</code> — <b>nối</b> danh sách thành chuỗi.</li>
+</ul>
+<pre class="run">full_name = "Nguyen Van Minh"
+parts = full_name.split(" ")     # ['Nguyen', 'Van', 'Minh']
+print(parts)
+print(len(parts), "tu")          # 3 tu</pre>
+<p>Bạn cũng có thể <b>nối chuỗi các method</b> lại — chúng chạy lần lượt từ trái sang phải:</p>
+<pre class="run">raw = "  Hello WORLD  "
+print(raw.strip().lower())       # 'hello world'</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 11.</b> Cho <code>sentence = "python la ngon ngu"</code>. Tách thành danh sách các từ (theo dấu cách) rồi lưu <b>số từ</b> vào <code>word_count</code> (dùng <code>split</code> rồi <code>len</code>).</span>
+<template class="st">sentence = "python la ngon ngu"
+# tach thanh tu, dem so tu -> word_count
+</template>
+<template class="ts">assert word_count == 4
+</template></div>
+
+<div class="recap">Ghi nhớ bài 2: chuỗi là dãy ký tự, index từ 0 (âm đếm từ cuối) · <code>len()</code> đo độ dài · <code>[a:b]</code> cắt · <code>+</code> ghép, <code>*</code> lặp · <code>\n \t \" \\</code> ký tự đặc biệt · chuỗi <b>immutable</b> — method trả về chuỗi mới · <code>.strip/.lower/.upper/.title/.replace/.startswith/.endswith/.count/.find/.split</code> · <code>in</code> để kiểm tra chứa · f-string <code>f"{bien:dinh_dang}"</code> để chèn và định dạng. Bài sau: ra quyết định với if/elif/else.</div>
+
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Thử thách.</b> Cho <code>full = "  John.DOE@Company.com  "</code>. Tạo <code>username</code> = phần <b>trước</b> dấu <code>@</code> đã chuẩn hóa (strip + lower), và <code>domain</code> = phần <b>sau</b> <code>@</code> đã chuẩn hóa. Kết quả: <code>username = "john.doe"</code>, <code>domain = "company.com"</code>. (Gợi ý: <code>.strip().lower()</code> trước, rồi <code>.find("@")</code> và cắt chuỗi.)</span>
+<template class="st">full = "  John.DOE@Company.com  "
+# tao username va domain
+</template>
+<template class="ts">assert username == "john.doe"
+assert domain == "company.com"
+</template></div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm ở nhà, không tính vào 2 giờ trên lớp. Bốn câu, câu cuối là thử thách.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>full = "  John.Doe@Company.com  "</code>. (1) tạo <code>email</code> = chuẩn hóa (strip + lower); (2) tạo <code>username</code> = phần trước <code>@</code>; (3) tạo <code>message</code> = <code>f"user: {username}"</code> → <code>"user: john.doe"</code>.</span>
+<template class="st">full = "  John.Doe@Company.com  "
+# tao email, username, message
+</template>
+<template class="ts">assert email == "john.doe@company.com"
+assert username == "john.doe"
+assert message == "user: john.doe"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>name = "nguyen van a"</code>. Tạo <code>proper</code> = tên viết hoa đầu mỗi từ (dùng <code>.title()</code>) → <code>"Nguyen Van A"</code>.</span>
+<template class="st">name = "nguyen van a"
+# tao proper bang .title()
+</template>
+<template class="ts">assert proper == "Nguyen Van A"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>filename = "report.final.txt"</code>. Tạo <code>ext</code> = phần mở rộng (sau dấu chấm cuối) → <code>"txt"</code> (gợi ý: <code>.split(".")</code> rồi lấy <code>[-1]</code>).</span>
+<template class="st">filename = "report.final.txt"
+# tao ext = phan mo rong
+</template>
+<template class="ts">assert ext == "txt"
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (thử thách).</b> Cho <code>email = "john.doe@example.com"</code>. Tạo <code>masked</code> = che tên đăng nhập: giữ ký tự đầu, thay phần còn lại của tên trước <code>@</code> bằng <code>"***"</code>, giữ nguyên phần sau <code>@</code> → <code>"j***@example.com"</code>. (Gợi ý: <code>.find("@")</code> và cắt chuỗi.)</span>
+<template class="st">email = "john.doe@example.com"
+# tao masked = "j***@example.com"
+</template>
+<template class="ts">assert masked == "j***@example.com"
+</template></div>

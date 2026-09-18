@@ -1,0 +1,195 @@
+<h3>Lesson 7 — while loops, break & continue</h3>
+<p>The <code>for</code> loop is perfect when you <b>know in advance</b> what you'll loop over: a list, a <code>range</code>. But real life is full of situations where you <b>don't know how many times</b>: "keep asking for the password until it's right", "keep halving until it's below 1", "loop until the user types 'quit'". For those, we have the <b>while loop</b>.</p>
+<p>The core difference: <code>for</code> loops over <b>a collection</b>, while <code>while</code> loops on <b>a condition</b> — "keep going <i>as long as</i> the condition is true". That power comes with a trap: if the condition <b>never</b> becomes false, the loop runs forever. This lesson teaches you to use <code>while</code> safely, along with the two loop "switches", <code>break</code> and <code>continue</code>.</p>
+
+<h4>1. When <code>for</code> isn't enough</h4>
+<p>Suppose you want to know: how many times do you double 1 before it passes 100? You <i>don't know</i> the answer (the number of times) up front, so you can't write a <code>range</code>. You only know the <b>stopping condition</b>: "stop once it passes 100". That's when you reach for <code>while</code>.</p>
+
+<h4>2. The structure of a while loop</h4>
+<pre class="run">n = 5
+while n &gt; 0:          # loop AS LONG AS n > 0 is true
+    print(n)
+    n -= 1            # you MUST change n, or it loops forever
+print("Done!")</pre>
+<p>Read it as: "<b>as long as</b> <code>n &gt; 0</code>, run the indented block". Three parts you need:</p>
+<ul>
+<li>A control variable <b>initialized before</b> the loop (<code>n = 5</code>).</li>
+<li>A <b>condition</b> after <code>while</code> — the loop runs while it's true, stops when false.</li>
+<li>Inside the body, <b>a line that moves the condition toward false</b> (<code>n -= 1</code>). This is the easiest line to forget.</li>
+</ul>
+
+<h4>3. How the machine runs a while loop</h4>
+<p>Before <b>each</b> pass, the machine checks the condition. True → run the body, then check again. False → exit immediately (it may run the body zero times if the condition is false from the start).</p>
+<figure class="diagram">
+<svg viewBox="0 0 460 250" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12.5">
+  <defs><marker id="w7e" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8FA0BC"/></marker></defs>
+  <rect x="185" y="10" width="100" height="30" rx="15" fill="#121C30" stroke="#22304C"/>
+  <text x="235" y="30" text-anchor="middle" fill="#E8E4D8">start</text>
+  <line x1="235" y1="40" x2="235" y2="60" stroke="#8FA0BC" marker-end="url(#w7e)"/>
+  <polygon points="235,62 340,102 235,142 130,102" fill="#0E1626" stroke="#F5B942"/>
+  <text x="235" y="100" text-anchor="middle" fill="#F5B942">condition true?</text>
+  <line x1="340" y1="102" x2="392" y2="102" stroke="#8FA0BC" marker-end="url(#w7e)"/>
+  <text x="366" y="94" text-anchor="middle" fill="#E2604C">false</text>
+  <rect x="392" y="86" width="64" height="32" rx="6" fill="#121C30" stroke="#E2604C"/>
+  <text x="424" y="106" text-anchor="middle" fill="#E8E4D8">exit</text>
+  <line x1="235" y1="142" x2="235" y2="166" stroke="#8FA0BC" marker-end="url(#w7e)"/>
+  <text x="247" y="158" fill="#7FD1C0">true</text>
+  <rect x="150" y="166" width="170" height="34" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="235" y="187" text-anchor="middle" fill="#E8E4D8">run the loop body</text>
+  <path d="M150,183 L60,183 L60,102 L128,102" fill="none" stroke="#8FA0BC" marker-end="url(#w7e)"/>
+  <text x="64" y="140" fill="#8FA0BC">repeat</text>
+</svg>
+<figcaption>while = check the condition BEFORE each pass. False means exit right away — it can run 0 times.</figcaption>
+</figure>
+<p>Trace <code>n</code> in the example above: 5 (print) → 4 (print) → 3 (print) → 2 (print) → 1 (print) → 0 (the condition <code>0 &gt; 0</code> is false → exit).</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Use <code>while</code> to create a countdown list <code>countdown</code> = <code>[5, 4, 3, 2, 1]</code> (start <code>n = 5</code>, each pass <code>append</code> then <code>n -= 1</code>).</span>
+<template class="st">n = 5
+countdown = []
+# use while to build countdown
+</template>
+<template class="ts">assert countdown == [5, 4, 3, 2, 1]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Use <code>while</code> to sum the numbers from 1 to 100 into <code>total</code> (start <code>i = 1</code>, <code>total = 0</code>; each pass add <code>i</code> then <code>i += 1</code>).</span>
+<template class="st">i = 1
+total = 0
+# use while to accumulate 1..100
+</template>
+<template class="ts">assert total == 5050
+</template></div>
+
+<h4>4. The trap: infinite loops</h4>
+<p>If the condition <b>never</b> becomes false, the program hangs forever. This is the most common <code>while</code> bug — usually caused by forgetting to update the control variable.</p>
+<pre># DO NOT RUN THIS — infinite loop!
+n = 5
+while n &gt; 0:
+    print(n)      # forgot n -= 1  ->  n stays 5  ->  loops forever</pre>
+<p>Golden rule: every time you write a <code>while</code>, immediately ask yourself <b>"what makes this condition false, and is that guaranteed to happen?"</b></p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Double <code>x</code> (start <code>x = 1</code>) until <code>x</code> passes 100, counting the doublings into <code>count</code>. It ends at <code>x = 128</code>, <code>count = 7</code>. (Use <code>while x &lt;= 100</code>.)</span>
+<template class="st">x = 1
+count = 0
+# double x until > 100, count the doublings
+</template>
+<template class="ts">assert count == 7
+assert x == 128
+</template></div>
+
+<h4>5. <code>break</code> — leave the loop immediately</h4>
+<p><code>break</code> stops the loop <b>right there</b>, skipping all remaining passes. Very useful for <b>finding the first element</b> that matches a condition and then stopping — no need to walk the rest.</p>
+<pre class="run">nums = [3, 7, 4, 9, 2]
+first_even = None
+for n in nums:
+    if n % 2 == 0:
+        first_even = n
+        break            # found it -> exit, don't check 9, 2
+print(first_even)        # 4</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>nums = [3, 7, 4, 9, 2]</code>, find the <b>first even</b> number into <code>first_even</code> then stop with <code>break</code>.</span>
+<template class="st">nums = [3, 7, 4, 9, 2]
+first_even = None
+# find the first even, then break
+</template>
+<template class="ts">assert first_even == 4
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Use <code>while True</code> and <code>break</code>: double <code>x</code> (start <code>x = 1</code>) until <code>x &gt;= 50</code>, then stop. It ends at <code>x = 64</code>.</span>
+<template class="st">x = 1
+# while True: double, if x >= 50 then break
+</template>
+<template class="ts">assert x == 64
+</template></div>
+
+<h4>6. <code>continue</code> — skip the rest of this pass</h4>
+<p><code>continue</code> jumps straight to the <b>next pass</b>, skipping the remaining lines of the current one. Use it to "skip over" elements you don't want to process.</p>
+<pre class="run">nums = [3, -1, 4, -2, 5]
+total = 0
+for n in nums:
+    if n &lt; 0:
+        continue         # negative -> skip, go to next pass
+    total += n
+print(total)             # 3 + 4 + 5 = 12</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>nums = [3, -1, 4, -2, 5]</code>, sum only the <b>non-negative</b> numbers into <code>total</code>, using <code>continue</code> to skip negatives. Result <code>12</code>.</span>
+<template class="st">nums = [3, -1, 4, -2, 5]
+total = 0
+# use continue to skip negatives
+</template>
+<template class="ts">assert total == 12
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>word = "programming"</code>, count the <b>non-vowel</b> characters into <code>consonants</code>, using <code>continue</code> to skip vowels (<code>if ch in "aeiou": continue</code>). Result <code>8</code>.</span>
+<template class="st">word = "programming"
+consonants = 0
+# count consonants, use continue to skip vowels
+</template>
+<template class="ts">assert consonants == 8
+</template></div>
+
+<h4>7. The "process until done" pattern</h4>
+<p>A very common shape: transform a value repeatedly until it reaches a target state. For example the Collatz sequence: if even halve it, if odd do <code>3n + 1</code>, repeat until it reaches 1.</p>
+<pre class="run">n = 6
+steps = 0
+while n != 1:
+    if n % 2 == 0:
+        n = n // 2
+    else:
+        n = 3 * n + 1
+    steps += 1
+print(steps)    # 8 steps: 6->3->10->5->16->8->4->2->1</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>n = 6</code>, count the steps for the Collatz sequence to bring <code>n</code> to 1 into <code>steps</code> (even → halve, odd → <code>3n + 1</code>). Result <code>8</code>.</span>
+<template class="st">n = 6
+steps = 0
+# count the Collatz steps to bring n to 1
+</template>
+<template class="ts">assert steps == 8
+</template></div>
+
+<h4>8. Mixed practice</h4>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>n = 12345</code>, count its <b>digits</b> into <code>digits</code> using <code>while</code> (each pass drop one digit: <code>n //= 10</code>, <code>digits += 1</code>, until <code>n == 0</code>). Result <code>5</code>.</span>
+<template class="st">n = 12345
+digits = 0
+# count the digits using while
+</template>
+<template class="ts">assert digits == 5
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>nums = [4, 9, 15, 6, 21]</code>, find the <b>first number divisible by 3</b> into <code>first</code> then <code>break</code>. Result <code>9</code>.</span>
+<template class="st">nums = [4, 9, 15, 6, 21]
+first = None
+# find the first number divisible by 3, then break
+</template>
+<template class="ts">assert first == 9
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch.</b> Given <code>n = 123</code>, create <code>reversed_num</code> = the digits reversed → <code>321</code>, using <code>while</code> (each pass: take the last digit <code>n % 10</code>, build the result <code>reversed_num = reversed_num * 10 + n % 10</code>, then <code>n //= 10</code>).</span>
+<template class="st">n = 123
+reversed_num = 0
+# reverse the digits using while
+</template>
+<template class="ts">assert reversed_num == 321
+</template></div>
+
+<div class="recap">Recap of lesson 7: <code>while condition:</code> loops <b>as long as</b> the condition is true · always include a line that moves the condition toward false, or you get an <b>infinite loop</b> · <code>break</code> exits the loop now · <code>continue</code> skips the rest and goes to the next pass · <code>while True: ... break</code> when the stopping condition is in the middle of the body. Next: nested loops (a loop inside a loop).</div>
+
+<h4>🏠 Homework</h4>
+<p>Do this at home, outside the 2-hour class. Four questions; the last is a stretch.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Use <code>while</code> to sum the <b>even</b> numbers from 2 to 20 (2, 4, …, 20) into <code>total</code>. Result <code>110</code>.</span>
+<template class="st">total = 0
+# use while to sum the even numbers 2..20
+</template>
+<template class="ts">assert total == 110
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>nums = [5, 8, 12, 3, 20]</code>, find the <b>first number greater than 10</b> into <code>first_big</code> then <code>break</code>. Result <code>12</code>.</span>
+<template class="st">nums = [5, 8, 12, 3, 20]
+first_big = None
+# find the first number > 10, then break
+</template>
+<template class="ts">assert first_big == 12
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>nums = [1, -3, 2, -5, 4, -1]</code>, count the <b>negative</b> elements into <code>neg_count</code>, using <code>continue</code> to skip non-negatives. Result <code>3</code>.</span>
+<template class="st">nums = [1, -3, 2, -5, 4, -1]
+neg_count = 0
+# count negatives, use continue to skip non-negatives
+</template>
+<template class="ts">assert neg_count == 3
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch — greatest common divisor).</b> Given <code>a = 48</code>, <code>b = 36</code>, use Euclid's algorithm to find <code>gcd</code>: loop <code>while b != 0</code> with <code>a, b = b, a % b</code>; when <code>b == 0</code>, <code>a</code> is the answer. Result <code>12</code>.</span>
+<template class="st">a = 48
+b = 36
+# find gcd with Euclid's algorithm (while)
+</template>
+<template class="ts">assert gcd == 12
+</template></div>

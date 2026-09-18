@@ -1,0 +1,243 @@
+<h3>Lesson 6 — The for loop & range</h3>
+<p>A computer isn't smarter than you — it's just <b>fast and never gets bored</b>. The real power of programming comes from telling the machine to do <b>one thing over and over</b>, thousands of times, without tiring or making mistakes. The tool for that is the <b>loop</b>, and it's the biggest leap in your programming thinking so far.</p>
+<p>Imagine greeting 100 students. Writing 100 <code>print</code> lines is tedious and error-prone, and if the list changes you'd fix each line by hand. There's a golden rule: <b>DRY — Don't Repeat Yourself</b>. When you notice you're about to copy–paste the same code several times, you almost certainly want a loop instead.</p>
+<p>This lesson goes slowly: we'll <b>dissect each part</b> of the <code>for</code> loop, watch the machine <b>run it step by step</b>, and only then practice. Nail this and the later lessons (nested lists, dictionaries, reading files) get much easier.</p>
+
+<h4>1. The problem: repeating by hand</h4>
+<p>Suppose we have three names and want to greet each one:</p>
+<pre class="run"># the manual way: repetitive, error-prone, hard to change
+print("Hello An")
+print("Hello Binh")
+print("Hello Chi")</pre>
+<p>It works — but ask yourself: what if there were <b>100</b> names? What if the list is read from a file and you <i>don't even know</i> how many names there'll be when you write the code? We need a way to tell the machine: "do this for <b>each</b> name, however many there are." That's exactly what the <code>for</code> loop is for.</p>
+
+<h4>2. Anatomy of a for loop</h4>
+<p>The same task, written with a loop:</p>
+<pre class="run">ten = ["An", "Binh", "Chi"]
+for t in ten:
+    print("Hello", t)</pre>
+<p>One body line replaces three repeated lines. Read its <b>four parts</b> carefully:</p>
+<ul>
+<li><code>for</code> — the opening keyword, telling the machine "get ready to loop".</li>
+<li><code>t</code> — the <b>loop variable</b>, which you name. On <b>each pass</b>, the machine puts one element of the list into it.</li>
+<li><code>in ten</code> — the <b>collection</b> to walk through: a list, a string, or a <code>range</code> (section 4).</li>
+<li><code>:</code> and the <b>indented block</b> below — the <b>loop body</b>, the code repeated each pass.</li>
+</ul>
+<p>Just like <code>if</code>, <b>indentation decides</b> which lines are inside the loop. Only indented lines repeat; a non-indented line runs <i>once</i>, after the loop finishes.</p>
+<pre class="run">for t in ["An", "Binh"]:
+    print("Inside:", t)       # indented -> runs each pass
+    print("  (still inside)")
+print("All done!")            # not indented -> runs once, at the end</pre>
+
+<h4>3. How the machine runs a loop</h4>
+<p>Under the hood, the machine repeats exactly <b>three steps</b>: (1) ask "is there an element I haven't taken yet?"; (2) if yes, take the <b>next</b> one into the loop variable and run the body; (3) go back to step 1. When there are no elements left, the loop stops.</p>
+<figure class="diagram">
+<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12.5">
+  <defs>
+    <marker id="a6e" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8FA0BC"/></marker>
+  </defs>
+  <rect x="185" y="10" width="110" height="30" rx="15" fill="#121C30" stroke="#22304C"/>
+  <text x="240" y="30" text-anchor="middle" fill="#E8E4D8">start loop</text>
+  <line x1="240" y1="40" x2="240" y2="66" stroke="#8FA0BC" marker-end="url(#a6e)"/>
+  <polygon points="240,68 340,110 240,152 140,110" fill="#0E1626" stroke="#F5B942"/>
+  <text x="240" y="108" text-anchor="middle" fill="#F5B942">any left?</text>
+  <line x1="340" y1="110" x2="392" y2="110" stroke="#8FA0BC" marker-end="url(#a6e)"/>
+  <text x="366" y="102" text-anchor="middle" fill="#E2604C">no</text>
+  <rect x="392" y="94" width="76" height="32" rx="6" fill="#121C30" stroke="#E2604C"/>
+  <text x="430" y="114" text-anchor="middle" fill="#E8E4D8">finish</text>
+  <line x1="240" y1="152" x2="240" y2="176" stroke="#8FA0BC" marker-end="url(#a6e)"/>
+  <text x="252" y="168" fill="#7FD1C0">yes</text>
+  <rect x="120" y="176" width="240" height="34" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="240" y="197" text-anchor="middle" fill="#E8E4D8">next element → loop variable</text>
+  <line x1="240" y1="210" x2="240" y2="232" stroke="#8FA0BC" marker-end="url(#a6e)"/>
+  <rect x="155" y="232" width="170" height="34" rx="6" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="240" y="253" text-anchor="middle" fill="#E8E4D8">run the loop body</text>
+  <path d="M155,249 L60,249 L60,110 L138,110" fill="none" stroke="#8FA0BC" marker-end="url(#a6e)"/>
+  <text x="64" y="180" fill="#8FA0BC">repeat</text>
+</svg>
+<figcaption>A loop = ask "any left?" → take the next element → run the body → ask again. When none are left, stop.</figcaption>
+</figure>
+<p>The best way to understand a loop is to <b>make a trace table</b> of the loop variable across passes. For <code>for t in ["An", "Binh", "Chi"]</code>:</p>
+<table class="res">
+<thead><tr><th>Pass</th><th>t becomes</th><th>Prints</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>"An"</td><td>Hello An</td></tr>
+<tr><td>2</td><td>"Binh"</td><td>Hello Binh</td></tr>
+<tr><td>3</td><td>"Chi"</td><td>Hello Chi</td></tr>
+<tr><td>—</td><td>(none left)</td><td>loop stops</td></tr>
+</tbody>
+</table>
+<p>This "running the code in your head" skill — tracing how variables change each pass — is something every good programmer does. For every loop you meet, try drawing a table like this.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Given <code>nums = [1, 2, 3, 4]</code>, use a loop to add them all into <code>total</code> (start <code>total = 0</code>, each pass <code>total += n</code>).</span>
+<template class="st">nums = [1, 2, 3, 4]
+total = 0
+# use for to accumulate into total
+</template>
+<template class="ts">assert total == 10
+</template></div>
+
+<h4>4. <code>range()</code> — generate a sequence of numbers to loop over</h4>
+<p>Often you don't have a list — you just want to loop a fixed number of <b>times</b>, e.g. "do it 10 times" or "count from 1 to 100". <code>range</code> produces exactly that sequence. There are three forms:</p>
+<table class="res">
+<thead><tr><th>Written as</th><th>Produces</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>range(5)</code></td><td>0, 1, 2, 3, 4</td><td>from 0, stop <b>before</b> 5</td></tr>
+<tr><td><code>range(1, 6)</code></td><td>1, 2, 3, 4, 5</td><td>from 1, stop before 6</td></tr>
+<tr><td><code>range(0, 10, 2)</code></td><td>0, 2, 4, 6, 8</td><td>step of 2</td></tr>
+</tbody>
+</table>
+<p>Why stop <b>before</b> the last number instead of at it? It's a Python convention (like slicing <code>[a:b]</code>). It means <code>range(len(my_list))</code> gives exactly the valid indexes 0..n-1.</p>
+<pre class="run">for i in range(5):
+    print(i, end=" ")   # 0 1 2 3 4
+print()
+for i in range(1, 6):
+    print(i, end=" ")   # 1 2 3 4 5</pre>
+<p>You can also walk a list <b>by index</b> by combining <code>range</code> and <code>len</code> — handy when you need each element's position:</p>
+<pre class="run">ten = ["An", "Binh", "Chi"]
+for i in range(len(ten)):
+    print(i, ten[i])    # 0 An / 1 Binh / 2 Chi</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Use <code>range</code> and <code>append</code> to create <code>doubles</code> = <code>[2, 4, 6, 8, 10]</code> (double the numbers 1..5). Start <code>doubles = []</code>.</span>
+<template class="st">doubles = []
+# for i in range(1, 6): append i*2 to doubles
+</template>
+<template class="ts">assert doubles == [2, 4, 6, 8, 10]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Use <code>range</code> to sum the numbers from 1 to 100 into <code>total</code> (start <code>total = 0</code>).</span>
+<template class="st">total = 0
+# accumulate 1..100 into total
+</template>
+<template class="ts">assert total == 5050
+</template></div>
+
+<h4>5. The "accumulator" pattern — the most important shape</h4>
+<p>So many loop problems follow the same shape: you want to fold many values into <b>one</b> result (a sum, a count, a joined string, the largest value…). The recipe is always three parts:</p>
+<ol>
+<li><b>Initialize</b> a result variable <i>before</i> the loop (often <code>0</code>, <code>""</code>, or <code>[]</code>).</li>
+<li><b>Update</b> it on <i>each</i> pass.</li>
+<li><b>Use</b> the result <i>after</i> the loop.</li>
+</ol>
+<pre class="run">nums = [4, 8, 2, 6]
+tong = 0            # 1) initialize
+for n in nums:
+    tong += n       # 2) update each pass
+print(tong)         # 3) use the result -> 20</pre>
+<p>Trace <code>tong</code> across passes: 0 → 4 → 12 → 14 → 20. If you <b>forget</b> the <code>tong = 0</code> line, the machine errors with "<code>tong</code> is not defined" on the first pass — a very common mistake.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>word = "banana"</code>, count how many <code>"a"</code> characters there are, into <code>count</code> (walk each character, when it's <code>"a"</code> do <code>count += 1</code>).</span>
+<template class="st">word = "banana"
+count = 0
+# count the "a" characters
+</template>
+<template class="ts">assert count == 3
+</template></div>
+
+<h4>6. Filter & count: put an <code>if</code> inside the loop</h4>
+<p>Combine two skills you already have — loops (this lesson) and conditions (lessons 3–4) — into one of the most common code patterns: <b>walk through and only handle elements that match a condition</b>.</p>
+<pre class="run">nums = [1, 2, 3, 4, 5, 6]
+so_chan = 0
+for n in nums:
+    if n % 2 == 0:      # the if is INSIDE the for (indented twice)
+        so_chan += 1
+print(so_chan)          # 3</pre>
+<p>Notice the two indent levels: <code>for</code> at level 0, the <code>for</code> body indented once, the <code>if</code> body indented twice. When reading deeply-indented code, always ask "which block does this line belong to?".</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>nums = [1, 2, 3, 4, 5, 6]</code>, count the <b>even</b> elements into <code>even_count</code> (use <code>if n % 2 == 0</code> inside the loop).</span>
+<template class="st">nums = [1, 2, 3, 4, 5, 6]
+even_count = 0
+# count the even elements
+</template>
+<template class="ts">assert even_count == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>nums = [3, 7, 2, 9, 4]</code>, find the largest yourself into <code>biggest</code> (start <code>biggest = nums[0]</code>, update when you see a bigger one). <i>Don't use <code>max()</code> — practice the accumulator thinking.</i></span>
+<template class="st">nums = [3, 7, 2, 9, 4]
+biggest = nums[0]
+# walk and update biggest
+</template>
+<template class="ts">assert biggest == 9
+</template></div>
+
+<h4>7. Building a new list with a loop</h4>
+<p>A variant of the accumulator: start with an empty list and <code>append</code> as you go. This is how you "transform" one list into another — extremely common.</p>
+<pre class="run">squares = []
+for i in range(1, 6):
+    squares.append(i ** 2)
+print(squares)      # [1, 4, 9, 16, 25]</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Create <code>squares</code> = <code>[1, 4, 9, 16, 25]</code> (squares of 1..5) using a loop and <code>append</code>.</span>
+<template class="st">squares = []
+# create squares with for + append
+</template>
+<template class="ts">assert squares == [1, 4, 9, 16, 25]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Sum the <b>multiples of 3</b> below 20 (that is 3, 6, 9, 12, 15, 18) into <code>total</code> (hint: <code>range(3, 20, 3)</code>).</span>
+<template class="st">total = 0
+# accumulate the multiples of 3 below 20
+</template>
+<template class="ts">assert total == 63
+</template></div>
+
+<h4>8. Common confusions</h4>
+<ul>
+<li><b>Forgetting to initialize</b> the accumulator before the loop → "not defined" error.</li>
+<li><b>Putting the "use the result" line INSIDE the loop</b> (wrong indent) → it runs every pass instead of once at the end.</li>
+<li><b>Thinking <code>range(1, 5)</code> goes to 5</b> — it actually stops at 4. To reach 5 use <code>range(1, 6)</code>.</li>
+<li><b>Changing a list <i>while</i> looping over it</b> (adding/removing) → causes unpredictable bugs; avoid it for now.</li>
+</ul>
+
+<h4>9. Mixed practice</h4>
+<p>Combine the patterns you just learned: walk, accumulate, filter, and build a new list.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>prices = [10, 20, 30]</code>, create <code>discounted</code> = each price after a 10% discount (times <code>0.9</code>), using a loop and <code>append</code>. Result: <code>[9.0, 18.0, 27.0]</code>.</span>
+<template class="st">prices = [10, 20, 30]
+discounted = []
+# discount each price by 10%, append to discounted
+</template>
+<template class="ts">assert discounted == [9.0, 18.0, 27.0]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>nums = [3, 8, 5, 12, 1, 7]</code>, count the elements <b>greater than 5</b> into <code>over_five</code>.</span>
+<template class="st">nums = [3, 8, 5, 12, 1, 7]
+over_five = 0
+# count elements > 5
+</template>
+<template class="ts">assert over_five == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 11.</b> Given <code>words = ["hi", "hello", "hey"]</code>, create <code>lengths</code> = a list of each word's length → <code>[2, 5, 3]</code> (use <code>len(w)</code> in the loop).</span>
+<template class="st">words = ["hi", "hello", "hey"]
+lengths = []
+# build a list of each word's length
+</template>
+<template class="ts">assert lengths == [2, 5, 3]
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch.</b> Given <code>nums = [3, 1, 4, 1, 5, 9, 2]</code>, find the <b>index</b> of the largest element into <code>max_index</code> — use <code>range(len(nums))</code> and track both the largest value and its position. Here <code>max_index = 5</code>.</span>
+<template class="st">nums = [3, 1, 4, 1, 5, 9, 2]
+max_index = 0
+# find the index of the largest element
+</template>
+<template class="ts">assert max_index == 5
+</template></div>
+
+<div class="recap">Recap of lesson 6: <code>for x in collection:</code> visits each element · indentation defines the body · the machine runs: ask "any left?" → take element → run body → repeat · <code>range(n) / range(a,b) / range(a,b,step)</code>, stops <b>before</b> the last number · the <b>accumulator</b> pattern: initialize → update → use · put an <code>if</code> inside to filter/count · <code>append</code> to build a new list. Next: <code>while</code>, <code>break</code>/<code>continue</code> and stopping a loop early.</div>
+
+<h4>🏠 Homework</h4>
+<p>Do this at home, outside the 2-hour class. Four questions; the last is a stretch.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Sum the <b>odd</b> numbers from 1 to 10 (1, 3, 5, 7, 9) into <code>total</code>.</span>
+<template class="st">total = 0
+# accumulate the odd numbers 1..10
+</template>
+<template class="ts">assert total == 25
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>word = "education"</code>, count the vowels (a, e, i, o, u) into <code>vowels</code> (hint: <code>if ch in "aeiou"</code>).</span>
+<template class="st">word = "education"
+vowels = 0
+# count the vowels
+</template>
+<template class="ts">assert vowels == 5
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Create a countdown list <code>countdown</code> = <code>[5, 4, 3, 2, 1]</code> using a loop (hint: <code>range(5, 0, -1)</code>).</span>
+<template class="st">countdown = []
+# create countdown with for + append
+</template>
+<template class="ts">assert countdown == [5, 4, 3, 2, 1]
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch — FizzBuzz).</b> Create a list <code>result</code> for the numbers 1..15: multiples of both 3 and 5 → <code>"FizzBuzz"</code>; multiples of 3 → <code>"Fizz"</code>; multiples of 5 → <code>"Buzz"</code>; otherwise → the number as a string. The result has 15 items, starting <code>["1", "2", "Fizz", "4", "Buzz", ...]</code>.</span>
+<template class="st">result = []
+# build result following the FizzBuzz rule for 1..15
+</template>
+<template class="ts">assert result == ["1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz"]
+</template></div>
