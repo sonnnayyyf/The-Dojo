@@ -14,7 +14,7 @@
   <h1 data-t-html="hero_h1"></h1>
   <p data-t="hero_p"></p>
   <div class="cta">
-    <a class="btn" href="python.html" data-t="hero_cta1"></a>
+    <a class="btn" href="course.html?c=python" data-t="hero_cta1"></a>
     <a class="btn ghost" href="pricing.html" data-t="hero_cta2"></a>
   </div>
   <div class="proof">
@@ -83,7 +83,7 @@
   <h2 data-t="cta_h2" style="font-family:var(--disp);font-size:27px"></h2>
   <p data-t="cta_p" style="color:var(--muted);max-width:580px;margin:12px auto 24px"></p>
   <div class="cta" style="justify-content:center">
-    <a class="btn" href="python.html" data-t="cta_btn1"></a>
+    <a class="btn" href="course.html?c=python" data-t="cta_btn1"></a>
     <a class="btn ghost" href="pricing.html" data-t="cta_btn2"></a>
   </div>
 </div></section>
@@ -129,7 +129,7 @@ vi:{
  courses_eyebrow:'Khóa học', courses_h2:'Chọn một khóa để bắt đầu',
  courses_p:'Bắt đầu miễn phí — bài 1 của mọi khóa đều mở sẵn và chạy ngay, không cần đăng ký.',
  courses_all:'Xem tất cả khóa học →',
- c_go:'Học thử bài 1 →', c_free:'Bài đầu miễn phí · không cần đăng ký',
+ c_go:'Xem khóa học →', c_try:'Học thử bài 1 →', c_free:'Bài đầu miễn phí · không cần đăng ký',
  c_python_t:'Python căn bản', c_python_d:'Từ dòng print() đầu tiên đến khi tự xây một chương trình chạy được, từng bước nhỏ.',
  c_python_o:['Đọc & viết Python thật một cách tự tin','Làm chủ list, dictionary & hàm','Hoàn thành một đồ án nhỏ và đồ án tốt nghiệp'],
  c_sql_t:'SQL cho công việc dữ liệu', c_sql_d:'Đặt câu hỏi thật cho dữ liệu thật — kỹ năng đứng sau mọi công việc phân tích và backend.',
@@ -179,7 +179,7 @@ en:{
  courses_eyebrow:'Courses', courses_h2:'Pick a course to start',
  courses_p:'Start free — lesson 1 of every course is unlocked and runs instantly, no signup.',
  courses_all:'Browse all courses →',
- c_go:'Try lesson 1 free →', c_free:'Free first lesson · no signup',
+ c_go:'View course →', c_try:'Try lesson 1 free →', c_free:'Free first lesson · no signup',
  c_python_t:'Python Foundations', c_python_d:'From your first print() to building a real program, one small step at a time.',
  c_python_o:['Read & write real Python confidently','Work with lists, dictionaries & functions','Build a mini-project and a capstone'],
  c_sql_t:'SQL for Data Work', c_sql_d:'Ask real questions of real data — the skill behind every analyst and backend job.',
@@ -211,7 +211,7 @@ window.onLang=function(){
      <p>${d['c_'+c.id+'_d']}</p>
      <ul class="outcome">${outcomes}</ul>
      <div class="meta">${d.c_free}</div>
-     <a class="btn ghost" href="${c.href}">${d.c_go}</a>
+     <a class="btn ghost" href="course.html?c=${c.id}">${d.c_go}</a>
    </div>`;
   }).join('');
 };

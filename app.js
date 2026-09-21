@@ -8,6 +8,7 @@
     zalo: '0986061705',            // your Zalo phone number
     email: 'EDIT-ME@example.com',  // fallback email (edit me)
   };
+  window.DOJO_SENSEI = SENSEI;      // read by static pages (e.g. course overview) for the "Ask about" button
 
   // ---------- Supabase (accounts + cloud progress) ----------
   const SUPABASE = {

@@ -34,7 +34,7 @@ vi:{
  c_p:'Mỗi khóa dạy bạn một kỹ năng thật, có thể dùng được — bằng cách viết code thật và được chấm ngay. Bài 1 của mọi khóa đều mở sẵn, miễn phí, không cần đăng ký.',
  c_more:'Thêm nhiều khóa mới đang được xây dựng — hãy quay lại nhé.',
  c_pricing:'Xem học phí chi tiết →',
- c_free:'Bài 1 miễn phí · không cần đăng ký', c_for:'Phù hợp với', c_go:'Học thử bài 1 →', c_price_note:'trọn khóa',
+ c_free:'Bài 1 miễn phí · không cần đăng ký', c_for:'Phù hợp với', c_go:'Xem khóa học →', c_try:'Học thử bài 1 miễn phí →', c_price_note:'trọn khóa',
  c_python_t:'Python căn bản', c_python_d:'Từ dòng print() đầu tiên đến khi tự xây một chương trình chạy được, từng bước nhỏ.',
  c_python_o:['Đọc & viết Python thật một cách tự tin','Làm chủ list, dictionary & hàm','Hoàn thành một đồ án nhỏ và đồ án tốt nghiệp'],
  c_python_for:'người mới hoàn toàn',
@@ -50,7 +50,7 @@ en:{
  c_p:'Each course teaches you one real, usable skill — by writing real code and getting graded on the spot. Lesson 1 of every course is unlocked, free, no signup.',
  c_more:'More courses are on the way — check back soon.',
  c_pricing:'See full pricing →',
- c_free:'Lesson 1 free · no signup', c_for:'Best for', c_go:'Try lesson 1 free →', c_price_note:'full course',
+ c_free:'Lesson 1 free · no signup', c_for:'Best for', c_go:'View course →', c_try:'Try lesson 1 free →', c_price_note:'full course',
  c_python_t:'Python Foundations', c_python_d:'From your first print() to building a real program, one small step at a time.',
  c_python_o:['Read & write real Python confidently','Work with lists, dictionaries & functions','Build a mini-project and a capstone'],
  c_python_for:'complete beginners',
@@ -71,7 +71,7 @@ window.onLang=function(){
      <p>${d['c_'+c.id+'_d']}</p>
      <ul class="outcome">${outcomes}</ul>
      <div class="meta">${d.c_for}: ${d['c_'+c.id+'_for']} · ${d.c_free}</div>
-     <a class="btn" href="${c.href}">${d.c_go}</a>
+     <a class="btn" href="course.html?c=${c.id}">${d.c_go}</a>
    </div>`;
   }).join('');
 };

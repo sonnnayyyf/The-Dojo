@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khóa học — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section class="chero"><div class="wrap" id="cHero"></div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="s_learn_e"></div><h2 data-t="s_learn_h"></h2></div>
+  <ul class="outcome outcome-grid" id="cOutcomes"></ul>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="s_fit_e"></div><h2 data-t="s_fit_h"></h2></div>
+  <div class="about2">
+    <div class="vscard good"><h3 data-t="s_for_h"></h3><ul id="cForWho"></ul></div>
+    <div class="vscard"><h3 data-t="s_expect_h"></h3><ul id="cExpect"></ul></div>
+  </div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="s_syl_e"></div><h2 data-t="s_syl_h"></h2><p data-t="s_syl_p"></p></div>
+  <div class="syllabus" id="cSyllabus"></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead"><div class="eyebrow" data-t="s_faq_e"></div><h2 data-t="s_faq_h"></h2></div>
+  <div class="faq" id="cFaq"></div>
+</div></section>
+
+<section class="ccta" style="border-top:1px solid var(--line)"><div class="wrap" id="cCta"></div></section>
+
+<script src="app.js"></script>
+<script>
+// which course? ?c=python|sql|qa  (default python)
+const CID = (new URLSearchParams(location.search).get('c') || 'python').toLowerCase();
+
+// shared UI strings (section headings, buttons)
+const PAGE_I18N = {
+vi:{
+  s_learn_e:'Bạn sẽ học được', s_learn_h:'Kết thúc khóa, bạn làm được gì',
+  s_fit_e:'Có hợp với bạn?', s_fit_h:'Khóa này dành cho ai — và bạn cần chuẩn bị gì',
+  s_for_h:'Phù hợp nếu bạn…', s_expect_h:'Điều bạn nên biết trước',
+  s_syl_e:'Nội dung khóa học', s_syl_h:'Lộ trình từng bước', s_syl_p:'Mỗi buổi ~2 giờ, đi từ vấn đề thật rồi tới code — kèm bài tập chấm ngay và bài về nhà.',
+  s_faq_e:'Câu hỏi thường gặp', s_faq_h:'Những điều học viên hay hỏi',
+  b_try:'Học thử bài 1 miễn phí', b_buy:'Đăng ký khóa học', b_ask:'Hỏi về khóa này', b_pricing:'Xem học phí →',
+  free_note:'Bài 1 mở sẵn · chạy ngay · không cần đăng ký',
+  cta_h:'Sẵn sàng viết dòng code đầu tiên?', cta_p:'Mở bài 1, viết thứ gì đó thật và thấy nó chạy — miễn phí, ngay trong trình duyệt.',
+  lv_label:'Trình độ', dur_label:'Thời lượng', les_label:'Số bài', price_label:'Học phí',
+  ask_copied:'Đã copy tin nhắn hỏi khóa học. Sang Zalo, dán (Ctrl+V) và gửi nhé!',
+},
+en:{
+  s_learn_e:'What you will learn', s_learn_h:'By the end, you will be able to',
+  s_fit_e:'Is it right for you?', s_fit_h:'Who this course is for — and what to expect',
+  s_for_h:'A great fit if you…', s_expect_h:'What to know before you start',
+  s_syl_e:'Course content', s_syl_h:'A step-by-step path', s_syl_p:'Each lesson is ~2 hours, problem-first then code — with exercises graded on the spot and homework.',
+  s_faq_e:'FAQ', s_faq_h:'What learners usually ask',
+  b_try:'Try lesson 1 free', b_buy:'Enrol in this course', b_ask:'Ask about this course', b_pricing:'See pricing →',
+  free_note:'Lesson 1 unlocked · runs instantly · no signup',
+  cta_h:'Ready to write your first line of code?', cta_p:'Open lesson 1, write something real and watch it run — free, right in your browser.',
+  lv_label:'Level', dur_label:'Length', les_label:'Lessons', price_label:'Price',
+  ask_copied:'Question about the course copied. Open Zalo, paste (Ctrl+V) and send!',
+}};
+
+// per-course content
+const INFO = {
+python:{ href:'python.html', price:{vi:'2.999.000₫',en:'2,999,000₫'},
+ vi:{ title:'Python căn bản', tag:'Ngôn ngữ lập trình được yêu thích nhất cho người mới',
+   level:'Người mới hoàn toàn', dur:'20 buổi · ~40 giờ', lessons:'20 bài',
+   lead:'Python là cách nhẹ nhàng nhất để bước vào lập trình — cú pháp gần với tiếng Anh, dùng ở khắp nơi từ web, dữ liệu tới AI. Khóa này bắt đầu từ con số 0 tuyệt đối: không giả định bạn từng viết code. Bạn sẽ chạy Python <b>thật</b> ngay trong trình duyệt, được chấm điểm tức thì, và kết thúc bằng hai dự án tự tay xây.',
+   outcomes:['Đọc và viết Python thật một cách tự tin','Làm việc với chuỗi, số, list và dictionary','Điều khiển luồng chương trình bằng if / for / while','Tự viết hàm để tái sử dụng code','Xử lý lỗi và đọc/ghi file văn bản','Hoàn thành một đồ án nhỏ và một đồ án tốt nghiệp'],
+   forWho:['Chưa từng viết một dòng code nào','Là học sinh / sinh viên muốn nền tảng vững','Muốn chuyển ngành sang lập trình','Thích học bằng cách làm thật, không chỉ xem video'],
+   expect:['Không cần cài đặt gì — mọi thứ chạy trong trình duyệt','Nên dành ~2 giờ tập trung cho mỗi buổi','Bài đọc bằng tiếng Việt, code viết bằng tiếng Anh','Có bài tập chấm ngay và bài về nhà mỗi buổi','Từ buổi 9, bạn sẽ dùng VS Code như lập trình viên thật'],
+   syllabus:[
+    {t:'Nền tảng', r:'Buổi 1–4', items:['Giá trị, biến và print()','Chuỗi ký tự và định dạng','Số, phép toán và input()','Điều kiện: if / elif / else']},
+    {t:'Dữ liệu & vòng lặp', r:'Buổi 5–8', items:['List và chỉ số','Vòng lặp for','Vòng lặp while, break/continue','Vòng lặp lồng nhau']},
+    {t:'Công cụ thật', r:'Buổi 9–10', items:['Cài Python + VS Code','Đồ án nhỏ: trình quản lý việc cần làm']},
+    {t:'Cấu trúc dữ liệu & hàm', r:'Buổi 11–14', items:['Dictionary','List of dict & dữ liệu lồng nhau','Hàm','Hàm nâng cao']},
+    {t:'Code vững chắc', r:'Buổi 15–18', items:['try/except','Tuple, unpacking, enumerate','Comprehension','Set & sắp xếp (sorted, key, lambda)']},
+    {t:'Tốt nghiệp', r:'Buổi 19–20', items:['Văn bản & file (split/join, module)','Đồ án tốt nghiệp: bộ phân tích log/văn bản']},
+   ],
+   faq:[
+    {q:'Tôi chưa biết gì về lập trình, học được không?', a:'Được — khóa thiết kế đúng cho người mới hoàn toàn. Mọi khái niệm bắt đầu từ số 0, đi từ vấn đề thật, không nhồi thuật ngữ.'},
+    {q:'Tôi có cần cài phần mềm gì không?', a:'Không, trong hầu hết khóa học. Python chạy ngay trong trình duyệt. Từ buổi 9 bạn sẽ cài VS Code để làm quen môi trường thật.'},
+    {q:'Học xong tôi làm được gì?', a:'Bạn tự tin đọc/viết Python, hiểu list–dict–hàm–file, và có hai dự án hoàn chỉnh để đưa vào hồ sơ.'},
+    {q:'Nếu bí thì sao?', a:'Mỗi bài tập có nút hỏi giáo viên — câu hỏi (kèm code của bạn) gửi thẳng tới một con người qua Zalo.'},
+   ] },
+ en:{ title:'Python Foundations', tag:'The most beginner-friendly language, done properly',
+   level:'Complete beginners', dur:'20 lessons · ~40 hours', lessons:'20 lessons',
+   lead:'Python is the gentlest way into programming — its syntax reads almost like English, and it powers everything from web to data to AI. This course starts from absolute zero: it assumes you have never written code. You will run <b>real</b> Python right in your browser, get graded instantly, and finish with two projects you built yourself.',
+   outcomes:['Read and write real Python with confidence','Work with strings, numbers, lists and dictionaries','Control program flow with if / for / while','Write your own reusable functions','Handle errors and read/write text files','Build a mini-project and a capstone project'],
+   forWho:['Have never written a line of code','Are a student who wants a solid foundation','Want to switch careers into programming','Learn best by doing, not just watching videos'],
+   expect:['Nothing to install — it all runs in the browser','Plan ~2 focused hours per lesson','Read in Vietnamese, write code in English','Graded exercises and homework every lesson','From lesson 9 you use VS Code like a real developer'],
+   syllabus:[
+    {t:'Foundations', r:'Lessons 1–4', items:['Values, variables and print()','Strings and formatting','Numbers, operators and input()','Conditionals: if / elif / else']},
+    {t:'Data & loops', r:'Lessons 5–8', items:['Lists and indexing','for loops','while loops, break/continue','Nested loops']},
+    {t:'Real tools', r:'Lessons 9–10', items:['Install Python + VS Code','Mini-project: to-do / task manager']},
+    {t:'Structuring data & functions', r:'Lessons 11–14', items:['Dictionaries','Lists of dicts & nested data','Functions','Functions in depth']},
+    {t:'Robust code', r:'Lessons 15–18', items:['try/except','Tuples, unpacking, enumerate','Comprehensions','Sets & sorting (sorted, key, lambda)']},
+    {t:'Capstone', r:'Lessons 19–20', items:['Text & files (split/join, modules)','Capstone: a log / text analyzer']},
+   ],
+   faq:[
+    {q:'I know nothing about coding — can I do this?', a:'Yes — it is designed for total beginners. Every concept starts from zero, problem-first, with no jargon dumped on you.'},
+    {q:'Do I need to install anything?', a:'No, for most of the course. Python runs in your browser. From lesson 9 you install VS Code to meet the real environment.'},
+    {q:'What can I do after finishing?', a:'You can confidently read/write Python, understand lists–dicts–functions–files, and have two complete projects for your portfolio.'},
+    {q:'What if I get stuck?', a:'Every exercise has an "ask teacher" button — your question (with your code) goes straight to a real person on Zalo.'},
+   ] } },
+
+sql:{ href:'sql.html', price:{vi:'2.499.000₫',en:'2,499,000₫'},
+ vi:{ title:'SQL cho công việc dữ liệu', tag:'Kỹ năng đứng sau mọi công việc phân tích và backend',
+   level:'Người mới · không cần biết lập trình', dur:'20 buổi · ~40 giờ', lessons:'20 bài',
+   lead:'Gần như mọi ứng dụng đều lưu dữ liệu trong cơ sở dữ liệu — và SQL là ngôn ngữ để hỏi chuyện với dữ liệu đó. Đây là một trong những kỹ năng dễ học nhưng giá trị nhất trong ngành tech. Bạn sẽ chạy SQL <b>thật</b> trên cơ sở dữ liệu mẫu ngay trong trình duyệt, viết truy vấn thật và thấy kết quả ngay.',
+   outcomes:['Truy vấn dữ liệu với SELECT, WHERE, ORDER BY','Kết nối nhiều bảng bằng JOIN','Tổng hợp dữ liệu với GROUP BY và hàm tổng hợp','Lọc nhóm bằng HAVING','Trả lời câu hỏi nghiệp vụ bằng subquery','Đọc và hiểu một lược đồ cơ sở dữ liệu'],
+   forWho:['Muốn làm phân tích dữ liệu hoặc backend','Đang làm Excel và muốn lên một bậc','Là tester/PO cần tự truy vấn dữ liệu','Không cần biết lập trình trước đó'],
+   expect:['Chạy ngay trong trình duyệt — không cần cài database','Nên dành ~2 giờ tập trung cho mỗi buổi','Bài đọc tiếng Việt, câu lệnh viết bằng tiếng Anh','Có bài tập chấm ngay so với đáp án','Bạn luyện trên dữ liệu mẫu giống thực tế'],
+   syllabus:[
+    {t:'Bắt đầu', r:'Buổi 1–4', items:['Cơ sở dữ liệu & bảng là gì','SELECT và cột','WHERE: lọc dữ liệu','ORDER BY & LIMIT']},
+    {t:'Tổng hợp', r:'Buổi 5–9', items:['Hàm tổng hợp (COUNT, SUM, AVG)','GROUP BY','HAVING','Biểu thức & CASE','Kiểu dữ liệu & NULL']},
+    {t:'Nhiều bảng', r:'Buổi 10–14', items:['Khóa chính & khóa ngoại','INNER JOIN','LEFT JOIN','Kết nối nhiều bảng','Bí danh & tự kết nối']},
+    {t:'Truy vấn nâng cao', r:'Buổi 15–18', items:['Subquery','IN / EXISTS','Truy vấn lồng trong SELECT','View & tổ chức truy vấn']},
+    {t:'Dự án', r:'Buổi 19–20', items:['Đồ án nhỏ: báo cáo bán hàng','Đồ án tốt nghiệp: trả lời bộ câu hỏi nghiệp vụ']},
+   ],
+   faq:[
+    {q:'Tôi chưa từng lập trình, học SQL được không?', a:'Hoàn toàn được. SQL rất gần ngôn ngữ tự nhiên và là điểm khởi đầu tuyệt vời cho công việc dữ liệu.'},
+    {q:'Tôi có cần cài cơ sở dữ liệu không?', a:'Không. Một cơ sở dữ liệu thật chạy ngay trong trình duyệt, sẵn dữ liệu mẫu để bạn luyện.'},
+    {q:'SQL này dùng được ở đâu?', a:'Kiến thức chuẩn SQL áp dụng cho PostgreSQL, MySQL, SQL Server và hầu hết hệ quản trị bạn gặp trong công việc.'},
+   ] },
+ en:{ title:'SQL for Data Work', tag:'The skill behind every analyst and backend job',
+   level:'Beginners · no coding needed', dur:'20 lessons · ~40 hours', lessons:'20 lessons',
+   lead:'Almost every app stores its data in a database — and SQL is the language you use to ask that data questions. It is one of the easiest-to-learn yet most valuable skills in tech. You will run <b>real</b> SQL against sample databases right in your browser, write real queries and see results instantly.',
+   outcomes:['Query data with SELECT, WHERE, ORDER BY','Combine tables with JOINs','Summarise data with GROUP BY and aggregates','Filter groups with HAVING','Answer business questions with subqueries','Read and understand a database schema'],
+   forWho:['Want to move into data analysis or backend','Use Excel today and want to level up','Are a tester/PO who needs to query data','Have no prior programming experience'],
+   expect:['Runs in the browser — no database to install','Plan ~2 focused hours per lesson','Read in Vietnamese, write SQL in English','Graded exercises checked against a reference','You practise on realistic sample data'],
+   syllabus:[
+    {t:'Getting started', r:'Lessons 1–4', items:['What databases & tables are','SELECT and columns','WHERE: filtering rows','ORDER BY & LIMIT']},
+    {t:'Summarising', r:'Lessons 5–9', items:['Aggregates (COUNT, SUM, AVG)','GROUP BY','HAVING','Expressions & CASE','Data types & NULL']},
+    {t:'Multiple tables', r:'Lessons 10–14', items:['Primary & foreign keys','INNER JOIN','LEFT JOIN','Joining several tables','Aliases & self-joins']},
+    {t:'Advanced queries', r:'Lessons 15–18', items:['Subqueries','IN / EXISTS','Subqueries in SELECT','Views & organising queries']},
+    {t:'Projects', r:'Lessons 19–20', items:['Mini-project: a sales report','Capstone: answer a set of business questions']},
+   ],
+   faq:[
+    {q:'I have never programmed — can I learn SQL?', a:'Absolutely. SQL reads close to plain language and is a great entry point into data work.'},
+    {q:'Do I need to install a database?', a:'No. A real database runs in your browser, pre-loaded with sample data to practise on.'},
+    {q:'Where can I use this SQL?', a:'Standard SQL knowledge transfers to PostgreSQL, MySQL, SQL Server and most systems you will meet at work.'},
+   ] } },
+
+qa:{ href:'qa.html', price:{vi:'3.499.000₫',en:'3,499,000₫'},
+ vi:{ title:'Kiểm thử phần mềm (QA)', tag:'Một hướng nghề thật, đang thiếu người',
+   level:'Người chuyển ngành · không cần code nhiều', dur:'12 buổi · ~24 giờ', lessons:'12 bài',
+   lead:'QA (kiểm thử phần mềm) là công việc tìm ra lỗi trước khi người dùng gặp phải — một cánh cửa vào ngành tech không đòi hỏi nền lập trình nặng. Khóa này dạy bạn tư duy như một tester: thiết kế test case, đánh giá mức độ nghiêm trọng và bước đầu vào tự động hóa. Học từ một kỹ sư QA đang đi làm.',
+   outcomes:['Hiểu vòng đời kiểm thử và vai trò của QA','Thiết kế test case tìm ra lỗi thật','Viết báo cáo lỗi rõ ràng, tái hiện được','Đánh giá severity & priority như dân chuyên','Phân biệt kiểm thử thủ công và tự động','Bước đầu vào tư duy tự động hóa kiểm thử'],
+   forWho:['Muốn vào ngành tech nhưng ngại code nhiều','Cẩn thận, tỉ mỉ, thích "bắt lỗi"','Đang làm ngành khác muốn chuyển sang QA','Muốn một nghề có nhu cầu tuyển dụng cao'],
+   expect:['Tập trung vào tư duy & quy trình, không nặng code','Nên dành ~2 giờ tập trung cho mỗi buổi','Bài đọc song ngữ, thuật ngữ chuẩn ngành','Có bài tập thực hành thiết kế test','Học từ kinh nghiệm dự án thật'],
+   syllabus:[
+    {t:'Nền tảng QA', r:'Buổi 1–3', items:['QA là gì & vì sao quan trọng','Vòng đời phát triển & kiểm thử','Các loại kiểm thử']},
+    {t:'Thiết kế test', r:'Buổi 4–7', items:['Viết test case','Kỹ thuật thiết kế test case','Test dữ liệu biên & lớp tương đương','Báo cáo lỗi hiệu quả']},
+    {t:'Đánh giá & quy trình', r:'Buổi 8–10', items:['Severity & priority','Quản lý lỗi & công cụ','Kiểm thử thăm dò (exploratory)']},
+    {t:'Tự động hóa', r:'Buổi 11–12', items:['Nhập môn tự động hóa','Đồ án: bộ test cho một ứng dụng nhỏ']},
+   ],
+   faq:[
+    {q:'QA có cần biết lập trình không?', a:'Ở mức nhập môn thì không nhiều. Khóa tập trung vào tư duy và quy trình; kỹ năng lập trình chỉ cần ở mức cơ bản khi tới phần tự động hóa.'},
+    {q:'Học QA có dễ xin việc không?', a:'QA là một trong những cửa vào ngành tech dễ tiếp cận nhất và luôn có nhu cầu tuyển dụng.'},
+    {q:'Ai dạy khóa này?', a:'Một kỹ sư QA đang làm việc tại Netcompany, chia sẻ trực tiếp từ dự án thật.'},
+   ] },
+ en:{ title:'QA & Software Testing', tag:'A real, in-demand career path',
+   level:'Career-switchers · light on code', dur:'12 lessons · ~24 hours', lessons:'12 lessons',
+   lead:'QA (software testing) is the job of finding bugs before users do — a door into tech that does not require heavy programming. This course teaches you to think like a tester: design test cases, judge severity, and take your first steps into automation. Taught by a working QA engineer.',
+   outcomes:['Understand the testing lifecycle and the QA role','Design test cases that find real bugs','Write clear, reproducible bug reports','Judge severity & priority like a pro','Tell manual and automated testing apart','Take your first steps into test automation'],
+   forWho:['Want into tech but are wary of heavy coding','Are careful, detail-oriented, enjoy finding faults','Work in another field and want to switch to QA','Want a career with strong hiring demand'],
+   expect:['Focus on mindset & process, not heavy code','Plan ~2 focused hours per lesson','Bilingual reading with industry-standard terms','Hands-on test-design exercises','Learn from real project experience'],
+   syllabus:[
+    {t:'QA foundations', r:'Lessons 1–3', items:['What QA is & why it matters','Development & testing lifecycle','Types of testing']},
+    {t:'Designing tests', r:'Lessons 4–7', items:['Writing test cases','Test-design techniques','Boundary & equivalence testing','Effective bug reports']},
+    {t:'Judgement & process', r:'Lessons 8–10', items:['Severity & priority','Defect management & tools','Exploratory testing']},
+    {t:'Automation', r:'Lessons 11–12', items:['Intro to automation','Project: a test suite for a small app']},
+   ],
+   faq:[
+    {q:'Does QA require programming?', a:'Not much at the intro level. The course focuses on mindset and process; basic coding only comes in for the automation part.'},
+    {q:'Is QA a good way into tech?', a:'QA is one of the most accessible entry points into the industry and is consistently in demand.'},
+    {q:'Who teaches this course?', a:'A working QA engineer at Netcompany, sharing directly from real projects.'},
+   ] } },
+};
+
+function askAbout(){
+  const d = INFO[CID][LANG] || INFO[CID].vi;
+  const num = (window.DOJO_SENSEI && window.DOJO_SENSEI.zalo) || '0986061705';
+  const msg = (LANG==='vi'
+    ? 'Xin chào, mình muốn hỏi về khóa "'+d.title+'" trên The Dojo.'
+    : 'Hi, I have a question about the "'+d.title+'" course on The Dojo.');
+  try { navigator.clipboard.writeText(msg); alert(PAGE_I18N[LANG].ask_copied); } catch(e){}
+  window.open('https://zalo.me/'+num, '_blank');
+}
+window.__dojoAskAbout = askAbout;
+
+window.onLang = function(){
+  const info = INFO[CID] || INFO.python;
+  const d = info[LANG] || info.vi;
+  const u = PAGE_I18N[LANG];
+  document.title = d.title + ' — The Dojo';
+
+  document.getElementById('cHero').innerHTML =
+    `<div class="eyebrow">The Dojo · ${d.level}</div>
+     <h1>${d.title}</h1>
+     <p class="cheroTag">${d.tag}</p>
+     <div class="cmeta">
+       <span><b>${u.lv_label}</b> ${d.level}</span>
+       <span><b>${u.dur_label}</b> ${d.dur}</span>
+       <span><b>${u.les_label}</b> ${d.lessons}</span>
+       <span><b>${u.price_label}</b> ${info.price[LANG]}</span>
+     </div>
+     <p class="cheroLead">${d.lead}</p>
+     <div class="cbtns">
+       <a class="btn" href="${info.href}">${u.b_try}</a>
+       <a class="btn ghost" href="pricing.html">${u.b_buy}</a>
+       <button type="button" class="btn ghost" onclick="__dojoAskAbout()">${u.b_ask}</button>
+     </div>
+     <div class="freeNote">${u.free_note}</div>`;
+
+  document.getElementById('cOutcomes').innerHTML = d.outcomes.map(i=>'<li>'+i+'</li>').join('');
+  document.getElementById('cForWho').innerHTML = d.forWho.map(i=>'<li>'+i+'</li>').join('');
+  document.getElementById('cExpect').innerHTML = d.expect.map(i=>'<li>'+i+'</li>').join('');
+  document.getElementById('cSyllabus').innerHTML = d.syllabus.map(m=>
+    `<div class="module"><div class="mhead"><h3>${m.t}</h3><span class="mrange">${m.r}</span></div>
+     <ul>${m.items.map(i=>'<li>'+i+'</li>').join('')}</ul></div>`).join('');
+  document.getElementById('cFaq').innerHTML = d.faq.map(f=>
+    `<details class="faqItem"><summary>${f.q}</summary><p>${f.a}</p></details>`).join('');
+
+  document.getElementById('cCta').innerHTML =
+    `<h2>${u.cta_h}</h2><p>${u.cta_p}</p>
+     <div class="cbtns" style="justify-content:center">
+       <a class="btn" href="${info.href}">${u.b_try}</a>
+       <a class="btn ghost" href="pricing.html">${u.b_pricing}</a>
+     </div>`;
+};
+</script>
+</body>
+</html>
