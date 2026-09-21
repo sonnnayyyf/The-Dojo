@@ -24,15 +24,6 @@
   </div>
 </div></section>
 
-<section><div class="wrap">
-  <div class="shead">
-    <div class="eyebrow" data-t="courses_eyebrow"></div>
-    <h2 data-t="courses_h2"></h2>
-    <p data-t="courses_p"></p>
-  </div>
-  <div class="courses" id="courseCards"></div>
-</div></section>
-
 <section style="border-top:1px solid var(--line)"><div class="wrap">
   <div class="shead">
     <div class="eyebrow" data-t="how_eyebrow"></div>
@@ -48,7 +39,44 @@
     <h2 data-t="why_h2"></h2>
     <p data-t="why_p"></p>
   </div>
-  <div class="courses" id="featureCards"></div>
+  <div class="vs" id="vsBlock"></div>
+  <div class="courses" id="featureCards" style="margin-top:16px"></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="who_eyebrow"></div>
+    <h2 data-t="who_h2"></h2>
+    <p data-t="who_p"></p>
+  </div>
+  <div class="courses" id="whoCards"></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="courses_eyebrow"></div>
+    <h2 data-t="courses_h2"></h2>
+    <p data-t="courses_p"></p>
+  </div>
+  <div class="courses" id="courseCards"></div>
+  <div style="text-align:center;margin-top:22px"><a class="btn ghost" href="courses.html" data-t="courses_all"></a></div>
+</div></section>
+
+<section style="border-top:1px solid var(--line)"><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="teach_eyebrow"></div>
+    <h2 data-t="teach_h2"></h2>
+  </div>
+  <div class="about2">
+    <div>
+      <p data-t-html="teach_p1"></p>
+      <p class="fact" data-t="teach_fact"></p>
+    </div>
+    <div>
+      <p data-t-html="teach_p2"></p>
+      <p style="margin-top:14px"><a class="btn ghost" href="about.html" data-t="teach_btn"></a></p>
+    </div>
+  </div>
 </div></section>
 
 <section style="border-top:1px solid var(--line);text-align:center"><div class="wrap">
@@ -63,73 +91,129 @@
 <script src="app.js"></script>
 <script>
 const COURSES=[
- {id:'python', href:'python.html', n:20, live:false},
- {id:'qa', href:'qa.html', n:12, live:false},
- {id:'sql', href:'sql.html', n:20, live:false},
+ {id:'python', href:'python.html'},
+ {id:'sql', href:'sql.html'},
+ {id:'qa', href:'qa.html'},
 ];
 const PAGE_I18N={
 vi:{
- hero_h1:'Học lập trình <em>bằng cách gõ code thật</em> — ngay trong trình duyệt.',
- hero_p:'Ba khóa tự học: Python, Kiểm thử phần mềm (QA), SQL. Mỗi khóa có bài 1 miễn phí, bài tập chấm điểm tự động, và một người thật để hỏi khi kẹt.',
- hero_cta1:'Học thử Python — miễn phí', hero_cta2:'Xem học phí',
- hero_proof1:'<b>52</b> bài học', hero_proof2:'<b>3</b> khóa tự học', hero_proof3:'<b>0đ</b> để bắt đầu',
+ hero_h1:'Đừng chỉ đọc tài liệu. <em>Hãy bắt đầu viết code thật.</em>',
+ hero_p:'The Dojo là một võ đường lập trình, không phải trang tài liệu: bạn viết code thật ngay trong trình duyệt, được chấm điểm tức thì, và luôn có một giáo viên đồng hành. Học bằng tiếng Việt, code bằng tiếng Anh — đúng như cách ngành phần mềm vận hành.',
+ hero_cta1:'Học thử miễn phí', hero_cta2:'Xem khóa học & học phí',
+ hero_proof1:'<b>Code thật</b> — không phải slide', hero_proof2:'<b>Giáo viên thật</b> — không phải diễn đàn', hero_proof3:'<b>Miễn phí</b> bài học đầu mỗi khóa',
+
+ how_eyebrow:'Cách học', how_h2:'Học bằng cách làm — có người kèm từng bước',
+ how_p:'Không video dài lê thê. Đọc phần giải thích ngắn, rồi luyện trên công cụ thật đến khi thật sự hiểu — có phản hồi suốt chặng đường.',
+ s1_t:'1 · Đọc & nhìn thấy', s1_d:'Giải thích ngắn gọn, dễ hiểu, kèm ví dụ chạy được, sơ đồ và bảng theo dõi — dành cho người mới hoàn toàn, không phải dân chuyên tin.',
+ s2_t:'2 · Viết code thật', s2_d:'Gõ vào trình soạn thảo thật và chạy Python hoặc SQL thật ngay trong trình duyệt — không cần cài đặt, không phải vật lộn với cấu hình.',
+ s3_t:'3 · Chấm điểm tức thì', s3_d:'Mỗi bài tập được kiểm tra ngay khi bạn chạy, phản hồi chỉ đúng chỗ sai — như một gia sư ngồi ngay bên cạnh.',
+ s4_t:'4 · Hỏi, rồi thăng cấp', s4_d:'Bí chỗ nào? Nhắn cho giáo viên chỉ với một chạm. Hoàn thành bài để lên đai và tiến tới các dự án thật.',
+
+ why_eyebrow:'Vì sao The Dojo', why_h2:'Không phải thêm một trang tài liệu',
+ why_p:'Tài liệu miễn phí cho bạn xem code. The Dojo bảo đảm bạn thật sự viết được — và đồng hành đến khi bạn làm được.',
+ vs_bad_t:'Đa số tài liệu miễn phí',
+ vs_bad:['Đọc, chép, rồi quên','Không ai kiểm tra bài của bạn','Bí là đóng tab','Nội dung tràn lan, không lộ trình','Bạn tự bơi một mình'],
+ vs_good_t:'The Dojo',
+ vs_good:['Viết & chạy code thật mỗi bài','Chấm tự động với phản hồi cụ thể','Giáo viên thật cách một chạm','Lộ trình thiết kế kỹ, có đai & dự án','Bạn hoàn thành điều mình bắt đầu'],
+ f1_t:'Dạy bởi kỹ sư đang đi làm', f1_d:'Bài học viết bởi một kỹ sư phần mềm kiêm giáo viên hơn 5 năm — thói quen thực chiến từ dự án thật, không phải lý thuyết sách vở.',
+ f2_t:'Học bằng ngôn ngữ của bạn', f2_d:'Mỗi bài song ngữ trọn vẹn: hiểu ý tưởng bằng tiếng Việt, viết code bằng tiếng Anh — để bạn sẵn sàng đi làm, không chỉ thuộc lòng.',
+ f3_t:'Đai thể hiện tiến độ', f3_d:'Lên đai từ trắng đến đen theo từng chặng. Động lực rõ ràng mà bạn (và phụ huynh) đều thấy được.',
+ f4_t:'Bạn làm ra sản phẩm thật', f4_d:'Mỗi khóa kết thúc bằng dự án — một đồ án nhỏ và một đồ án tốt nghiệp để khoe, không chỉ là bài tập rồi quên.',
+
+ who_eyebrow:'Dành cho ai', who_h2:'Dành cho người mới thật sự',
+ who_p:'Nếu bạn chưa từng viết một dòng code, đây chính là nơi dành cho bạn.',
+ w1_t:'Người mới hoàn toàn', w1_d:'Chưa từng code? Mọi khái niệm bắt đầu từ số 0, đi từ vấn đề, không nhồi thuật ngữ.',
+ w2_t:'Học sinh & phụ huynh', w2_d:'Một lộ trình an toàn, có cấu trúc, tiến độ rõ ràng và giáo viên thật — một lớp học đáng tin, không phải video trôi nổi.',
+ w3_t:'Người chuyển ngành', w3_d:'Muốn vào ngành tech hay QA? Xây kỹ năng thực chiến, đúng nhu cầu công việc — và có người kiểm tra bạn làm đúng.',
+
  courses_eyebrow:'Khóa học', courses_h2:'Chọn một khóa để bắt đầu',
- courses_p:'Bài 1 của mọi khóa đều miễn phí và làm được ngay — không cần đăng ký.',
- c_python_t:'Python căn bản', c_python_d:'20 bài — biến, vòng lặp, danh sách, dictionary, hàm, file. Python thật chạy trong trình duyệt.',
- c_qa_t:'Kiểm thử phần mềm căn bản', c_qa_d:'12 bài — tư duy tester thật: lớp tương đương, giá trị biên, severity/priority, smoke test, tự động hóa.',
- c_sql_t:'SQL cho công việc dữ liệu', c_sql_d:'20 bài — SELECT, JOIN, GROUP BY, subquery. Cơ sở dữ liệu thật chạy trong trình duyệt.',
- c_go:'Học thử →',
- how_eyebrow:'Cách học', how_h2:'Học bằng cách làm, không phải xem',
- how_p:'Không video dài lê thê, không slide. Bạn đọc phần kiến thức ngắn gọn rồi bắt tay code ngay.',
- s1_t:'1 · Đọc & hiểu', s1_d:'Mỗi bài giải thích khái niệm bằng ví dụ chạy được, sơ đồ trực quan và bảng theo dõi — dễ hiểu cho người mới hoàn toàn.',
- s2_t:'2 · Code & chấm điểm', s2_d:'Gõ code vào trình soạn thảo có tô màu cú pháp, bấm Chạy. Bài tập được chấm ngay, báo lỗi cụ thể (biến nào sai, cần giá trị gì).',
- s3_t:'3 · Hỏi sensei khi kẹt', s3_d:'Kẹt ở đâu, bấm "Hỏi sensei" để gửi thẳng câu hỏi kèm code cho giáo viên. Không bị bỏ lại một mình.',
- why_eyebrow:'Vì sao khác biệt', why_h2:'Không chỉ là tài liệu miễn phí',
- why_p:'Điều tạo nên khác biệt so với các trang học free ngoài kia:',
- f1_t:'Chấm điểm tự động', f1_d:'Không chỉ đọc rồi thôi — bạn phải làm đúng mới qua. Phản hồi cụ thể như khi có gia sư ngồi cạnh.',
- f2_t:'Có người thật kèm', f2_d:'Mỗi học viên có một giáo viên để nhắn khi bí. Đây là lớp học có người đứng sau, không phải khóa "mua xong biến mất".',
- f3_t:'Theo dõi tiến độ & đai', f3_d:'Hoàn thành bài để lên đai (trắng → đen) qua 5 chặng. Thấy rõ mình đang ở đâu và còn bao xa tới đích.',
- f4_t:'Dự án thật', f4_d:'Kết thúc bằng các đồ án nhỏ và đồ án tốt nghiệp — bạn xây được thứ chạy được, không chỉ học lý thuyết.',
- cta_h2:'Sẵn sàng gõ dòng code đầu tiên?', cta_p:'Bài 1 của cả ba khóa đều miễn phí, chạy ngay trong trình duyệt — không cần cài đặt, không cần đăng ký.',
- cta_btn1:'Học thử Python — miễn phí', cta_btn2:'Xem học phí',
+ courses_p:'Bắt đầu miễn phí — bài 1 của mọi khóa đều mở sẵn và chạy ngay, không cần đăng ký.',
+ courses_all:'Xem tất cả khóa học →',
+ c_go:'Học thử bài 1 →', c_free:'Bài đầu miễn phí · không cần đăng ký',
+ c_python_t:'Python căn bản', c_python_d:'Từ dòng print() đầu tiên đến khi tự xây một chương trình chạy được, từng bước nhỏ.',
+ c_python_o:['Đọc & viết Python thật một cách tự tin','Làm chủ list, dictionary & hàm','Hoàn thành một đồ án nhỏ và đồ án tốt nghiệp'],
+ c_sql_t:'SQL cho công việc dữ liệu', c_sql_d:'Đặt câu hỏi thật cho dữ liệu thật — kỹ năng đứng sau mọi công việc phân tích và backend.',
+ c_sql_o:['Truy vấn cơ sở dữ liệu với SELECT & JOIN','Tổng hợp dữ liệu với GROUP BY','Trả lời câu hỏi nghiệp vụ bằng subquery'],
+ c_qa_t:'Kiểm thử phần mềm (QA)', c_qa_d:'Tư duy như một tester và "phá" phần mềm có chủ đích — một hướng nghề thật, đang thiếu người.',
+ c_qa_o:['Thiết kế test case tìm ra lỗi thật','Đánh giá severity & priority như dân chuyên','Bước đầu vào tự động hóa kiểm thử'],
+
+ teach_eyebrow:'Ai dạy bạn', teach_h2:'Một giáo viên luôn bên bạn',
+ teach_p1:'The Dojo được vận hành bởi <b>Sơn</b> — kỹ sư phần mềm (QA) tại Netcompany và giáo viên hơn 5 năm. Bạn không mua một kho video; bạn tham gia một lớp học có người trả lời.',
+ teach_fact:'Đặt câu hỏi ngay trong bài tập — câu hỏi đến thẳng một con người, không phải bot.',
+ teach_p2:'Muốn đi sâu hơn? Các buổi học 1-1 (tùy chọn) điều chỉnh tốc độ và giáo trình đúng theo nhu cầu của bạn.',
+ teach_btn:'Gặp giáo viên của bạn →',
+
+ cta_h2:'Dòng code đầu tiên chỉ cách một cú nhấp', cta_p:'Mở bài 1, viết một thứ gì đó thật, và thấy nó chạy — miễn phí, ngay trong trình duyệt, ngay bây giờ.',
+ cta_btn1:'Bắt đầu bài học miễn phí', cta_btn2:'Xem khóa học & học phí',
 },
 en:{
- hero_h1:'Learn to code <em>by writing real code</em> — right in your browser.',
- hero_p:'Three self-paced courses: Python, Software Testing (QA), SQL. Each has a free lesson 1, auto-graded exercises, and a real human to ask when you get stuck.',
- hero_cta1:'Try Python free', hero_cta2:'See pricing',
- hero_proof1:'<b>52</b> lessons', hero_proof2:'<b>3</b> self-paced courses', hero_proof3:'<b>$0</b> to start',
+ hero_h1:'Stop reading tutorials. <em>Start writing real code.</em>',
+ hero_p:'The Dojo is a coding dojo, not a documentation site: you write real code in your browser, get graded instantly, and have a real teacher in your corner. Learn in Vietnamese, code in English — the way the industry actually works.',
+ hero_cta1:'Try a free lesson', hero_cta2:'See courses & pricing',
+ hero_proof1:'<b>Real code</b> — not slides', hero_proof2:'<b>A real teacher</b> — not a forum', hero_proof3:'<b>Free</b> first lesson, every course',
+
+ how_eyebrow:'How it works', how_h2:'Learn by doing — coached every step',
+ how_p:'No endless videos. Read a short explanation, then practice on real tools until it clicks — with feedback the whole way.',
+ s1_t:'1 · Read & see it', s1_d:'Short, plain-language explanations with runnable examples, diagrams and trace tables — built for total beginners, not computer-science majors.',
+ s2_t:'2 · Write real code', s2_d:'Type into a real editor and run real Python or SQL in your browser — nothing to install, no fragile setup to fight with.',
+ s3_t:'3 · Get graded instantly', s3_d:'Every exercise is checked the moment you run it, with feedback that points at the exact mistake — like a tutor leaning over your shoulder.',
+ s4_t:'4 · Ask, then level up', s4_d:'Stuck? Message your teacher with one tap. Clear a lesson to earn your next belt and build toward real projects.',
+
+ why_eyebrow:'Why The Dojo', why_h2:'Not another tutorial site',
+ why_p:'Free tutorials show you code. The Dojo makes sure you can actually write it — and stays with you until you can.',
+ vs_bad_t:'Most free tutorials',
+ vs_bad:['Read, copy, forget','No one checks your work','Get stuck → tab closed','Endless content, no path','You are on your own'],
+ vs_good_t:'The Dojo',
+ vs_good:['Write & run real code every lesson','Auto-graded with specific feedback','A real teacher one tap away','A designed path with belts & projects','You finish what you start'],
+ f1_t:'Taught by a working engineer', f1_d:'Lessons written by a software engineer and 5+ year teacher — practical habits from real projects, not textbook trivia.',
+ f2_t:'Learn in your language', f2_d:'Every lesson is fully bilingual: understand the idea in Vietnamese, write code in English — so you are job-ready, not phrasebook-ready.',
+ f3_t:'Belts that show progress', f3_d:'Earn belts from white to black as you go. Real momentum you — and parents — can actually see.',
+ f4_t:'You build real things', f4_d:'Each course ends in projects — a mini-project and a capstone you can show off, not just exercises you forget.',
+
+ who_eyebrow:'Who it is for', who_h2:'Built for real beginners',
+ who_p:'If you have never written a line of code, you are exactly who this was made for.',
+ w1_t:'Absolute beginners', w1_d:'Never coded before? Every concept starts from zero, problem-first, with no jargon dumped on you.',
+ w2_t:'Students & parents', w2_d:'A safe, structured path with visible progress and a real teacher — a class you can trust your child to, not a random video.',
+ w3_t:'Career-switchers', w3_d:'Moving into tech or QA? Build practical, job-shaped skills you can put to work — and someone to check you are doing it right.',
+
  courses_eyebrow:'Courses', courses_h2:'Pick a course to start',
- courses_p:'Lesson 1 of every course is free and works instantly — no signup needed.',
- c_python_t:'Python Foundations', c_python_d:'20 lessons — variables, loops, lists, dicts, functions, files. Real Python runs in your browser.',
- c_qa_t:'QA & Testing Fundamentals', c_qa_d:'12 lessons — real tester thinking: equivalence classes, boundary values, severity/priority, smoke testing, automation.',
- c_sql_t:'SQL for Data Work', c_sql_d:'20 lessons — SELECT, JOIN, GROUP BY, subqueries. A real database runs in your browser.',
- c_go:'Try free →',
- how_eyebrow:'How it works', how_h2:'Learn by doing, not watching',
- how_p:'No long videos, no slides. You read a short, clear explanation and then start coding immediately.',
- s1_t:'1 · Read & understand', s1_d:'Every lesson explains the concept with runnable examples, visual diagrams and trace tables — clear for total beginners.',
- s2_t:'2 · Code & get graded', s2_d:'Type into a syntax-highlighted editor and hit Run. Exercises are graded instantly with specific feedback (which variable is wrong, what value it needs).',
- s3_t:'3 · Ask your sensei', s3_d:'Stuck? Hit "Ask sensei" to send your question and your code straight to your teacher. You are never left alone.',
- why_eyebrow:'Why it is different', why_h2:'More than a free tutorial',
- why_p:'What sets this apart from the free sites out there:',
- f1_t:'Auto-graded', f1_d:'Not just reading — you have to get it right to pass. Specific feedback, like a tutor sitting next to you.',
- f2_t:'A real human mentor', f2_d:'Every student has a teacher to message when stuck. A class with someone behind it, not a "buy and vanish" course.',
- f3_t:'Progress & belts', f3_d:'Complete lessons to earn belts (white → black) across 5 stages. See exactly where you are and how far to go.',
- f4_t:'Real projects', f4_d:'You finish with mini-projects and a capstone — you build something that runs, not just theory.',
- cta_h2:'Ready to type your first line of code?', cta_p:'Lesson 1 of all three courses is free and runs right in your browser — nothing to install, no signup.',
- cta_btn1:'Try Python free', cta_btn2:'See pricing',
+ courses_p:'Start free — lesson 1 of every course is unlocked and runs instantly, no signup.',
+ courses_all:'Browse all courses →',
+ c_go:'Try lesson 1 free →', c_free:'Free first lesson · no signup',
+ c_python_t:'Python Foundations', c_python_d:'From your first print() to building a real program, one small step at a time.',
+ c_python_o:['Read & write real Python confidently','Work with lists, dictionaries & functions','Build a mini-project and a capstone'],
+ c_sql_t:'SQL for Data Work', c_sql_d:'Ask real questions of real data — the skill behind every analyst and backend job.',
+ c_sql_o:['Query databases with SELECT & JOIN','Summarise data with GROUP BY','Answer business questions with subqueries'],
+ c_qa_t:'QA & Software Testing', c_qa_d:'Think like a tester and break software on purpose — a real, in-demand career path.',
+ c_qa_o:['Design test cases that find real bugs','Judge severity & priority like a pro','Get started with test automation'],
+
+ teach_eyebrow:'Who teaches you', teach_h2:'A real teacher in your corner',
+ teach_p1:'The Dojo is run by <b>Son</b> — a software engineer (QA) at Netcompany and a teacher of 5+ years. You are not buying a video library; you are joining a class with someone who answers.',
+ teach_fact:'Ask a question inside any exercise — it goes straight to a person, not a bot.',
+ teach_p2:'Prefer going deeper? Optional 1-on-1 sessions adapt the pace and curriculum to exactly what you need.',
+ teach_btn:'Meet your teacher →',
+
+ cta_h2:'Your first line of code is one click away', cta_p:'Open lesson 1, write something real, and see it run — free, in your browser, right now.',
+ cta_btn1:'Start a free lesson', cta_btn2:'See courses & pricing',
 }};
 window.onLang=function(){
   const d=PAGE_I18N[LANG];
-  document.getElementById('courseCards').innerHTML=COURSES.map(c=>`
-   <div class="course">
-     <h3>${d['c_'+c.id+'_t']}</h3>
-     <div class="meta">${c.n} ${LANG==='vi'?'bài':'lessons'}</div>
-     <p>${d['c_'+c.id+'_d']}</p>
-     <a class="btn ghost" href="${c.href}">${d.c_go}</a>
-   </div>`).join('');
   const card=(t,x)=>`<div class="course"><h3>${d[t]}</h3><p>${d[x]}</p></div>`;
-  document.getElementById('stepCards').innerHTML=card('s1_t','s1_d')+card('s2_t','s2_d')+card('s3_t','s3_d');
+  document.getElementById('stepCards').innerHTML=card('s1_t','s1_d')+card('s2_t','s2_d')+card('s3_t','s3_d')+card('s4_t','s4_d');
+  const vsCard=(cls,title,items)=>`<div class="vscard ${cls}"><h3>${title}</h3><ul>${items.map(i=>'<li>'+i+'</li>').join('')}</ul></div>`;
+  document.getElementById('vsBlock').innerHTML=vsCard('bad',d.vs_bad_t,d.vs_bad)+vsCard('good',d.vs_good_t,d.vs_good);
   document.getElementById('featureCards').innerHTML=card('f1_t','f1_d')+card('f2_t','f2_d')+card('f3_t','f3_d')+card('f4_t','f4_d');
+  document.getElementById('whoCards').innerHTML=card('w1_t','w1_d')+card('w2_t','w2_d')+card('w3_t','w3_d');
+  document.getElementById('courseCards').innerHTML=COURSES.map(c=>{
+    const outcomes=d['c_'+c.id+'_o'].map(i=>'<li>'+i+'</li>').join('');
+    return `<div class="course">
+     <h3>${d['c_'+c.id+'_t']}</h3>
+     <p>${d['c_'+c.id+'_d']}</p>
+     <ul class="outcome">${outcomes}</ul>
+     <div class="meta">${d.c_free}</div>
+     <a class="btn ghost" href="${c.href}">${d.c_go}</a>
+   </div>`;
+  }).join('');
 };
 </script>
 </body>

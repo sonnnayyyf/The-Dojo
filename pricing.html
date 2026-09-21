@@ -13,7 +13,8 @@
 <section><div class="wrap">
   <div class="shead"><div class="eyebrow" data-t="p_eyebrow"></div><h2 data-t="p_h2"></h2>
   <p data-t-html="p_p"></p></div>
-  <div class="plans" id="planCards"></div>
+  <div class="plans" id="courseCards"></div>
+  <div style="text-align:center;margin-top:24px"><a class="btn ghost" href="courses.html" data-t="p_all"></a></div>
 </div></section>
 
 <section style="border-top:1px solid var(--line)"><div class="wrap">
@@ -35,8 +36,9 @@
 <script>
 const PAGE_I18N={
 vi:{
- p_eyebrow:'Học phí', p_h2:'Cách thức hoạt động',
- p_p:'Học thử Bài 1 của mọi khóa miễn phí. Nếu thấy phù hợp, thanh toán một lần cho khóa bạn chọn và tôi gửi <b>mã mở khóa cá nhân</b> — mã này giải khóa toàn bộ bài học ngay trên trang. Mỗi học viên một mã riêng: mã của bạn dùng được, chia sẻ cho người khác sẽ bị thu hồi.',
+ p_eyebrow:'Khóa học', p_h2:'Khóa học nổi bật',
+ p_p:'Học thử Bài 1 của mọi khóa miễn phí. Nếu thấy phù hợp, thanh toán một lần cho khóa bạn chọn và nhận <b>mã mở khóa cá nhân</b> — mở toàn bộ bài học ngay trên trang.',
+ p_all:'Xem tất cả khóa học →',
  b_eyebrow:'Liên hệ', b_h2:'Thanh toán & đặt lịch',
  b_buy_h:'Mua trọn khóa:', b_buy_p:'chuyển khoản ngân hàng / MoMo, nhắn tin kèm ảnh xác nhận, tôi sẽ gửi lại mã mở khóa cá nhân (thường trong vài giờ).',
  b_bank:'Ngân hàng: <span class="editme">EDIT — tên NH / số TK / ảnh VietQR</span>',
@@ -45,8 +47,9 @@ vi:{
  b_email:'Email:',
 },
 en:{
- p_eyebrow:'Pricing', p_h2:'How it works',
- p_p:'Lesson 1 of every course is free. If it clicks, pay once for the course you want and I send you your <b>personal unlock code</b> — it decrypts every lesson right on the page. Codes are individual: yours works, sharing it gets it revoked.',
+ p_eyebrow:'Courses', p_h2:'Top courses',
+ p_p:'Lesson 1 of every course is free. If it clicks, pay once for the course you want and get your <b>personal unlock code</b> — it opens every lesson right on the page.',
+ p_all:'View all courses →',
  b_eyebrow:'Contact', b_h2:'Pay & book',
  b_buy_h:'To buy a full course:', b_buy_p:'transfer via bank/MoMo, message me proof, and I reply with your personal unlock code (usually within a few hours).',
  b_bank:'Bank: <span class="editme">EDIT — bank name / account / VietQR image</span>',
@@ -54,30 +57,30 @@ en:{
  b_live_h:'Live 1-on-1:', b_live_p:'message me your goal and available times — I will quote directly based on what you need. First 20 minutes free to see if we fit.',
  b_email:'Email:',
 }};
-const PLANS={
+const COURSES={
 vi:[
- {h:'Học thử',pr:'0',prs:'— mãi mãi',hot:false,cta:['Bắt đầu ngay','index.html'],
-  li:['Bài 1 của cả 3 khóa, trọn vẹn','Thực hành ngay trên trình duyệt','Bài tập có chấm điểm']},
- {h:'Trọn khóa (tự học)',pr:'799k₫',prs:'một lần / mỗi khóa',hot:true,cta:['Nhận mã của bạn →','#contact'],
-  li:['Mở khóa toàn bộ bài học của khóa','Bài tập + file lời giải đã kiểm chứng','<b>Hỏi tôi trực tiếp khi kẹt</b> — Zalo/Discord, phản hồi trong 24h','1 buổi 30 phút chữa bài qua video khi hoàn thành khóa','Cập nhật nội dung miễn phí trọn đời','Mã mở khóa cá nhân riêng của bạn']},
- {h:'Học kèm 1-1',pr:'Nhắn tin',prs:'để nhận báo giá',hot:false,cta:['Liên hệ','#contact'],
-  li:['Học qua video theo lịch của bạn','Giáo trình điều chỉnh theo người học','Chữa bài tập từng dòng','20 phút đầu miễn phí']},
+ {h:'Python căn bản',pr:'2.999.000₫',prs:'trọn khóa',cta:['Học thử →','python.html'],
+  li:['Đọc & viết Python thật một cách tự tin','Làm chủ list, dictionary & hàm','Hoàn thành đồ án nhỏ + đồ án tốt nghiệp','Phù hợp với: người mới hoàn toàn']},
+ {h:'SQL cho công việc dữ liệu',pr:'2.499.000₫',prs:'trọn khóa',cta:['Học thử →','sql.html'],
+  li:['Truy vấn dữ liệu với SELECT & JOIN','Tổng hợp & trả lời câu hỏi nghiệp vụ','Luyện trên cơ sở dữ liệu thật trong trình duyệt','Phù hợp với: người làm phân tích & backend']},
+ {h:'Kiểm thử phần mềm (QA)',pr:'3.499.000₫',prs:'trọn khóa',cta:['Học thử →','qa.html'],
+  li:['Thiết kế test case tìm ra lỗi thật','Đánh giá severity & priority như dân chuyên','Bước đầu vào tự động hóa kiểm thử','Phù hợp với: người chuyển ngành sang QA']},
 ],
 en:[
- {h:'Free taste',pr:'0',prs:'— forever',hot:false,cta:['Start now','index.html'],
-  li:['Lesson 1 of all 3 courses, complete','Practice right in the browser','Graded exercises']},
- {h:'Full course (self-paced)',pr:'799k₫',prs:'one-time / per course',hot:true,cta:['Get your code →','#contact'],
-  li:['All lessons of the course unlocked','Homework + verified solution files','<b>Ask me directly when stuck</b> — Zalo/Discord, replies within 24h','One 30-min video review session when you finish','Free content updates for life','Your own personal unlock code']},
- {h:'Live 1-on-1',pr:'DM me',prs:'for pricing',hot:false,cta:['Contact','#contact'],
-  li:['Video sessions on your schedule','Curriculum adapted to you','Homework reviewed line-by-line','First 20 minutes free']},
+ {h:'Python fundamentals',pr:'2,999,000₫',prs:'full course',cta:['Try it →','python.html'],
+  li:['Read & write real Python confidently','Master lists, dictionaries & functions','Finish a mini-project + a capstone','Best for: complete beginners']},
+ {h:'SQL for data work',pr:'2,499,000₫',prs:'full course',cta:['Try it →','sql.html'],
+  li:['Query databases with SELECT & JOIN','Summarise & answer business questions','Practice on a real in-browser database','Best for: analysts & backend starters']},
+ {h:'QA / Software testing',pr:'3,499,000₫',prs:'full course',cta:['Try it →','qa.html'],
+  li:['Design test cases that find real bugs','Judge severity & priority like a pro','Get started with test automation','Best for: career-switchers into QA']},
 ]};
 window.onLang=function(){
-  document.getElementById('planCards').innerHTML=PLANS[LANG].map(p=>`
-   <div class="plan ${p.hot?'hot':''}">
+  document.getElementById('courseCards').innerHTML=COURSES[LANG].map(p=>`
+   <div class="plan">
      <h3>${p.h}</h3>
      <div class="pr">${p.pr}<small> ${p.prs}</small></div>
      <ul>${p.li.map(x=>'<li>'+x+'</li>').join('')}</ul>
-     <a class="btn ${p.hot?'':'ghost'}" href="${p.cta[1]}">${p.cta[0]}</a>
+     <a class="btn" href="${p.cta[1]}">${p.cta[0]}</a>
    </div>`).join('');
 };
 </script>

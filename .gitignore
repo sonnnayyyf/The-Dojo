@@ -1,0 +1,11 @@
+# Local-only tooling secrets & artifacts (never commit)
+private-tools/.env
+private-tools/keys/
+private-tools/ledger.csv
+
+# Node
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db

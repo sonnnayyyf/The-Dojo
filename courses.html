@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khóa học — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="c_eyebrow"></div>
+    <h2 data-t="c_h2"></h2>
+    <p data-t="c_p"></p>
+  </div>
+  <div class="courses" id="courseCards"></div>
+  <p class="fact" data-t="c_more" style="margin-top:22px"></p>
+  <div style="margin-top:14px"><a class="btn ghost" href="pricing.html" data-t="c_pricing"></a></div>
+</div></section>
+
+<script src="app.js"></script>
+<script>
+const COURSES=[
+ {id:'python', href:'python.html', price:{vi:'2.999.000₫', en:'2,999,000₫'}},
+ {id:'sql', href:'sql.html', price:{vi:'2.499.000₫', en:'2,499,000₫'}},
+ {id:'qa', href:'qa.html', price:{vi:'3.499.000₫', en:'3,499,000₫'}},
+];
+const PAGE_I18N={
+vi:{
+ c_eyebrow:'Khóa học', c_h2:'Chọn khóa học của bạn',
+ c_p:'Mỗi khóa dạy bạn một kỹ năng thật, có thể dùng được — bằng cách viết code thật và được chấm ngay. Bài 1 của mọi khóa đều mở sẵn, miễn phí, không cần đăng ký.',
+ c_more:'Thêm nhiều khóa mới đang được xây dựng — hãy quay lại nhé.',
+ c_pricing:'Xem học phí chi tiết →',
+ c_free:'Bài 1 miễn phí · không cần đăng ký', c_for:'Phù hợp với', c_go:'Học thử bài 1 →', c_price_note:'trọn khóa',
+ c_python_t:'Python căn bản', c_python_d:'Từ dòng print() đầu tiên đến khi tự xây một chương trình chạy được, từng bước nhỏ.',
+ c_python_o:['Đọc & viết Python thật một cách tự tin','Làm chủ list, dictionary & hàm','Hoàn thành một đồ án nhỏ và đồ án tốt nghiệp'],
+ c_python_for:'người mới hoàn toàn',
+ c_sql_t:'SQL cho công việc dữ liệu', c_sql_d:'Đặt câu hỏi thật cho dữ liệu thật — kỹ năng đứng sau mọi công việc phân tích và backend.',
+ c_sql_o:['Truy vấn cơ sở dữ liệu với SELECT & JOIN','Tổng hợp dữ liệu với GROUP BY','Trả lời câu hỏi nghiệp vụ bằng subquery'],
+ c_sql_for:'người làm phân tích & backend',
+ c_qa_t:'Kiểm thử phần mềm (QA)', c_qa_d:'Tư duy như một tester và "phá" phần mềm có chủ đích — một hướng nghề thật, đang thiếu người.',
+ c_qa_o:['Thiết kế test case tìm ra lỗi thật','Đánh giá severity & priority như dân chuyên','Bước đầu vào tự động hóa kiểm thử'],
+ c_qa_for:'người chuyển ngành sang QA',
+},
+en:{
+ c_eyebrow:'Courses', c_h2:'Browse the courses',
+ c_p:'Each course teaches you one real, usable skill — by writing real code and getting graded on the spot. Lesson 1 of every course is unlocked, free, no signup.',
+ c_more:'More courses are on the way — check back soon.',
+ c_pricing:'See full pricing →',
+ c_free:'Lesson 1 free · no signup', c_for:'Best for', c_go:'Try lesson 1 free →', c_price_note:'full course',
+ c_python_t:'Python Foundations', c_python_d:'From your first print() to building a real program, one small step at a time.',
+ c_python_o:['Read & write real Python confidently','Work with lists, dictionaries & functions','Build a mini-project and a capstone'],
+ c_python_for:'complete beginners',
+ c_sql_t:'SQL for Data Work', c_sql_d:'Ask real questions of real data — the skill behind every analyst and backend job.',
+ c_sql_o:['Query databases with SELECT & JOIN','Summarise data with GROUP BY','Answer business questions with subqueries'],
+ c_sql_for:'analysts & backend starters',
+ c_qa_t:'QA & Software Testing', c_qa_d:'Think like a tester and break software on purpose — a real, in-demand career path.',
+ c_qa_o:['Design test cases that find real bugs','Judge severity & priority like a pro','Get started with test automation'],
+ c_qa_for:'career-switchers into QA',
+}};
+window.onLang=function(){
+  const d=PAGE_I18N[LANG];
+  document.getElementById('courseCards').innerHTML=COURSES.map(c=>{
+    const outcomes=d['c_'+c.id+'_o'].map(i=>'<li>'+i+'</li>').join('');
+    return `<div class="course">
+     <h3>${d['c_'+c.id+'_t']}</h3>
+     <div class="price">${c.price[LANG]} <small style="color:var(--muted)">· ${d.c_price_note}</small></div>
+     <p>${d['c_'+c.id+'_d']}</p>
+     <ul class="outcome">${outcomes}</ul>
+     <div class="meta">${d.c_for}: ${d['c_'+c.id+'_for']} · ${d.c_free}</div>
+     <a class="btn" href="${c.href}">${d.c_go}</a>
+   </div>`;
+  }).join('');
+};
+</script>
+</body>
+</html>

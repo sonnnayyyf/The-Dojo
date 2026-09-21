@@ -19,9 +19,9 @@
   window.LANG = localStorage.getItem('dojoLang') || 'vi';
 
   const NAV_I18N = {
-    vi: { home: 'Trang chủ', about: 'Giới thiệu', pricing: 'Học phí', python: 'Python', qa: 'QA/Testing', sql: 'SQL', langBtn: 'EN',
+    vi: { home: 'Trang chủ', about: 'Giới thiệu', pricing: 'Học phí', courses: 'Khóa học', langBtn: 'EN',
       login: 'Đăng nhập', logout: 'Đăng xuất', account: 'Tài khoản' },
-    en: { home: 'Home', about: 'About', pricing: 'Pricing', python: 'Python', qa: 'QA/Testing', sql: 'SQL', langBtn: 'VI',
+    en: { home: 'Home', about: 'About', pricing: 'Pricing', courses: 'Courses', langBtn: 'VI',
       login: 'Log in', logout: 'Log out', account: 'Account' },
   };
   const FOOTER_I18N = {
@@ -33,13 +33,13 @@
 
   function renderNav() {
     const t = NAV_I18N[LANG];
+    const coursePages = ['courses.html', 'python.html', 'qa.html', 'sql.html'];
     const links = [
-      ['index.html', t.home], ['about.html', t.about], ['pricing.html', t.pricing],
-      ['python.html', t.python], ['qa.html', t.qa], ['sql.html', t.sql],
+      ['index.html', t.home], ['courses.html', t.courses], ['pricing.html', t.pricing], ['about.html', t.about],
     ];
     const linksHtml = links.map(([href, label]) => {
-      const here = PAGE_FILE === href ? ' here' : '';
-      return `<a class="${here.trim()}" href="${href}">${label}</a>`;
+      const active = PAGE_FILE === href || (href === 'courses.html' && coursePages.includes(PAGE_FILE));
+      return `<a class="${active ? 'here' : ''}" href="${href}">${label}</a>`;
     }).join('');
     const html = `<nav><div class="wrap">
       <a class="logo" href="index.html">The <span>Dojo</span></a>
@@ -280,7 +280,7 @@
       badCode: 'Mã không đúng hoặc không dùng cho khóa này.', close: 'Đóng', unlockedAs: 'đã mở khóa: ',
       run: 'Chạy', reset: 'Đặt lại', pass: 'Đạt', fail: 'Chưa đạt', loading: 'Đang tải môi trường chạy code…',
       showAnswer: 'Xem đáp án mẫu', hideAnswer: 'Ẩn đáp án mẫu', output: 'Kết quả in ra', tryAgain: 'Chưa đúng, thử lại nhé',
-      askSensei: 'Hỏi sensei', tryExample: 'Chạy thử', outline: 'Nội dung bài học', done: 'Xong',
+      askSensei: 'Hỏi giáo viên', tryExample: 'Chạy thử', outline: 'Nội dung bài học', done: 'Xong',
       senseiIntro: 'Viết câu hỏi của bạn — chúng tôi sẽ tự động kèm bài học và code của bạn.',
       questionPh: 'Bạn đang kẹt ở đâu?', sendZalo: 'Gửi qua Zalo', sendEmail: 'Gửi email',
       copied: 'Đã copy câu hỏi + code. Sang Zalo, dán (Ctrl+V) vào ô chat và gửi nhé!', progressLabel: 'Tiến độ' },
@@ -288,7 +288,7 @@
       badCode: 'Code is invalid or not for this course.', close: 'Close', unlockedAs: 'unlocked as: ',
       run: 'Run', reset: 'Reset', pass: 'Pass', fail: 'Fail', loading: 'Loading the code runner…',
       showAnswer: 'Show sample answer', hideAnswer: 'Hide sample answer', output: 'Output', tryAgain: 'Not quite — try again',
-      askSensei: 'Ask sensei', tryExample: 'Try it', outline: 'In this lesson', done: 'Done',
+      askSensei: 'Ask teacher', tryExample: 'Try it', outline: 'In this lesson', done: 'Done',
       senseiIntro: 'Write your question — we\'ll attach the lesson and your code automatically.',
       questionPh: 'Where are you stuck?', sendZalo: 'Send via Zalo', sendEmail: 'Send email',
       copied: 'Question + code copied. Open Zalo, paste (Ctrl+V) into the chat and send!', progressLabel: 'Progress' },

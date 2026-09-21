@@ -1,0 +1,200 @@
+<h3>Lesson 9 — Setup: Python + VS Code</h3>
+<p>Until now you have run Python right here in the browser. That playground is perfect for learning because the feedback is instant — but it is not where real programs live. Professional developers write their code in <b>files</b> on their own computer, using a proper <b>code editor</b>, and run those files with the real Python that they installed. This lesson is the bridge from the playground to that real workflow.</p>
+<p>There are two halves. The <b>first</b> is a short, one-time setup: install Python and install <b>VS Code</b> (the free editor most Python developers use). The <b>second</b>, and bigger, half is a set of <b>warm-up exercises</b> that prepare you for the next lesson's mini-project — a small <b>to-do / task manager</b>. You will still run those exercises here in the browser so you keep the instant checking while you practise the pieces you'll soon assemble.</p>
+<p>From here on your <b>homework moves into real VS Code</b> instead of being auto-graded on the site — so getting the tools working is the important first step. Take your time with the setup; everything after it is familiar list, loop and string work aimed at one goal: a working task list.</p>
+
+<h4>1. Get your tools (one-time setup)</h4>
+<p>You only do this once. Three small steps:</p>
+<table class="res">
+<thead><tr><th>Step</th><th>What to do</th></tr></thead>
+<tbody>
+<tr><td>1. Install Python</td><td>Go to <code>python.org/downloads</code>, download the latest version, run the installer, and <b>tick “Add Python to PATH”</b> before clicking Install.</td></tr>
+<tr><td>2. Install VS Code</td><td>Go to <code>code.visualstudio.com</code>, download and install <b>Visual Studio Code</b>.</td></tr>
+<tr><td>3. Add the Python extension</td><td>Open VS Code → Extensions (the squares icon) → search <b>“Python”</b> (by Microsoft) → Install.</td></tr>
+</tbody>
+</table>
+<p>To check it worked, open a terminal in VS Code (menu <b>Terminal → New Terminal</b>) and type <code>python --version</code>. You should see something like <code>Python 3.12.x</code>. That's the whole setup — the rest of this lesson is practice.</p>
+
+<h4>2. How code runs from a file</h4>
+<p>In the browser, your code ran the moment you pressed ▶. On your computer the loop is slightly longer but just as simple: you <b>write</b> code into a <code>.py</code> file, VS Code hands that file to <b>Python</b>, and Python <b>runs</b> it top to bottom and shows the output in the terminal.</p>
+<figure class="diagram">
+<svg viewBox="0 0 380 120" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="ah9" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <g stroke="#22304C" text-anchor="middle">
+    <rect x="8" y="40" width="78" height="46" rx="6" fill="#121C30"/>
+    <rect x="118" y="40" width="78" height="46" rx="6" fill="#121C30"/>
+    <rect x="228" y="40" width="72" height="46" rx="6" fill="#121C30"/>
+    <rect x="322" y="40" width="52" height="46" rx="6" fill="#121C30"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="47" y="60">tasks.py</text><text x="47" y="76" fill="#8FA0BC">your file</text>
+    <text x="157" y="60" fill="#7FD1C0">VS Code</text><text x="157" y="76" fill="#8FA0BC">editor</text>
+    <text x="264" y="60" fill="#F5B942">Python</text><text x="264" y="76" fill="#8FA0BC">runs it</text>
+    <text x="348" y="60">Output</text><text x="348" y="76" fill="#8FA0BC">terminal</text>
+  </g>
+  <g stroke="#F5B942" stroke-width="1.5" marker-end="url(#ah9)" fill="none">
+    <line x1="88" y1="63" x2="114" y2="63"/>
+    <line x1="198" y1="63" x2="224" y2="63"/>
+    <line x1="302" y1="63" x2="320" y2="63"/>
+  </g>
+</svg>
+<figcaption>The edit → run → read loop. You type code into a <code>.py</code> file inside VS Code, press ▶ Run (or type <code>python tasks.py</code> in the terminal), and Python prints the result. Edit, run again, repeat.</figcaption>
+</figure>
+<p>The good news: the Python language is <b>exactly the same</b> as in this playground. Everything you already know — lists, loops, <code>if</code>, f-strings — works identically in a file. So let's warm up on the building blocks of a task manager.</p>
+
+<h4>3. A task list is just a list of strings</h4>
+<p>A to-do app is, at heart, a <b>list of strings</b> where each string is one task. You already know how to grow a list with <code>append</code>.</p>
+<pre class="run">tasks = []
+tasks.append("Buy milk")
+tasks.append("Call Anna")
+print(tasks)   # ['Buy milk', 'Call Anna']</pre>
+<figure class="diagram">
+<svg viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <text x="150" y="18" text-anchor="middle" fill="#8FA0BC">tasks — a list of strings</text>
+  <g stroke="#22304C">
+    <rect x="70" y="30" width="180" height="30" rx="5" fill="#121C30"/>
+    <rect x="70" y="66" width="180" height="30" rx="5" fill="#121C30"/>
+    <rect x="70" y="102" width="180" height="30" rx="5" fill="#121C30"/>
+    <rect x="70" y="140" width="180" height="30" rx="5" fill="#0E1626" stroke-dasharray="4 3"/>
+  </g>
+  <g fill="#7FD1C0" font-size="11" text-anchor="end">
+    <text x="60" y="50">[0]</text><text x="60" y="86">[1]</text><text x="60" y="122">[2]</text><text x="60" y="160">[3]</text>
+  </g>
+  <g fill="#E8E4D8">
+    <text x="82" y="50">"Buy milk"</text>
+    <text x="82" y="86">"Call Anna"</text>
+    <text x="82" y="122">"Wash car"</text>
+    <text x="82" y="160" fill="#8FA0BC">append adds here →</text>
+  </g>
+  <text x="150" y="186" text-anchor="middle" fill="#F5B942">tasks.append("...") always adds to the end</text>
+</svg>
+<figcaption>Each task sits at an index (0, 1, 2, …). <code>append</code> always adds a new task at the <b>end</b> of the list.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Start with <code>tasks = []</code> and <code>append</code> three tasks in order: <code>"Buy milk"</code>, <code>"Call Anna"</code>, <code>"Wash car"</code>. Result <code>['Buy milk', 'Call Anna', 'Wash car']</code>.</span>
+<template class="st">tasks = []
+# append the three tasks
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Call Anna", "Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>tasks = ["Buy milk", "Call Anna"]</code>, add <code>"Pay bills"</code> to the end. Result <code>['Buy milk', 'Call Anna', 'Pay bills']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna"]
+# add "Pay bills" to the end
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Call Anna", "Pay bills"]
+</template></div>
+
+<h4>4. Removing and finding a task</h4>
+<p>Users also finish or cancel tasks. <code>list.remove(value)</code> deletes the first matching item; to know <b>where</b> a task is, walk the list and compare.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna", "Wash car"]
+tasks.remove("Call Anna")
+print(tasks)                 # ['Buy milk', 'Wash car']
+print("Wash car" in tasks)   # True — membership check</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, remove <code>"Call Anna"</code>. Result <code>['Buy milk', 'Wash car']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+# remove "Call Anna"
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, set <code>has_call</code> to whether <code>"Call Anna"</code> is in the list. Result <code>True</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+has_call = None
+# is "Call Anna" in the list?
+</template>
+<template class="ts">assert has_call == True
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, find the <b>index</b> of <code>"Wash car"</code> by looping, and store it in <code>pos</code> (start <code>pos = -1</code>). Result <code>2</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+pos = -1
+# loop to find the index of "Wash car"
+</template>
+<template class="ts">assert pos == 2
+</template></div>
+
+<h4>5. Showing a numbered menu</h4>
+<p>People count from 1, but list indexes start at 0 — so a menu line for the task at index <code>i</code> shows the number <code>i + 1</code>. Build each line with an f-string.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna"]
+for i in range(len(tasks)):
+    print(f"{i + 1}. {tasks[i]}")
+# 1. Buy milk
+# 2. Call Anna</pre>
+<table class="res">
+<thead><tr><th>index i</th><th>tasks[i]</th><th>menu line</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>"Buy milk"</td><td>1. Buy milk</td></tr>
+<tr><td>1</td><td>"Call Anna"</td><td>2. Call Anna</td></tr>
+</tbody>
+</table>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, build a list <code>lines</code> of menu strings <code>"1. Buy milk"</code>, <code>"2. Call Anna"</code>, <code>"3. Wash car"</code> (use <code>i + 1</code> and an f-string).</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+lines = []
+# build "1. ...", "2. ...", "3. ..."
+</template>
+<template class="ts">assert lines == ["1. Buy milk", "2. Call Anna", "3. Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>tasks = ["Buy milk", "Call Anna"]</code>, <b>print</b> the numbered menu (one line per task, like <code>1. Buy milk</code>). Check the printed output.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna"]
+# print each task as "N. task"
+</template>
+<template class="ts">assert _OUT_.strip() == "1. Buy milk\n2. Call Anna"
+</template></div>
+
+<h4>6. Marking a task done</h4>
+<p>A common trick: mark a finished task by putting a tag in front of its text, like <code>"[x] "</code>. Then a task is "done" when it <b>starts with</b> that tag (<code>task.startswith("[x] ")</code>).</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna"]
+done = []
+for t in tasks:
+    done.append("[x] " + t)
+print(done)   # ['[x] Buy milk', '[x] Call Anna']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, build <code>done</code> where every task is prefixed with <code>"[x] "</code> → <code>['[x] Buy milk', '[x] Call Anna', '[x] Wash car']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+done = []
+# prefix each task with "[x] "
+</template>
+<template class="ts">assert done == ["[x] Buy milk", "[x] Call Anna", "[x] Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]</code>, count how many are <b>done</b> (start with <code>"[x] "</code>) into <code>done_count</code>. Result <code>2</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+done_count = 0
+# count tasks that start with "[x] "
+</template>
+<template class="ts">assert done_count == 2
+</template></div>
+
+<h4>7. A little summary</h4>
+<p>The last piece before the mini-project: a summary line. Count the total and the done tasks, then format one clear sentence.</p>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+total = len(tasks)
+done = 0
+for t in tasks:
+    if t.startswith("[x] "):
+        done += 1
+print(f"{done} of {total} tasks done")   # 2 of 3 tasks done</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]</code>, build the string <code>summary</code> = <code>"2 of 4 tasks done"</code> using <code>len</code>, a loop and an f-string.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+summary = ""
+# build "2 of 4 tasks done"
+</template>
+<template class="ts">assert summary == "2 of 4 tasks done"
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (status report).</b> Given <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]</code>, build a list <code>report</code> of lines <code>"N. STATUS name"</code> where STATUS is <code>DONE</code> if the task starts with <code>"[x] "</code> (and its name has that tag removed with <code>task[4:]</code>) or <code>TODO</code> otherwise → <code>['1. DONE Buy milk', '2. TODO Call Anna', '3. DONE Wash car']</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+report = []
+# for each task build "N. STATUS name"
+</template>
+<template class="ts">assert report == ["1. DONE Buy milk", "2. TODO Call Anna", "3. DONE Wash car"]
+</template></div>
+
+<div class="recap">Recap of lesson 9: install <b>Python</b> (tick “Add to PATH”) + <b>VS Code</b> + the Python extension · check with <code>python --version</code> · a program is a <code>.py</code> file that Python runs top to bottom · a to-do list is a <b>list of strings</b>: grow with <code>append</code>, delete with <code>remove</code>, test with <code>in</code> · number a menu with <code>i + 1</code> · mark done with a <code>"[x] "</code> prefix and test with <code>startswith</code>. Next: assemble these pieces into the <b>to-do / task manager</b> mini-project.</div>
+
+<h4>🏠 Homework</h4>
+<p><b>From this lesson on, homework is done in real VS Code</b> on your computer (not auto-graded here). Create a folder for the course and a file <code>tasks.py</code>, then complete the tasks below. Run your file after each step with the ▶ Run button or <code>python tasks.py</code> in the terminal.</p>
+<ol class="hw">
+<li><b>Hello, tools.</b> In <code>tasks.py</code>, print <code>"My task manager"</code>. Run the file and confirm you see the line in the terminal.</li>
+<li><b>Show the list.</b> Make a list of 3 tasks and print them as a numbered menu (<code>1. ...</code>, <code>2. ...</code>, <code>3. ...</code>) using a <code>for</code> loop and <code>i + 1</code>.</li>
+<li><b>Add and remove.</b> Print the list, then <code>append</code> a new task and <code>remove</code> one of the originals, and print the list again so you can see the change.</li>
+<li><b>🔥 Stretch — summary.</b> Mark one task done by prefixing it with <code>"[x] "</code>, then print a summary line like <code>"1 of 3 tasks done"</code> by counting the tasks that <code>startswith("[x] ")</code>.</li>
+</ol>

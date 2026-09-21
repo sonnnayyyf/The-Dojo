@@ -1,0 +1,200 @@
+<h3>Bài 9 — Cài đặt: Python + VS Code</h3>
+<p>Từ đầu khóa đến giờ bạn chạy Python ngay trong trình duyệt. Sân tập đó rất hợp để học vì phản hồi tức thì — nhưng đó không phải nơi các chương trình thật “sống”. Lập trình viên chuyên nghiệp viết mã vào các <b>tệp</b> trên máy của mình, dùng một <b>trình soạn mã</b> đúng nghĩa, rồi chạy các tệp đó bằng Python thật đã cài đặt. Bài này là cây cầu nối từ sân tập sang quy trình thật đó.</p>
+<p>Có hai phần. Phần <b>đầu</b> là bước cài đặt ngắn, chỉ làm một lần: cài Python và cài <b>VS Code</b> (trình soạn thảo miễn phí mà đa số lập trình viên Python dùng). Phần <b>sau</b>, và lớn hơn, là một loạt <b>bài tập khởi động</b> chuẩn bị cho đồ án nhỏ ở bài kế tiếp — một <b>trình quản lý công việc (to-do)</b>. Bạn vẫn chạy các bài tập này ngay trong trình duyệt để giữ được sự chấm bài tức thì trong lúc luyện những mảnh ghép sắp lắp ráp.</p>
+<p>Kể từ đây <b>bài tập về nhà chuyển sang làm trong VS Code thật</b> thay vì chấm tự động trên web — nên làm cho công cụ chạy được là bước đầu quan trọng. Hãy thong thả với phần cài đặt; mọi thứ sau đó đều là list, vòng lặp và chuỗi quen thuộc, hướng tới một mục tiêu: một danh sách công việc chạy được.</p>
+
+<h4>1. Chuẩn bị công cụ (cài một lần)</h4>
+<p>Bạn chỉ làm việc này một lần. Ba bước nhỏ:</p>
+<table class="res">
+<thead><tr><th>Bước</th><th>Làm gì</th></tr></thead>
+<tbody>
+<tr><td>1. Cài Python</td><td>Vào <code>python.org/downloads</code>, tải bản mới nhất, chạy trình cài đặt, và <b>tích “Add Python to PATH”</b> trước khi bấm Install.</td></tr>
+<tr><td>2. Cài VS Code</td><td>Vào <code>code.visualstudio.com</code>, tải và cài <b>Visual Studio Code</b>.</td></tr>
+<tr><td>3. Thêm extension Python</td><td>Mở VS Code → Extensions (biểu tượng ô vuông) → tìm <b>“Python”</b> (của Microsoft) → Install.</td></tr>
+</tbody>
+</table>
+<p>Để kiểm tra đã chạy được, mở terminal trong VS Code (menu <b>Terminal → New Terminal</b>) và gõ <code>python --version</code>. Bạn sẽ thấy dạng như <code>Python 3.12.x</code>. Cài đặt chỉ có vậy — phần còn lại của bài là luyện tập.</p>
+
+<h4>2. Mã chạy từ một tệp như thế nào</h4>
+<p>Trong trình duyệt, mã chạy ngay khi bạn bấm ▶. Trên máy bạn, vòng lặp dài hơn một chút nhưng cũng đơn giản: bạn <b>viết</b> mã vào một tệp <code>.py</code>, VS Code đưa tệp đó cho <b>Python</b>, và Python <b>chạy</b> từ trên xuống rồi hiện kết quả trong terminal.</p>
+<figure class="diagram">
+<svg viewBox="0 0 380 120" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="ah9v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <g stroke="#22304C" text-anchor="middle">
+    <rect x="8" y="40" width="78" height="46" rx="6" fill="#121C30"/>
+    <rect x="118" y="40" width="78" height="46" rx="6" fill="#121C30"/>
+    <rect x="228" y="40" width="72" height="46" rx="6" fill="#121C30"/>
+    <rect x="322" y="40" width="52" height="46" rx="6" fill="#121C30"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="47" y="60">tasks.py</text><text x="47" y="76" fill="#8FA0BC">tệp của bạn</text>
+    <text x="157" y="60" fill="#7FD1C0">VS Code</text><text x="157" y="76" fill="#8FA0BC">soạn thảo</text>
+    <text x="264" y="60" fill="#F5B942">Python</text><text x="264" y="76" fill="#8FA0BC">chạy nó</text>
+    <text x="348" y="60">Kết quả</text><text x="348" y="76" fill="#8FA0BC">terminal</text>
+  </g>
+  <g stroke="#F5B942" stroke-width="1.5" marker-end="url(#ah9v)" fill="none">
+    <line x1="88" y1="63" x2="114" y2="63"/>
+    <line x1="198" y1="63" x2="224" y2="63"/>
+    <line x1="302" y1="63" x2="320" y2="63"/>
+  </g>
+</svg>
+<figcaption>Vòng lặp soạn → chạy → đọc. Bạn gõ mã vào tệp <code>.py</code> trong VS Code, bấm ▶ Run (hoặc gõ <code>python tasks.py</code> trong terminal), và Python in kết quả. Sửa, chạy lại, lặp lại.</figcaption>
+</figure>
+<p>Tin vui: ngôn ngữ Python <b>giống hệt</b> như trong sân tập này. Mọi thứ bạn đã biết — list, vòng lặp, <code>if</code>, f-string — đều hoạt động y như vậy trong một tệp. Vậy nên hãy khởi động với những viên gạch của trình quản lý công việc.</p>
+
+<h4>3. Danh sách công việc chỉ là một list các chuỗi</h4>
+<p>Một app to-do, về bản chất, là một <b>list các chuỗi</b> trong đó mỗi chuỗi là một công việc. Bạn đã biết cách nới rộng list bằng <code>append</code>.</p>
+<pre class="run">tasks = []
+tasks.append("Buy milk")
+tasks.append("Call Anna")
+print(tasks)   # ['Buy milk', 'Call Anna']</pre>
+<figure class="diagram">
+<svg viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <text x="150" y="18" text-anchor="middle" fill="#8FA0BC">tasks — một list các chuỗi</text>
+  <g stroke="#22304C">
+    <rect x="70" y="30" width="180" height="30" rx="5" fill="#121C30"/>
+    <rect x="70" y="66" width="180" height="30" rx="5" fill="#121C30"/>
+    <rect x="70" y="102" width="180" height="30" rx="5" fill="#121C30"/>
+    <rect x="70" y="140" width="180" height="30" rx="5" fill="#0E1626" stroke-dasharray="4 3"/>
+  </g>
+  <g fill="#7FD1C0" font-size="11" text-anchor="end">
+    <text x="60" y="50">[0]</text><text x="60" y="86">[1]</text><text x="60" y="122">[2]</text><text x="60" y="160">[3]</text>
+  </g>
+  <g fill="#E8E4D8">
+    <text x="82" y="50">"Buy milk"</text>
+    <text x="82" y="86">"Call Anna"</text>
+    <text x="82" y="122">"Wash car"</text>
+    <text x="82" y="160" fill="#8FA0BC">append thêm vào đây →</text>
+  </g>
+  <text x="150" y="186" text-anchor="middle" fill="#F5B942">tasks.append("...") luôn thêm vào cuối</text>
+</svg>
+<figcaption>Mỗi công việc nằm ở một chỉ số (0, 1, 2, …). <code>append</code> luôn thêm công việc mới vào <b>cuối</b> list.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Bắt đầu với <code>tasks = []</code> và <code>append</code> ba công việc theo thứ tự: <code>"Buy milk"</code>, <code>"Call Anna"</code>, <code>"Wash car"</code>. Kết quả <code>['Buy milk', 'Call Anna', 'Wash car']</code>.</span>
+<template class="st">tasks = []
+# append the three tasks
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Call Anna", "Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>tasks = ["Buy milk", "Call Anna"]</code>, thêm <code>"Pay bills"</code> vào cuối. Kết quả <code>['Buy milk', 'Call Anna', 'Pay bills']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna"]
+# add "Pay bills" to the end
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Call Anna", "Pay bills"]
+</template></div>
+
+<h4>4. Xóa và tìm một công việc</h4>
+<p>Người dùng cũng hoàn thành hoặc hủy công việc. <code>list.remove(value)</code> xóa phần tử khớp đầu tiên; muốn biết công việc nằm <b>ở đâu</b>, duyệt list và so sánh.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna", "Wash car"]
+tasks.remove("Call Anna")
+print(tasks)                 # ['Buy milk', 'Wash car']
+print("Wash car" in tasks)   # True — kiểm tra có mặt</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, xóa <code>"Call Anna"</code>. Kết quả <code>['Buy milk', 'Wash car']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+# remove "Call Anna"
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, gán <code>has_call</code> bằng việc <code>"Call Anna"</code> có trong list hay không. Kết quả <code>True</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+has_call = None
+# is "Call Anna" in the list?
+</template>
+<template class="ts">assert has_call == True
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, tìm <b>chỉ số</b> của <code>"Wash car"</code> bằng vòng lặp và lưu vào <code>pos</code> (bắt đầu <code>pos = -1</code>). Kết quả <code>2</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+pos = -1
+# loop to find the index of "Wash car"
+</template>
+<template class="ts">assert pos == 2
+</template></div>
+
+<h4>5. Hiển thị một menu có đánh số</h4>
+<p>Con người đếm từ 1, nhưng chỉ số list bắt đầu từ 0 — nên dòng menu cho công việc ở chỉ số <code>i</code> hiện số <code>i + 1</code>. Dựng mỗi dòng bằng f-string.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna"]
+for i in range(len(tasks)):
+    print(f"{i + 1}. {tasks[i]}")
+# 1. Buy milk
+# 2. Call Anna</pre>
+<table class="res">
+<thead><tr><th>chỉ số i</th><th>tasks[i]</th><th>dòng menu</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>"Buy milk"</td><td>1. Buy milk</td></tr>
+<tr><td>1</td><td>"Call Anna"</td><td>2. Call Anna</td></tr>
+</tbody>
+</table>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, dựng list <code>lines</code> gồm các chuỗi menu <code>"1. Buy milk"</code>, <code>"2. Call Anna"</code>, <code>"3. Wash car"</code> (dùng <code>i + 1</code> và f-string).</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+lines = []
+# build "1. ...", "2. ...", "3. ..."
+</template>
+<template class="ts">assert lines == ["1. Buy milk", "2. Call Anna", "3. Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>tasks = ["Buy milk", "Call Anna"]</code>, <b>in</b> menu có đánh số (mỗi công việc một dòng, dạng <code>1. Buy milk</code>). Kiểm tra phần in ra.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna"]
+# print each task as "N. task"
+</template>
+<template class="ts">assert _OUT_.strip() == "1. Buy milk\n2. Call Anna"
+</template></div>
+
+<h4>6. Đánh dấu công việc đã xong</h4>
+<p>Một mẹo phổ biến: đánh dấu công việc đã xong bằng cách gắn một nhãn phía trước phần chữ, như <code>"[x] "</code>. Khi đó một công việc là “đã xong” khi nó <b>bắt đầu bằng</b> nhãn ấy (<code>task.startswith("[x] ")</code>).</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna"]
+done = []
+for t in tasks:
+    done.append("[x] " + t)
+print(done)   # ['[x] Buy milk', '[x] Call Anna']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, dựng <code>done</code> trong đó mỗi công việc được gắn tiền tố <code>"[x] "</code> → <code>['[x] Buy milk', '[x] Call Anna', '[x] Wash car']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+done = []
+# prefix each task with "[x] "
+</template>
+<template class="ts">assert done == ["[x] Buy milk", "[x] Call Anna", "[x] Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]</code>, đếm bao nhiêu công việc <b>đã xong</b> (bắt đầu bằng <code>"[x] "</code>) vào <code>done_count</code>. Kết quả <code>2</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+done_count = 0
+# count tasks that start with "[x] "
+</template>
+<template class="ts">assert done_count == 2
+</template></div>
+
+<h4>7. Một bản tóm tắt nhỏ</h4>
+<p>Mảnh ghép cuối trước đồ án nhỏ: một dòng tóm tắt. Đếm tổng số và số công việc đã xong, rồi ghép thành một câu rõ ràng.</p>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+total = len(tasks)
+done = 0
+for t in tasks:
+    if t.startswith("[x] "):
+        done += 1
+print(f"{done} of {total} tasks done")   # 2 of 3 tasks done</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]</code>, dựng chuỗi <code>summary</code> = <code>"2 of 4 tasks done"</code> dùng <code>len</code>, một vòng lặp và f-string.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+summary = ""
+# build "2 of 4 tasks done"
+</template>
+<template class="ts">assert summary == "2 of 4 tasks done"
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (bản báo cáo trạng thái).</b> Cho <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]</code>, dựng list <code>report</code> các dòng <code>"N. STATUS name"</code> trong đó STATUS là <code>DONE</code> nếu công việc bắt đầu bằng <code>"[x] "</code> (và tên đã bỏ nhãn đó bằng <code>task[4:]</code>) hoặc <code>TODO</code> nếu ngược lại → <code>['1. DONE Buy milk', '2. TODO Call Anna', '3. DONE Wash car']</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+report = []
+# for each task build "N. STATUS name"
+</template>
+<template class="ts">assert report == ["1. DONE Buy milk", "2. TODO Call Anna", "3. DONE Wash car"]
+</template></div>
+
+<div class="recap">Tóm tắt bài 9: cài <b>Python</b> (tích “Add to PATH”) + <b>VS Code</b> + extension Python · kiểm tra bằng <code>python --version</code> · một chương trình là tệp <code>.py</code> mà Python chạy từ trên xuống · danh sách công việc là một <b>list các chuỗi</b>: nới rộng bằng <code>append</code>, xóa bằng <code>remove</code>, kiểm tra bằng <code>in</code> · đánh số menu bằng <code>i + 1</code> · đánh dấu xong bằng tiền tố <code>"[x] "</code> và kiểm tra bằng <code>startswith</code>. Bài sau: lắp các mảnh này thành đồ án nhỏ <b>trình quản lý công việc (to-do)</b>.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p><b>Kể từ bài này, bài tập về nhà được làm trong VS Code thật</b> trên máy bạn (không chấm tự động ở đây). Tạo một thư mục cho khóa học và một tệp <code>tasks.py</code>, rồi hoàn thành các phần dưới. Chạy tệp sau mỗi bước bằng nút ▶ Run hoặc <code>python tasks.py</code> trong terminal.</p>
+<ol class="hw">
+<li><b>Chào công cụ.</b> Trong <code>tasks.py</code>, in <code>"My task manager"</code>. Chạy tệp và xác nhận bạn thấy dòng đó trong terminal.</li>
+<li><b>Hiện danh sách.</b> Tạo một list 3 công việc và in chúng thành menu có đánh số (<code>1. ...</code>, <code>2. ...</code>, <code>3. ...</code>) dùng vòng lặp <code>for</code> và <code>i + 1</code>.</li>
+<li><b>Thêm và xóa.</b> In list, rồi <code>append</code> một công việc mới và <code>remove</code> một công việc ban đầu, in lại list để thấy thay đổi.</li>
+<li><b>🔥 Nâng cao — tóm tắt.</b> Đánh dấu một công việc đã xong bằng tiền tố <code>"[x] "</code>, rồi in một dòng tóm tắt dạng <code>"1 of 3 tasks done"</code> bằng cách đếm các công việc <code>startswith("[x] ")</code>.</li>
+</ol>
