@@ -6,6 +6,10 @@ private-tools/ledger.csv
 # Node
 node_modules/
 
+# Python cache (from local verification scripts)
+__pycache__/
+*.pyc
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

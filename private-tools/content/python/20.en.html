@@ -1,0 +1,122 @@
+<h3>Lesson 20 — Capstone: build your own app</h3>
+<p>This is it — the finish line. Over nineteen lessons you've gone from your very first <code>print()</code> to functions, dictionaries, error handling and text analysis. Now you'll put it all together and build a complete little program <b>of your own</b>, in real VS Code, and submit it. This is the piece you can show people and say: "I built that."</p>
+<p>You'll pick <b>one of three projects</b> below. Each comes with a guided build-up — clear milestones, just like the mini-project in Lesson 10 — so you're never staring at a blank file. But the last step of every project is the same: <b>add your own idea</b>. A feature, a twist, a bit of polish that's yours. That's what turns an exercise into <i>your</i> project.</p>
+<p>Each project also has one small <b>warm-up</b> you can run and grade right here to get the core function working — then you take it into VS Code and build the whole thing around it. Aim for something you're proud of — roughly 40–80 lines and an hour or two of focused work; quality beats length.</p>
+
+<h4>How the capstone works</h4>
+<ol>
+<li>Pick <b>one</b> of the three projects below.</li>
+<li>Do its warm-up exercise here to nail the core logic.</li>
+<li>Open <b>VS Code</b>, create a file (e.g. <code>capstone.py</code>), and follow the build steps.</li>
+<li>Add <b>at least one</b> idea of your own (see each project's "make it yours").</li>
+<li><b>Submit to your teacher:</b> your code file <b>and</b> a screenshot of it running.</li>
+</ol>
+<figure class="diagram">
+<svg viewBox="0 0 360 92" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a20" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <rect x="14" y="30" width="96" height="34" rx="8" fill="#121C30" stroke="#22304C"/>
+  <text x="62" y="51" text-anchor="middle" fill="#7FD1C0">pick a project</text>
+  <rect x="132" y="30" width="96" height="34" rx="8" fill="#121C30" stroke="#22304C"/>
+  <text x="180" y="51" text-anchor="middle" fill="#F5B942">build in VS Code</text>
+  <rect x="250" y="30" width="96" height="34" rx="8" fill="#121C30" stroke="#22304C"/>
+  <text x="298" y="47" text-anchor="middle" fill="#E8E4D8">submit code</text>
+  <text x="298" y="59" text-anchor="middle" fill="#8FA0BC" font-size="9">+ screenshot</text>
+  <g stroke="#F5B942" stroke-width="1.4" marker-end="url(#a20)" fill="none">
+    <line x1="110" y1="47" x2="130" y2="47"/><line x1="228" y1="47" x2="248" y2="47"/>
+  </g>
+</svg>
+</figure>
+
+<h4>Project A — Text Analyser</h4>
+<p>Feed your program a block of text and have it report interesting facts: total words, unique words, the most common word, the average word length. A tiny version of the tools real writers and data folk use.</p>
+<p><b>Data model:</b> the text is a string; <code>text.split()</code> gives the words; a dictionary counts them.</p>
+<p><b>Build steps:</b></p>
+<ol>
+<li>Store a paragraph of a few sentences in a variable <code>text</code>. (Later, swap to <code>text = input("Paste text: ")</code>.)</li>
+<li>Lowercase it first with <code>text.lower()</code> so <code>"The"</code> and <code>"the"</code> count as the same word.</li>
+<li>Split into words with <code>.split()</code> and print <code>"Total words: N"</code> using <code>len</code>.</li>
+<li>Use a <code>set</code> to print how many <b>unique</b> words there are.</li>
+<li>Build a word → count dictionary with the counting pattern (<code>counts[w] = counts.get(w, 0) + 1</code>).</li>
+<li>Loop the dictionary to find and print the <b>most common</b> word (track the biggest count so far).</li>
+<li>Print the <b>average word length</b>, rounded (sum of <code>len(w)</code> ÷ number of words).</li>
+<li>Wrap the whole thing in a function <code>analyse(text)</code> that <b>returns a report dictionary</b>, then print each line of the report neatly.</li>
+</ol>
+<p><b>Make it yours</b> (pick a few): strip punctuation with <code>.replace(",", "").replace(".", "")</code> before counting · show the <b>top 3</b> words with their counts · count sentences by splitting on <code>"."</code> · find the <b>longest</b> and <b>shortest</b> word · ignore common "stop words" like <code>"the"</code>, <code>"a"</code>, <code>"is"</code> using a list · draw a tiny bar chart with <code>"#" * count</code> next to each top word · keep asking for text in a loop until the user types <code>"quit"</code>.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Warm-up A.</b> Define <code>average_word_length</code> that returns the average length of the words in <code>text</code>, rounded to 1 decimal. So <code>average_word_length("a bb ccc")</code> is <code>2.0</code>.</span>
+<template class="st">def average_word_length(text):
+    # average length of the words, rounded to 1 decimal
+    pass
+</template>
+<template class="ts">assert average_word_length("a bb ccc") == 2.0
+assert average_word_length("the cat sat") == 3.0
+</template></div>
+
+<h4>Project B — Expense Tracker</h4>
+<p>Track spending: each expense is a record with a description, an amount, and a category. The program adds expenses, lists them, totals them, and breaks the total down by category.</p>
+<p><b>Data model:</b> a list of dictionaries like <code>{"desc": "Lunch", "amount": 50, "category": "food"}</code>.</p>
+<p><b>Build steps:</b></p>
+<ol>
+<li>Start a list of 4–5 expense dictionaries, each with <code>desc</code>, <code>amount</code> and <code>category</code>.</li>
+<li>Loop and print each as <code>"Lunch — 50 (food)"</code> using an f-string.</li>
+<li>Print the <b>grand total</b> of all amounts (a loop, or <code>sum</code>).</li>
+<li>Write <code>total_by_category(records, cat)</code> (your warm-up) and reuse it.</li>
+<li>Get the <code>set</code> of categories, then print the total for <b>each</b> category.</li>
+<li>Find and print the single <b>biggest</b> expense (its description and amount).</li>
+<li>Print each category's <b>share as a percentage</b> of the grand total, rounded.</li>
+<li>Add a <code>while True</code> menu (1 add · 2 list · 3 totals · 4 quit) reading <code>input()</code>; on <code>"4"</code>, <code>break</code>.</li>
+<li>Make "add" read a description, an <code>amount</code> (with <code>int(input())</code>) and a category, then <code>append</code> a new dict — guard a bad amount with <code>try/except</code> so it never crashes.</li>
+</ol>
+<p><b>Make it yours</b> (pick a few): <b>sort</b> expenses biggest → smallest · set a <b>budget</b> and warn when a category goes over it · show the <b>average</b> expense · let the user filter by a category they type · count how many expenses are in each category · build one formatted <b>report</b> string you could save · add a <code>date</code> field and show the newest first.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Warm-up B.</b> Define <code>total_by_category</code> that sums the <code>amount</code> of the records whose <code>category</code> matches <code>cat</code>. For the records below, <code>total_by_category(records, "food")</code> is <code>130</code>.</span>
+<template class="st">def total_by_category(records, cat):
+    # sum amounts where category == cat
+    pass
+
+records = [
+    {"desc": "Lunch", "amount": 50, "category": "food"},
+    {"desc": "Bus", "amount": 15, "category": "transport"},
+    {"desc": "Dinner", "amount": 80, "category": "food"},
+]
+</template>
+<template class="ts">assert total_by_category(records, "food") == 130
+assert total_by_category(records, "transport") == 15
+</template></div>
+
+<h4>Project C — Quiz Game</h4>
+<p>A quiz that asks questions, checks answers, keeps score, and reports how the player did. Great practice with loops, conditions and dictionaries.</p>
+<p><b>Data model:</b> a list of question dictionaries like <code>{"q": "Capital of Vietnam?", "a": "Hanoi"}</code>.</p>
+<p><b>Build steps:</b></p>
+<ol>
+<li>Store 3–5 question dictionaries (each <code>{"q": ..., "a": ...}</code>) in a list.</li>
+<li>Loop with <code>enumerate</code> and print each as <code>"Q1: ..."</code>.</li>
+<li>For each question, read the player's answer with <code>input()</code> and compare it to the correct one, counting a <code>score</code>.</li>
+<li>Make checking <b>fair</b> by comparing <code>answer.strip().lower()</code> on both sides.</li>
+<li>Print the final score like <code>"You got 2 / 3"</code>.</li>
+<li>Print a message by <b>score band</b> — e.g. all correct → "Perfect!", at least half → "Not bad", else → "Keep practising".</li>
+<li>Keep a list of the questions the player got <b>wrong</b> and show them (with the right answers) at the end.</li>
+<li>Turn one question into <b>multiple choice</b>: show options a/b/c and accept the letter.</li>
+</ol>
+<p><b>Make it yours</b> (pick a few): <b>shuffle</b> the questions with the <code>random</code> module · add <b>categories</b> or difficulty levels and let the player choose · reveal the correct answer after a wrong guess · keep a <b>high score</b> across rounds · let the player add their own questions with <code>input()</code> · give a point bonus for a streak of correct answers.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Warm-up C.</b> Define <code>score_quiz</code> that takes the player's <code>answers</code> and the <code>correct</code> answers (two equal-length lists) and returns how many match by position. So <code>score_quiz(["a", "b", "c"], ["a", "x", "c"])</code> is <code>2</code>.</span>
+<template class="st">def score_quiz(answers, correct):
+    # count how many answers match by position
+    pass
+</template>
+<template class="ts">assert score_quiz(["a", "b", "c"], ["a", "x", "c"]) == 2
+assert score_quiz(["a"], ["a"]) == 1
+</template></div>
+
+<div class="recap">Recap of lesson 20: your <b>capstone</b> pulls together everything — pick Text Analyser, Expense Tracker, or Quiz Game, get the core function working here, then build the full program in VS Code · every project ends with <b>your own idea</b> added on top · this is the pipeline you practised: input → structure → analyse → report. You've finished Python Fundamentals. 🎉</div>
+
+<h4>🏠 Homework — the capstone</h4>
+<p>This is your final project, done in <b>VS Code</b> and submitted to your teacher.</p>
+<ol class="hw">
+<li><b>Choose a project</b> (A, B, or C) and create <code>capstone.py</code> in VS Code.</li>
+<li><b>Build it</b> by following the project's steps above, running it as you go.</li>
+<li><b>Make it yours</b> — add at least one feature from the "make it yours" list, or your own idea.</li>
+<li><b>🔥 Submit</b> your <code>capstone.py</code> file <b>and a screenshot of it running</b> to your teacher. Be ready to explain how it works — that's your black belt. 🥋</li>
+</ol>

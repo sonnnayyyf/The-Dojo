@@ -1,0 +1,193 @@
+<h3>Lesson 15 — Errors: try / except</h3>
+<p>Up to now, when something went wrong — dividing by zero, turning <code>"abc"</code> into a number, reading a key that isn't there — your program simply <b>crashed</b> with a red error message and stopped dead. That's fine while learning, but a real program can't fall over every time a user types something odd. It needs to <b>expect</b> trouble and handle it calmly.</p>
+<p>Python's tool for this is <code>try / except</code>: you put the risky code in a <code>try</code> block, and if it raises an error, Python jumps to the <code>except</code> block instead of crashing. Your program keeps running and can give a sensible response — a default value, a friendly message, a skipped item.</p>
+<p>This is the difference between a fragile script and software people can actually use. Handling bad input gracefully is one of the clearest marks of a real developer.</p>
+
+<h4>1. What an error looks like</h4>
+<p>Certain operations fail at runtime and raise a named <b>exception</b>. A few you'll meet constantly:</p>
+<table class="res">
+<thead><tr><th>Code</th><th>Exception</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td><code>int("abc")</code></td><td>ValueError</td><td>text isn't a number</td></tr>
+<tr><td><code>10 / 0</code></td><td>ZeroDivisionError</td><td>can't divide by zero</td></tr>
+<tr><td><code>d["missing"]</code></td><td>KeyError</td><td>no such key in the dict</td></tr>
+<tr><td><code>items[99]</code></td><td>IndexError</td><td>position is past the end</td></tr>
+</tbody>
+</table>
+<p>Without handling, any of these stops the whole program.</p>
+
+<h4>2. try / except</h4>
+<p>Wrap the risky line in <code>try</code>. If it fails, the <code>except</code> block runs instead.</p>
+<pre class="run">def safe_int(s):
+    try:
+        return int(s)        # risky: might fail
+    except ValueError:
+        return 0             # runs only if int() failed
+
+print(safe_int("42"))    # 42
+print(safe_int("abc"))   # 0  — no crash</pre>
+<figure class="diagram">
+<svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a15" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7FD1C0"/>
+    </marker>
+  </defs>
+  <rect x="120" y="14" width="120" height="34" rx="8" fill="#121C30" stroke="#22304C"/>
+  <text x="180" y="35" text-anchor="middle" fill="#E8E4D8">run try block</text>
+  <rect x="30" y="100" width="130" height="34" rx="8" fill="#0E1626" stroke="#22304C"/>
+  <text x="95" y="121" text-anchor="middle" fill="#7FD1C0">worked → return</text>
+  <rect x="200" y="100" width="140" height="34" rx="8" fill="#0E1626" stroke="#22304C"/>
+  <text x="270" y="121" text-anchor="middle" fill="#E2604C">failed → except</text>
+  <g stroke="#7FD1C0" stroke-width="1.3" marker-end="url(#a15)" fill="none">
+    <line x1="160" y1="48" x2="100" y2="96"/>
+  </g>
+  <g stroke="#E2604C" stroke-width="1.3" marker-end="url(#a15)" fill="none" stroke-dasharray="4 3">
+    <line x1="200" y1="48" x2="262" y2="96"/>
+  </g>
+  <text x="120" y="78" fill="#8FA0BC" font-size="10">no error</text>
+  <text x="238" y="78" fill="#8FA0BC" font-size="10">error!</text>
+</svg>
+<figcaption>If the <code>try</code> block succeeds, the <code>except</code> is skipped. If it raises an error, Python jumps to <code>except</code> instead of crashing.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Define <code>safe_int</code> that returns <code>int(s)</code>, or <code>0</code> if <code>s</code> can't be converted. So <code>safe_int("42")</code> is <code>42</code> and <code>safe_int("abc")</code> is <code>0</code>.</span>
+<template class="st">def safe_int(s):
+    # try to convert, else return 0
+    pass
+</template>
+<template class="ts">assert safe_int("42") == 42
+assert safe_int("abc") == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Define <code>safe_divide</code> that returns <code>a / b</code>, or <code>0</code> if <code>b</code> is zero (catch <code>ZeroDivisionError</code>). So <code>safe_divide(10, 2)</code> is <code>5.0</code> and <code>safe_divide(5, 0)</code> is <code>0</code>.</span>
+<template class="st">def safe_divide(a, b):
+    # divide safely
+    pass
+</template>
+<template class="ts">assert safe_divide(10, 2) == 5.0
+assert safe_divide(5, 0) == 0
+</template></div>
+
+<h4>3. Catching the right error</h4>
+<p>Name the exception you expect after <code>except</code>. This keeps you from accidentally hiding bugs you didn't mean to catch. Reading a missing dictionary key raises <code>KeyError</code>; an out-of-range list index raises <code>IndexError</code>.</p>
+<pre class="run">def safe_get(d, key):
+    try:
+        return d[key]
+    except KeyError:
+        return "missing"
+
+person = {"name": "Anna"}
+print(safe_get(person, "name"))    # Anna
+print(safe_get(person, "email"))   # missing</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Define <code>safe_get</code> that returns <code>d[key]</code>, or <code>"missing"</code> if the key isn't there. So for <code>{"name": "Anna"}</code>, <code>safe_get(d, "name")</code> is <code>"Anna"</code> and <code>safe_get(d, "email")</code> is <code>"missing"</code>.</span>
+<template class="st">def safe_get(d, key):
+    # return the value or "missing"
+    pass
+</template>
+<template class="ts">assert safe_get({"name": "Anna"}, "name") == "Anna"
+assert safe_get({"name": "Anna"}, "email") == "missing"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Define <code>get_item</code> that returns <code>items[i]</code>, or <code>None</code> if the index is out of range (catch <code>IndexError</code>). So <code>get_item([10, 20], 0)</code> is <code>10</code> and <code>get_item([10, 20], 5)</code> is <code>None</code>.</span>
+<template class="st">def get_item(items, i):
+    # return the item or None
+    pass
+</template>
+<template class="ts">assert get_item([10, 20], 0) == 10
+assert get_item([10, 20], 5) is None
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Define <code>to_float</code> that returns <code>float(s)</code>, or <code>None</code> if it can't convert. So <code>to_float("3.5")</code> is <code>3.5</code> and <code>to_float("x")</code> is <code>None</code>.</span>
+<template class="st">def to_float(s):
+    # return the float or None
+    pass
+</template>
+<template class="ts">assert to_float("3.5") == 3.5
+assert to_float("x") is None
+</template></div>
+
+<h4>4. Handling bad items in a loop</h4>
+<p>A very common real task: process a list where <b>some</b> entries are bad. Wrap the risky bit in <code>try</code> and just skip (or default) the failures — the loop keeps going.</p>
+<pre class="run">values = ["1", "2", "x", "3"]
+total = 0
+for v in values:
+    try:
+        total += int(v)
+    except ValueError:
+        pass                 # ignore the bad one
+print(total)   # 6</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Define <code>sum_numbers</code> that adds up the values in a list that can be turned into <code>int</code>, skipping the rest. So <code>sum_numbers(["1", "2", "x", "3"])</code> is <code>6</code>.</span>
+<template class="st">def sum_numbers(values):
+    # sum the convertible values, skip the rest
+    pass
+</template>
+<template class="ts">assert sum_numbers(["1", "2", "x", "3"]) == 6
+assert sum_numbers(["a", "b"]) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Define <code>count_valid</code> that returns how many strings in <code>values</code> can be converted to <code>int</code>. So <code>count_valid(["1", "2", "x", "3"])</code> is <code>3</code>.</span>
+<template class="st">def count_valid(values):
+    # count how many convert to int
+    pass
+</template>
+<template class="ts">assert count_valid(["1", "2", "x", "3"]) == 3
+assert count_valid(["a"]) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Define <code>percent</code> that returns <code>round(part / whole * 100)</code>, or <code>0</code> if <code>whole</code> is zero. So <code>percent(1, 4)</code> is <code>25</code> and <code>percent(1, 0)</code> is <code>0</code>.</span>
+<template class="st">def percent(part, whole):
+    # return the percentage, or 0 if whole is 0
+    pass
+</template>
+<template class="ts">assert percent(1, 4) == 25
+assert percent(1, 0) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Define <code>clean_ints</code> that returns a list of the <code>int</code> values from <code>values</code>, dropping any that don't convert. So <code>clean_ints(["10", "x", "20"])</code> is <code>[10, 20]</code>.</span>
+<template class="st">def clean_ints(values):
+    # return a list of the valid ints
+    pass
+</template>
+<template class="ts">assert clean_ints(["10", "x", "20"]) == [10, 20]
+assert clean_ints(["a", "b"]) == []
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (robust average).</b> Define <code>safe_average</code> that averages only the values in <code>values</code> that convert to a number, and returns <code>0</code> if none do. So <code>safe_average(["2", "x", "4"])</code> is <code>3.0</code> and <code>safe_average(["a"])</code> is <code>0</code>.</span>
+<template class="st">def safe_average(values):
+    # average the valid numbers, or 0 if none
+    pass
+</template>
+<template class="ts">assert safe_average(["2", "x", "4"]) == 3.0
+assert safe_average(["a"]) == 0
+</template></div>
+
+<div class="recap">Recap of lesson 15: risky operations raise named <b>exceptions</b> (<code>ValueError</code>, <code>ZeroDivisionError</code>, <code>KeyError</code>, <code>IndexError</code>) that crash the program if unhandled · put risky code in <code>try</code> and the recovery in <code>except</code> · name the specific exception you expect so you don't hide other bugs · in a loop, <code>try/except</code> lets you skip or default bad items and keep going. Next: <b>tuples, unpacking &amp; enumerate</b> — cleaner ways to bundle and walk data.</div>
+
+<h4>🏠 Homework</h4>
+<p>Four graded exercises — do them right here before the next lesson.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Define <code>to_int</code> that returns <code>int(s)</code>, or a <code>default</code> value (default <code>0</code>) if it can't convert. So <code>to_int("5")</code> is <code>5</code>, <code>to_int("x")</code> is <code>0</code>, and <code>to_int("x", -1)</code> is <code>-1</code>.</span>
+<template class="st">def to_int(s, default=0):
+    # convert, or return the default
+    pass
+</template>
+<template class="ts">assert to_int("5") == 5
+assert to_int("x") == 0
+assert to_int("x", -1) == -1
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Define <code>safe_ratio</code> that returns <code>a / b</code>, or <code>None</code> if <code>b</code> is zero. So <code>safe_ratio(10, 2)</code> is <code>5.0</code> and <code>safe_ratio(1, 0)</code> is <code>None</code>.</span>
+<template class="st">def safe_ratio(a, b):
+    # divide safely, else None
+    pass
+</template>
+<template class="ts">assert safe_ratio(10, 2) == 5.0
+assert safe_ratio(1, 0) is None
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Define <code>lookup</code> that returns <code>d[key]</code>, or <code>"N/A"</code> if the key isn't present. So for <code>{"a": 1}</code>, <code>lookup(d, "a")</code> is <code>1</code> and <code>lookup(d, "z")</code> is <code>"N/A"</code>.</span>
+<template class="st">def lookup(d, key):
+    # return the value or "N/A"
+    pass
+</template>
+<template class="ts">assert lookup({"a": 1}, "a") == 1
+assert lookup({"a": 1}, "z") == "N/A"
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Define <code>total_valid</code> that sums the values in <code>values</code> that convert to <code>int</code> and skips the rest. So <code>total_valid(["1", "2", "x"])</code> is <code>3</code> and <code>total_valid(["a", "b"])</code> is <code>0</code>.</span>
+<template class="st">def total_valid(values):
+    # sum only the convertible values
+    pass
+</template>
+<template class="ts">assert total_valid(["1", "2", "x"]) == 3
+assert total_valid(["a", "b"]) == 0
+</template></div>

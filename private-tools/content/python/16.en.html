@@ -1,0 +1,169 @@
+<h3>Lesson 16 — Tuples, unpacking &amp; enumerate</h3>
+<p>You've quietly been using <b>tuples</b> already — every time a function returned two values, or you wrote <code>(3, 4)</code>. A tuple is like a list, but <b>fixed</b>: once made, you can't change its contents. That sounds like a limitation, but it's exactly what you want for things that come in a set shape and shouldn't be edited by accident — a coordinate <code>(x, y)</code>, an RGB colour, a <code>(name, score)</code> pair.</p>
+<p>Alongside tuples come two everyday conveniences: <b>unpacking</b> (splitting a tuple straight into named variables) and <b>enumerate</b> (looping over a list while getting each item's index for free). Both make your code shorter and much easier to read than juggling index numbers by hand.</p>
+<p>These are small tools, but you'll reach for them in almost every program from here on. Let's make them second nature.</p>
+
+<h4>1. Tuples: fixed groups of values</h4>
+<p>Write a tuple with commas, usually inside parentheses. You read it by index just like a list — but you <b>can't</b> reassign its items.</p>
+<pre class="run">point = (3, 4)
+print(point[0])     # 3
+print(point[1])     # 4
+# point[0] = 9      # ERROR — tuples are immutable</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Create a tuple <code>rgb</code> holding <code>255</code>, <code>128</code>, <code>0</code> (in that order). So <code>rgb</code> is <code>(255, 128, 0)</code>.</span>
+<template class="st"># create the rgb tuple
+rgb = 
+</template>
+<template class="ts">assert rgb == (255, 128, 0)
+</template></div>
+
+<h4>2. Unpacking a tuple</h4>
+<p>Assign a tuple to several names at once and Python hands each value to its own variable. Cleaner than <code>point[0]</code>, <code>point[1]</code> everywhere.</p>
+<pre class="run">point = (3, 4)
+x, y = point         # unpack
+print(x, y)          # 3 4
+
+a, b = 1, 2
+a, b = b, a          # swap in one line!
+print(a, b)          # 2 1</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>point = (3, 4)</code>, unpack it into <code>x</code> and <code>y</code>, then set <code>s</code> to their sum. So <code>s</code> is <code>7</code>.</span>
+<template class="st">point = (3, 4)
+# unpack into x and y, then sum them into s
+s = 0
+</template>
+<template class="ts">assert s == 7
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>a = 1</code> and <code>b = 2</code>, <b>swap</b> them using unpacking so that <code>a</code> becomes <code>2</code> and <code>b</code> becomes <code>1</code>.</span>
+<template class="st">a = 1
+b = 2
+# swap a and b
+</template>
+<template class="ts">assert a == 2 and b == 1
+</template></div>
+
+<h4>3. enumerate: index and value together</h4>
+<p>You often need both the position and the item while looping. Instead of <code>range(len(...))</code> and manual indexing, <code>enumerate</code> hands you both. Add <code>start=1</code> to count from 1.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna"]
+for i, task in enumerate(tasks, start=1):
+    print(f"{i}. {task}")
+# 1. Buy milk
+# 2. Call Anna</pre>
+<figure class="diagram">
+<svg viewBox="0 0 340 120" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <text x="170" y="16" text-anchor="middle" fill="#8FA0BC">enumerate(["a", "b", "c"]) yields pairs</text>
+  <g stroke="#22304C" fill="#121C30">
+    <rect x="40" y="34" width="80" height="30" rx="6"/>
+    <rect x="130" y="34" width="80" height="30" rx="6"/>
+    <rect x="220" y="34" width="80" height="30" rx="6"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="80" y="54">(0, "a")</text><text x="170" y="54">(1, "b")</text><text x="260" y="54">(2, "c")</text>
+  </g>
+  <g fill="#7FD1C0" text-anchor="middle" font-size="10">
+    <text x="80" y="86">index, value</text><text x="170" y="86">index, value</text><text x="260" y="86">index, value</text>
+  </g>
+  <text x="170" y="108" text-anchor="middle" fill="#F5B942">for i, v in enumerate(items):</text>
+</svg>
+<figcaption><code>enumerate</code> pairs each item with its index, so <code>for i, v in enumerate(items)</code> gives you both at once.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, build a list <code>lines</code> of <code>"N. task"</code> strings using <code>enumerate(tasks, start=1)</code> → <code>['1. Buy milk', '2. Call Anna', '3. Wash car']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+lines = []
+# use enumerate to number the tasks
+</template>
+<template class="ts">assert lines == ["1. Buy milk", "2. Call Anna", "3. Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>names = ["a", "b", "c"]</code>, use <code>enumerate</code> to find the index of <code>"b"</code> into <code>pos</code> (start <code>pos = -1</code>). Result <code>1</code>.</span>
+<template class="st">names = ["a", "b", "c"]
+pos = -1
+# use enumerate to find the index of "b"
+</template>
+<template class="ts">assert pos == 1
+</template></div>
+
+<h4>4. Looping over pairs</h4>
+<p>When a list holds tuples, unpack them right in the <code>for</code> line. This is exactly how you loop a dictionary's <code>.items()</code> too.</p>
+<pre class="run">pairs = [("a", 1), ("b", 2), ("c", 3)]
+total = 0
+for letter, number in pairs:
+    total += number
+print(total)   # 6</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>pairs = [("a", 1), ("b", 2), ("c", 3)]</code>, add up the second value of each pair into <code>total</code> by unpacking in the loop. Result <code>6</code>.</span>
+<template class="st">pairs = [("a", 1), ("b", 2), ("c", 3)]
+total = 0
+# unpack each pair and sum the numbers
+</template>
+<template class="ts">assert total == 6
+</template></div>
+
+<h4>5. zip: pairing two lists</h4>
+<p><code>zip</code> walks two lists side by side, giving tuples of matching items. Perfect for combining related data — and <code>dict(zip(...))</code> turns two lists into a dictionary.</p>
+<pre class="run">names = ["Anna", "Ben"]
+ages = [30, 25]
+paired = list(zip(names, ages))
+print(paired)              # [('Anna', 30), ('Ben', 25)]
+print(dict(zip(names, ages)))   # {'Anna': 30, 'Ben': 25}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>names = ["a", "b"]</code> and <code>ages = [20, 30]</code>, build <code>paired</code> = a list of tuples pairing them → <code>[('a', 20), ('b', 30)]</code>. (Use <code>zip</code> and <code>list</code>.)</span>
+<template class="st">names = ["a", "b"]
+ages = [20, 30]
+paired = []
+# zip the two lists into a list of tuples
+</template>
+<template class="ts">assert paired == [("a", 20), ("b", 30)]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given the same <code>names</code> and <code>ages</code>, build a dictionary <code>ages_by_name</code> mapping each name to its age → <code>{'a': 20, 'b': 30}</code>. (Use <code>dict(zip(...))</code>.)</span>
+<template class="st">names = ["a", "b"]
+ages = [20, 30]
+ages_by_name = {}
+# build the dict from the two lists
+</template>
+<template class="ts">assert ages_by_name == {"a": 20, "b": 30}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>words = ["x", "y", "z"]</code>, build a dictionary <code>indexed</code> mapping each index to its word → <code>{0: 'x', 1: 'y', 2: 'z'}</code>. (Use <code>enumerate</code>.)</span>
+<template class="st">words = ["x", "y", "z"]
+indexed = {}
+# map each index to its word
+</template>
+<template class="ts">assert indexed == {0: "x", 1: "y", 2: "z"}
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (top scorer).</b> Given <code>scores = [("Anna", 85), ("Ben", 92), ("Cara", 78)]</code>, find the <b>name</b> with the highest score into <code>winner</code> by unpacking each pair in a loop. Result <code>"Ben"</code>.</span>
+<template class="st">scores = [("Anna", 85), ("Ben", 92), ("Cara", 78)]
+winner = ""
+best = -1
+# unpack each (name, score) and track the best
+</template>
+<template class="ts">assert winner == "Ben"
+</template></div>
+
+<div class="recap">Recap of lesson 16: a <b>tuple</b> is an ordered, <b>immutable</b> group — great for fixed records like <code>(x, y)</code> · <b>unpack</b> a tuple into names (<code>x, y = point</code>) and swap in one line (<code>a, b = b, a</code>) · <code>enumerate</code> gives index + value in a loop (<code>for i, v in enumerate(items, start=1)</code>) · unpack tuples right in the <code>for</code> line · <code>zip</code> pairs two lists, and <code>dict(zip(...))</code> builds a dictionary. Next: <b>sets &amp; sorting basics</b> — removing duplicates and ordering data.</div>
+
+<h4>🏠 Homework</h4>
+<p>Four graded exercises — do them right here before the next lesson.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>point = (10, 20)</code>, unpack it into <code>x</code> and <code>y</code>, then build <code>label</code> = <code>"x=10, y=20"</code> using an f-string.</span>
+<template class="st">point = (10, 20)
+label = ""
+# unpack, then build "x=10, y=20"
+</template>
+<template class="ts">assert label == "x=10, y=20"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>fruits = ["apple", "pear", "plum"]</code>, build a list <code>menu</code> of <code>"N) fruit"</code> strings using <code>enumerate(fruits, start=1)</code> → <code>['1) apple', '2) pear', '3) plum']</code>.</span>
+<template class="st">fruits = ["apple", "pear", "plum"]
+menu = []
+# number the fruits like "1) apple"
+</template>
+<template class="ts">assert menu == ["1) apple", "2) pear", "3) plum"]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>keys = ["a", "b", "c"]</code> and <code>vals = [1, 2, 3]</code>, build a dictionary <code>d</code> pairing them → <code>{'a': 1, 'b': 2, 'c': 3}</code>. (Use <code>dict(zip(...))</code>.)</span>
+<template class="st">keys = ["a", "b", "c"]
+vals = [1, 2, 3]
+d = {}
+# build the dict from the two lists
+</template>
+<template class="ts">assert d == {"a": 1, "b": 2, "c": 3}
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given <code>scores = [("Anna", 85), ("Ben", 70), ("Cara", 90)]</code>, build <code>passed</code> = the names whose score is <b>80 or more</b>, by unpacking each pair → <code>['Anna', 'Cara']</code>.</span>
+<template class="st">scores = [("Anna", 85), ("Ben", 70), ("Cara", 90)]
+passed = []
+# collect names with score >= 80
+</template>
+<template class="ts">assert passed == ["Anna", "Cara"]
+</template></div>

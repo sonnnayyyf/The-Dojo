@@ -1,0 +1,174 @@
+<h3>Bài 11 — Dictionary: dữ liệu có nhãn</h3>
+<p>List rất hợp khi thứ tự và vị trí quan trọng — việc 1, việc 2, việc 3. Nhưng rất thường xuyên bạn không muốn nhớ <i>vị trí</i>; bạn muốn tra cứu theo <b>tên</b>. Số điện thoại của Anna là gì? Giá của quyển sách này bao nhiêu? Từ "error" xuất hiện mấy lần? Với những câu hỏi như vậy, đếm ngón tay để lấy phần tử số 7 là sai công cụ.</p>
+<p>Câu trả lời của Python là <b>dictionary</b> (<code>dict</code>): một tập hợp ánh xạ một <b>khóa (key)</b> — cái nhãn — tới một <b>giá trị (value)</b> — dữ liệu. Thay vì <code>contacts[2]</code> bạn viết <code>contacts["Anna"]</code>. Một dictionary giống như từ điển thật hay tấm danh thiếp: bạn tra một từ (khóa) để lấy nghĩa của nó (giá trị).</p>
+<p>Dictionary là một trong những công cụ được dùng nhiều nhất trong toàn bộ Python — cấu hình, hồ sơ, đếm số lượng, dữ liệu JSON từ web, và các trường của gần như mọi "đối tượng" (một người dùng, một sản phẩm, một công việc) đều là dictionary. Nắm vững nó và một lượng lớn code thật bỗng trở nên dễ hiểu.</p>
+
+<h4>1. Tạo và đọc một dictionary</h4>
+<p>Bạn viết một dict bằng dấu ngoặc nhọn <code>{}</code> và các cặp <code>key: value</code>. Bạn đọc một giá trị bằng cách đặt khóa của nó trong ngoặc vuông.</p>
+<pre class="run">person = {"name": "Anna", "age": 30, "city": "Hanoi"}
+print(person["name"])   # Anna
+print(person["age"])    # 30</pre>
+<figure class="diagram">
+<svg viewBox="0 0 320 176" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <text x="160" y="18" text-anchor="middle" fill="#8FA0BC">person — một dictionary (key → value)</text>
+  <g stroke="#22304C">
+    <rect x="26" y="34" width="96" height="30" rx="5" fill="#0E1626"/>
+    <rect x="26" y="72" width="96" height="30" rx="5" fill="#0E1626"/>
+    <rect x="26" y="110" width="96" height="30" rx="5" fill="#0E1626"/>
+    <rect x="196" y="34" width="98" height="30" rx="5" fill="#121C30"/>
+    <rect x="196" y="72" width="98" height="30" rx="5" fill="#121C30"/>
+    <rect x="196" y="110" width="98" height="30" rx="5" fill="#121C30"/>
+  </g>
+  <g fill="#7FD1C0" text-anchor="middle">
+    <text x="74" y="54">"name"</text><text x="74" y="92">"age"</text><text x="74" y="130">"city"</text>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="245" y="54">"Anna"</text><text x="245" y="92">30</text><text x="245" y="130">"Hanoi"</text>
+  </g>
+  <g stroke="#F5B942" stroke-width="1.3">
+    <line x1="122" y1="49" x2="194" y2="49"/><line x1="122" y1="87" x2="194" y2="87"/><line x1="122" y1="125" x2="194" y2="125"/>
+  </g>
+  <text x="158" y="162" text-anchor="middle" fill="#F5B942">person["age"] → 30</text>
+</svg>
+<figcaption>Mỗi khóa trỏ tới một giá trị. Tra <code>person["age"]</code> nhảy thẳng tới <code>30</code> — không cần số vị trí.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Tạo dictionary <code>person</code> với các khóa <code>"name"</code> → <code>"Anna"</code>, <code>"age"</code> → <code>30</code>, và <code>"city"</code> → <code>"Hanoi"</code>.</span>
+<template class="st"># create the person dictionary
+person = 
+</template>
+<template class="ts">assert person == {"name": "Anna", "age": 30, "city": "Hanoi"}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>person = {"name": "Anna", "age": 30, "city": "Hanoi"}</code>, đọc thành phố vào <code>c</code>. Kết quả <code>"Hanoi"</code>.</span>
+<template class="st">person = {"name": "Anna", "age": 30, "city": "Hanoi"}
+c = ""
+# read the city
+</template>
+<template class="ts">assert c == "Hanoi"
+</template></div>
+
+<h4>2. Thêm và cập nhật giá trị</h4>
+<p>Gán cho một khóa sẽ đặt giá trị của nó. Nếu khóa đã có thì nó được <b>cập nhật</b>; nếu là khóa mới thì cặp được <b>thêm vào</b>.</p>
+<pre class="run">product = {"name": "Book", "price": 100}
+product["price"] = 120        # cập nhật khóa đã có
+product["stock"] = 5          # thêm khóa mới
+print(product)   # {'name': 'Book', 'price': 120, 'stock': 5}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>product = {"name": "Book", "price": 100}</code>, đổi giá thành <code>120</code>. Kết quả <code>{'name': 'Book', 'price': 120}</code>.</span>
+<template class="st">product = {"name": "Book", "price": 100}
+# update the price
+</template>
+<template class="ts">assert product == {"name": "Book", "price": 120}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>product = {"name": "Book", "price": 120}</code>, thêm khóa mới <code>"stock"</code> với giá trị <code>5</code>. Kết quả <code>{'name': 'Book', 'price': 120, 'stock': 5}</code>.</span>
+<template class="st">product = {"name": "Book", "price": 120}
+# add the stock key
+</template>
+<template class="ts">assert product == {"name": "Book", "price": 120, "stock": 5}
+</template></div>
+
+<h4>3. Kiểm tra khóa an toàn</h4>
+<p>Đọc một khóa không tồn tại là một <b>lỗi</b>. Dùng <code>in</code> để kiểm tra trước, hoặc <code>.get(key, default)</code> để đọc an toàn với một giá trị dự phòng.</p>
+<pre class="run">person = {"name": "Anna", "age": 30}
+print("age" in person)              # True
+print("email" in person)            # False
+print(person.get("email", "N/A"))   # N/A  (không crash)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>person = {"name": "Anna", "age": 30}</code>, gán <code>has_email</code> bằng việc <code>"email"</code> có phải là một khóa hay không. Kết quả <code>False</code>.</span>
+<template class="st">person = {"name": "Anna", "age": 30}
+has_email = None
+# is "email" a key?
+</template>
+<template class="ts">assert has_email == False
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>contact = {"name": "Anna", "city": "Hanoi"}</code>, đọc số điện thoại vào <code>phone</code> bằng <code>.get</code> với giá trị mặc định <code>"unknown"</code> (không có khóa phone). Kết quả <code>"unknown"</code>.</span>
+<template class="st">contact = {"name": "Anna", "city": "Hanoi"}
+phone = ""
+# read phone safely with a default
+</template>
+<template class="ts">assert phone == "unknown"
+</template></div>
+
+<h4>4. Duyệt qua một dictionary</h4>
+<p>Duyệt một dict cho bạn các <b>khóa</b>. Dùng <code>.values()</code> cho các giá trị và <code>.items()</code> để lấy cả khóa lẫn giá trị cùng lúc.</p>
+<pre class="run">scores = {"Anna": 3, "Ben": 5, "Cara": 2}
+total = 0
+for value in scores.values():
+    total += value
+print(total)   # 10
+
+for name, value in scores.items():
+    print(f"{name}: {value}")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>scores = {"a": 3, "b": 5, "c": 2}</code>, cộng tất cả giá trị vào <code>total</code>. Kết quả <code>10</code>.</span>
+<template class="st">scores = {"a": 3, "b": 5, "c": 2}
+total = 0
+# sum the values
+</template>
+<template class="ts">assert total == 10
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>prices = {"coffee": 30, "tea": 25, "cake": 60}</code>, đếm bao nhiêu món giá <b>hơn 40</b> vào <code>expensive</code>. Kết quả <code>1</code>.</span>
+<template class="st">prices = {"coffee": 30, "tea": 25, "cake": 60}
+expensive = 0
+# count items priced over 40
+</template>
+<template class="ts">assert expensive == 1
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>menu = {"coffee": 30, "tea": 25}</code>, dựng list <code>lines</code> gồm các chuỗi <code>"key: value"</code> dùng <code>.items()</code> → <code>['coffee: 30', 'tea: 25']</code>.</span>
+<template class="st">menu = {"coffee": 30, "tea": 25}
+lines = []
+# build "key: value" strings
+</template>
+<template class="ts">assert lines == ["coffee: 30", "tea: 25"]
+</template></div>
+
+<h4>5. Mẫu đếm số lượng</h4>
+<p>Một trong những mẹo dictionary hữu ích nhất: <b>đếm</b>. Duyệt một list, và với mỗi phần tử cộng 1 vào mục của nó — dùng <code>.get(item, 0)</code> để một phần tử hoàn toàn mới bắt đầu từ 0.</p>
+<pre class="run">words = ["red", "blue", "red", "green", "red"]
+counts = {}
+for w in words:
+    counts[w] = counts.get(w, 0) + 1
+print(counts)   # {'red': 3, 'blue': 1, 'green': 1}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>items = ["a", "b", "a", "c", "a", "b"]</code>, dựng dictionary <code>counts</code> đếm mỗi phần tử xuất hiện bao nhiêu lần → <code>{'a': 3, 'b': 2, 'c': 1}</code>.</span>
+<template class="st">items = ["a", "b", "a", "c", "a", "b"]
+counts = {}
+# count each item
+</template>
+<template class="ts">assert counts == {"a": 3, "b": 2, "c": 1}
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (tần suất từ).</b> Cho câu <code>text = "red blue red green blue red"</code>, tách thành các từ và dựng dictionary <code>counts</code> từ → số lần → <code>{'red': 3, 'blue': 2, 'green': 1}</code>. (Dùng <code>text.split()</code>.)</span>
+<template class="st">text = "red blue red green blue red"
+counts = {}
+# split into words and count each
+</template>
+<template class="ts">assert counts == {"red": 3, "blue": 2, "green": 1}
+</template></div>
+
+<div class="recap">Tóm tắt bài 11: một <b>dictionary</b> ánh xạ <b>khóa</b> tới <b>giá trị</b> — tra theo nhãn, không theo vị trí · tạo bằng <code>{"k": v}</code>, đọc bằng <code>d["k"]</code> · gán để thêm hoặc cập nhật · kiểm tra bằng <code>in</code> hoặc đọc an toàn bằng <code>.get(key, default)</code> · duyệt <code>.values()</code>, <code>.items()</code> · mẫu đếm <code>d[x] = d.get(x, 0) + 1</code>. Bài sau: <b>list các dictionary</b> — hình dáng của gần như mọi dữ liệu thực tế (một bảng bản ghi).</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — làm ngay tại đây trước bài kế tiếp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>person = {"name": "Anna", "age": 30, "city": "Hanoi"}</code>, dựng chuỗi <code>line</code> = <code>"Anna, 30, lives in Hanoi"</code> dùng các giá trị.</span>
+<template class="st">person = {"name": "Anna", "age": 30, "city": "Hanoi"}
+line = ""
+# build "Anna, 30, lives in Hanoi"
+</template>
+<template class="ts">assert line == "Anna, 30, lives in Hanoi"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>book = {"Anna": "111", "Ben": "222"}</code>, tra <code>"Cara"</code> vào <code>number</code> dùng <code>.get</code> với giá trị mặc định <code>"not found"</code>. Kết quả <code>"not found"</code>.</span>
+<template class="st">book = {"Anna": "111", "Ben": "222"}
+number = ""
+# look up "Cara" safely
+</template>
+<template class="ts">assert number == "not found"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>letters = ["a", "b", "a", "a", "c"]</code>, dựng dictionary <code>counts</code> đếm mỗi chữ xuất hiện bao nhiêu lần → <code>{'a': 3, 'b': 1, 'c': 1}</code>.</span>
+<template class="st">letters = ["a", "b", "a", "a", "c"]
+counts = {}
+# count each letter
+</template>
+<template class="ts">assert counts == {"a": 3, "b": 1, "c": 1}
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Cho <code>words = ["red", "blue", "red", "green", "red", "blue"]</code>, đếm chúng và tìm từ xuất hiện nhiều nhất vào <code>top</code>. Kết quả <code>"red"</code>.</span>
+<template class="st">words = ["red", "blue", "red", "green", "red", "blue"]
+top = ""
+# count the words, then find the most frequent
+</template>
+<template class="ts">assert top == "red"
+</template></div>

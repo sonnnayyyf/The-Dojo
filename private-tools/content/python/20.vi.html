@@ -1,0 +1,122 @@
+<h3>Bài 20 — Đồ án tốt nghiệp: tự xây ứng dụng của bạn</h3>
+<p>Đây rồi — vạch đích. Qua mười chín bài, bạn đã đi từ dòng <code>print()</code> đầu tiên đến hàm, dictionary, xử lý lỗi và phân tích văn bản. Giờ bạn sẽ ghép tất cả lại và xây một chương trình nhỏ hoàn chỉnh <b>của riêng mình</b>, trong VS Code thật, rồi nộp lại. Đây là tác phẩm bạn có thể khoe và nói: "Cái đó tôi làm đấy."</p>
+<p>Bạn sẽ chọn <b>một trong ba dự án</b> bên dưới. Mỗi cái đi kèm hướng dẫn xây dựng từng bước — các cột mốc rõ ràng, đúng như đồ án nhỏ ở Bài 10 — để bạn không bao giờ phải nhìn một tệp trống trơn. Nhưng bước cuối của mọi dự án đều giống nhau: <b>thêm ý tưởng của riêng bạn</b>. Một tính năng, một biến tấu, một chút trau chuốt là của bạn. Đó là thứ biến một bài tập thành dự án <i>của bạn</i>.</p>
+<p>Mỗi dự án cũng có một bài <b>khởi động</b> nhỏ bạn có thể chạy và chấm ngay tại đây để làm cho hàm cốt lõi chạy được — rồi mang nó vào VS Code và xây toàn bộ xung quanh nó. Hãy nhắm tới một thứ bạn tự hào — cỡ 40–80 dòng và một, hai giờ tập trung; chất lượng hơn số lượng.</p>
+
+<h4>Đồ án tốt nghiệp hoạt động thế nào</h4>
+<ol>
+<li>Chọn <b>một</b> trong ba dự án bên dưới.</li>
+<li>Làm bài khởi động của nó ở đây để nắm chắc logic cốt lõi.</li>
+<li>Mở <b>VS Code</b>, tạo một tệp (ví dụ <code>capstone.py</code>), và làm theo các bước xây dựng.</li>
+<li>Thêm <b>ít nhất một</b> ý tưởng của riêng bạn (xem mục "biến nó thành của bạn" ở mỗi dự án).</li>
+<li><b>Nộp cho giáo viên:</b> tệp code <b>và</b> một ảnh chụp màn hình lúc nó chạy.</li>
+</ol>
+<figure class="diagram">
+<svg viewBox="0 0 360 92" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a20v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <rect x="14" y="30" width="96" height="34" rx="8" fill="#121C30" stroke="#22304C"/>
+  <text x="62" y="51" text-anchor="middle" fill="#7FD1C0">chọn dự án</text>
+  <rect x="132" y="30" width="96" height="34" rx="8" fill="#121C30" stroke="#22304C"/>
+  <text x="180" y="51" text-anchor="middle" fill="#F5B942">xây trong VS Code</text>
+  <rect x="250" y="30" width="96" height="34" rx="8" fill="#121C30" stroke="#22304C"/>
+  <text x="298" y="47" text-anchor="middle" fill="#E8E4D8">nộp code</text>
+  <text x="298" y="59" text-anchor="middle" fill="#8FA0BC" font-size="9">+ ảnh màn hình</text>
+  <g stroke="#F5B942" stroke-width="1.4" marker-end="url(#a20v)" fill="none">
+    <line x1="110" y1="47" x2="130" y2="47"/><line x1="228" y1="47" x2="248" y2="47"/>
+  </g>
+</svg>
+</figure>
+
+<h4>Dự án A — Bộ phân tích văn bản</h4>
+<p>Đưa cho chương trình một đoạn văn bản và để nó báo cáo những điều thú vị: tổng số từ, số từ khác nhau, từ phổ biến nhất, độ dài từ trung bình. Một phiên bản thu nhỏ của công cụ mà người viết và dân dữ liệu thật dùng.</p>
+<p><b>Mô hình dữ liệu:</b> văn bản là một chuỗi; <code>text.split()</code> cho các từ; một dictionary đếm chúng.</p>
+<p><b>Các bước xây dựng:</b></p>
+<ol>
+<li>Lưu một đoạn văn vài câu vào biến <code>text</code>. (Sau đó, đổi sang <code>text = input("Paste text: ")</code>.)</li>
+<li>Đưa về chữ thường trước bằng <code>text.lower()</code> để <code>"The"</code> và <code>"the"</code> tính là cùng một từ.</li>
+<li>Tách thành các từ bằng <code>.split()</code> và in <code>"Total words: N"</code> dùng <code>len</code>.</li>
+<li>Dùng một <code>set</code> để in có bao nhiêu từ <b>khác nhau</b>.</li>
+<li>Dựng một dictionary từ → số lần bằng mẫu đếm (<code>counts[w] = counts.get(w, 0) + 1</code>).</li>
+<li>Duyệt dictionary để tìm và in từ <b>phổ biến nhất</b> (theo dõi số lớn nhất tới hiện tại).</li>
+<li>In <b>độ dài từ trung bình</b>, đã làm tròn (tổng <code>len(w)</code> ÷ số từ).</li>
+<li>Gói tất cả vào một hàm <code>analyse(text)</code> <b>trả về một dictionary báo cáo</b>, rồi in từng dòng báo cáo gọn gàng.</li>
+</ol>
+<p><b>Biến nó thành của bạn</b> (chọn vài cái): bỏ dấu câu bằng <code>.replace(",", "").replace(".", "")</code> trước khi đếm · hiện <b>top 3</b> từ kèm số lần · đếm số câu bằng cách tách theo <code>"."</code> · tìm từ <b>dài nhất</b> và <b>ngắn nhất</b> · bỏ qua các từ phổ biến như <code>"the"</code>, <code>"a"</code>, <code>"is"</code> bằng một list · vẽ một biểu đồ cột nhỏ bằng <code>"#" * count</code> cạnh mỗi từ top · cứ hỏi văn bản trong vòng lặp tới khi người dùng gõ <code>"quit"</code>.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Khởi động A.</b> Định nghĩa <code>average_word_length</code> trả về độ dài trung bình của các từ trong <code>text</code>, làm tròn tới 1 chữ số thập phân. Vậy <code>average_word_length("a bb ccc")</code> là <code>2.0</code>.</span>
+<template class="st">def average_word_length(text):
+    # average length of the words, rounded to 1 decimal
+    pass
+</template>
+<template class="ts">assert average_word_length("a bb ccc") == 2.0
+assert average_word_length("the cat sat") == 3.0
+</template></div>
+
+<h4>Dự án B — Trình theo dõi chi tiêu</h4>
+<p>Theo dõi chi tiêu: mỗi khoản là một bản ghi có mô tả, số tiền, và danh mục. Chương trình thêm khoản chi, liệt kê, tính tổng, và bóc tách tổng theo danh mục.</p>
+<p><b>Mô hình dữ liệu:</b> một list các dictionary như <code>{"desc": "Lunch", "amount": 50, "category": "food"}</code>.</p>
+<p><b>Các bước xây dựng:</b></p>
+<ol>
+<li>Bắt đầu với một list 4–5 dictionary khoản chi, mỗi cái có <code>desc</code>, <code>amount</code> và <code>category</code>.</li>
+<li>Duyệt và in mỗi cái dạng <code>"Lunch — 50 (food)"</code> dùng f-string.</li>
+<li>In <b>tổng cộng</b> tất cả số tiền (một vòng lặp, hoặc <code>sum</code>).</li>
+<li>Viết <code>total_by_category(records, cat)</code> (bài khởi động của bạn) và tái dùng nó.</li>
+<li>Lấy <code>set</code> các danh mục, rồi in tổng cho <b>từng</b> danh mục.</li>
+<li>Tìm và in khoản chi <b>lớn nhất</b> (mô tả và số tiền của nó).</li>
+<li>In <b>tỷ lệ phần trăm</b> của mỗi danh mục trên tổng cộng, đã làm tròn.</li>
+<li>Thêm một menu <code>while True</code> (1 thêm · 2 liệt kê · 3 tổng · 4 thoát) đọc <code>input()</code>; khi <code>"4"</code> thì <code>break</code>.</li>
+<li>Cho "thêm" đọc mô tả, một <code>amount</code> (bằng <code>int(input())</code>) và một danh mục, rồi <code>append</code> một dict mới — chặn số tiền sai bằng <code>try/except</code> để không bao giờ crash.</li>
+</ol>
+<p><b>Biến nó thành của bạn</b> (chọn vài cái): <b>sắp</b> khoản chi từ lớn → nhỏ · đặt <b>ngân sách</b> và cảnh báo khi một danh mục vượt · hiện chi phí <b>trung bình</b> · cho người dùng lọc theo danh mục họ gõ · đếm số khoản chi trong mỗi danh mục · dựng một chuỗi <b>báo cáo</b> có định dạng để lưu · thêm trường <code>date</code> và hiện cái mới nhất trước.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Khởi động B.</b> Định nghĩa <code>total_by_category</code> cộng <code>amount</code> của các bản ghi có <code>category</code> khớp với <code>cat</code>. Với các bản ghi dưới đây, <code>total_by_category(records, "food")</code> là <code>130</code>.</span>
+<template class="st">def total_by_category(records, cat):
+    # sum amounts where category == cat
+    pass
+
+records = [
+    {"desc": "Lunch", "amount": 50, "category": "food"},
+    {"desc": "Bus", "amount": 15, "category": "transport"},
+    {"desc": "Dinner", "amount": 80, "category": "food"},
+]
+</template>
+<template class="ts">assert total_by_category(records, "food") == 130
+assert total_by_category(records, "transport") == 15
+</template></div>
+
+<h4>Dự án C — Trò chơi đố vui</h4>
+<p>Một trò đố vui hỏi câu hỏi, kiểm tra câu trả lời, giữ điểm, và báo cáo người chơi làm được thế nào. Luyện tập tuyệt vời với vòng lặp, điều kiện và dictionary.</p>
+<p><b>Mô hình dữ liệu:</b> một list các dictionary câu hỏi như <code>{"q": "Capital of Vietnam?", "a": "Hanoi"}</code>.</p>
+<p><b>Các bước xây dựng:</b></p>
+<ol>
+<li>Lưu 3–5 dictionary câu hỏi (mỗi cái <code>{"q": ..., "a": ...}</code>) trong một list.</li>
+<li>Duyệt bằng <code>enumerate</code> và in từng câu dạng <code>"Q1: ..."</code>.</li>
+<li>Với mỗi câu, đọc câu trả lời của người chơi bằng <code>input()</code> và so với đáp án đúng, đếm <code>score</code>.</li>
+<li>Kiểm tra cho <b>công bằng</b> bằng cách so <code>answer.strip().lower()</code> ở cả hai phía.</li>
+<li>In điểm cuối cùng dạng <code>"You got 2 / 3"</code>.</li>
+<li>In một thông báo theo <b>khoảng điểm</b> — ví dụ đúng hết → "Perfect!", ít nhất một nửa → "Not bad", còn lại → "Keep practising".</li>
+<li>Giữ một list các câu người chơi làm <b>sai</b> và hiện chúng (kèm đáp án đúng) ở cuối.</li>
+<li>Biến một câu thành <b>trắc nghiệm</b>: hiện lựa chọn a/b/c và nhận chữ cái.</li>
+</ol>
+<p><b>Biến nó thành của bạn</b> (chọn vài cái): <b>xáo trộn</b> câu hỏi bằng module <code>random</code> · thêm <b>danh mục</b> hoặc độ khó và cho người chơi chọn · hiện đáp án đúng sau khi đoán sai · giữ <b>điểm cao nhất</b> qua các lượt · cho người chơi thêm câu hỏi của họ bằng <code>input()</code> · thưởng điểm khi trả lời đúng liên tiếp.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Khởi động C.</b> Định nghĩa <code>score_quiz</code> nhận <code>answers</code> của người chơi và <code>correct</code> đáp án đúng (hai list dài bằng nhau) và trả về bao nhiêu cái khớp theo vị trí. Vậy <code>score_quiz(["a", "b", "c"], ["a", "x", "c"])</code> là <code>2</code>.</span>
+<template class="st">def score_quiz(answers, correct):
+    # count how many answers match by position
+    pass
+</template>
+<template class="ts">assert score_quiz(["a", "b", "c"], ["a", "x", "c"]) == 2
+assert score_quiz(["a"], ["a"]) == 1
+</template></div>
+
+<div class="recap">Tóm tắt bài 20: <b>đồ án tốt nghiệp</b> của bạn gom tất cả lại — chọn Bộ phân tích văn bản, Trình theo dõi chi tiêu, hoặc Trò chơi đố vui, làm cho hàm cốt lõi chạy ở đây, rồi xây chương trình đầy đủ trong VS Code · mọi dự án kết thúc bằng <b>ý tưởng của riêng bạn</b> thêm vào · đây chính là quy trình bạn đã luyện: đầu vào → cấu trúc → phân tích → báo cáo. Bạn đã hoàn thành Python Căn bản. 🎉</div>
+
+<h4>🏠 Bài tập về nhà — đồ án tốt nghiệp</h4>
+<p>Đây là dự án cuối cùng của bạn, làm trong <b>VS Code</b> và nộp cho giáo viên.</p>
+<ol class="hw">
+<li><b>Chọn một dự án</b> (A, B, hoặc C) và tạo <code>capstone.py</code> trong VS Code.</li>
+<li><b>Xây nó</b> bằng cách làm theo các bước của dự án ở trên, vừa làm vừa chạy.</li>
+<li><b>Biến nó thành của bạn</b> — thêm ít nhất một tính năng từ danh sách "biến nó thành của bạn", hoặc ý tưởng của riêng bạn.</li>
+<li><b>🔥 Nộp</b> tệp <code>capstone.py</code> <b>và một ảnh chụp màn hình lúc nó chạy</b> cho giáo viên. Hãy sẵn sàng giải thích cách nó hoạt động — đó là đai đen của bạn. 🥋</li>
+</ol>

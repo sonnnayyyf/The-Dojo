@@ -78,24 +78,38 @@
   The real content-lock (encrypt lessons + deliver key only to entitled accounts) is a **launch task**.
 
 ## 6. Status — DONE
-- Python **Lessons 1–9** authored bilingual at the rich standard, verified (incl. SVG diagrams for
-  indexing/loops/nested loops, while-flow; stretch + 4-question homework each). L9 (Setup: Python +
-  VS Code) is the bridge lesson: small setup section + to-do mini-project prep exercises; from L9 on,
-  homework is done in real VS Code (prose tasks, not auto-graded).
+- **Python Fundamentals COMPLETE: Lessons 1–20** authored bilingual at the rich standard, built into
+  `python.html`, and verified (SVG diagrams throughout; stretch + homework each; answers validated).
+  L9 (Setup) & L10 (mini-project: task manager) are the two VS Code lessons: homework done in real
+  VS Code and **submitted to the tutor (code file + screenshot)**. **L11 onward = on-site auto-graded
+  homework** (4 graded exercises, last a stretch). L20 capstone = 3 project options, submitted via
+  VS Code. Course stays fundamentals-only (comprehensions, lambda/`key` sorting deferred to Intermediate).
 - Marketing pages done: homepage (hero, how-it-works, why-different, CTA), about (About Dojo / Who's
   teaching / About me with EDIT placeholders), pricing.
 - Platform features: CodeMirror + live syntax squiggles, runnable examples, auto-grading with specific
   feedback, progress + belts (white→black), Ask sensei (Zalo `0986061705`), lesson outlines, VI/EN toggle.
 - Accounts/Supabase live.
+- **SQL Fundamentals: Lessons 1–10 DONE** (bilingual, rich standard, built into `sql.html`, all `ref`
+  queries verified against the seed data, end-to-end grading confirmed in-browser). Course was trimmed
+  from 20 → **14 lessons** (fundamentals only). 1 SELECT · 2 WHERE · 3 ORDER BY & LIMIT · 4 Calculations
+  & AS · 5 Aggregates · 6 GROUP BY & HAVING · 7 CASE WHEN & functions · 8 JOIN · 9 LEFT JOIN & NULL ·
+  10 Subqueries. **Remaining: 11–14** (11 Mini project: sales report · 12 INSERT, UPDATE & DELETE ·
+  13 CREATE TABLE & data types · 14 Capstone: customer analysis) — still placeholders.
 
 ## 7. Status — TODO / roadmap
-1. **Author Python L10–L20** at the rich standard. Current titles/order:
-   10 Mini project: to-do/task manager · 11 Dictionaries · 12 Lists of dicts & nested data · 13 Functions ·
-   14 Functions in depth · 15 try/except · 16 Tuples/unpacking/enumerate · 17 Comprehensions ·
-   18 Sets & sorting (sorted, key, lambda) · 19 Text & files (split/join, modules) · 20 Capstone: log/text analyzer.
-2. **Author QA** (12 lessons) and **SQL** (20 lessons) content (only lesson 1 exists; rest placeholder).
-3. Optional **Python Advanced** course #4 (OOP, generators, decorators, context managers, type hints,
-   regex, requests/JSON, pytest) — user is considering; do NOT start until they confirm.
+1. **Python Fundamentals (L1–L20) is done.** Do not re-author. If revisiting, keep it fundamentals-only:
+   comprehensions, lambda/`key` sorting, OOP, generators, decorators etc. belong to the planned
+   **Python Intermediate** / **Python Advanced** courses, not here.
+2. **Author QA** (12 lessons) and **SQL** content. **SQL was trimmed to 14 lessons (fundamentals only)**;
+   lessons **1–10 are authored bilingually** (`private-tools/content/sql/NN.{vi,en}.html`), lessons
+   **11–14 remain placeholder** (11 Mini project · 12 INSERT/UPDATE/DELETE · 13 CREATE TABLE & data types ·
+   14 Capstone). Advanced SQL (UNION, window functions, self-joins, indexes) is deferred to a future
+   SQL Intermediate/Advanced course. Can be delegated to the **Dojo Builder** agent or the dedicated
+   **SQL Course Builder** agent (`.github/agents/sql-course-builder.agent.md`) in a separate session.
+3. Planned follow-on courses — **Python Intermediate** (13 lessons), **Python Advanced**, a standalone
+   **Python DSA / Algorithms** course, and **Web Programming Fundamentals** (15 lessons). Full outlines
+   in **section 9**. Keep the Fundamentals course from bloating — push advanced topics to these.
+   Do NOT start authoring any of them until the user confirms per-course.
 4. **Pre-launch:** encrypt lessons for real content-locking + wire content-key delivery via entitlement;
    deploy (Netlify/Vercel/Cloudflare Pages); set Supabase Auth → Site URL + Redirect URLs for prod;
    consider PWA (installable/offline). Then full account e2e test (signup → redeem → progress persists).
@@ -104,5 +118,59 @@
 - General **IT/programming** theme (not finance/accounting).
 - Bilingual bodies; English identifiers.
 - Two project checkpoints (mini L10, capstone L20); gentle beginner pacing.
-- Homework is graded on-site through L8; from L9 (VS Code setup) onward homework moves to real VS Code.
+- Homework: auto-graded on-site through L8; **L9 (setup) & L10 (mini-project) done in real VS Code and
+  submitted to the tutor (code + screenshot); L11 onward returns to on-site auto-graded homework**
+  (auto-grading is the product's differentiator). Capstone is submitted via VS Code (code + screenshot).
+- Later lessons **de-emphasise files**; L19 is a review / capstone-prep lesson (not a files lesson).
+- **Python Fundamentals stays fundamentals**: comprehensions, lambda/`key` sorting and other advanced
+  topics belong to the future Python Intermediate/Advanced courses, not this one.
 - Ask-sensei = copy formatted message (lesson+exercise+code+question) to clipboard + open `zalo.me/<num>`.
+
+## 9. Future course plans (brainstorm — confirmed outlines, NOT yet authored)
+All follow the house standard: bilingual VI/EN, English identifiers, rich problem-first intros, SVG
+diagrams, 10–12 graded exercises + a 🔥 stretch each, on-site auto-graded homework (4, last a stretch),
+a mini-project checkpoint + a capstone. Do NOT author until the user confirms the specific course.
+
+### 9a. Python Intermediate — 13 lessons ("job-ready" tier; price above Fundamentals)
+Bridges Fundamentals → Advanced: clean, Pythonic code + real tooling.
+1. Comprehensions (list/dict/set, filtering, nested) · 2. Sorting like a pro (`key=`, `lambda`, `reverse`) ·
+3. Functions II (`*args`, `**kwargs`, keyword-only, `*`/`**` unpacking) · 4. Files & filesystem
+(`with open`, `pathlib`, line-by-line) · 5. JSON & structured data (`json` load/dump, nested) ·
+6. Standard library & modules (own module; `random`/`datetime`/`collections` `Counter`,`defaultdict`) ·
+7. OOP 1 — classes (`class`, `__init__`, attributes, methods) · 8. OOP 2 — behaviour
+(`__str__`/`__repr__`/`__eq__`, class vs dict, encapsulation) · 9. OOP 3 — inheritance & composition
+(`super()`, overriding, is-a vs has-a) · 10. Clean records: dataclasses & namedtuple ·
+11. Iterators & generators (`yield`, generator expressions, lazy) · 12. Robust code (exceptions in
+depth, custom exception classes, intro `logging`) · 13. Testing & type hints + Capstone (type hints,
+first `pytest`; capstone = a small tested module, submitted via VS Code). Mini-project checkpoint ~L6–7
+(e.g. a JSON-backed manager). **Deferred to Advanced:** decorators, custom context managers,
+async/asyncio & concurrency, advanced typing/mypy, regex, requests/APIs, packaging & publishing,
+performance/profiling, design patterns, descriptors/metaclasses, advanced pytest (fixtures/mocking).
+
+### 9b. Python Advanced — topics (lesson count TBD, ~12–15)
+Decorators & closures · context managers (own `__enter__`/`__exit__`) · advanced generators/`itertools`
+& coroutines · `async`/`await` + concurrency (threads/processes/asyncio) · advanced typing
+(generics, `Protocol`, `TypedDict`) + mypy · regex · `requests`/REST APIs & web data · packaging &
+publishing (pip-installable, venv deep) · performance & profiling · design patterns ·
+descriptors/metaclasses · advanced testing (pytest fixtures, mocking).
+
+### 9c. Python DSA / Algorithms — standalone course (idea, count TBD)
+Sorting & searching, Big-O, recursion, stacks/queues, linked lists, trees/graphs, hashing, common
+interview patterns (two-pointer, sliding window, etc.). Kept separate from Intermediate on purpose.
+
+### 9d. Web Programming Fundamentals — 15 lessons (front-end)
+Beginner front-end: HTML → CSS → JavaScript → interactivity. Sequence:
+1. How the web works (browser, HTML/CSS/JS roles, request/response — conceptual) · 2. HTML essentials
+(elements, text, links, images) · 3. HTML lists & tables · 4. HTML forms & inputs · 5. HTML semantic
+layout (header/nav/main/section/footer, attributes) · 6. CSS essentials (selectors, colors, text, box
+model) · 7. CSS layout with flexbox · 8. CSS responsive (media queries, units, intro grid) ·
+9. **Mini-project:** build & style a landing page · 10. JavaScript basics (variables, types, operators) ·
+11. JS control flow & data (if, loops, arrays, objects) · 12. JS functions & the DOM (select & change
+elements) · 13. JS events & interactivity (clicks, input) · 14. JS forms, validation & `fetch` (JSON/APIs,
+light) · 15. **Capstone:** a small interactive web app (e.g. to-do UI, quiz, widget), submitted via VS Code.
+
+**PLATFORM PREREQUISITE (build before authoring web lessons):** the engine currently supports
+exercise kinds `quiz`, `py` (Pyodide), `sql` (sql.js) only. Web lessons need a new **live HTML/CSS/JS
+preview** exercise (render student code in a sandboxed `<iframe>`) and a **JS auto-grader** (run student
+JS and assert on output/return/DOM). This new exercise type must be added to `app.js` first. A dedicated
+**Web Course Builder** agent can be created once the platform approach is decided.

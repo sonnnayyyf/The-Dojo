@@ -1,0 +1,116 @@
+<h3>Bài 7 — CASE WHEN & hàm xử lý (chữ, số, ngày)</h3>
+<p>Dữ liệu thô không phải lúc nào cũng ở dạng bạn cần. Sếp không muốn thấy con số <code>350000</code> — họ muốn nhãn "hàng cao cấp". Cột <code>joined_at</code> là <code>'2024-01-10'</code> nhưng báo cáo chỉ cần <b>năm</b>. Đây là lúc dùng <code>CASE WHEN</code> và các <b>hàm</b> có sẵn của SQL để biến dữ liệu thô thành thông tin dễ đọc.</p>
+<p><code>CASE WHEN</code> là "if/else" của SQL: xét từng dòng, trả về giá trị tùy điều kiện. Ngoài ra SQL có sẵn hàm xử lý <b>chuỗi</b> (<code>LENGTH</code>, <code>SUBSTR</code>, <code>REPLACE</code>), <b>số</b> (<code>ROUND</code>), và <b>ngày tháng</b> (<code>strftime</code>).</p>
+<p>Mọi cột tạo ra ở đây đều nên có <code>AS</code> để đặt tên rõ ràng — như bạn đã quen từ Bài 4.</p>
+
+<h4>1. CASE WHEN — gán nhãn theo điều kiện</h4>
+<p>Cú pháp: <code>CASE WHEN điều_kiện THEN giá_trị ... ELSE giá_trị_mặc_định END</code>. SQL xét các nhánh <b>từ trên xuống</b>, dừng ở nhánh đầu tiên đúng.</p>
+<pre class="run">SELECT name,
+  CASE WHEN price >= 100000 THEN 'high'
+       WHEN price >= 20000  THEN 'medium'
+       ELSE 'low' END AS tier
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Với mỗi sản phẩm, tạo cột <code>tier</code>: <code>'high'</code> nếu <code>price &gt;= 100000</code>, <code>'medium'</code> nếu <code>price &gt;= 20000</code>, còn lại <code>'low'</code>. Hiển thị <code>name</code> và <code>tier</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 100000 THEN 'high'
+       WHEN price >= 20000 THEN 'medium'
+       ELSE 'low' END AS tier
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 100000 THEN 'high' WHEN price >= 20000 THEN 'medium' ELSE 'low' END AS tier FROM products</template></div>
+
+<h4>2. CASE hai nhánh đơn giản</h4>
+<p>Chỉ cần một <code>WHEN</code> và một <code>ELSE</code> là đủ để chia hai loại.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tạo cột <code>stock_level</code>: <code>'plenty'</code> nếu <code>stock &gt;= 100</code>, còn lại <code>'low'</code>. Hiển thị <code>name</code> và <code>stock_level</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN stock >= 100 THEN 'plenty' ELSE 'low' END AS stock_level
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN stock >= 100 THEN 'plenty' ELSE 'low' END AS stock_level FROM products</template></div>
+
+<h4>3. CASE trả về số</h4>
+<p><code>CASE</code> không chỉ trả về chữ — nó trả về được cả số, nên rất hợp để tính giá trị có điều kiện.</p>
+<pre class="run">SELECT name,
+  ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85
+             ELSE price * 0.95 END) AS final_price
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tính <code>final_price</code>: hàng <code>'Điện tử'</code> giảm 15% (<code>price * 0.85</code>), còn lại giảm 5% (<code>price * 0.95</code>), rồi <code>ROUND</code>. Hiển thị <code>name</code> và <code>final_price</code>.</span>
+<template class="st">SELECT name,
+  ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85 ELSE price * 0.95 END) AS final_price
+FROM products</template>
+<template class="ref">SELECT name, ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85 ELSE price * 0.95 END) AS final_price FROM products</template></div>
+
+<h4>4. Hàm chuỗi: LENGTH, SUBSTR</h4>
+<p><code>LENGTH(chuỗi)</code> đếm số ký tự. <code>SUBSTR(chuỗi, bắt_đầu, độ_dài)</code> cắt một đoạn (vị trí đầu tiên là 1).</p>
+<pre class="run">SELECT name, LENGTH(name) AS name_len
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Hiển thị <code>name</code> và <b>độ dài tên</b> <code>LENGTH(name) AS name_len</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, LENGTH(name) AS name_len FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Hiển thị <code>name</code> và <b>3 ký tự đầu</b> của tên: <code>SUBSTR(name, 1, 3) AS prefix</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, SUBSTR(name, 1, 3) AS prefix FROM products</template></div>
+
+<h4>5. Hàm chuỗi: REPLACE</h4>
+<p><code>REPLACE(chuỗi, tìm, thay)</code> thay mọi lần xuất hiện của một đoạn con.</p>
+<pre class="run">SELECT name, REPLACE(city, 'TP. ', '') AS short_city
+FROM customers;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Từ <code>customers</code>, bỏ tiền tố <code>'TP. '</code> khỏi <code>city</code>: <code>REPLACE(city, 'TP. ', '') AS short_city</code>. Hiển thị <code>name</code> và <code>short_city</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, REPLACE(city, 'TP. ', '') AS short_city FROM customers</template></div>
+
+<h4>6. Hàm ngày tháng</h4>
+<p>Ngày lưu dạng <code>'YYYY-MM-DD'</code>. Bạn có thể cắt bằng <code>SUBSTR</code>, hoặc dùng <code>strftime</code> để trích phần cần: <code>strftime('%Y', ngày)</code> lấy năm, <code>'%m'</code> lấy tháng.</p>
+<pre class="run">SELECT name, SUBSTR(joined_at, 1, 4) AS year
+FROM customers;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Từ <code>customers</code>, lấy <b>năm gia nhập</b> bằng cách cắt 4 ký tự đầu: <code>SUBSTR(joined_at, 1, 4) AS year</code>. Hiển thị <code>name</code> và <code>year</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, SUBSTR(joined_at, 1, 4) AS year FROM customers</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Từ <code>customers</code>, lấy <b>tháng gia nhập</b> (2 ký tự ở vị trí 6): <code>SUBSTR(joined_at, 6, 2) AS month</code>. Hiển thị <code>name</code> và <code>month</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, SUBSTR(joined_at, 6, 2) AS month FROM customers</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Từ <code>orders</code>, lấy <b>năm đặt hàng</b> bằng <code>strftime('%Y', order_date) AS year</code>. Hiển thị <code>id</code> và <code>year</code>.</span>
+<template class="st">SELECT id, 
+FROM orders</template>
+<template class="ref">SELECT id, strftime('%Y', order_date) AS year FROM orders</template></div>
+
+<h4>7. Hàm số: ROUND nhiều chữ số</h4>
+<p><code>ROUND(số, k)</code> làm tròn tới <code>k</code> chữ số thập phân.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Hiển thị <code>name</code> và giá (đã cộng 10% VAT) tính theo <b>nghìn đồng, một chữ số thập phân</b>: <code>ROUND(price * 1.1 / 1000.0, 1) AS k_vat</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, ROUND(price * 1.1 / 1000.0, 1) AS k_vat FROM products</template></div>
+
+<h4>8. Ghép CASE với lọc và sắp xếp</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Chỉ với nhóm <code>'Đồ uống'</code> và <code>'Đồ ăn'</code>: hiển thị <code>name</code>, <code>price</code>, và cột <code>tier</code> = <code>'premium'</code> nếu <code>price &gt;= 30000</code>, còn lại <code>'regular'</code>. Sắp theo <code>price</code> giảm dần.</span>
+<template class="st">SELECT name, price,
+  CASE WHEN price >= 30000 THEN 'premium' ELSE 'regular' END AS tier
+FROM products
+WHERE category IN ('Đồ uống', 'Đồ ăn')
+ORDER BY </template>
+<template class="ref">SELECT name, price, CASE WHEN price >= 30000 THEN 'premium' ELSE 'regular' END AS tier FROM products WHERE category IN ('Đồ uống', 'Đồ ăn') ORDER BY price DESC</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Tạo cột <code>bucket</code>: <code>'expensive'</code> nếu <code>price &gt;= 50000</code>, còn lại <code>'affordable'</code>. Hiển thị <code>name</code> và <code>bucket</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 50000 THEN 'expensive' ELSE 'affordable' END AS bucket
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 50000 THEN 'expensive' ELSE 'affordable' END AS bucket FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Từ <code>customers</code>, hiển thị <code>name</code> và <b>độ dài tên thành phố</b>: <code>LENGTH(city) AS city_len</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, LENGTH(city) AS city_len FROM customers</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Từ <code>customers</code>, lấy <b>năm gia nhập</b> bằng <code>strftime('%Y', joined_at) AS year</code>. Hiển thị <code>name</code> và <code>year</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, strftime('%Y', joined_at) AS year FROM customers</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Tạo cột <code>kind</code>: <code>'tech'</code> nếu <code>category = 'Điện tử'</code>, còn lại <code>'non-tech'</code>. Hiển thị <code>name</code>, <code>category</code>, <code>kind</code>, sắp theo <code>kind</code> rồi <code>name</code>.</span>
+<template class="st">SELECT name, category,
+  CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind
+FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, category, CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind FROM products ORDER BY kind, name</template></div>

@@ -1,0 +1,187 @@
+<h3>Lesson 10 — Mini project: a task manager</h3>
+<p>You now know the core building blocks of Python: variables, strings, conditions, lists, and loops. On their own each one is small — but real programs are just these blocks <b>assembled</b> to do something useful. In this lesson you stop learning pieces and start building a whole thing: a small <b>task manager</b>, the kind of app developers put together all the time.</p>
+<p>This is a <b>checkpoint</b> lesson. Instead of one new idea, you'll combine everything so far, one feature at a time: store tasks, add them, list them with checkboxes, mark them done, remove them, and print a summary. Each exercise builds one real feature of the app — and by the end they click together into a program that actually works.</p>
+<p>A real task manager would wrap this in a menu loop that reads what the user types. In the browser we can't read live input, so here we build and test the <b>logic</b> — the hard, important part — on lists we control. Then your homework is to wrap that exact logic in a real menu loop inside VS Code.</p>
+
+<h4>1. The plan: what we're building</h4>
+<p>Our task manager keeps a <b>list of task strings</b>. A task is "done" when it starts with the tag <code>"[x] "</code> (you met this in Lesson 9). Everything the app does is one of a few simple operations on that list.</p>
+<figure class="diagram">
+<svg viewBox="0 0 380 210" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a10" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7FD1C0"/>
+    </marker>
+  </defs>
+  <rect x="130" y="14" width="120" height="34" rx="7" fill="#121C30" stroke="#22304C"/>
+  <text x="190" y="35" text-anchor="middle" fill="#F5B942">Show the menu</text>
+  <rect x="130" y="74" width="120" height="34" rx="7" fill="#121C30" stroke="#22304C"/>
+  <text x="190" y="95" text-anchor="middle" fill="#E8E4D8">Read a choice</text>
+  <g fill="#121C30" stroke="#22304C">
+    <rect x="12" y="134" width="80" height="32" rx="7"/>
+    <rect x="102" y="134" width="80" height="32" rx="7"/>
+    <rect x="198" y="134" width="80" height="32" rx="7"/>
+    <rect x="288" y="134" width="80" height="32" rx="7"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="52" y="154">Add</text>
+    <text x="142" y="154">List</text>
+    <text x="238" y="154">Done</text>
+    <text x="328" y="154">Remove</text>
+  </g>
+  <g stroke="#7FD1C0" stroke-width="1.4" marker-end="url(#a10)" fill="none">
+    <line x1="190" y1="48" x2="190" y2="72"/>
+    <line x1="190" y1="108" x2="190" y2="132"/>
+  </g>
+  <path d="M288 150 C 360 150, 372 96, 372 60 C 372 30, 300 24, 252 24" fill="none" stroke="#22304C" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#a10)"/>
+  <text x="300" y="196" text-anchor="middle" fill="#8FA0BC">…each action runs, then back to the menu</text>
+</svg>
+<figcaption>The shape of almost every small app: show options → read a choice → do one operation → loop back. We'll build each operation as its own piece of logic.</figcaption>
+</figure>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna", "Wash car"]
+# "[x] " in front means done. No tag means still to do.
+print(tasks[0].startswith("[x] "))   # True  -> done
+print(tasks[1].startswith("[x] "))   # False -> to do</pre>
+
+<h4>2. Adding tasks (and ignoring empty ones)</h4>
+<p>When a user adds a task, a good app <b>ignores blank input</b>. We use <code>.strip()</code> to remove spaces and only keep tasks that still have text.</p>
+<pre class="run">adds = ["Buy milk", "   ", "Call Anna"]
+tasks = []
+for a in adds:
+    if a.strip() != "":
+        tasks.append(a.strip())
+print(tasks)   # ['Buy milk', 'Call Anna']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Given <code>adds = ["Buy milk", "", "Call Anna", "  ", "Wash car"]</code>, build <code>tasks</code> by appending only the non-empty entries (use <code>.strip()</code>). Result <code>['Buy milk', 'Call Anna', 'Wash car']</code>.</span>
+<template class="st">adds = ["Buy milk", "", "Call Anna", "  ", "Wash car"]
+tasks = []
+# append only the non-empty tasks
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Call Anna", "Wash car"]
+</template></div>
+
+<h4>3. Listing tasks with numbers and checkboxes</h4>
+<p>The user needs to see the list. We show each task with its number (<code>i + 1</code>) and a checkbox: <code>[x]</code> if done, <code>[ ]</code> if not. For a done task we also strip the <code>"[x] "</code> tag off the name so it reads cleanly.</p>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna"]
+for i in range(len(tasks)):
+    t = tasks[i]
+    if t.startswith("[x] "):
+        print(f"{i + 1}. [x] {t[4:]}")
+    else:
+        print(f"{i + 1}. [ ] {t}")
+# 1. [x] Buy milk
+# 2. [ ] Call Anna</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>tasks = ["[x] Buy milk", "Call Anna", "Wash car"]</code>, build a list <code>lines</code> of display strings: done tasks as <code>"N. [x] name"</code> (tag removed) and others as <code>"N. [ ] name"</code> → <code>['1. [x] Buy milk', '2. [ ] Call Anna', '3. [ ] Wash car']</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "Wash car"]
+lines = []
+# build each display line with a number and a checkbox
+</template>
+<template class="ts">assert lines == ["1. [x] Buy milk", "2. [ ] Call Anna", "3. [ ] Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given the same <code>tasks</code>, <b>print</b> the numbered checkbox list (one line each, exactly like the example above). Check the printed output.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "Wash car"]
+# print each task as "N. [x] name" or "N. [ ] name"
+</template>
+<template class="ts">assert _OUT_.strip() == "1. [x] Buy milk\n2. [ ] Call Anna\n3. [ ] Wash car"
+</template></div>
+
+<h4>4. Marking a task done</h4>
+<p>To mark task number <code>n</code> done, put the <code>"[x] "</code> tag in front of it — but only if it isn't already done, so we never end up with <code>"[x] [x] "</code>.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna"]
+n = 1                       # mark the 1st task (index n-1 = 0)
+if not tasks[n - 1].startswith("[x] "):
+    tasks[n - 1] = "[x] " + tasks[n - 1]
+print(tasks)   # ['[x] Buy milk', 'Call Anna']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code> and <code>n = 2</code>, mark task number <code>n</code> done by adding <code>"[x] "</code> in front (only if not already done). Result <code>['Buy milk', '[x] Call Anna', 'Wash car']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+n = 2
+# mark task number n as done
+</template>
+<template class="ts">assert tasks == ["Buy milk", "[x] Call Anna", "Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>task = "[x] Buy milk"</code>, <b>toggle</b> it into <code>toggled</code>: if it starts with <code>"[x] "</code> remove that tag, otherwise add it. Here it should become <code>"Buy milk"</code>.</span>
+<template class="st">task = "[x] Buy milk"
+toggled = ""
+# toggle the done tag
+</template>
+<template class="ts">assert toggled == "Buy milk"
+</template></div>
+
+<h4>5. Removing a task</h4>
+<p>To delete task number <code>n</code>, remove the item at index <code>n - 1</code>. <code>list.pop(index)</code> does exactly that.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna", "Wash car"]
+n = 2
+tasks.pop(n - 1)           # remove the 2nd task
+print(tasks)   # ['Buy milk', 'Wash car']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code> and <code>n = 3</code>, remove task number <code>n</code>. Result <code>['Buy milk', 'Call Anna']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+n = 3
+# remove task number n
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Call Anna"]
+</template></div>
+
+<h4>6. Filtering: what's still to do</h4>
+<p>A useful view is "only the tasks I still have to do" — the ones <b>not</b> starting with <code>"[x] "</code>.</p>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+pending = []
+for t in tasks:
+    if not t.startswith("[x] "):
+        pending.append(t)
+print(pending)   # ['Call Anna', 'Pay bills']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]</code>, build <code>pending</code> = the tasks not yet done → <code>['Call Anna', 'Pay bills']</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+pending = []
+# collect the tasks that are not done
+</template>
+<template class="ts">assert pending == ["Call Anna", "Pay bills"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given the same <code>tasks</code>, count how many are <b>done</b> into <code>done_count</code>. Result <code>2</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+done_count = 0
+# count the done tasks
+</template>
+<template class="ts">assert done_count == 2
+</template></div>
+
+<h4>7. A status summary</h4>
+<p>Finally, a one-line summary the app can show at the top: total, done, and pending counts, plus how far along you are as a percentage.</p>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+total = len(tasks)
+done = 0
+for t in tasks:
+    if t.startswith("[x] "):
+        done += 1
+percent = round(done / total * 100)
+print(f"{done}/{total} done ({percent}%)")   # 2/3 done (67%)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]</code>, build <code>summary</code> = <code>"You have 4 tasks, 2 done, 2 pending"</code> (use <code>len</code>, a loop, and an f-string).</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+summary = ""
+# build the summary string
+</template>
+<template class="ts">assert summary == "You have 4 tasks, 2 done, 2 pending"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]</code>, compute the completion <code>percent</code> as a whole number: done ÷ total × 100, rounded. Here <code>2 / 4 × 100 = 50</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+percent = 0
+# compute the completion percentage (rounded whole number)
+</template>
+<template class="ts">assert percent == 50
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (the whole thing).</b> Given <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]</code>, build a <code>report</code> list: a summary header first, then one numbered checkbox line per task → <code>['Tasks: 3 | Done: 2 | Pending: 1', '1. [x] Buy milk', '2. [ ] Call Anna', '3. [x] Wash car']</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+report = []
+# 1) count done and pending, append the header line
+# 2) append one "N. [x/ ] name" line per task
+</template>
+<template class="ts">assert report == ["Tasks: 3 | Done: 2 | Pending: 1", "1. [x] Buy milk", "2. [ ] Call Anna", "3. [x] Wash car"]
+</template></div>
+
+<div class="recap">Recap of lesson 10: a small app is just simple operations on one data structure — here a <b>list of task strings</b> · add (skip blanks with <code>.strip()</code>) · list with <code>i + 1</code> and a <code>[x]</code>/<code>[ ]</code> checkbox · mark done by adding the <code>"[x] "</code> tag (only once) · remove with <code>pop(n - 1)</code> · filter and count with a loop and <code>startswith</code> · summarise with an f-string and <code>round</code>. You just built the logic of a real program. Next: <b>dictionaries</b>, a cleaner way to store labelled data like each task's text, status and priority together.</div>
+
+<h4>🏠 Homework</h4>
+<p>Do this in <b>VS Code</b> on your computer. Create <code>tasks.py</code> and turn the logic above into a program you can actually use. Run it with the ▶ Run button or <code>python tasks.py</code>. <b>When you're done, send me your <code>tasks.py</code> and a screenshot of it running</b> so I can review your work.</p>
+<ol class="hw">
+<li><b>Show the list.</b> Start with a list of 3–4 tasks (some tagged <code>"[x] "</code>) and print them as a numbered checkbox list, then print the summary line (<code>"You have N tasks, D done, P pending"</code>).</li>
+<li><b>The menu loop.</b> Add a <code>while True</code> loop that prints a menu (1 add · 2 mark done · 3 remove · 4 quit) and reads the choice with <code>choice = input("Choose: ")</code>. On choice <code>"4"</code>, <code>break</code> out of the loop.</li>
+<li><b>Add & done.</b> Make option 1 read a new task with <code>input()</code> and append it (ignore blanks), and option 2 read a number and mark that task done. Re-print the list after each action.</li>
+<li><b>🔥 Stretch — remove & polish.</b> Make option 3 remove a task by number, and handle bad input gracefully (e.g. a number that doesn't exist, or empty text) so the program never crashes.</li>
+</ol>

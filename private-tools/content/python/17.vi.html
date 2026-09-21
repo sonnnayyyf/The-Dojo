@@ -1,0 +1,161 @@
+<h3>Bài 17 — Set &amp; sắp xếp cơ bản</h3>
+<p>Hai nhu cầu hằng ngày xuất hiện liên tục khi bạn xử lý dữ liệu thật: loại bỏ <b>trùng lặp</b>, và sắp xếp mọi thứ theo <b>thứ tự</b>. Python có một công cụ gọn cho mỗi việc. Một <b>set</b> là một tập hợp tự động chỉ giữ các giá trị duy nhất — hoàn hảo cho câu "có bao nhiêu thứ <i>khác nhau</i> ở đây?". Và <code>sorted()</code> nhận bất kỳ list nào rồi trả về một bản sao đã sắp gọn gàng.</p>
+<p>Trên đường đi bạn sẽ gặp ba hàm dựng sẵn nhỏ xíu mà bạn sẽ dùng mãi: <code>min</code>, <code>max</code>, và <code>sum</code>. Cùng với set và sắp xếp, chúng biến một đống số thành câu trả lời — nhỏ nhất, lớn nhất, tổng, thứ hạng — chỉ trong một dòng.</p>
+<p>Bài này giữ đúng mức căn bản: ta sắp xếp bằng <code>sorted()</code> thường và <code>reverse=True</code>. (Thứ tự sắp xếp tùy chỉnh bằng <code>key</code> sẽ có ở khóa Trung cấp.)</p>
+
+<h4>1. Set: các giá trị duy nhất</h4>
+<p>Một set dùng dấu ngoặc nhọn như dict, nhưng chứa từng giá trị đơn, không phải cặp. Sức mạnh của nó: âm thầm bỏ đi trùng lặp. Biến một list thành <code>set</code> là cách chuẩn để tìm các phần tử khác nhau.</p>
+<pre class="run">nums = [1, 2, 2, 3, 3, 3]
+unique = set(nums)
+print(unique)        # {1, 2, 3}
+print(len(unique))   # 3  — ba giá trị khác nhau</pre>
+<figure class="diagram">
+<svg viewBox="0 0 340 96" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <defs>
+    <marker id="a17v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7FD1C0"/>
+    </marker>
+  </defs>
+  <rect x="16" y="34" width="150" height="34" rx="7" fill="#121C30" stroke="#22304C"/>
+  <text x="91" y="56" text-anchor="middle" fill="#E8E4D8">[1, 2, 2, 3, 3, 3]</text>
+  <text x="91" y="26" text-anchor="middle" fill="#8FA0BC" font-size="10">một list (có lặp)</text>
+  <text x="200" y="56" text-anchor="middle" fill="#F5B942">set()</text>
+  <rect x="242" y="34" width="82" height="34" rx="7" fill="#0E1626" stroke="#22304C"/>
+  <text x="283" y="56" text-anchor="middle" fill="#7FD1C0">{1, 2, 3}</text>
+  <text x="283" y="26" text-anchor="middle" fill="#8FA0BC" font-size="10">duy nhất</text>
+  <g stroke="#7FD1C0" stroke-width="1.4" marker-end="url(#a17v)" fill="none">
+    <line x1="166" y1="51" x2="180" y2="51"/>
+    <line x1="220" y1="51" x2="240" y2="51"/>
+  </g>
+</svg>
+<figcaption>Bọc một list trong <code>set(...)</code> vứt bỏ trùng lặp, chỉ để lại các giá trị khác nhau.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Cho <code>nums = [1, 2, 2, 3, 3, 3]</code>, gán <code>distinct</code> bằng số giá trị <b>khác nhau</b>. Kết quả <code>3</code>. (Dùng <code>set</code> và <code>len</code>.)</span>
+<template class="st">nums = [1, 2, 2, 3, 3, 3]
+distinct = 0
+# count the distinct values
+</template>
+<template class="ts">assert distinct == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>tags = {"python", "sql", "qa"}</code>, gán <code>has_sql</code> bằng việc <code>"sql"</code> có trong set hay không. Kết quả <code>True</code>. (Kiểm tra thành viên trên set rất nhanh.)</span>
+<template class="st">tags = {"python", "sql", "qa"}
+has_sql = None
+# is "sql" in the set?
+</template>
+<template class="ts">assert has_sql == True
+</template></div>
+
+<h4>2. Kết hợp các set</h4>
+<p>Các set có thể kết hợp như trong toán học: <code>|</code> là <b>hợp (union)</b> (mọi thứ trong một trong hai), <code>&amp;</code> là <b>giao (intersection)</b> (chỉ những gì có ở cả hai).</p>
+<pre class="run">a = {1, 2, 3}
+b = {2, 3, 4}
+print(a | b)   # {1, 2, 3, 4}  — hợp
+print(a & b)   # {2, 3}        — có ở cả hai</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>a = {1, 2, 3}</code> và <code>b = {2, 3, 4}</code>, dựng <code>combined</code> = hợp của chúng → <code>{1, 2, 3, 4}</code>.</span>
+<template class="st">a = {1, 2, 3}
+b = {2, 3, 4}
+combined = set()
+# union of a and b
+</template>
+<template class="ts">assert combined == {1, 2, 3, 4}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Với cùng <code>a</code> và <code>b</code>, dựng <code>shared</code> = các giá trị có ở <b>cả hai</b> → <code>{2, 3}</code>.</span>
+<template class="st">a = {1, 2, 3}
+b = {2, 3, 4}
+shared = set()
+# intersection of a and b
+</template>
+<template class="ts">assert shared == {2, 3}
+</template></div>
+
+<h4>3. Sắp xếp với sorted()</h4>
+<p><code>sorted(list)</code> trả về một list <b>mới</b> theo thứ tự tăng dần — nó không đổi list gốc. Thêm <code>reverse=True</code> để giảm dần. Nó chạy được với số và, theo thứ tự bảng chữ cái, với chuỗi.</p>
+<pre class="run">nums = [3, 1, 2]
+print(sorted(nums))               # [1, 2, 3]
+print(sorted(nums, reverse=True)) # [3, 2, 1]
+print(sorted(["banana", "apple", "cherry"]))  # ['apple', 'banana', 'cherry']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>nums = [3, 1, 2]</code>, dựng <code>ordered</code> = các số sắp tăng dần → <code>[1, 2, 3]</code>.</span>
+<template class="st">nums = [3, 1, 2]
+ordered = []
+# sort ascending
+</template>
+<template class="ts">assert ordered == [1, 2, 3]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>nums = [3, 1, 2]</code>, dựng <code>desc</code> = các số sắp từ lớn tới nhỏ → <code>[3, 2, 1]</code>. (Dùng <code>reverse=True</code>.)</span>
+<template class="st">nums = [3, 1, 2]
+desc = []
+# sort descending
+</template>
+<template class="ts">assert desc == [3, 2, 1]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>words = ["banana", "apple", "cherry"]</code>, dựng <code>alpha</code> = các từ theo thứ tự bảng chữ cái → <code>['apple', 'banana', 'cherry']</code>.</span>
+<template class="st">words = ["banana", "apple", "cherry"]
+alpha = []
+# sort alphabetically
+</template>
+<template class="ts">assert alpha == ["apple", "banana", "cherry"]
+</template></div>
+
+<h4>4. min, max, sum</h4>
+<p>Ba hàm dựng sẵn trả lời những câu hỏi thường gặp nhất về một list số, mỗi câu chỉ một từ.</p>
+<pre class="run">nums = [4, 2, 8, 6]
+print(min(nums))   # 2
+print(max(nums))   # 8
+print(sum(nums))   # 20</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>nums = [4, 2, 8, 6]</code>, gán <code>lowest</code>, <code>highest</code>, và <code>total</code> dùng <code>min</code>, <code>max</code>, và <code>sum</code>. Kết quả <code>2</code>, <code>8</code>, <code>20</code>.</span>
+<template class="st">nums = [4, 2, 8, 6]
+lowest = 0
+highest = 0
+total = 0
+# use min, max, sum
+</template>
+<template class="ts">assert lowest == 2 and highest == 8 and total == 20
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>nums = [3, 1, 2, 3, 1]</code>, dựng <code>unique_sorted</code> = các giá trị khác nhau theo thứ tự tăng dần → <code>[1, 2, 3]</code>. (Kết hợp <code>set</code> và <code>sorted</code>.)</span>
+<template class="st">nums = [3, 1, 2, 3, 1]
+unique_sorted = []
+# distinct values, sorted ascending
+</template>
+<template class="ts">assert unique_sorted == [1, 2, 3]
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (ba giá trị lớn nhất).</b> Cho <code>nums = [5, 2, 8, 1, 9, 3]</code>, dựng <code>top3</code> = ba giá trị lớn nhất, lớn nhất trước → <code>[9, 8, 5]</code>. (Sắp giảm dần, rồi lấy ba cái đầu bằng <code>[:3]</code>.)</span>
+<template class="st">nums = [5, 2, 8, 1, 9, 3]
+top3 = []
+# the three largest, biggest first
+</template>
+<template class="ts">assert top3 == [9, 8, 5]
+</template></div>
+
+<div class="recap">Tóm tắt bài 17: một <b>set</b> chỉ giữ các giá trị <b>duy nhất</b> — <code>set(list)</code> bỏ trùng lặp, kiểm tra thành viên (<code>in</code>) nhanh, và <code>|</code> / <code>&amp;</code> cho hợp / giao · <code>sorted(list)</code> trả về list tăng dần mới, <code>reverse=True</code> để giảm dần, và chạy với chuỗi theo bảng chữ cái · <code>min</code>, <code>max</code>, <code>sum</code> trả lời nhỏ nhất / lớn nhất / tổng trong một từ · kết hợp chúng (ví dụ <code>sorted(set(...))</code>) để có kết quả duy nhất, có thứ tự. Bài sau: <b>bộ công cụ xử lý văn bản</b> — tách, ghép và làm sạch chuỗi. (Thứ tự sắp xếp tùy chỉnh bằng <code>key</code> có ở Python Trung cấp.)</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — làm ngay tại đây trước bài kế tiếp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>letters = ["a", "b", "a", "c", "a"]</code>, gán <code>distinct</code> bằng số chữ khác nhau. Kết quả <code>3</code>.</span>
+<template class="st">letters = ["a", "b", "a", "c", "a"]
+distinct = 0
+# count the distinct letters
+</template>
+<template class="ts">assert distinct == 3
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>nums = [30, 10, 20]</code>, dựng <code>ordered</code> = các số sắp tăng dần → <code>[10, 20, 30]</code>.</span>
+<template class="st">nums = [30, 10, 20]
+ordered = []
+# sort ascending
+</template>
+<template class="ts">assert ordered == [10, 20, 30]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>a = {1, 2, 3}</code> và <code>b = {3, 4, 5}</code>, dựng <code>shared</code> = các giá trị có ở cả hai → <code>{3}</code>.</span>
+<template class="st">a = {1, 2, 3}
+b = {3, 4, 5}
+shared = set()
+# values in both sets
+</template>
+<template class="ts">assert shared == {3}
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Cho <code>scores = [70, 90, 50, 90, 60]</code>, dựng <code>top2</code> = hai điểm <b>khác nhau</b> cao nhất, lớn nhất trước → <code>[90, 70]</code>. (Bỏ trùng lặp, sắp giảm dần, lấy hai cái đầu.)</span>
+<template class="st">scores = [70, 90, 50, 90, 60]
+top2 = []
+# two highest distinct scores, biggest first
+</template>
+<template class="ts">assert top2 == [90, 70]
+</template></div>

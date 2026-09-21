@@ -1,0 +1,169 @@
+<h3>Bài 16 — Tuple, unpacking &amp; enumerate</h3>
+<p>Bạn đã âm thầm dùng <b>tuple</b> rồi — mỗi lần một hàm trả về hai giá trị, hay bạn viết <code>(3, 4)</code>. Một tuple giống list, nhưng <b>cố định</b>: khi đã tạo, bạn không thể đổi nội dung của nó. Nghe như một hạn chế, nhưng đó chính là điều bạn muốn cho những thứ có hình dạng cố định và không nên bị sửa vô tình — một tọa độ <code>(x, y)</code>, một màu RGB, một cặp <code>(name, score)</code>.</p>
+<p>Đi cùng tuple là hai tiện ích hằng ngày: <b>unpacking</b> (tách một tuple thẳng vào các biến có tên) và <b>enumerate</b> (duyệt một list mà vẫn có chỉ số của mỗi phần tử miễn phí). Cả hai làm code ngắn hơn và dễ đọc hơn nhiều so với tự xoay xở với các số chỉ mục.</p>
+<p>Đây là những công cụ nhỏ, nhưng bạn sẽ dùng chúng trong gần như mọi chương trình từ đây trở đi. Hãy biến chúng thành phản xạ.</p>
+
+<h4>1. Tuple: nhóm giá trị cố định</h4>
+<p>Viết một tuple bằng dấu phẩy, thường đặt trong ngoặc đơn. Bạn đọc nó theo chỉ số y như list — nhưng <b>không thể</b> gán lại các phần tử của nó.</p>
+<pre class="run">point = (3, 4)
+print(point[0])     # 3
+print(point[1])     # 4
+# point[0] = 9      # LỖI — tuple là bất biến</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Tạo một tuple <code>rgb</code> chứa <code>255</code>, <code>128</code>, <code>0</code> (theo thứ tự đó). Vậy <code>rgb</code> là <code>(255, 128, 0)</code>.</span>
+<template class="st"># create the rgb tuple
+rgb = 
+</template>
+<template class="ts">assert rgb == (255, 128, 0)
+</template></div>
+
+<h4>2. Bung (unpack) một tuple</h4>
+<p>Gán một tuple cho nhiều tên cùng lúc và Python trao mỗi giá trị cho biến của nó. Gọn hơn viết <code>point[0]</code>, <code>point[1]</code> khắp nơi.</p>
+<pre class="run">point = (3, 4)
+x, y = point         # bung ra
+print(x, y)          # 3 4
+
+a, b = 1, 2
+a, b = b, a          # hoán đổi trong một dòng!
+print(a, b)          # 2 1</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>point = (3, 4)</code>, bung nó vào <code>x</code> và <code>y</code>, rồi gán <code>s</code> bằng tổng của chúng. Vậy <code>s</code> là <code>7</code>.</span>
+<template class="st">point = (3, 4)
+# unpack into x and y, then sum them into s
+s = 0
+</template>
+<template class="ts">assert s == 7
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>a = 1</code> và <code>b = 2</code>, <b>hoán đổi</b> chúng bằng unpacking sao cho <code>a</code> thành <code>2</code> và <code>b</code> thành <code>1</code>.</span>
+<template class="st">a = 1
+b = 2
+# swap a and b
+</template>
+<template class="ts">assert a == 2 and b == 1
+</template></div>
+
+<h4>3. enumerate: chỉ số và giá trị cùng nhau</h4>
+<p>Bạn thường cần cả vị trí lẫn phần tử khi duyệt. Thay vì <code>range(len(...))</code> rồi tự lấy chỉ số, <code>enumerate</code> trao cho bạn cả hai. Thêm <code>start=1</code> để đếm từ 1.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna"]
+for i, task in enumerate(tasks, start=1):
+    print(f"{i}. {task}")
+# 1. Buy milk
+# 2. Call Anna</pre>
+<figure class="diagram">
+<svg viewBox="0 0 340 120" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <text x="170" y="16" text-anchor="middle" fill="#8FA0BC">enumerate(["a", "b", "c"]) sinh ra các cặp</text>
+  <g stroke="#22304C" fill="#121C30">
+    <rect x="40" y="34" width="80" height="30" rx="6"/>
+    <rect x="130" y="34" width="80" height="30" rx="6"/>
+    <rect x="220" y="34" width="80" height="30" rx="6"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="80" y="54">(0, "a")</text><text x="170" y="54">(1, "b")</text><text x="260" y="54">(2, "c")</text>
+  </g>
+  <g fill="#7FD1C0" text-anchor="middle" font-size="10">
+    <text x="80" y="86">chỉ số, giá trị</text><text x="170" y="86">chỉ số, giá trị</text><text x="260" y="86">chỉ số, giá trị</text>
+  </g>
+  <text x="170" y="108" text-anchor="middle" fill="#F5B942">for i, v in enumerate(items):</text>
+</svg>
+<figcaption><code>enumerate</code> ghép mỗi phần tử với chỉ số của nó, nên <code>for i, v in enumerate(items)</code> cho bạn cả hai cùng lúc.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code>, dựng list <code>lines</code> gồm các chuỗi <code>"N. task"</code> dùng <code>enumerate(tasks, start=1)</code> → <code>['1. Buy milk', '2. Call Anna', '3. Wash car']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+lines = []
+# use enumerate to number the tasks
+</template>
+<template class="ts">assert lines == ["1. Buy milk", "2. Call Anna", "3. Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>names = ["a", "b", "c"]</code>, dùng <code>enumerate</code> để tìm chỉ số của <code>"b"</code> vào <code>pos</code> (bắt đầu <code>pos = -1</code>). Kết quả <code>1</code>.</span>
+<template class="st">names = ["a", "b", "c"]
+pos = -1
+# use enumerate to find the index of "b"
+</template>
+<template class="ts">assert pos == 1
+</template></div>
+
+<h4>4. Duyệt qua các cặp</h4>
+<p>Khi một list chứa các tuple, hãy bung chúng ngay trên dòng <code>for</code>. Đây cũng đúng là cách bạn duyệt <code>.items()</code> của một dictionary.</p>
+<pre class="run">pairs = [("a", 1), ("b", 2), ("c", 3)]
+total = 0
+for letter, number in pairs:
+    total += number
+print(total)   # 6</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>pairs = [("a", 1), ("b", 2), ("c", 3)]</code>, cộng giá trị thứ hai của mỗi cặp vào <code>total</code> bằng cách bung trong vòng lặp. Kết quả <code>6</code>.</span>
+<template class="st">pairs = [("a", 1), ("b", 2), ("c", 3)]
+total = 0
+# unpack each pair and sum the numbers
+</template>
+<template class="ts">assert total == 6
+</template></div>
+
+<h4>5. zip: ghép cặp hai list</h4>
+<p><code>zip</code> duyệt hai list song song, cho ra các tuple gồm những phần tử tương ứng. Tuyệt vời để kết hợp dữ liệu liên quan — và <code>dict(zip(...))</code> biến hai list thành một dictionary.</p>
+<pre class="run">names = ["Anna", "Ben"]
+ages = [30, 25]
+paired = list(zip(names, ages))
+print(paired)              # [('Anna', 30), ('Ben', 25)]
+print(dict(zip(names, ages)))   # {'Anna': 30, 'Ben': 25}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>names = ["a", "b"]</code> và <code>ages = [20, 30]</code>, dựng <code>paired</code> = một list các tuple ghép chúng → <code>[('a', 20), ('b', 30)]</code>. (Dùng <code>zip</code> và <code>list</code>.)</span>
+<template class="st">names = ["a", "b"]
+ages = [20, 30]
+paired = []
+# zip the two lists into a list of tuples
+</template>
+<template class="ts">assert paired == [("a", 20), ("b", 30)]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Với cùng <code>names</code> và <code>ages</code>, dựng một dictionary <code>ages_by_name</code> ánh xạ mỗi tên tới tuổi của nó → <code>{'a': 20, 'b': 30}</code>. (Dùng <code>dict(zip(...))</code>.)</span>
+<template class="st">names = ["a", "b"]
+ages = [20, 30]
+ages_by_name = {}
+# build the dict from the two lists
+</template>
+<template class="ts">assert ages_by_name == {"a": 20, "b": 30}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>words = ["x", "y", "z"]</code>, dựng một dictionary <code>indexed</code> ánh xạ mỗi chỉ số tới từ của nó → <code>{0: 'x', 1: 'y', 2: 'z'}</code>. (Dùng <code>enumerate</code>.)</span>
+<template class="st">words = ["x", "y", "z"]
+indexed = {}
+# map each index to its word
+</template>
+<template class="ts">assert indexed == {0: "x", 1: "y", 2: "z"}
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (người điểm cao nhất).</b> Cho <code>scores = [("Anna", 85), ("Ben", 92), ("Cara", 78)]</code>, tìm <b>tên</b> có điểm cao nhất vào <code>winner</code> bằng cách bung mỗi cặp trong vòng lặp. Kết quả <code>"Ben"</code>.</span>
+<template class="st">scores = [("Anna", 85), ("Ben", 92), ("Cara", 78)]
+winner = ""
+best = -1
+# unpack each (name, score) and track the best
+</template>
+<template class="ts">assert winner == "Ben"
+</template></div>
+
+<div class="recap">Tóm tắt bài 16: một <b>tuple</b> là một nhóm có thứ tự, <b>bất biến</b> — hợp cho bản ghi cố định như <code>(x, y)</code> · <b>bung</b> một tuple vào các tên (<code>x, y = point</code>) và hoán đổi trong một dòng (<code>a, b = b, a</code>) · <code>enumerate</code> cho chỉ số + giá trị trong vòng lặp (<code>for i, v in enumerate(items, start=1)</code>) · bung tuple ngay trên dòng <code>for</code> · <code>zip</code> ghép cặp hai list, và <code>dict(zip(...))</code> dựng một dictionary. Bài sau: <b>set &amp; sắp xếp cơ bản</b> — loại bỏ trùng lặp và sắp thứ tự dữ liệu.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — làm ngay tại đây trước bài kế tiếp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>point = (10, 20)</code>, bung nó vào <code>x</code> và <code>y</code>, rồi dựng <code>label</code> = <code>"x=10, y=20"</code> dùng f-string.</span>
+<template class="st">point = (10, 20)
+label = ""
+# unpack, then build "x=10, y=20"
+</template>
+<template class="ts">assert label == "x=10, y=20"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>fruits = ["apple", "pear", "plum"]</code>, dựng list <code>menu</code> gồm các chuỗi <code>"N) fruit"</code> dùng <code>enumerate(fruits, start=1)</code> → <code>['1) apple', '2) pear', '3) plum']</code>.</span>
+<template class="st">fruits = ["apple", "pear", "plum"]
+menu = []
+# number the fruits like "1) apple"
+</template>
+<template class="ts">assert menu == ["1) apple", "2) pear", "3) plum"]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>keys = ["a", "b", "c"]</code> và <code>vals = [1, 2, 3]</code>, dựng một dictionary <code>d</code> ghép cặp chúng → <code>{'a': 1, 'b': 2, 'c': 3}</code>. (Dùng <code>dict(zip(...))</code>.)</span>
+<template class="st">keys = ["a", "b", "c"]
+vals = [1, 2, 3]
+d = {}
+# build the dict from the two lists
+</template>
+<template class="ts">assert d == {"a": 1, "b": 2, "c": 3}
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Cho <code>scores = [("Anna", 85), ("Ben", 70), ("Cara", 90)]</code>, dựng <code>passed</code> = tên những người có điểm <b>80 trở lên</b>, bằng cách bung mỗi cặp → <code>['Anna', 'Cara']</code>.</span>
+<template class="st">scores = [("Anna", 85), ("Ben", 70), ("Cara", 90)]
+passed = []
+# collect names with score >= 80
+</template>
+<template class="ts">assert passed == ["Anna", "Cara"]
+</template></div>

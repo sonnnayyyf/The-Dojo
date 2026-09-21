@@ -1,0 +1,208 @@
+<h3>Bài 13 — Hàm: đặt tên cho một khối code</h3>
+<p>Nhìn lại các bài đã học, bạn sẽ thấy vài đoạn logic nhỏ cứ lặp đi lặp lại: kiểm tra một việc đã xong chưa, định dạng một dòng, đếm một thứ gì đó. Chép đoạn logic đó khắp nơi vừa chậm vừa nguy hiểm — sửa lỗi ở một bản mà năm bản kia vẫn sai. Phải có cách viết một đoạn logic <b>một lần</b>, đặt tên cho nó, rồi tái sử dụng. Có đấy: <b>hàm (function)</b>.</p>
+<p>Một hàm là một cỗ máy có tên, tái sử dụng được. Bạn <b>định nghĩa</b> nó một lần, rồi <b>gọi</b> nó bằng tên bất cứ khi nào cần — tùy chọn đưa vào <b>đầu vào</b> (đối số) và nhận lại một <b>đầu ra</b> (giá trị trả về). Bạn đã gọi hàm suốt cả khóa rồi: <code>print(...)</code>, <code>len(...)</code>, <code>round(...)</code> đều là hàm do người khác viết. Giờ bạn sẽ viết hàm của riêng mình.</p>
+<p>Đây là bước ngoặt. Hàm là cách chương trình thật giữ được gọn gàng: thay vì một bức tường code khổng lồ, bạn xây những mảnh nhỏ có tên, mỗi mảnh làm một việc — dễ đọc, dễ kiểm tra, dễ tái dùng. Nắm được điều này thì mọi thứ về sau đều nhẹ hơn.</p>
+
+<h4>1. Định nghĩa và gọi một hàm</h4>
+<p>Bạn định nghĩa một hàm bằng <code>def</code>, một cái tên, dấu ngoặc đơn, và dấu hai chấm. Các dòng thụt vào bên dưới là <b>thân hàm</b> — chúng không chạy cho tới khi bạn <b>gọi</b> hàm bằng cách viết tên nó kèm <code>()</code>.</p>
+<pre class="run">def say_hello():
+    print("Hello!")
+    print("Welcome to The Dojo.")
+
+say_hello()      # gọi nó — giờ thân hàm mới chạy
+say_hello()      # gọi lại — tái sử dụng!</pre>
+<p>Định nghĩa một hàm <b>không</b> chạy nó — chỉ dạy Python biết hàm làm gì. Không có gì xảy ra cho tới khi bạn gọi. Gọi hai lần thì thân hàm chạy hai lần.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Định nghĩa một hàm <code>greet</code> <b>trả về</b> chuỗi <code>"Hello!"</code>. (Ta sẽ kiểm tra bằng cách gọi <code>greet()</code>.)</span>
+<template class="st">def greet():
+    # return the greeting
+    pass
+</template>
+<template class="ts">assert greet() == "Hello!"
+</template></div>
+
+<h4>2. Tham số: đưa đầu vào cho hàm</h4>
+<p>Một hàm hữu ích hơn nhiều khi nó làm việc được với các giá trị <b>khác nhau</b>. Đặt tên một <b>tham số (parameter)</b> trong ngoặc; khi gọi hàm bạn truyền vào một <b>đối số (argument)</b> để điền vào đó.</p>
+<pre class="run">def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Anna")    # Hello, Anna!
+greet("Ben")     # Hello, Ben!</pre>
+<figure class="diagram">
+<svg viewBox="0 0 360 110" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <defs>
+    <marker id="a13v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <rect x="130" y="30" width="100" height="50" rx="10" fill="#121C30" stroke="#22304C"/>
+  <text x="180" y="52" text-anchor="middle" fill="#F5B942">add(a, b)</text>
+  <text x="180" y="70" text-anchor="middle" fill="#8FA0BC" font-size="10">cỗ máy</text>
+  <text x="40" y="49" text-anchor="middle" fill="#7FD1C0">2, 3</text>
+  <text x="40" y="66" text-anchor="middle" fill="#8FA0BC" font-size="10">đối số</text>
+  <text x="322" y="49" text-anchor="middle" fill="#E8E4D8">5</text>
+  <text x="322" y="66" text-anchor="middle" fill="#8FA0BC" font-size="10">giá trị trả về</text>
+  <g stroke="#F5B942" stroke-width="1.5" marker-end="url(#a13v)" fill="none">
+    <line x1="66" y1="52" x2="126" y2="52"/>
+    <line x1="230" y1="52" x2="292" y2="52"/>
+  </g>
+</svg>
+<figcaption>Một hàm là một cỗ máy: đối số đi <b>vào</b>, thân hàm làm việc, và một giá trị đi <b>ra</b> qua <code>return</code>.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Định nghĩa <code>double</code> nhận một số <code>n</code> và trả về <code>n</code> nhân 2. Vậy <code>double(5)</code> là <code>10</code>.</span>
+<template class="st">def double(n):
+    # return n doubled
+    pass
+</template>
+<template class="ts">assert double(5) == 10
+assert double(0) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Định nghĩa <code>square</code> nhận <code>n</code> và trả về <code>n * n</code>. Vậy <code>square(4)</code> là <code>16</code>.</span>
+<template class="st">def square(n):
+    # return n squared
+    pass
+</template>
+<template class="ts">assert square(4) == 16
+assert square(10) == 100
+</template></div>
+
+<h4>3. return so với print — điều quan trọng nhất</h4>
+<p>Đây là chỗ khiến mọi người mới vấp, nên hãy đọc chậm. <code>print</code> <b>hiện</b> một giá trị lên màn hình rồi thôi. <code>return</code> <b>trao giá trị lại</b> cho nơi đã gọi hàm, để nó được lưu và dùng tiếp. Một hàm chỉ in ra thì chẳng cho bạn gì để làm việc.</p>
+<pre class="run">def add_print(a, b):
+    print(a + b)          # hiện ra, không trả về gì
+
+def add_return(a, b):
+    return a + b          # trao giá trị lại
+
+x = add_return(2, 3)
+print(x * 10)             # 50 — ta dùng được giá trị trả về
+
+y = add_print(2, 3)       # in ra 5...
+print(y)                  # None — không có gì để lưu!</pre>
+<p>Nguyên tắc: nếu bạn muốn <b>dùng</b> kết quả của hàm sau đó, hàm phải <code>return</code> nó.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Định nghĩa <code>shout</code> nhận một chuỗi <code>s</code> và <b>trả về</b> nó viết hoa kèm một dấu <code>"!"</code>. Vậy <code>shout("hi")</code> là <code>"HI!"</code>. (Dùng <code>s.upper()</code>.)</span>
+<template class="st">def shout(s):
+    # return the shouted string
+    pass
+</template>
+<template class="ts">assert shout("hi") == "HI!"
+assert shout("dojo") == "DOJO!"
+</template></div>
+
+<h4>4. Nhiều tham số</h4>
+<p>Một hàm có thể nhận bao nhiêu đầu vào tùy bạn, phân cách bằng dấu phẩy. Các đối số điền vào các tham số theo thứ tự.</p>
+<pre class="run">def add(a, b):
+    return a + b
+
+def total_price(price, qty):
+    return price * qty
+
+print(add(2, 3))            # 5
+print(total_price(50, 3))   # 150</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Định nghĩa <code>add</code> trả về tổng của <code>a</code> và <code>b</code>. Vậy <code>add(2, 3)</code> là <code>5</code>.</span>
+<template class="st">def add(a, b):
+    # return the sum
+    pass
+</template>
+<template class="ts">assert add(2, 3) == 5
+assert add(-1, 1) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Định nghĩa <code>total_price</code> nhận <code>price</code> và <code>qty</code> và trả về <code>price * qty</code>. Vậy <code>total_price(50, 3)</code> là <code>150</code>.</span>
+<template class="st">def total_price(price, qty):
+    # return the total
+    pass
+</template>
+<template class="ts">assert total_price(50, 3) == 150
+assert total_price(8000, 0) == 0
+</template></div>
+
+<h4>5. Trả về một quyết định (True/False)</h4>
+<p>Một hàm có thể trả về bất cứ thứ gì — kể cả kết quả của một phép so sánh, vốn là một boolean. Đó là cách gọn gàng để đặt tên cho một phép kiểm tra có/không.</p>
+<pre class="run">def is_even(n):
+    return n % 2 == 0
+
+print(is_even(4))    # True
+print(is_even(7))    # False</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Định nghĩa <code>is_even</code> trả về <code>True</code> nếu <code>n</code> chẵn, ngược lại <code>False</code>. Vậy <code>is_even(4)</code> là <code>True</code> và <code>is_even(5)</code> là <code>False</code>.</span>
+<template class="st">def is_even(n):
+    # return whether n is even
+    pass
+</template>
+<template class="ts">assert is_even(4) == True
+assert is_even(5) == False
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Định nghĩa <code>max_of</code> nhận <code>a</code> và <code>b</code> và trả về cái lớn hơn. Vậy <code>max_of(3, 7)</code> là <code>7</code>. (Dùng <code>if</code>.)</span>
+<template class="st">def max_of(a, b):
+    # return the larger of a and b
+    pass
+</template>
+<template class="ts">assert max_of(3, 7) == 7
+assert max_of(10, 2) == 10
+</template></div>
+
+<h4>6. Dùng các hàm cùng nhau</h4>
+<p>Sức mạnh thật sự: một khi hàm đã tồn tại, bạn có thể gọi nó trong vòng lặp, trong hàm khác, ở bất cứ đâu. Những mảnh nhỏ ghép lại thành chương trình lớn.</p>
+<pre class="run">def greet_name(name):
+    return f"Hello, {name}!"
+
+names = ["Anna", "Ben"]
+for n in names:
+    print(greet_name(n))
+# Hello, Anna!
+# Hello, Ben!</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Định nghĩa <code>greet_name</code> nhận <code>name</code> và trả về <code>"Hello, name!"</code>. Vậy <code>greet_name("Anna")</code> là <code>"Hello, Anna!"</code>. (Dùng f-string.)</span>
+<template class="st">def greet_name(name):
+    # return the greeting with the name
+    pass
+</template>
+<template class="ts">assert greet_name("Anna") == "Hello, Anna!"
+assert greet_name("Ben") == "Hello, Ben!"
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (hàm chấm điểm).</b> Định nghĩa <code>grade</code> nhận một <code>score</code> và trả về một chữ cái: <code>"A"</code> nếu 90 trở lên, <code>"B"</code> cho 80–89, <code>"C"</code> cho 70–79, ngược lại <code>"F"</code>. Vậy <code>grade(95)</code> là <code>"A"</code> và <code>grade(50)</code> là <code>"F"</code>.</span>
+<template class="st">def grade(score):
+    # return the letter grade
+    pass
+</template>
+<template class="ts">assert grade(95) == "A"
+assert grade(85) == "B"
+assert grade(72) == "C"
+assert grade(50) == "F"
+</template></div>
+
+<div class="recap">Tóm tắt bài 13: một <b>hàm</b> là một khối có tên, tái sử dụng được · <b>định nghĩa</b> bằng <code>def name(params):</code>, chạy bằng cách <b>gọi</b> <code>name(args)</code> · <b>tham số</b> là đầu vào, <b>đối số</b> điền vào chúng · <code>return</code> trao giá trị lại để dùng tiếp — <code>print</code> chỉ hiện ra và trả về <code>None</code> · một hàm có thể trả về số, chuỗi, hoặc boolean · gọi hàm trong vòng lặp và trong hàm khác để xây chương trình lớn hơn. Bài sau: hàm chuyên sâu — giá trị mặc định, trả về nhiều thứ, và phạm vi biến.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — làm ngay tại đây trước bài kế tiếp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Định nghĩa <code>triple</code> nhận <code>n</code> và trả về <code>n * 3</code>. Vậy <code>triple(4)</code> là <code>12</code>.</span>
+<template class="st">def triple(n):
+    # return n tripled
+    pass
+</template>
+<template class="ts">assert triple(4) == 12
+assert triple(0) == 0
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Định nghĩa <code>is_positive</code> trả về <code>True</code> nếu <code>n</code> lớn hơn 0, ngược lại <code>False</code>. Vậy <code>is_positive(3)</code> là <code>True</code> và <code>is_positive(-2)</code> là <code>False</code>.</span>
+<template class="st">def is_positive(n):
+    # return whether n is positive
+    pass
+</template>
+<template class="ts">assert is_positive(3) == True
+assert is_positive(-2) == False
+assert is_positive(0) == False
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Định nghĩa <code>initials</code> nhận tên <code>first</code> và <code>last</code> và trả về chữ cái đầu viết hoa kèm dấu chấm. Vậy <code>initials("Anna", "Bui")</code> là <code>"A.B."</code>. (Dùng <code>first[0]</code> và <code>.upper()</code>.)</span>
+<template class="st">def initials(first, last):
+    # return the initials like "A.B."
+    pass
+</template>
+<template class="ts">assert initials("Anna", "Bui") == "A.B."
+assert initials("son", "tran") == "S.T."
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Định nghĩa <code>count_vowels</code> nhận một <code>word</code> viết thường và trả về số nguyên âm (<code>a e i o u</code>) trong đó. Vậy <code>count_vowels("hello")</code> là <code>2</code>. (Duyệt các chữ; kiểm tra <code>if letter in "aeiou"</code>.)</span>
+<template class="st">def count_vowels(word):
+    # count and return the vowels
+    pass
+</template>
+<template class="ts">assert count_vowels("hello") == 2
+assert count_vowels("dojo") == 2
+assert count_vowels("xyz") == 0
+</template></div>

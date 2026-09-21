@@ -1,0 +1,108 @@
+<h3>Lesson 5 — Aggregates: COUNT, SUM, AVG, MIN, MAX</h3>
+<p>Every query so far returned <i>individual rows</i>. But a manager rarely asks "list all 10,000 orders" — they ask for <b>one number</b>: "<b>how many</b> products do we have?", "what's the <b>total</b> stock?", "the <b>average</b> price?", "how much does the <b>most expensive</b> item cost?".</p>
+<p>That's the job of <b>aggregate functions</b>. They collapse many rows into a <b>single value</b>: <code>COUNT</code> counts, <code>SUM</code> adds, <code>AVG</code> averages, <code>MIN</code>/<code>MAX</code> find the smallest/largest.</p>
+<p>Combined with <code>WHERE</code>, you compute a number for exactly the group you care about. This is the foundation of every report — and in Lesson 6 you'll learn <code>GROUP BY</code> to compute these numbers for <i>each group</i> at once.</p>
+
+<h4>1. COUNT — count rows</h4>
+<p><code>COUNT(*)</code> counts the rows that match the query. Always name the column with <code>AS</code>.</p>
+<pre class="run">SELECT COUNT(*) AS total
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Count the total number of products in <code>products</code>, naming the column <code>total</code>.</span>
+<template class="st">SELECT COUNT(*) AS total
+FROM </template>
+<template class="ref">SELECT COUNT(*) AS total FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Count the products in the <code>'Đồ uống'</code> category, naming the column <code>n</code>.</span>
+<template class="st">SELECT COUNT(*) AS n
+FROM products
+WHERE </template>
+<template class="ref">SELECT COUNT(*) AS n FROM products WHERE category = 'Đồ uống'</template></div>
+
+<h4>2. Counting distinct values: COUNT(DISTINCT …)</h4>
+<p>To find out <b>how many different</b> values exist, use <code>COUNT(DISTINCT column)</code> — it ignores duplicates.</p>
+<pre class="run">SELECT COUNT(DISTINCT category) AS categories
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Count the number of <b>distinct categories</b> (<code>category</code>) in <code>products</code>, naming the column <code>categories</code>.</span>
+<template class="st">SELECT COUNT(DISTINCT category) AS categories
+FROM </template>
+<template class="ref">SELECT COUNT(DISTINCT category) AS categories FROM products</template></div>
+
+<h4>3. SUM — add it all up</h4>
+<p><code>SUM(column)</code> adds every value in a numeric column.</p>
+<pre class="run">SELECT SUM(stock) AS total_stock
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Compute the <b>total stock</b> (<code>SUM(stock)</code>) across all products, naming the column <code>total_stock</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT SUM(stock) AS total_stock FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Compute the <b>total price</b> (<code>SUM(price)</code>) of products in the <code>'Điện tử'</code> category, naming the column <code>total</code>.</span>
+<template class="st">SELECT SUM(price) AS total
+FROM products
+WHERE </template>
+<template class="ref">SELECT SUM(price) AS total FROM products WHERE category = 'Điện tử'</template></div>
+
+<h4>4. AVG — the average</h4>
+<p><code>AVG(column)</code> computes the mean. The result is usually fractional, so it's common to wrap it in <code>ROUND(…)</code>.</p>
+<pre class="run">SELECT AVG(price) AS avg_price
+FROM products;
+
+SELECT ROUND(AVG(price)) AS avg_price
+FROM products
+WHERE category = 'Đồ uống';</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Compute the <b>average price</b> (<code>AVG(price)</code>) of all products, naming the column <code>avg_price</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT AVG(price) AS avg_price FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Compute the average price of the <code>'Đồ uống'</code> category, <b>rounded</b> with <code>ROUND(AVG(price))</code>, naming the column <code>avg_price</code>.</span>
+<template class="st">SELECT ROUND(AVG(price)) AS avg_price
+FROM products
+WHERE </template>
+<template class="ref">SELECT ROUND(AVG(price)) AS avg_price FROM products WHERE category = 'Đồ uống'</template></div>
+
+<h4>5. MIN and MAX</h4>
+<p><code>MIN</code> finds the smallest value, <code>MAX</code> the largest — they work on numbers, text, and dates.</p>
+<pre class="run">SELECT MIN(price) AS cheapest, MAX(price) AS most_expensive
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Find the <b>lowest price</b> in <code>products</code> (<code>MIN(price)</code>), naming the column <code>cheapest</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT MIN(price) AS cheapest FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Find the <b>highest price</b> in <code>products</code> (<code>MAX(price)</code>), naming the column <code>most_expensive</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT MAX(price) AS most_expensive FROM products</template></div>
+
+<h4>6. Aggregating another table</h4>
+<p>Aggregates work on any table. The <code>order_items</code> table records quantities sold in the <code>qty</code> column.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Compute the <b>total quantity sold</b> (<code>SUM(qty)</code>) in <code>order_items</code>, naming the column <code>total_qty</code>.</span>
+<template class="st">SELECT 
+FROM order_items</template>
+<template class="ref">SELECT SUM(qty) AS total_qty FROM order_items</template></div>
+
+<h4>7. Several numbers in one query</h4>
+<p>You can place multiple aggregates side by side to get a whole "summary row" at once.</p>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> For the <code>'Đồ uống'</code> category only, build a one-row summary with 4 columns: <code>COUNT(*) AS n</code>, <code>MIN(price) AS cheapest</code>, <code>MAX(price) AS most_expensive</code>, and <code>ROUND(AVG(price)) AS avg_price</code>.</span>
+<template class="st">SELECT COUNT(*) AS n, MIN(price) AS cheapest, 
+FROM products
+WHERE </template>
+<template class="ref">SELECT COUNT(*) AS n, MIN(price) AS cheapest, MAX(price) AS most_expensive, ROUND(AVG(price)) AS avg_price FROM products WHERE category = 'Đồ uống'</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Count the total number of customers in <code>customers</code>, naming the column <code>total</code>.</span>
+<template class="st">SELECT 
+FROM customers</template>
+<template class="ref">SELECT COUNT(*) AS total FROM customers</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Compute the total stock (<code>SUM(stock)</code>) of the <code>'Văn phòng phẩm'</code> category, naming the column <code>total_stock</code>.</span>
+<template class="st">SELECT SUM(stock) AS total_stock
+FROM products
+WHERE </template>
+<template class="ref">SELECT SUM(stock) AS total_stock FROM products WHERE category = 'Văn phòng phẩm'</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Find the highest price (<code>MAX(price)</code>) in the <code>'Đồ ăn'</code> category, naming the column <code>most_expensive</code>.</span>
+<template class="st">SELECT MAX(price) AS most_expensive
+FROM products
+WHERE </template>
+<template class="ref">SELECT MAX(price) AS most_expensive FROM products WHERE category = 'Đồ ăn'</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> From <code>order_items</code>, build a one-row summary with 3 columns: <code>COUNT(*) AS lines</code> (number of order lines), <code>SUM(qty) AS total_qty</code> (total quantity), and <code>MAX(qty) AS biggest_line</code> (the largest single line).</span>
+<template class="st">SELECT COUNT(*) AS lines, 
+FROM order_items</template>
+<template class="ref">SELECT COUNT(*) AS lines, SUM(qty) AS total_qty, MAX(qty) AS biggest_line FROM order_items</template></div>

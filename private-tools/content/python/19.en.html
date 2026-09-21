@@ -1,0 +1,175 @@
+<h3>Lesson 19 — Review &amp; capstone prep</h3>
+<p>You've reached the end of the fundamentals. Look back at how far you've come: variables and strings, conditions, loops, lists, dictionaries, functions, error handling, tuples, sets, sorting, and text processing. That's genuinely everything you need to build small, useful programs — and in the next and final lesson, you'll build one of your own.</p>
+<p>This lesson is a <b>consolidation</b>. There's no new syntax; instead we combine what you already know into the shape real programs take: take raw input, <b>parse</b> it into structured data, <b>analyse</b> it, and produce a <b>report</b>. Every exercise here is a small piece of exactly that pipeline — and a direct rehearsal for your capstone.</p>
+<p>If any exercise feels shaky, that's useful information: pop back to that lesson for a quick review before the capstone. Take your time; this is where it all clicks together.</p>
+
+<h4>1. The shape of a real program</h4>
+<p>Most useful programs follow the same flow: messy input comes in, you turn it into tidy records, you compute something, and you present a result. Each stage is just the skills you already have.</p>
+<figure class="diagram">
+<svg viewBox="0 0 380 96" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="10.5">
+  <defs>
+    <marker id="a19" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <g stroke="#22304C" fill="#121C30">
+    <rect x="8" y="36" width="74" height="34" rx="7"/>
+    <rect x="106" y="36" width="74" height="34" rx="7"/>
+    <rect x="204" y="36" width="74" height="34" rx="7"/>
+    <rect x="302" y="36" width="70" height="34" rx="7"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="45" y="52">raw text</text><text x="45" y="64" fill="#8FA0BC" font-size="9">split</text>
+    <text x="143" y="52" fill="#7FD1C0">records</text><text x="143" y="64" fill="#8FA0BC" font-size="9">list of dicts</text>
+    <text x="241" y="52" fill="#F5B942">analyse</text><text x="241" y="64" fill="#8FA0BC" font-size="9">count/sort</text>
+    <text x="337" y="52">report</text><text x="337" y="64" fill="#8FA0BC" font-size="9">summary</text>
+  </g>
+  <g stroke="#F5B942" stroke-width="1.4" marker-end="url(#a19)" fill="none">
+    <line x1="82" y1="53" x2="104" y2="53"/><line x1="180" y1="53" x2="202" y2="53"/><line x1="278" y1="53" x2="300" y2="53"/>
+  </g>
+</svg>
+<figcaption>Parse → structure → analyse → report. The capstone is just this pipeline applied to a problem you choose.</figcaption>
+</figure>
+<pre class="run">def parse_score(line):
+    name, score = line.split(",")
+    return (name, int(score))
+
+print(parse_score("Anna,85"))   # ('Anna', 85)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Define <code>parse_score</code> that takes a line like <code>"Anna,85"</code> and returns a tuple <code>(name, score)</code> with the score as an <code>int</code>. So <code>parse_score("Anna,85")</code> is <code>("Anna", 85)</code>.</span>
+<template class="st">def parse_score(line):
+    # split on the comma, convert the score to int
+    pass
+</template>
+<template class="ts">assert parse_score("Anna,85") == ("Anna", 85)
+assert parse_score("Ben,90") == ("Ben", 90)
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Define <code>safe_parse</code> that works like <code>parse_score</code> but returns <code>None</code> if the line is malformed (no comma, or a non-number score). So <code>safe_parse("Anna,85")</code> is <code>("Anna", 85)</code> and <code>safe_parse("oops")</code> is <code>None</code>.</span>
+<template class="st">def safe_parse(line):
+    # parse safely; return None on bad input
+    pass
+</template>
+<template class="ts">assert safe_parse("Anna,85") == ("Anna", 85)
+assert safe_parse("oops") is None
+assert safe_parse("Ben,xx") is None
+</template></div>
+
+<h4>2. Analysing records</h4>
+<p>Once data is a list of <code>(name, score)</code> tuples, all your loop, sum and filter skills apply directly.</p>
+<pre class="run">records = [("A", 50), ("B", 80), ("C", 65)]
+total = 0
+for name, score in records:
+    total += score
+print(total)   # 195</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Define <code>total_score</code> that sums the scores in a list of <code>(name, score)</code> tuples. So <code>total_score([("A", 10), ("B", 20), ("C", 5)])</code> is <code>35</code>.</span>
+<template class="st">def total_score(records):
+    # sum every score
+    pass
+</template>
+<template class="ts">assert total_score([("A", 10), ("B", 20), ("C", 5)]) == 35
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Define <code>average_score</code> that returns the average score of a non-empty record list. So <code>average_score([("A", 2), ("B", 4)])</code> is <code>3.0</code>.</span>
+<template class="st">def average_score(records):
+    # return the average score
+    pass
+</template>
+<template class="ts">assert average_score([("A", 2), ("B", 4)]) == 3.0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Define <code>passing</code> that returns the <b>names</b> whose score is at least <code>cutoff</code>. So <code>passing([("A", 50), ("B", 80), ("C", 65)], 60)</code> is <code>["B", "C"]</code>.</span>
+<template class="st">def passing(records, cutoff):
+    # names with score >= cutoff
+    pass
+</template>
+<template class="ts">assert passing([("A", 50), ("B", 80), ("C", 65)], 60) == ["B", "C"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Define <code>ranked_scores</code> that returns just the scores, sorted from highest to lowest. So <code>ranked_scores([("A", 50), ("B", 80), ("C", 65)])</code> is <code>[80, 65, 50]</code>.</span>
+<template class="st">def ranked_scores(records):
+    # return the scores, highest first
+    pass
+</template>
+<template class="ts">assert ranked_scores([("A", 50), ("B", 80), ("C", 65)]) == [80, 65, 50]
+</template></div>
+
+<h4>3. Counting and finding the top</h4>
+<p>The counting pattern plus a "biggest so far" search — the heart of any "what's most common" report.</p>
+<pre class="run">def count_words(text):
+    counts = {}
+    for w in text.split():
+        counts[w] = counts.get(w, 0) + 1
+    return counts
+
+print(count_words("a b a c a"))   # {'a': 3, 'b': 1, 'c': 1}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Define <code>count_words</code> that returns a word → count dictionary for a sentence. So <code>count_words("a b a c a")</code> is <code>{'a': 3, 'b': 1, 'c': 1}</code>.</span>
+<template class="st">def count_words(text):
+    # count each word
+    pass
+</template>
+<template class="ts">assert count_words("a b a c a") == {"a": 3, "b": 1, "c": 1}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Define <code>top_word</code> that takes a word → count dictionary and returns the word with the highest count. So <code>top_word({"a": 3, "b": 1})</code> is <code>"a"</code>.</span>
+<template class="st">def top_word(counts):
+    # return the key with the biggest value
+    pass
+</template>
+<template class="ts">assert top_word({"a": 3, "b": 1}) == "a"
+assert top_word({"x": 1, "y": 5}) == "y"
+</template></div>
+
+<h4>4. Building a report</h4>
+<p>The finish line of a program: gather your numbers into one clear summary — usually a dictionary of results.</p>
+<pre class="run">records = [("A", 50), ("B", 80), ("C", 65)]
+report = {
+    "count": len(records),
+    "total": sum(score for name, score in records),
+}
+print(report)   # {'count': 3, 'total': 195}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Define <code>analyse</code> that takes a non-empty record list and returns a dictionary with <code>count</code>, <code>total</code>, <code>average</code>, and <code>top</code> (the name with the highest score). So <code>analyse([("A", 50), ("B", 80), ("C", 65)])</code> is <code>{"count": 3, "total": 195, "average": 65.0, "top": "B"}</code>.</span>
+<template class="st">def analyse(records):
+    # build the summary dictionary
+    pass
+</template>
+<template class="ts">assert analyse([("A", 50), ("B", 80), ("C", 65)]) == {"count": 3, "total": 195, "average": 65.0, "top": "B"}
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (text analyser).</b> Define <code>analyse_text</code> that takes a sentence and returns <code>{"words": total_word_count, "unique": distinct_word_count, "top": most_common_word}</code>. So <code>analyse_text("red blue red green red")</code> is <code>{"words": 5, "unique": 3, "top": "red"}</code>. This is a mini version of the capstone!</span>
+<template class="st">def analyse_text(text):
+    # words, unique words, and the most common word
+    pass
+</template>
+<template class="ts">assert analyse_text("red blue red green red") == {"words": 5, "unique": 3, "top": "red"}
+</template></div>
+
+<h4>5. Next up: your capstone</h4>
+<p>In the final lesson you'll build a complete little program of your own, in real VS Code, and submit it. You'll pick from three project options — each with a guided build-up like the mini-project in Lesson 10, and room to add your own ideas. Everything you just reviewed — parsing, records, counting, sorting, reporting — is exactly the toolkit you'll use. You're ready.</p>
+
+<div class="recap">Recap of lesson 19: real programs follow a pipeline — <b>parse</b> raw input into records, <b>analyse</b> with loops/sum/sort/count, and produce a <b>report</b> (usually a dictionary) · <code>try/except</code> keeps parsing robust against bad lines · the counting pattern plus a "biggest so far" search finds the most common item · these combine into small analysers like the capstone. Next: <b>build your own app</b> — three project options, your creativity, submitted to your teacher.</div>
+
+<h4>🏠 Homework</h4>
+<p>Four graded exercises — a final warm-up before the capstone.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Define <code>parse_pair</code> that takes a line like <code>"apple:3"</code> and returns a tuple <code>(name, count)</code> with the count as an <code>int</code>. So <code>parse_pair("apple:3")</code> is <code>("apple", 3)</code>.</span>
+<template class="st">def parse_pair(line):
+    # split on ":", convert the count to int
+    pass
+</template>
+<template class="ts">assert parse_pair("apple:3") == ("apple", 3)
+assert parse_pair("pen:12") == ("pen", 12)
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Define <code>count_words</code> that returns a word → count dictionary for a sentence. So <code>count_words("x y x")</code> is <code>{'x': 2, 'y': 1}</code>.</span>
+<template class="st">def count_words(text):
+    # count each word
+    pass
+</template>
+<template class="ts">assert count_words("x y x") == {"x": 2, "y": 1}
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Define <code>average</code> that returns the average of a non-empty list of numbers. So <code>average([2, 4, 6])</code> is <code>4.0</code>.</span>
+<template class="st">def average(nums):
+    # return the average
+    pass
+</template>
+<template class="ts">assert average([2, 4, 6]) == 4.0
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Define <code>report</code> that takes a non-empty list of numbers and returns <code>{"min": smallest, "max": largest, "average": mean}</code>. So <code>report([2, 4, 6])</code> is <code>{"min": 2, "max": 6, "average": 4.0}</code>. (Use <code>min</code>, <code>max</code>, <code>sum</code>.)</span>
+<template class="st">def report(nums):
+    # build the summary dictionary
+    pass
+</template>
+<template class="ts">assert report([2, 4, 6]) == {"min": 2, "max": 6, "average": 4.0}
+</template></div>

@@ -1,0 +1,208 @@
+<h3>Lesson 13 — Functions: naming a block of code</h3>
+<p>Look back at your lessons so far and you'll notice the same little routines popping up again and again: check if a task is done, format a line, count something. Copying that logic everywhere is slow and dangerous — fix a bug in one copy and the other five are still wrong. There has to be a way to write a piece of logic <b>once</b>, give it a name, and reuse it. There is: the <b>function</b>.</p>
+<p>A function is a named, reusable machine. You <b>define</b> it once, then <b>call</b> it by name whenever you need it — optionally feeding it <b>inputs</b> (arguments) and getting an <b>output</b> back (a return value). You've already been calling functions the whole course: <code>print(...)</code>, <code>len(...)</code>, <code>round(...)</code> are all functions someone else wrote. Now you'll write your own.</p>
+<p>This is a turning point. Functions are how real programs stay organised: instead of one giant wall of code, you build small, named pieces that each do one job — easy to read, test, and reuse. Master this and everything after it gets easier.</p>
+
+<h4>1. Defining and calling a function</h4>
+<p>You define a function with <code>def</code>, a name, parentheses, and a colon. The indented lines below are its <b>body</b> — they don't run until you <b>call</b> the function by writing its name with <code>()</code>.</p>
+<pre class="run">def say_hello():
+    print("Hello!")
+    print("Welcome to The Dojo.")
+
+say_hello()      # call it — now the body runs
+say_hello()      # call it again — reuse!</pre>
+<p>Defining a function does <b>not</b> run it — it just teaches Python what the function does. Nothing happens until you call it. Calling it twice runs the body twice.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Define a function <code>greet</code> that <b>returns</b> the string <code>"Hello!"</code>. (We'll test it by calling <code>greet()</code>.)</span>
+<template class="st">def greet():
+    # return the greeting
+    pass
+</template>
+<template class="ts">assert greet() == "Hello!"
+</template></div>
+
+<h4>2. Parameters: giving a function input</h4>
+<p>A function becomes far more useful when it can work on <b>different</b> values. Put a <b>parameter</b> name in the parentheses; when you call the function you pass an <b>argument</b> that fills it in.</p>
+<pre class="run">def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Anna")    # Hello, Anna!
+greet("Ben")     # Hello, Ben!</pre>
+<figure class="diagram">
+<svg viewBox="0 0 360 110" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <defs>
+    <marker id="a13" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <rect x="130" y="30" width="100" height="50" rx="10" fill="#121C30" stroke="#22304C"/>
+  <text x="180" y="52" text-anchor="middle" fill="#F5B942">add(a, b)</text>
+  <text x="180" y="70" text-anchor="middle" fill="#8FA0BC" font-size="10">the machine</text>
+  <text x="40" y="49" text-anchor="middle" fill="#7FD1C0">2, 3</text>
+  <text x="40" y="66" text-anchor="middle" fill="#8FA0BC" font-size="10">arguments</text>
+  <text x="322" y="49" text-anchor="middle" fill="#E8E4D8">5</text>
+  <text x="322" y="66" text-anchor="middle" fill="#8FA0BC" font-size="10">return value</text>
+  <g stroke="#F5B942" stroke-width="1.5" marker-end="url(#a13)" fill="none">
+    <line x1="66" y1="52" x2="126" y2="52"/>
+    <line x1="230" y1="52" x2="292" y2="52"/>
+  </g>
+</svg>
+<figcaption>A function is a machine: arguments go <b>in</b>, the body does the work, and a value comes <b>out</b> via <code>return</code>.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Define <code>double</code> that takes a number <code>n</code> and returns <code>n</code> times 2. So <code>double(5)</code> is <code>10</code>.</span>
+<template class="st">def double(n):
+    # return n doubled
+    pass
+</template>
+<template class="ts">assert double(5) == 10
+assert double(0) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Define <code>square</code> that takes <code>n</code> and returns <code>n * n</code>. So <code>square(4)</code> is <code>16</code>.</span>
+<template class="st">def square(n):
+    # return n squared
+    pass
+</template>
+<template class="ts">assert square(4) == 16
+assert square(10) == 100
+</template></div>
+
+<h4>3. return vs print — the big one</h4>
+<p>This trips up every beginner, so read slowly. <code>print</code> <b>shows</b> a value on the screen and then it's gone. <code>return</code> <b>hands a value back</b> to whoever called the function, so it can be stored and used. A function that only prints gives you nothing to work with.</p>
+<pre class="run">def add_print(a, b):
+    print(a + b)          # shows it, returns nothing
+
+def add_return(a, b):
+    return a + b          # hands the value back
+
+x = add_return(2, 3)
+print(x * 10)             # 50 — we could use the returned value
+
+y = add_print(2, 3)       # prints 5...
+print(y)                  # None — there was nothing to store!</pre>
+<p>Rule of thumb: if you want to <b>use</b> a function's result later, it must <code>return</code> it.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Define <code>shout</code> that takes a string <code>s</code> and <b>returns</b> it in uppercase with a <code>"!"</code> added. So <code>shout("hi")</code> is <code>"HI!"</code>. (Use <code>s.upper()</code>.)</span>
+<template class="st">def shout(s):
+    # return the shouted string
+    pass
+</template>
+<template class="ts">assert shout("hi") == "HI!"
+assert shout("dojo") == "DOJO!"
+</template></div>
+
+<h4>4. Several parameters</h4>
+<p>A function can take as many inputs as you need, separated by commas. The arguments fill the parameters in order.</p>
+<pre class="run">def add(a, b):
+    return a + b
+
+def total_price(price, qty):
+    return price * qty
+
+print(add(2, 3))            # 5
+print(total_price(50, 3))   # 150</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Define <code>add</code> that returns the sum of <code>a</code> and <code>b</code>. So <code>add(2, 3)</code> is <code>5</code>.</span>
+<template class="st">def add(a, b):
+    # return the sum
+    pass
+</template>
+<template class="ts">assert add(2, 3) == 5
+assert add(-1, 1) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Define <code>total_price</code> that takes <code>price</code> and <code>qty</code> and returns <code>price * qty</code>. So <code>total_price(50, 3)</code> is <code>150</code>.</span>
+<template class="st">def total_price(price, qty):
+    # return the total
+    pass
+</template>
+<template class="ts">assert total_price(50, 3) == 150
+assert total_price(8000, 0) == 0
+</template></div>
+
+<h4>5. Returning a decision (True/False)</h4>
+<p>A function can return anything — including the result of a comparison, which is a boolean. That's a clean way to name a yes/no test.</p>
+<pre class="run">def is_even(n):
+    return n % 2 == 0
+
+print(is_even(4))    # True
+print(is_even(7))    # False</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Define <code>is_even</code> that returns <code>True</code> if <code>n</code> is even, else <code>False</code>. So <code>is_even(4)</code> is <code>True</code> and <code>is_even(5)</code> is <code>False</code>.</span>
+<template class="st">def is_even(n):
+    # return whether n is even
+    pass
+</template>
+<template class="ts">assert is_even(4) == True
+assert is_even(5) == False
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Define <code>max_of</code> that takes <code>a</code> and <code>b</code> and returns the larger one. So <code>max_of(3, 7)</code> is <code>7</code>. (Use an <code>if</code>.)</span>
+<template class="st">def max_of(a, b):
+    # return the larger of a and b
+    pass
+</template>
+<template class="ts">assert max_of(3, 7) == 7
+assert max_of(10, 2) == 10
+</template></div>
+
+<h4>6. Using functions together</h4>
+<p>The real power: once a function exists, you can call it inside loops, inside other functions, anywhere. Small pieces combine into big programs.</p>
+<pre class="run">def greet_name(name):
+    return f"Hello, {name}!"
+
+names = ["Anna", "Ben"]
+for n in names:
+    print(greet_name(n))
+# Hello, Anna!
+# Hello, Ben!</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Define <code>greet_name</code> that takes <code>name</code> and returns <code>"Hello, name!"</code>. So <code>greet_name("Anna")</code> is <code>"Hello, Anna!"</code>. (Use an f-string.)</span>
+<template class="st">def greet_name(name):
+    # return the greeting with the name
+    pass
+</template>
+<template class="ts">assert greet_name("Anna") == "Hello, Anna!"
+assert greet_name("Ben") == "Hello, Ben!"
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (grading function).</b> Define <code>grade</code> that takes a <code>score</code> and returns a letter: <code>"A"</code> for 90 or above, <code>"B"</code> for 80–89, <code>"C"</code> for 70–79, otherwise <code>"F"</code>. So <code>grade(95)</code> is <code>"A"</code> and <code>grade(50)</code> is <code>"F"</code>.</span>
+<template class="st">def grade(score):
+    # return the letter grade
+    pass
+</template>
+<template class="ts">assert grade(95) == "A"
+assert grade(85) == "B"
+assert grade(72) == "C"
+assert grade(50) == "F"
+</template></div>
+
+<div class="recap">Recap of lesson 13: a <b>function</b> is a named, reusable block · <b>define</b> with <code>def name(params):</code>, run it by <b>calling</b> <code>name(args)</code> · <b>parameters</b> are inputs, <b>arguments</b> fill them in · <code>return</code> hands a value back so it can be used — <code>print</code> only shows it and returns <code>None</code> · a function can return numbers, strings, or booleans · call functions inside loops and other functions to build bigger programs. Next: functions in depth — default values, returning several things, and variable scope.</div>
+
+<h4>🏠 Homework</h4>
+<p>Four graded exercises — do them right here before the next lesson.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Define <code>triple</code> that takes <code>n</code> and returns <code>n * 3</code>. So <code>triple(4)</code> is <code>12</code>.</span>
+<template class="st">def triple(n):
+    # return n tripled
+    pass
+</template>
+<template class="ts">assert triple(4) == 12
+assert triple(0) == 0
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Define <code>is_positive</code> that returns <code>True</code> if <code>n</code> is greater than 0, else <code>False</code>. So <code>is_positive(3)</code> is <code>True</code> and <code>is_positive(-2)</code> is <code>False</code>.</span>
+<template class="st">def is_positive(n):
+    # return whether n is positive
+    pass
+</template>
+<template class="ts">assert is_positive(3) == True
+assert is_positive(-2) == False
+assert is_positive(0) == False
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Define <code>initials</code> that takes <code>first</code> and <code>last</code> names and returns their uppercase initials with dots. So <code>initials("Anna", "Bui")</code> is <code>"A.B."</code>. (Use <code>first[0]</code> and <code>.upper()</code>.)</span>
+<template class="st">def initials(first, last):
+    # return the initials like "A.B."
+    pass
+</template>
+<template class="ts">assert initials("Anna", "Bui") == "A.B."
+assert initials("son", "tran") == "S.T."
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Define <code>count_vowels</code> that takes a lowercase <code>word</code> and returns how many vowels (<code>a e i o u</code>) it contains. So <code>count_vowels("hello")</code> is <code>2</code>. (Loop the letters; check <code>if letter in "aeiou"</code>.)</span>
+<template class="st">def count_vowels(word):
+    # count and return the vowels
+    pass
+</template>
+<template class="ts">assert count_vowels("hello") == 2
+assert count_vowels("dojo") == 2
+assert count_vowels("xyz") == 0
+</template></div>

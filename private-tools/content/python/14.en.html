@@ -1,0 +1,185 @@
+<h3>Lesson 14 — Functions in depth: defaults, many returns, scope</h3>
+<p>You can now write and call functions. This lesson adds the three things that make them genuinely powerful in real code: <b>default values</b> (so some inputs are optional), returning <b>more than one value</b> at once, and understanding <b>scope</b> — which variables a function can see and which stay private inside it.</p>
+<p>None of this is new syntax to memorise for its own sake. Each piece solves a real annoyance: default values save you from passing the same argument over and over; multiple returns let one function answer a richer question; and scope is the rule that keeps big programs from turning into a tangle of variables stepping on each other.</p>
+<p>By the end you'll write functions that feel like the ones in real libraries — flexible, self-contained, and safe to reuse anywhere.</p>
+
+<h4>1. Default parameter values</h4>
+<p>Give a parameter a default with <code>=</code>. If the caller supplies that argument it's used; if not, the default kicks in. Optional inputs, for free.</p>
+<pre class="run">def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+
+print(greet("Anna"))            # Hello, Anna!   (default greeting)
+print(greet("Ben", "Hi"))       # Hi, Ben!       (override it)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Define <code>greet</code> with a second parameter <code>greeting</code> that defaults to <code>"Hello"</code>, returning <code>"greeting, name!"</code>. So <code>greet("Anna")</code> is <code>"Hello, Anna!"</code> and <code>greet("Ben", "Hi")</code> is <code>"Hi, Ben!"</code>.</span>
+<template class="st">def greet(name, greeting="Hello"):
+    # return "greeting, name!"
+    pass
+</template>
+<template class="ts">assert greet("Anna") == "Hello, Anna!"
+assert greet("Ben", "Hi") == "Hi, Ben!"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Define <code>power</code> that takes <code>base</code> and <code>exp</code> (default <code>2</code>) and returns <code>base ** exp</code>. So <code>power(5)</code> is <code>25</code> and <code>power(2, 3)</code> is <code>8</code>.</span>
+<template class="st">def power(base, exp=2):
+    # return base to the power exp
+    pass
+</template>
+<template class="ts">assert power(5) == 25
+assert power(2, 3) == 8
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Define <code>apply_discount</code> that takes <code>price</code> and <code>percent</code> (default <code>10</code>) and returns the price after taking off that percent. So <code>apply_discount(100)</code> is <code>90.0</code> and <code>apply_discount(200, 25)</code> is <code>150.0</code>.</span>
+<template class="st">def apply_discount(price, percent=10):
+    # return the discounted price
+    pass
+</template>
+<template class="ts">assert apply_discount(100) == 90.0
+assert apply_discount(200, 25) == 150.0
+</template></div>
+
+<h4>2. Returning several values</h4>
+<p>A function can hand back more than one value at once — just separate them with commas. Python bundles them into a <b>tuple</b>, and the caller can <b>unpack</b> them into separate names.</p>
+<pre class="run">def first_last(items):
+    return items[0], items[-1]
+
+pair = first_last([10, 20, 30])
+print(pair)                 # (10, 30)  — a tuple
+
+lo, hi = first_last([10, 20, 30])   # unpack into two names
+print(lo, hi)               # 10 30</pre>
+<figure class="diagram">
+<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a14" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7FD1C0"/>
+    </marker>
+  </defs>
+  <rect x="20" y="40" width="130" height="40" rx="9" fill="#121C30" stroke="#22304C"/>
+  <text x="85" y="64" text-anchor="middle" fill="#F5B942">first_last(items)</text>
+  <rect x="196" y="42" width="60" height="36" rx="7" fill="#0E1626" stroke="#22304C"/>
+  <text x="226" y="65" text-anchor="middle" fill="#E8E4D8">(10, 30)</text>
+  <text x="226" y="34" text-anchor="middle" fill="#8FA0BC" font-size="10">a tuple</text>
+  <rect x="286" y="24" width="60" height="28" rx="6" fill="#121C30" stroke="#22304C"/>
+  <text x="316" y="42" text-anchor="middle" fill="#7FD1C0">lo = 10</text>
+  <rect x="286" y="66" width="60" height="28" rx="6" fill="#121C30" stroke="#22304C"/>
+  <text x="316" y="84" text-anchor="middle" fill="#7FD1C0">hi = 30</text>
+  <g stroke="#7FD1C0" stroke-width="1.4" marker-end="url(#a14)" fill="none">
+    <line x1="150" y1="60" x2="192" y2="60"/>
+    <line x1="256" y1="54" x2="284" y2="40"/>
+    <line x1="256" y1="66" x2="284" y2="78"/>
+  </g>
+</svg>
+<figcaption>Returning two values makes a <b>tuple</b>; unpacking with <code>lo, hi = ...</code> splits it back into separate names.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Define <code>first_last</code> that takes a list <code>items</code> and returns a tuple of its first and last element. So <code>first_last([10, 20, 30])</code> is <code>(10, 30)</code>.</span>
+<template class="st">def first_last(items):
+    # return (first, last)
+    pass
+</template>
+<template class="ts">assert first_last([10, 20, 30]) == (10, 30)
+assert first_last([5, 9]) == (5, 9)
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Define <code>split_name</code> that takes a full name like <code>"Anna Bui"</code> and returns a tuple <code>(first, last)</code> → <code>("Anna", "Bui")</code>. (Use <code>full.split()</code>.)</span>
+<template class="st">def split_name(full):
+    # return (first, last)
+    pass
+</template>
+<template class="ts">assert split_name("Anna Bui") == ("Anna", "Bui")
+assert split_name("Son Tran") == ("Son", "Tran")
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Define <code>high_low</code> that takes a list of numbers <code>nums</code> and returns <code>(smallest, largest)</code> using a loop. So <code>high_low([3, 1, 2])</code> is <code>(1, 3)</code>.</span>
+<template class="st">def high_low(nums):
+    # return (smallest, largest)
+    pass
+</template>
+<template class="ts">assert high_low([3, 1, 2]) == (1, 3)
+assert high_low([5, 5, 5]) == (5, 5)
+</template></div>
+
+<h4>3. Scope: what a function can see</h4>
+<p>Variables created <b>inside</b> a function are <b>local</b> — they exist only while the function runs and vanish when it returns. The outside program can't see them, and that's a good thing: it means a function's inner workings never accidentally clash with names elsewhere.</p>
+<pre class="run">def make_label(n):
+    tag = "item"          # local — only exists in here
+    return f"{tag} {n}"
+
+print(make_label(3))      # item 3
+# print(tag)              # would be an ERROR: tag is not defined out here</pre>
+<p>Think of each function as a room with its own scratch paper. Whatever it scribbles (its local variables) is thrown away when it leaves the room; only what it <code>return</code>s comes out.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Define <code>make_label</code> that takes <code>n</code>, uses a <b>local</b> variable <code>tag = "item"</code>, and returns <code>"item n"</code>. So <code>make_label(3)</code> is <code>"item 3"</code>.</span>
+<template class="st">def make_label(n):
+    # use a local variable tag, then return "item n"
+    pass
+</template>
+<template class="ts">assert make_label(3) == "item 3"
+assert make_label(9) == "item 9"
+</template></div>
+
+<h4>4. Functions that do real work</h4>
+<p>Put it together: parameters in, a loop or logic in the body, one clear value out.</p>
+<pre class="run">def count_positive(nums):
+    count = 0
+    for n in nums:
+        if n > 0:
+            count += 1
+    return count
+
+print(count_positive([-1, 2, -3, 4]))   # 2</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Define <code>count_positive</code> that returns how many numbers in <code>nums</code> are greater than 0. So <code>count_positive([-1, 2, -3, 4])</code> is <code>2</code>.</span>
+<template class="st">def count_positive(nums):
+    # count and return the positive numbers
+    pass
+</template>
+<template class="ts">assert count_positive([-1, 2, -3, 4]) == 2
+assert count_positive([0, -5]) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Define <code>average</code> that returns the average of a non-empty list <code>nums</code> (sum ÷ count). So <code>average([2, 4, 6])</code> is <code>4.0</code>.</span>
+<template class="st">def average(nums):
+    # return the average
+    pass
+</template>
+<template class="ts">assert average([2, 4, 6]) == 4.0
+assert average([10]) == 10.0
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (stats in one call).</b> Define <code>stats</code> that takes a non-empty list <code>nums</code> and returns a tuple <code>(count, total, average)</code> using a loop. So <code>stats([2, 4, 6])</code> is <code>(3, 12, 4.0)</code>.</span>
+<template class="st">def stats(nums):
+    # return (count, total, average)
+    pass
+</template>
+<template class="ts">assert stats([2, 4, 6]) == (3, 12, 4.0)
+assert stats([10]) == (1, 10, 10.0)
+</template></div>
+
+<div class="recap">Recap of lesson 14: <b>default values</b> (<code>def f(x, y=10):</code>) make parameters optional · a function can <b>return several values</b> — Python bundles them into a <b>tuple</b> the caller can <b>unpack</b> (<code>lo, hi = ...</code>) · variables made inside a function are <b>local</b> and disappear when it returns — only the returned value escapes · combine parameters, loops and one clear return to build reliable little tools. Next: handling <b>errors</b> gracefully with <code>try / except</code>.</div>
+
+<h4>🏠 Homework</h4>
+<p>Four graded exercises — do them right here before the next lesson.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Define <code>introduce</code> that takes <code>name</code> and <code>city</code> (default <code>"Hanoi"</code>) and returns <code>"name from city"</code>. So <code>introduce("Anna")</code> is <code>"Anna from Hanoi"</code> and <code>introduce("Ben", "Hue")</code> is <code>"Ben from Hue"</code>.</span>
+<template class="st">def introduce(name, city="Hanoi"):
+    # return "name from city"
+    pass
+</template>
+<template class="ts">assert introduce("Anna") == "Anna from Hanoi"
+assert introduce("Ben", "Hue") == "Ben from Hue"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Define <code>apply_tax</code> that takes <code>price</code> and <code>rate</code> (default <code>10</code>) and returns the price plus that percent of tax. So <code>apply_tax(100)</code> is <code>110.0</code> and <code>apply_tax(200, 5)</code> is <code>210.0</code>.</span>
+<template class="st">def apply_tax(price, rate=10):
+    # return the price with tax added
+    pass
+</template>
+<template class="ts">assert apply_tax(100) == 110.0
+assert apply_tax(200, 5) == 210.0
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Define <code>middle_three</code> that takes a list of at least 3 items and returns a tuple of its <b>first, middle, and last</b> items. So <code>middle_three([1, 2, 3])</code> is <code>(1, 2, 3)</code> and <code>middle_three([10, 20, 30, 40, 50])</code> is <code>(10, 30, 50)</code>. (The middle index is <code>len(items) // 2</code>.)</span>
+<template class="st">def middle_three(items):
+    # return (first, middle, last)
+    pass
+</template>
+<template class="ts">assert middle_three([1, 2, 3]) == (1, 2, 3)
+assert middle_three([10, 20, 30, 40, 50]) == (10, 30, 50)
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Define <code>longest</code> that takes a list of <code>words</code> and returns the longest one (using a loop; if there's a tie, keep the first). So <code>longest(["a", "bbb", "cc"])</code> is <code>"bbb"</code>.</span>
+<template class="st">def longest(words):
+    # return the longest word
+    pass
+</template>
+<template class="ts">assert longest(["a", "bbb", "cc"]) == "bbb"
+assert longest(["dog", "cat", "mouse"]) == "mouse"
+</template></div>

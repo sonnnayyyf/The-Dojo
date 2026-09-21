@@ -1,0 +1,146 @@
+<h3>Bài 9 — LEFT JOIN & NULL</h3>
+<p><code>JOIN</code> ở Bài 8 (còn gọi là <b>INNER JOIN</b>) chỉ giữ những dòng <b>khớp được</b> ở cả hai bảng. Nhưng nhiều câu hỏi quan trọng lại nằm ở chỗ <i>không</i> khớp: "khách nào <b>chưa từng</b> đặt hàng?", "sản phẩm nào <b>chưa bán được</b> cái nào?". INNER JOIN sẽ <b>giấu mất</b> đúng những dòng bạn cần tìm.</p>
+<p><code>LEFT JOIN</code> giải quyết việc đó: nó giữ <b>tất cả</b> các dòng của bảng bên trái, và với những dòng không tìm được cặp khớp bên phải, nó điền <code>NULL</code> (giá trị "trống"). Nhờ vậy khách hàng không có đơn vẫn xuất hiện — kèm <code>NULL</code> ở các cột của đơn.</p>
+<p>Khách hàng <b>Phạm Thị D</b> chưa có đơn nào, và vài sản phẩm chưa bán được — đây là dữ liệu hoàn hảo để luyện <code>LEFT JOIN</code> và cách xử lý <code>NULL</code> bằng <code>IS NULL</code> và <code>COALESCE</code>.</p>
+
+<h4>1. LEFT JOIN — giữ mọi dòng bên trái</h4>
+<p>Đổi <code>JOIN</code> thành <code>LEFT JOIN</code>: mọi khách hàng đều xuất hiện, kể cả người không có đơn (cột đơn hàng sẽ là <code>NULL</code>).</p>
+<pre class="run">SELECT c.name AS customer, o.id AS order_id
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+ORDER BY c.id, o.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Ghép <code>customers</code> với <code>orders</code> bằng <code>LEFT JOIN</code>, hiển thị <code>c.name AS customer</code> và <code>o.id AS order_id</code> (mọi khách, kể cả người chưa có đơn), sắp theo <code>c.id, o.id</code>.</span>
+<template class="st">SELECT c.name AS customer, o.id AS order_id
+FROM customers c
+LEFT JOIN orders o ON </template>
+<template class="ref">SELECT c.name AS customer, o.id AS order_id FROM customers c LEFT JOIN orders o ON o.customer_id = c.id ORDER BY c.id, o.id</template></div>
+
+<h4>2. IS NULL — tìm những dòng không khớp</h4>
+<p>Không thể so sánh <code>NULL</code> bằng <code>=</code>. Phải dùng <code>IS NULL</code> (hoặc <code>IS NOT NULL</code>). Kết hợp <code>LEFT JOIN</code> + <code>WHERE ... IS NULL</code> là cách kinh điển để tìm "những cái không có cặp".</p>
+<pre class="run">SELECT c.name AS customer
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+WHERE o.id IS NULL;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tìm khách <b>chưa từng đặt hàng</b>: <code>LEFT JOIN</code> <code>customers</code> với <code>orders</code>, lọc <code>o.id IS NULL</code>, hiển thị <code>c.name AS customer</code>, sắp theo <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+WHERE </template>
+<template class="ref">SELECT c.name AS customer FROM customers c LEFT JOIN orders o ON o.customer_id = c.id WHERE o.id IS NULL ORDER BY c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tìm sản phẩm <b>chưa bán được cái nào</b>: <code>LEFT JOIN</code> <code>products</code> với <code>order_items</code>, lọc <code>oi.id IS NULL</code>, hiển thị <code>p.name AS product</code>, sắp theo <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+WHERE </template>
+<template class="ref">SELECT p.name AS product FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id WHERE oi.id IS NULL ORDER BY p.id</template></div>
+
+<h4>3. Đếm kèm số 0</h4>
+<p>Điểm khác biệt tinh tế: <code>COUNT(*)</code> đếm cả dòng, nhưng <code>COUNT(cột)</code> <b>bỏ qua NULL</b>. Vì vậy <code>COUNT(o.id)</code> trên kết quả <code>LEFT JOIN</code> cho ra <b>0</b> đúng với khách không có đơn.</p>
+<pre class="run">SELECT c.name AS customer, COUNT(o.id) AS order_count
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY c.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Đếm <b>số đơn mỗi khách, kể cả 0</b>: <code>LEFT JOIN</code> <code>customers</code> với <code>orders</code>, gom theo <code>c.id</code>, hiển thị <code>c.name AS customer</code> và <code>COUNT(o.id) AS order_count</code>, sắp theo <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(o.id) AS order_count
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+GROUP BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(o.id) AS order_count FROM customers c LEFT JOIN orders o ON o.customer_id = c.id GROUP BY c.id ORDER BY c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Đếm <b>số dòng hàng mỗi khách, kể cả 0</b>: <code>LEFT JOIN</code> <code>customers</code> → <code>orders</code> → <code>order_items</code>, gom theo <code>c.id</code>, hiển thị <code>c.name AS customer</code> và <code>COUNT(oi.id) AS line_count</code>, sắp theo <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(oi.id) AS line_count
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+GROUP BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(oi.id) AS line_count FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id GROUP BY c.id ORDER BY c.id</template></div>
+
+<h4>4. COALESCE — thay NULL bằng giá trị khác</h4>
+<p><code>SUM</code> trên nhóm rỗng trả về <code>NULL</code>, không phải 0. <code>COALESCE(x, 0)</code> nghĩa là "nếu <code>x</code> là NULL thì dùng 0". Rất hợp cho báo cáo tiền.</p>
+<pre class="run">SELECT c.name AS customer,
+       COALESCE(SUM(p.price * oi.qty), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o      ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p     ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY c.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Tổng chi tiêu mỗi khách, <b>khách không mua ghi 0</b>: dùng chuỗi <code>LEFT JOIN</code> như ví dụ, hiển thị <code>c.name AS customer</code> và <code>COALESCE(SUM(p.price * oi.qty), 0) AS total_spent</code>, gom theo <code>c.id</code>, sắp theo <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Tổng số lượng bán ra mỗi sản phẩm, <b>chưa bán ghi 0</b>: <code>LEFT JOIN</code> <code>products</code> với <code>order_items</code>, hiển thị <code>p.name AS product</code> và <code>COALESCE(SUM(oi.qty), 0) AS total_qty</code>, gom theo <code>p.id</code>, sắp theo <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS total_qty
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS total_qty FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id ORDER BY p.id</template></div>
+
+<h4>5. IS NOT NULL và HAVING</h4>
+<p>Ngược lại, <code>IS NOT NULL</code> giữ những dòng <i>có</i> khớp. Và bạn có thể lọc nhóm "rỗng" bằng <code>HAVING COUNT(...) = 0</code>.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Đếm <b>số lần mỗi sản phẩm xuất hiện trong các dòng hàng, kể cả 0</b>: <code>LEFT JOIN</code> <code>products</code> với <code>order_items</code>, hiển thị <code>p.name AS product</code> và <code>COUNT(oi.id) AS times_ordered</code>, gom theo <code>p.id</code>, sắp theo <code>times_ordered</code> giảm dần rồi <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product, COUNT(oi.id) AS times_ordered
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, COUNT(oi.id) AS times_ordered FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id ORDER BY times_ordered DESC, p.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Tìm sản phẩm chưa bán được, <b>bằng HAVING</b>: <code>LEFT JOIN</code> <code>products</code> với <code>order_items</code>, gom theo <code>p.id</code>, giữ nhóm có <code>COUNT(oi.id) = 0</code>, hiển thị <code>p.name AS product</code>, sắp theo <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY p.id
+HAVING </template>
+<template class="ref">SELECT p.name AS product FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id HAVING COUNT(oi.id) = 0 ORDER BY p.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Liệt kê tên các khách <b>có ít nhất một đơn</b> (dùng <code>IS NOT NULL</code>): <code>LEFT JOIN</code> <code>customers</code> với <code>orders</code>, lọc <code>o.id IS NOT NULL</code>, hiển thị <code>DISTINCT c.name AS customer</code>, sắp theo <code>c.id</code>.</span>
+<template class="st">SELECT DISTINCT c.name AS customer
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+WHERE </template>
+<template class="ref">SELECT DISTINCT c.name AS customer FROM customers c LEFT JOIN orders o ON o.customer_id = c.id WHERE o.id IS NOT NULL ORDER BY c.id</template></div>
+
+<h4>6. Báo cáo tổng hợp không bỏ sót ai</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Báo cáo mỗi khách gồm <b>số đơn</b> và <b>tổng chi tiêu</b>, <b>không bỏ sót khách nào</b>. Dùng chuỗi <code>LEFT JOIN</code> <code>customers</code> → <code>orders</code> → <code>order_items</code> → <code>products</code>; hiển thị <code>c.name AS customer</code>, <code>COUNT(DISTINCT o.id) AS order_count</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS total_spent</code>; gom theo <code>c.id</code>; sắp theo <code>total_spent</code> giảm dần rồi <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS order_count, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS order_count, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY total_spent DESC, c.id</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> <code>LEFT JOIN</code> <code>customers</code> với <code>orders</code>, hiển thị <code>c.name AS customer</code> và <code>o.order_date</code> (mọi khách, kể cả người chưa có đơn), sắp theo <code>c.id, o.order_date</code>.</span>
+<template class="st">SELECT c.name AS customer, o.order_date
+FROM customers c
+LEFT JOIN orders o ON </template>
+<template class="ref">SELECT c.name AS customer, o.order_date FROM customers c LEFT JOIN orders o ON o.customer_id = c.id ORDER BY c.id, o.order_date</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tìm khách chưa có đơn <b>bằng HAVING</b>: <code>LEFT JOIN</code> <code>customers</code> với <code>orders</code>, gom theo <code>c.id</code>, giữ nhóm có <code>COUNT(o.id) = 0</code>, hiển thị <code>c.name AS customer</code> và <code>COUNT(o.id) AS order_count</code>, sắp theo <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(o.id) AS order_count
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+GROUP BY c.id
+HAVING </template>
+<template class="ref">SELECT c.name AS customer, COUNT(o.id) AS order_count FROM customers c LEFT JOIN orders o ON o.customer_id = c.id GROUP BY c.id HAVING COUNT(o.id) = 0 ORDER BY c.id</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tổng số lượng bán ra mỗi sản phẩm (chưa bán ghi 0), sắp theo lượng bán: <code>LEFT JOIN</code> <code>products</code> với <code>order_items</code>, hiển thị <code>p.name AS product</code> và <code>COALESCE(SUM(oi.qty), 0) AS total_qty</code>, gom theo <code>p.id</code>, sắp theo <code>total_qty</code> giảm dần rồi <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS total_qty
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS total_qty FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id ORDER BY total_qty DESC, p.id</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Báo cáo mỗi khách gồm số đơn và tổng chi tiêu (không bỏ sót ai), sắp <b>tăng dần</b> theo chi tiêu để khách chưa mua lên đầu. Dùng <code>LEFT JOIN</code> <code>customers</code> → <code>orders</code> → <code>order_items</code> → <code>products</code>; hiển thị <code>c.name AS customer</code>, <code>COUNT(DISTINCT o.id) AS orders</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS total_spent</code>; gom theo <code>c.id</code>; sắp theo <code>total_spent</code> tăng dần rồi <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY total_spent ASC, c.id</template></div>

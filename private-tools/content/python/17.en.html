@@ -1,0 +1,161 @@
+<h3>Lesson 17 — Sets &amp; sorting basics</h3>
+<p>Two everyday needs come up constantly once you handle real data: getting rid of <b>duplicates</b>, and putting things in <b>order</b>. Python has a clean tool for each. A <b>set</b> is a collection that automatically keeps only unique values — perfect for "how many <i>different</i> things are here?". And <code>sorted()</code> takes any list and hands back a tidy, ordered copy.</p>
+<p>Along the way you'll meet three tiny built-in functions you'll use forever: <code>min</code>, <code>max</code>, and <code>sum</code>. Together with sets and sorting, they turn a pile of numbers into answers — the smallest, the largest, the total, the ranking — in a single line.</p>
+<p>This keeps things firmly at the fundamentals level: we sort with plain <code>sorted()</code> and <code>reverse=True</code>. (Custom sort orders with <code>key</code> come in the Intermediate course.)</p>
+
+<h4>1. Sets: unique values</h4>
+<p>A set uses curly braces like a dict, but holds single values, not pairs. Its superpower: it silently drops duplicates. Turning a list into a <code>set</code> is the standard way to find the distinct items.</p>
+<pre class="run">nums = [1, 2, 2, 3, 3, 3]
+unique = set(nums)
+print(unique)        # {1, 2, 3}
+print(len(unique))   # 3  — three distinct values</pre>
+<figure class="diagram">
+<svg viewBox="0 0 340 96" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <defs>
+    <marker id="a17" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7FD1C0"/>
+    </marker>
+  </defs>
+  <rect x="16" y="34" width="150" height="34" rx="7" fill="#121C30" stroke="#22304C"/>
+  <text x="91" y="56" text-anchor="middle" fill="#E8E4D8">[1, 2, 2, 3, 3, 3]</text>
+  <text x="91" y="26" text-anchor="middle" fill="#8FA0BC" font-size="10">a list (with repeats)</text>
+  <text x="200" y="56" text-anchor="middle" fill="#F5B942">set()</text>
+  <rect x="242" y="34" width="82" height="34" rx="7" fill="#0E1626" stroke="#22304C"/>
+  <text x="283" y="56" text-anchor="middle" fill="#7FD1C0">{1, 2, 3}</text>
+  <text x="283" y="26" text-anchor="middle" fill="#8FA0BC" font-size="10">unique</text>
+  <g stroke="#7FD1C0" stroke-width="1.4" marker-end="url(#a17)" fill="none">
+    <line x1="166" y1="51" x2="180" y2="51"/>
+    <line x1="220" y1="51" x2="240" y2="51"/>
+  </g>
+</svg>
+<figcaption>Wrapping a list in <code>set(...)</code> throws away duplicates, leaving only the distinct values.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Given <code>nums = [1, 2, 2, 3, 3, 3]</code>, set <code>distinct</code> to how many <b>different</b> values there are. Result <code>3</code>. (Use <code>set</code> and <code>len</code>.)</span>
+<template class="st">nums = [1, 2, 2, 3, 3, 3]
+distinct = 0
+# count the distinct values
+</template>
+<template class="ts">assert distinct == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>tags = {"python", "sql", "qa"}</code>, set <code>has_sql</code> to whether <code>"sql"</code> is in the set. Result <code>True</code>. (Membership on a set is very fast.)</span>
+<template class="st">tags = {"python", "sql", "qa"}
+has_sql = None
+# is "sql" in the set?
+</template>
+<template class="ts">assert has_sql == True
+</template></div>
+
+<h4>2. Combining sets</h4>
+<p>Sets can be combined like in maths: <code>|</code> is <b>union</b> (everything in either), <code>&amp;</code> is <b>intersection</b> (only what's in both).</p>
+<pre class="run">a = {1, 2, 3}
+b = {2, 3, 4}
+print(a | b)   # {1, 2, 3, 4}  — union
+print(a & b)   # {2, 3}        — in both</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>a = {1, 2, 3}</code> and <code>b = {2, 3, 4}</code>, build <code>combined</code> = their union → <code>{1, 2, 3, 4}</code>.</span>
+<template class="st">a = {1, 2, 3}
+b = {2, 3, 4}
+combined = set()
+# union of a and b
+</template>
+<template class="ts">assert combined == {1, 2, 3, 4}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given the same <code>a</code> and <code>b</code>, build <code>shared</code> = the values in <b>both</b> → <code>{2, 3}</code>.</span>
+<template class="st">a = {1, 2, 3}
+b = {2, 3, 4}
+shared = set()
+# intersection of a and b
+</template>
+<template class="ts">assert shared == {2, 3}
+</template></div>
+
+<h4>3. Sorting with sorted()</h4>
+<p><code>sorted(list)</code> returns a <b>new</b> list in ascending order — it doesn't change the original. Add <code>reverse=True</code> for descending. It works on numbers and, alphabetically, on strings.</p>
+<pre class="run">nums = [3, 1, 2]
+print(sorted(nums))               # [1, 2, 3]
+print(sorted(nums, reverse=True)) # [3, 2, 1]
+print(sorted(["banana", "apple", "cherry"]))  # ['apple', 'banana', 'cherry']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>nums = [3, 1, 2]</code>, build <code>ordered</code> = the numbers sorted ascending → <code>[1, 2, 3]</code>.</span>
+<template class="st">nums = [3, 1, 2]
+ordered = []
+# sort ascending
+</template>
+<template class="ts">assert ordered == [1, 2, 3]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>nums = [3, 1, 2]</code>, build <code>desc</code> = the numbers sorted from biggest to smallest → <code>[3, 2, 1]</code>. (Use <code>reverse=True</code>.)</span>
+<template class="st">nums = [3, 1, 2]
+desc = []
+# sort descending
+</template>
+<template class="ts">assert desc == [3, 2, 1]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>words = ["banana", "apple", "cherry"]</code>, build <code>alpha</code> = the words in alphabetical order → <code>['apple', 'banana', 'cherry']</code>.</span>
+<template class="st">words = ["banana", "apple", "cherry"]
+alpha = []
+# sort alphabetically
+</template>
+<template class="ts">assert alpha == ["apple", "banana", "cherry"]
+</template></div>
+
+<h4>4. min, max, sum</h4>
+<p>Three built-ins that answer the most common questions about a list of numbers in one word each.</p>
+<pre class="run">nums = [4, 2, 8, 6]
+print(min(nums))   # 2
+print(max(nums))   # 8
+print(sum(nums))   # 20</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>nums = [4, 2, 8, 6]</code>, set <code>lowest</code>, <code>highest</code>, and <code>total</code> using <code>min</code>, <code>max</code>, and <code>sum</code>. Results <code>2</code>, <code>8</code>, <code>20</code>.</span>
+<template class="st">nums = [4, 2, 8, 6]
+lowest = 0
+highest = 0
+total = 0
+# use min, max, sum
+</template>
+<template class="ts">assert lowest == 2 and highest == 8 and total == 20
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>nums = [3, 1, 2, 3, 1]</code>, build <code>unique_sorted</code> = the distinct values in ascending order → <code>[1, 2, 3]</code>. (Combine <code>set</code> and <code>sorted</code>.)</span>
+<template class="st">nums = [3, 1, 2, 3, 1]
+unique_sorted = []
+# distinct values, sorted ascending
+</template>
+<template class="ts">assert unique_sorted == [1, 2, 3]
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (top three).</b> Given <code>nums = [5, 2, 8, 1, 9, 3]</code>, build <code>top3</code> = the three largest values, biggest first → <code>[9, 8, 5]</code>. (Sort descending, then take the first three with <code>[:3]</code>.)</span>
+<template class="st">nums = [5, 2, 8, 1, 9, 3]
+top3 = []
+# the three largest, biggest first
+</template>
+<template class="ts">assert top3 == [9, 8, 5]
+</template></div>
+
+<div class="recap">Recap of lesson 17: a <b>set</b> holds only <b>unique</b> values — <code>set(list)</code> removes duplicates, membership (<code>in</code>) is fast, and <code>|</code> / <code>&amp;</code> give union / intersection · <code>sorted(list)</code> returns a new ascending list, <code>reverse=True</code> for descending, and it works on strings alphabetically · <code>min</code>, <code>max</code>, <code>sum</code> answer smallest / largest / total in one word · combine them (e.g. <code>sorted(set(...))</code>) for distinct, ordered results. Next: the <b>text toolkit</b> — splitting, joining, and cleaning strings. (Custom sort orders with <code>key</code> come in Python Intermediate.)</div>
+
+<h4>🏠 Homework</h4>
+<p>Four graded exercises — do them right here before the next lesson.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>letters = ["a", "b", "a", "c", "a"]</code>, set <code>distinct</code> to how many different letters there are. Result <code>3</code>.</span>
+<template class="st">letters = ["a", "b", "a", "c", "a"]
+distinct = 0
+# count the distinct letters
+</template>
+<template class="ts">assert distinct == 3
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>nums = [30, 10, 20]</code>, build <code>ordered</code> = the numbers sorted ascending → <code>[10, 20, 30]</code>.</span>
+<template class="st">nums = [30, 10, 20]
+ordered = []
+# sort ascending
+</template>
+<template class="ts">assert ordered == [10, 20, 30]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>a = {1, 2, 3}</code> and <code>b = {3, 4, 5}</code>, build <code>shared</code> = the values in both → <code>{3}</code>.</span>
+<template class="st">a = {1, 2, 3}
+b = {3, 4, 5}
+shared = set()
+# values in both sets
+</template>
+<template class="ts">assert shared == {3}
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given <code>scores = [70, 90, 50, 90, 60]</code>, build <code>top2</code> = the two highest <b>distinct</b> scores, biggest first → <code>[90, 70]</code>. (Remove duplicates, sort descending, take the first two.)</span>
+<template class="st">scores = [70, 90, 50, 90, 60]
+top2 = []
+# two highest distinct scores, biggest first
+</template>
+<template class="ts">assert top2 == [90, 70]
+</template></div>

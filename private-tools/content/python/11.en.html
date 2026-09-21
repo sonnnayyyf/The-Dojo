@@ -1,0 +1,174 @@
+<h3>Lesson 11 — Dictionaries: labelled data</h3>
+<p>A list is great when order and position matter — task 1, task 2, task 3. But very often you don't want to remember <i>positions</i>; you want to look things up by <b>name</b>. What's Anna's phone number? What's the price of this book? How many times did the word "error" appear? For questions like these, counting on your fingers to index number 7 is the wrong tool.</p>
+<p>Python's answer is the <b>dictionary</b> (<code>dict</code>): a collection that maps a <b>key</b> (the label) to a <b>value</b> (the data). Instead of <code>contacts[2]</code> you write <code>contacts["Anna"]</code>. A dictionary is like a real dictionary or a contact card: you look up a word (the key) to get its meaning (the value).</p>
+<p>Dictionaries are one of the most used tools in all of Python — configuration, records, counts, JSON data from the web, and the fields of almost any "thing" (a user, a product, a task) are all dictionaries. Learn them well and a huge amount of real code suddenly makes sense.</p>
+
+<h4>1. Creating and reading a dictionary</h4>
+<p>You write a dict with curly braces <code>{}</code> and <code>key: value</code> pairs. You read a value by putting its key in square brackets.</p>
+<pre class="run">person = {"name": "Anna", "age": 30, "city": "Hanoi"}
+print(person["name"])   # Anna
+print(person["age"])    # 30</pre>
+<figure class="diagram">
+<svg viewBox="0 0 320 176" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <text x="160" y="18" text-anchor="middle" fill="#8FA0BC">person — a dictionary (key → value)</text>
+  <g stroke="#22304C">
+    <rect x="26" y="34" width="96" height="30" rx="5" fill="#0E1626"/>
+    <rect x="26" y="72" width="96" height="30" rx="5" fill="#0E1626"/>
+    <rect x="26" y="110" width="96" height="30" rx="5" fill="#0E1626"/>
+    <rect x="196" y="34" width="98" height="30" rx="5" fill="#121C30"/>
+    <rect x="196" y="72" width="98" height="30" rx="5" fill="#121C30"/>
+    <rect x="196" y="110" width="98" height="30" rx="5" fill="#121C30"/>
+  </g>
+  <g fill="#7FD1C0" text-anchor="middle">
+    <text x="74" y="54">"name"</text><text x="74" y="92">"age"</text><text x="74" y="130">"city"</text>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="245" y="54">"Anna"</text><text x="245" y="92">30</text><text x="245" y="130">"Hanoi"</text>
+  </g>
+  <g stroke="#F5B942" stroke-width="1.3">
+    <line x1="122" y1="49" x2="194" y2="49"/><line x1="122" y1="87" x2="194" y2="87"/><line x1="122" y1="125" x2="194" y2="125"/>
+  </g>
+  <text x="158" y="162" text-anchor="middle" fill="#F5B942">person["age"] → 30</text>
+</svg>
+<figcaption>Each key points to one value. Looking up <code>person["age"]</code> jumps straight to <code>30</code> — no position numbers needed.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Create a dictionary <code>person</code> with keys <code>"name"</code> → <code>"Anna"</code>, <code>"age"</code> → <code>30</code>, and <code>"city"</code> → <code>"Hanoi"</code>.</span>
+<template class="st"># create the person dictionary
+person = 
+</template>
+<template class="ts">assert person == {"name": "Anna", "age": 30, "city": "Hanoi"}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>person = {"name": "Anna", "age": 30, "city": "Hanoi"}</code>, read the city into <code>c</code>. Result <code>"Hanoi"</code>.</span>
+<template class="st">person = {"name": "Anna", "age": 30, "city": "Hanoi"}
+c = ""
+# read the city
+</template>
+<template class="ts">assert c == "Hanoi"
+</template></div>
+
+<h4>2. Adding and updating values</h4>
+<p>Assigning to a key sets its value. If the key already exists it's <b>updated</b>; if it's new the pair is <b>added</b>.</p>
+<pre class="run">product = {"name": "Book", "price": 100}
+product["price"] = 120        # update an existing key
+product["stock"] = 5          # add a new key
+print(product)   # {'name': 'Book', 'price': 120, 'stock': 5}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>product = {"name": "Book", "price": 100}</code>, change the price to <code>120</code>. Result <code>{'name': 'Book', 'price': 120}</code>.</span>
+<template class="st">product = {"name": "Book", "price": 100}
+# update the price
+</template>
+<template class="ts">assert product == {"name": "Book", "price": 120}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>product = {"name": "Book", "price": 120}</code>, add a new key <code>"stock"</code> with value <code>5</code>. Result <code>{'name': 'Book', 'price': 120, 'stock': 5}</code>.</span>
+<template class="st">product = {"name": "Book", "price": 120}
+# add the stock key
+</template>
+<template class="ts">assert product == {"name": "Book", "price": 120, "stock": 5}
+</template></div>
+
+<h4>3. Checking keys safely</h4>
+<p>Reading a key that doesn't exist is an <b>error</b>. Use <code>in</code> to check first, or <code>.get(key, default)</code> to read safely with a fallback value.</p>
+<pre class="run">person = {"name": "Anna", "age": 30}
+print("age" in person)              # True
+print("email" in person)            # False
+print(person.get("email", "N/A"))   # N/A  (no crash)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>person = {"name": "Anna", "age": 30}</code>, set <code>has_email</code> to whether <code>"email"</code> is a key. Result <code>False</code>.</span>
+<template class="st">person = {"name": "Anna", "age": 30}
+has_email = None
+# is "email" a key?
+</template>
+<template class="ts">assert has_email == False
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>contact = {"name": "Anna", "city": "Hanoi"}</code>, read the phone into <code>phone</code> using <code>.get</code> with a default of <code>"unknown"</code> (there is no phone key). Result <code>"unknown"</code>.</span>
+<template class="st">contact = {"name": "Anna", "city": "Hanoi"}
+phone = ""
+# read phone safely with a default
+</template>
+<template class="ts">assert phone == "unknown"
+</template></div>
+
+<h4>4. Looping over a dictionary</h4>
+<p>Looping a dict gives you its <b>keys</b>. Use <code>.values()</code> for the values and <code>.items()</code> to get both key and value together.</p>
+<pre class="run">scores = {"Anna": 3, "Ben": 5, "Cara": 2}
+total = 0
+for value in scores.values():
+    total += value
+print(total)   # 10
+
+for name, value in scores.items():
+    print(f"{name}: {value}")</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>scores = {"a": 3, "b": 5, "c": 2}</code>, add up all the values into <code>total</code>. Result <code>10</code>.</span>
+<template class="st">scores = {"a": 3, "b": 5, "c": 2}
+total = 0
+# sum the values
+</template>
+<template class="ts">assert total == 10
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>prices = {"coffee": 30, "tea": 25, "cake": 60}</code>, count how many items cost <b>more than 40</b> into <code>expensive</code>. Result <code>1</code>.</span>
+<template class="st">prices = {"coffee": 30, "tea": 25, "cake": 60}
+expensive = 0
+# count items priced over 40
+</template>
+<template class="ts">assert expensive == 1
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>menu = {"coffee": 30, "tea": 25}</code>, build a list <code>lines</code> of <code>"key: value"</code> strings using <code>.items()</code> → <code>['coffee: 30', 'tea: 25']</code>.</span>
+<template class="st">menu = {"coffee": 30, "tea": 25}
+lines = []
+# build "key: value" strings
+</template>
+<template class="ts">assert lines == ["coffee: 30", "tea: 25"]
+</template></div>
+
+<h4>5. The counting pattern</h4>
+<p>One of the most useful dictionary tricks: <b>counting</b>. Walk a list, and for each item add 1 to its entry — using <code>.get(item, 0)</code> so a brand-new item starts from 0.</p>
+<pre class="run">words = ["red", "blue", "red", "green", "red"]
+counts = {}
+for w in words:
+    counts[w] = counts.get(w, 0) + 1
+print(counts)   # {'red': 3, 'blue': 1, 'green': 1}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>items = ["a", "b", "a", "c", "a", "b"]</code>, build a <code>counts</code> dictionary of how many times each appears → <code>{'a': 3, 'b': 2, 'c': 1}</code>.</span>
+<template class="st">items = ["a", "b", "a", "c", "a", "b"]
+counts = {}
+# count each item
+</template>
+<template class="ts">assert counts == {"a": 3, "b": 2, "c": 1}
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (word frequency).</b> Given the sentence <code>text = "red blue red green blue red"</code>, split it into words and build a <code>counts</code> dictionary of word → count → <code>{'red': 3, 'blue': 2, 'green': 1}</code>. (Use <code>text.split()</code>.)</span>
+<template class="st">text = "red blue red green blue red"
+counts = {}
+# split into words and count each
+</template>
+<template class="ts">assert counts == {"red": 3, "blue": 2, "green": 1}
+</template></div>
+
+<div class="recap">Recap of lesson 11: a <b>dictionary</b> maps <b>keys</b> to <b>values</b> — look up by label, not position · create with <code>{"k": v}</code>, read with <code>d["k"]</code> · assign to add or update · check with <code>in</code> or read safely with <code>.get(key, default)</code> · loop <code>.values()</code>, <code>.items()</code> · the counting pattern <code>d[x] = d.get(x, 0) + 1</code>. Next: <b>lists of dictionaries</b> — the shape of almost all real-world data (a table of records).</div>
+
+<h4>🏠 Homework</h4>
+<p>Four graded exercises — do them right here before the next lesson.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>person = {"name": "Anna", "age": 30, "city": "Hanoi"}</code>, build the string <code>line</code> = <code>"Anna, 30, lives in Hanoi"</code> using the values.</span>
+<template class="st">person = {"name": "Anna", "age": 30, "city": "Hanoi"}
+line = ""
+# build "Anna, 30, lives in Hanoi"
+</template>
+<template class="ts">assert line == "Anna, 30, lives in Hanoi"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>book = {"Anna": "111", "Ben": "222"}</code>, look up <code>"Cara"</code> into <code>number</code> using <code>.get</code> with a default of <code>"not found"</code>. Result <code>"not found"</code>.</span>
+<template class="st">book = {"Anna": "111", "Ben": "222"}
+number = ""
+# look up "Cara" safely
+</template>
+<template class="ts">assert number == "not found"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>letters = ["a", "b", "a", "a", "c"]</code>, build a <code>counts</code> dictionary of how many times each letter appears → <code>{'a': 3, 'b': 1, 'c': 1}</code>.</span>
+<template class="st">letters = ["a", "b", "a", "a", "c"]
+counts = {}
+# count each letter
+</template>
+<template class="ts">assert counts == {"a": 3, "b": 1, "c": 1}
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given <code>words = ["red", "blue", "red", "green", "red", "blue"]</code>, count them and find the word that appears the most into <code>top</code>. Result <code>"red"</code>.</span>
+<template class="st">words = ["red", "blue", "red", "green", "red", "blue"]
+top = ""
+# count the words, then find the most frequent
+</template>
+<template class="ts">assert top == "red"
+</template></div>

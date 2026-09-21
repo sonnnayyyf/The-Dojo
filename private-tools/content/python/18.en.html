@@ -1,0 +1,160 @@
+<h3>Lesson 18 — Text toolkit: split, join &amp; clean</h3>
+<p>So much of real programming is wrangling <b>text</b>: a line typed by a user, a row copied from a spreadsheet, a message, a search box. The data almost never arrives perfectly clean — it has stray spaces, mixed capitalisation, commas separating fields. This lesson is your toolkit for turning messy text into tidy data you can actually work with.</p>
+<p>Three moves do most of the work: <b>split</b> a string into a list of pieces, <b>join</b> a list back into a string, and <b>clean</b> individual pieces with <code>strip</code>, <code>lower</code>, and <code>replace</code>. Add a couple of ways to <b>search</b> inside text and you can answer real questions — how many words, does it contain this, which word appears most.</p>
+<p>These are also the exact skills behind your capstone next, where you'll analyse a block of text. Let's sharpen them.</p>
+
+<h4>1. Splitting text into pieces</h4>
+<p><code>split()</code> with no argument breaks a string on spaces into a list of words. Give it a separator to split on something else — a comma, a slash, a dash.</p>
+<pre class="run">print("the quick brown fox".split())   # ['the', 'quick', 'brown', 'fox']
+print("a,b,c".split(","))              # ['a', 'b', 'c']
+print("2024-01-15".split("-"))         # ['2024', '01', '15']</pre>
+<figure class="diagram">
+<svg viewBox="0 0 340 100" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a18" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <rect x="24" y="36" width="110" height="32" rx="7" fill="#121C30" stroke="#22304C"/>
+  <text x="79" y="57" text-anchor="middle" fill="#E8E4D8">"a b c"</text>
+  <rect x="206" y="36" width="120" height="32" rx="7" fill="#0E1626" stroke="#22304C"/>
+  <text x="266" y="57" text-anchor="middle" fill="#7FD1C0">["a","b","c"]</text>
+  <g stroke="#F5B942" stroke-width="1.4" marker-end="url(#a18)" fill="none">
+    <line x1="136" y1="45" x2="204" y2="45"/>
+    <line x1="204" y1="60" x2="136" y2="60"/>
+  </g>
+  <text x="170" y="40" text-anchor="middle" fill="#F5B942" font-size="10">.split()</text>
+  <text x="170" y="74" text-anchor="middle" fill="#7FD1C0" font-size="10">" ".join(...)</text>
+</svg>
+<figcaption><code>split</code> turns a string into a list of pieces; <code>join</code> turns a list of pieces back into a string. They're opposites.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 1.</b> Given <code>text = "the quick brown fox"</code>, build <code>words</code> = the list of words → <code>['the', 'quick', 'brown', 'fox']</code>.</span>
+<template class="st">text = "the quick brown fox"
+words = []
+# split into words
+</template>
+<template class="ts">assert words == ["the", "quick", "brown", "fox"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 2.</b> Given <code>row = "apple,pear,plum"</code>, build <code>parts</code> = the list split on commas → <code>['apple', 'pear', 'plum']</code>.</span>
+<template class="st">row = "apple,pear,plum"
+parts = []
+# split on commas
+</template>
+<template class="ts">assert parts == ["apple", "pear", "plum"]
+</template></div>
+
+<h4>2. Joining pieces back together</h4>
+<p><code>separator.join(list)</code> glues a list of strings into one, putting the separator between each. Note the separator goes first: <code>", ".join(items)</code>.</p>
+<pre class="run">print(" ".join(["Hello", "world"]))      # Hello world
+print("-".join(["2024", "01", "15"]))    # 2024-01-15
+print(", ".join(["a", "b", "c"]))        # a, b, c</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 3.</b> Given <code>bits = ["2024", "01", "15"]</code>, join them with <code>"-"</code> into <code>date</code> → <code>"2024-01-15"</code>.</span>
+<template class="st">bits = ["2024", "01", "15"]
+date = ""
+# join with dashes
+</template>
+<template class="ts">assert date == "2024-01-15"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 4.</b> Given <code>words = ["learn", "by", "doing"]</code>, join them with a space into <code>sentence</code> → <code>"learn by doing"</code>.</span>
+<template class="st">words = ["learn", "by", "doing"]
+sentence = ""
+# join with spaces
+</template>
+<template class="ts">assert sentence == "learn by doing"
+</template></div>
+
+<h4>3. Cleaning up text</h4>
+<p>Three cleaners you'll use constantly: <code>strip()</code> removes leading/trailing spaces, <code>lower()</code> makes everything lowercase (so <code>"Cat"</code> and <code>"cat"</code> match), and <code>replace(old, new)</code> swaps one substring for another.</p>
+<pre class="run">print("  Hello World  ".strip())    # "Hello World"
+print("SHOUT".lower())             # "shout"
+print("a.b.c".replace(".", "/"))   # "a/b/c"</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 5.</b> Given <code>raw = "  Hello World  "</code>, remove the spaces at both ends into <code>clean</code> → <code>"Hello World"</code>.</span>
+<template class="st">raw = "  Hello World  "
+clean = ""
+# strip the outer spaces
+</template>
+<template class="ts">assert clean == "Hello World"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 6.</b> Given <code>word = "SHOUT"</code>, make it lowercase into <code>quiet</code> → <code>"shout"</code>.</span>
+<template class="st">word = "SHOUT"
+quiet = ""
+# lowercase it
+</template>
+<template class="ts">assert quiet == "shout"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 7.</b> Given <code>path = "a.b.c"</code>, replace every <code>"."</code> with <code>"/"</code> into <code>fixed</code> → <code>"a/b/c"</code>.</span>
+<template class="st">path = "a.b.c"
+fixed = ""
+# replace dots with slashes
+</template>
+<template class="ts">assert fixed == "a/b/c"
+</template></div>
+
+<h4>4. Searching inside text</h4>
+<p>To ask questions about text: <code>len(text.split())</code> counts words, <code>text.count(x)</code> counts how many times something appears, and <code>x in words</code> checks membership.</p>
+<pre class="run">text = "the cat sat on the mat"
+print(len(text.split()))     # 6  — six words
+print(text.count("the"))     # 2  — "the" appears twice
+print("cat" in text.split()) # True</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 8.</b> Given <code>text = "one two three four"</code>, set <code>word_count</code> to the number of words. Result <code>4</code>.</span>
+<template class="st">text = "one two three four"
+word_count = 0
+# count the words
+</template>
+<template class="ts">assert word_count == 4
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 9.</b> Given <code>word = "banana"</code>, set <code>a_count</code> to how many times <code>"a"</code> appears. Result <code>3</code>.</span>
+<template class="st">word = "banana"
+a_count = 0
+# count the letter "a"
+</template>
+<template class="ts">assert a_count == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Exercise 10.</b> Given <code>text = "the cat sat on the mat"</code>, set <code>has_dog</code> to whether <code>"dog"</code> is one of the words. Result <code>False</code>.</span>
+<template class="st">text = "the cat sat on the mat"
+has_dog = None
+# is "dog" among the words?
+</template>
+<template class="ts">assert has_dog == False
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Stretch (most common word).</b> Given <code>text = "red blue red green red blue"</code>, find the word that appears the most into <code>top</code>. Split into words, count with a dictionary, then pick the biggest. Result <code>"red"</code>.</span>
+<template class="st">text = "red blue red green red blue"
+top = ""
+# split, count each word, find the most common
+</template>
+<template class="ts">assert top == "red"
+</template></div>
+
+<div class="recap">Recap of lesson 18: <code>split()</code> breaks text into a list of pieces (pass a separator like <code>","</code> for other formats) · <code>sep.join(list)</code> glues a list back into a string · clean with <code>strip()</code> (outer spaces), <code>lower()</code> (case), and <code>replace(old, new)</code> · search with <code>len(text.split())</code>, <code>text.count(x)</code>, and <code>x in words</code> · together these normalise messy text into tidy data. Next: a <b>review</b> lesson to pull everything together and get ready for your capstone.</div>
+
+<h4>🏠 Homework</h4>
+<p>Four graded exercises — do them right here before the next lesson.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 1.</b> Given <code>path = "home/user/file.txt"</code>, build <code>parts</code> = the list split on <code>"/"</code> → <code>['home', 'user', 'file.txt']</code>.</span>
+<template class="st">path = "home/user/file.txt"
+parts = []
+# split on slashes
+</template>
+<template class="ts">assert parts == ["home", "user", "file.txt"]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 2.</b> Given <code>tags = ["python", "sql", "qa"]</code>, join them with <code>", "</code> into <code>line</code> → <code>"python, sql, qa"</code>.</span>
+<template class="st">tags = ["python", "sql", "qa"]
+line = ""
+# join with ", "
+</template>
+<template class="ts">assert line == "python, sql, qa"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Homework 3.</b> Given <code>raw = "  Data Science  "</code>, strip the outer spaces and lowercase it into <code>clean</code> → <code>"data science"</code>.</span>
+<template class="st">raw = "  Data Science  "
+clean = ""
+# strip, then lowercase
+</template>
+<template class="ts">assert clean == "data science"
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Homework 4 (stretch).</b> Given <code>text = "Cat cat CAT dog"</code> and <code>word = "cat"</code>, set <code>count</code> to how many times <code>word</code> appears, <b>ignoring case</b>. Result <code>3</code>. (Lowercase the text, split it, then count.)</span>
+<template class="st">text = "Cat cat CAT dog"
+word = "cat"
+count = 0
+# count case-insensitively
+</template>
+<template class="ts">assert count == 3
+</template></div>

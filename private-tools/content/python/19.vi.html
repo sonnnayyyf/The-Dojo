@@ -1,0 +1,175 @@
+<h3>Bài 19 — Ôn tập &amp; chuẩn bị đồ án</h3>
+<p>Bạn đã tới cuối phần căn bản. Nhìn lại chặng đường đã đi: biến và chuỗi, điều kiện, vòng lặp, list, dictionary, hàm, xử lý lỗi, tuple, set, sắp xếp, và xử lý văn bản. Đó thật sự là mọi thứ bạn cần để xây những chương trình nhỏ, hữu ích — và ở bài cuối cùng kế tiếp, bạn sẽ tự xây một cái của riêng mình.</p>
+<p>Bài này là để <b>củng cố</b>. Không có cú pháp mới; thay vào đó ta kết hợp những gì bạn đã biết thành hình dáng mà chương trình thật mang: nhận đầu vào thô, <b>phân tích (parse)</b> thành dữ liệu có cấu trúc, <b>phân tích số liệu</b>, và tạo ra một <b>bản báo cáo</b>. Mỗi bài tập ở đây là một mảnh nhỏ đúng của quy trình đó — và là buổi tổng duyệt trực tiếp cho đồ án tốt nghiệp.</p>
+<p>Nếu bài tập nào thấy chông chênh, đó là thông tin hữu ích: quay lại bài đó ôn nhanh trước khi làm đồ án. Cứ thong thả; đây là lúc mọi thứ ghép lại với nhau.</p>
+
+<h4>1. Hình dáng của một chương trình thật</h4>
+<p>Hầu hết chương trình hữu ích theo cùng một dòng chảy: đầu vào lộn xộn đi vào, bạn biến nó thành bản ghi gọn gàng, tính toán gì đó, rồi trình bày kết quả. Mỗi giai đoạn chỉ là những kỹ năng bạn đã có.</p>
+<figure class="diagram">
+<svg viewBox="0 0 380 96" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="10.5">
+  <defs>
+    <marker id="a19v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <g stroke="#22304C" fill="#121C30">
+    <rect x="8" y="36" width="74" height="34" rx="7"/>
+    <rect x="106" y="36" width="74" height="34" rx="7"/>
+    <rect x="204" y="36" width="74" height="34" rx="7"/>
+    <rect x="302" y="36" width="70" height="34" rx="7"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="45" y="52">văn bản thô</text><text x="45" y="64" fill="#8FA0BC" font-size="9">split</text>
+    <text x="143" y="52" fill="#7FD1C0">bản ghi</text><text x="143" y="64" fill="#8FA0BC" font-size="9">list of dicts</text>
+    <text x="241" y="52" fill="#F5B942">phân tích</text><text x="241" y="64" fill="#8FA0BC" font-size="9">đếm/sắp</text>
+    <text x="337" y="52">báo cáo</text><text x="337" y="64" fill="#8FA0BC" font-size="9">tóm tắt</text>
+  </g>
+  <g stroke="#F5B942" stroke-width="1.4" marker-end="url(#a19v)" fill="none">
+    <line x1="82" y1="53" x2="104" y2="53"/><line x1="180" y1="53" x2="202" y2="53"/><line x1="278" y1="53" x2="300" y2="53"/>
+  </g>
+</svg>
+<figcaption>Parse → cấu trúc → phân tích → báo cáo. Đồ án tốt nghiệp chỉ là quy trình này áp dụng cho một bài toán bạn chọn.</figcaption>
+</figure>
+<pre class="run">def parse_score(line):
+    name, score = line.split(",")
+    return (name, int(score))
+
+print(parse_score("Anna,85"))   # ('Anna', 85)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Định nghĩa <code>parse_score</code> nhận một dòng như <code>"Anna,85"</code> và trả về tuple <code>(name, score)</code> với score là <code>int</code>. Vậy <code>parse_score("Anna,85")</code> là <code>("Anna", 85)</code>.</span>
+<template class="st">def parse_score(line):
+    # split on the comma, convert the score to int
+    pass
+</template>
+<template class="ts">assert parse_score("Anna,85") == ("Anna", 85)
+assert parse_score("Ben,90") == ("Ben", 90)
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Định nghĩa <code>safe_parse</code> hoạt động như <code>parse_score</code> nhưng trả về <code>None</code> nếu dòng bị lỗi (không có dấu phẩy, hoặc score không phải số). Vậy <code>safe_parse("Anna,85")</code> là <code>("Anna", 85)</code> và <code>safe_parse("oops")</code> là <code>None</code>.</span>
+<template class="st">def safe_parse(line):
+    # parse safely; return None on bad input
+    pass
+</template>
+<template class="ts">assert safe_parse("Anna,85") == ("Anna", 85)
+assert safe_parse("oops") is None
+assert safe_parse("Ben,xx") is None
+</template></div>
+
+<h4>2. Phân tích các bản ghi</h4>
+<p>Khi dữ liệu đã là một list các tuple <code>(name, score)</code>, mọi kỹ năng vòng lặp, tính tổng và lọc của bạn áp dụng trực tiếp.</p>
+<pre class="run">records = [("A", 50), ("B", 80), ("C", 65)]
+total = 0
+for name, score in records:
+    total += score
+print(total)   # 195</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Định nghĩa <code>total_score</code> cộng các score trong một list tuple <code>(name, score)</code>. Vậy <code>total_score([("A", 10), ("B", 20), ("C", 5)])</code> là <code>35</code>.</span>
+<template class="st">def total_score(records):
+    # sum every score
+    pass
+</template>
+<template class="ts">assert total_score([("A", 10), ("B", 20), ("C", 5)]) == 35
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Định nghĩa <code>average_score</code> trả về score trung bình của một list bản ghi không rỗng. Vậy <code>average_score([("A", 2), ("B", 4)])</code> là <code>3.0</code>.</span>
+<template class="st">def average_score(records):
+    # return the average score
+    pass
+</template>
+<template class="ts">assert average_score([("A", 2), ("B", 4)]) == 3.0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Định nghĩa <code>passing</code> trả về <b>tên</b> những người có score ít nhất bằng <code>cutoff</code>. Vậy <code>passing([("A", 50), ("B", 80), ("C", 65)], 60)</code> là <code>["B", "C"]</code>.</span>
+<template class="st">def passing(records, cutoff):
+    # names with score >= cutoff
+    pass
+</template>
+<template class="ts">assert passing([("A", 50), ("B", 80), ("C", 65)], 60) == ["B", "C"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Định nghĩa <code>ranked_scores</code> chỉ trả về các score, sắp từ cao xuống thấp. Vậy <code>ranked_scores([("A", 50), ("B", 80), ("C", 65)])</code> là <code>[80, 65, 50]</code>.</span>
+<template class="st">def ranked_scores(records):
+    # return the scores, highest first
+    pass
+</template>
+<template class="ts">assert ranked_scores([("A", 50), ("B", 80), ("C", 65)]) == [80, 65, 50]
+</template></div>
+
+<h4>3. Đếm và tìm cái nhiều nhất</h4>
+<p>Mẫu đếm cộng với một phép tìm "lớn nhất tới hiện tại" — trái tim của mọi báo cáo "cái gì phổ biến nhất".</p>
+<pre class="run">def count_words(text):
+    counts = {}
+    for w in text.split():
+        counts[w] = counts.get(w, 0) + 1
+    return counts
+
+print(count_words("a b a c a"))   # {'a': 3, 'b': 1, 'c': 1}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Định nghĩa <code>count_words</code> trả về một dictionary từ → số lần cho một câu. Vậy <code>count_words("a b a c a")</code> là <code>{'a': 3, 'b': 1, 'c': 1}</code>.</span>
+<template class="st">def count_words(text):
+    # count each word
+    pass
+</template>
+<template class="ts">assert count_words("a b a c a") == {"a": 3, "b": 1, "c": 1}
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Định nghĩa <code>top_word</code> nhận một dictionary từ → số lần và trả về từ có số đếm cao nhất. Vậy <code>top_word({"a": 3, "b": 1})</code> là <code>"a"</code>.</span>
+<template class="st">def top_word(counts):
+    # return the key with the biggest value
+    pass
+</template>
+<template class="ts">assert top_word({"a": 3, "b": 1}) == "a"
+assert top_word({"x": 1, "y": 5}) == "y"
+</template></div>
+
+<h4>4. Dựng một bản báo cáo</h4>
+<p>Vạch đích của một chương trình: gom các con số của bạn thành một bản tóm tắt rõ ràng — thường là một dictionary kết quả.</p>
+<pre class="run">records = [("A", 50), ("B", 80), ("C", 65)]
+report = {
+    "count": len(records),
+    "total": sum(score for name, score in records),
+}
+print(report)   # {'count': 3, 'total': 195}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Định nghĩa <code>analyse</code> nhận một list bản ghi không rỗng và trả về một dictionary có <code>count</code>, <code>total</code>, <code>average</code>, và <code>top</code> (tên có score cao nhất). Vậy <code>analyse([("A", 50), ("B", 80), ("C", 65)])</code> là <code>{"count": 3, "total": 195, "average": 65.0, "top": "B"}</code>.</span>
+<template class="st">def analyse(records):
+    # build the summary dictionary
+    pass
+</template>
+<template class="ts">assert analyse([("A", 50), ("B", 80), ("C", 65)]) == {"count": 3, "total": 195, "average": 65.0, "top": "B"}
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (bộ phân tích văn bản).</b> Định nghĩa <code>analyse_text</code> nhận một câu và trả về <code>{"words": tổng_số_từ, "unique": số_từ_khác_nhau, "top": từ_phổ_biến_nhất}</code>. Vậy <code>analyse_text("red blue red green red")</code> là <code>{"words": 5, "unique": 3, "top": "red"}</code>. Đây là phiên bản thu nhỏ của đồ án tốt nghiệp!</span>
+<template class="st">def analyse_text(text):
+    # words, unique words, and the most common word
+    pass
+</template>
+<template class="ts">assert analyse_text("red blue red green red") == {"words": 5, "unique": 3, "top": "red"}
+</template></div>
+
+<h4>5. Kế tiếp: đồ án tốt nghiệp của bạn</h4>
+<p>Ở bài cuối bạn sẽ xây một chương trình nhỏ hoàn chỉnh của riêng mình, trong VS Code thật, và nộp lại. Bạn sẽ chọn từ ba lựa chọn dự án — mỗi cái có hướng dẫn xây dựng từng bước như đồ án nhỏ ở Bài 10, và có chỗ để bạn thêm ý tưởng của mình. Mọi thứ bạn vừa ôn — phân tích cú pháp, bản ghi, đếm, sắp xếp, báo cáo — chính là bộ công cụ bạn sẽ dùng. Bạn đã sẵn sàng.</p>
+
+<div class="recap">Tóm tắt bài 19: chương trình thật theo một quy trình — <b>parse</b> đầu vào thô thành bản ghi, <b>phân tích</b> bằng vòng lặp/sum/sắp xếp/đếm, và tạo một <b>báo cáo</b> (thường là một dictionary) · <code>try/except</code> giữ việc phân tích vững vàng trước dòng lỗi · mẫu đếm cộng phép tìm "lớn nhất tới hiện tại" tìm ra phần tử phổ biến nhất · chúng kết hợp thành những bộ phân tích nhỏ như đồ án tốt nghiệp. Bài sau: <b>tự xây ứng dụng của bạn</b> — ba lựa chọn dự án, sự sáng tạo của bạn, nộp cho giáo viên.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — buổi khởi động cuối trước đồ án tốt nghiệp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Định nghĩa <code>parse_pair</code> nhận một dòng như <code>"apple:3"</code> và trả về tuple <code>(name, count)</code> với count là <code>int</code>. Vậy <code>parse_pair("apple:3")</code> là <code>("apple", 3)</code>.</span>
+<template class="st">def parse_pair(line):
+    # split on ":", convert the count to int
+    pass
+</template>
+<template class="ts">assert parse_pair("apple:3") == ("apple", 3)
+assert parse_pair("pen:12") == ("pen", 12)
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Định nghĩa <code>count_words</code> trả về một dictionary từ → số lần cho một câu. Vậy <code>count_words("x y x")</code> là <code>{'x': 2, 'y': 1}</code>.</span>
+<template class="st">def count_words(text):
+    # count each word
+    pass
+</template>
+<template class="ts">assert count_words("x y x") == {"x": 2, "y": 1}
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Định nghĩa <code>average</code> trả về trung bình của một list số không rỗng. Vậy <code>average([2, 4, 6])</code> là <code>4.0</code>.</span>
+<template class="st">def average(nums):
+    # return the average
+    pass
+</template>
+<template class="ts">assert average([2, 4, 6]) == 4.0
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Định nghĩa <code>report</code> nhận một list số không rỗng và trả về <code>{"min": nhỏ_nhất, "max": lớn_nhất, "average": trung_bình}</code>. Vậy <code>report([2, 4, 6])</code> là <code>{"min": 2, "max": 6, "average": 4.0}</code>. (Dùng <code>min</code>, <code>max</code>, <code>sum</code>.)</span>
+<template class="st">def report(nums):
+    # build the summary dictionary
+    pass
+</template>
+<template class="ts">assert report([2, 4, 6]) == {"min": 2, "max": 6, "average": 4.0}
+</template></div>

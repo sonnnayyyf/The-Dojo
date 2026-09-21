@@ -1,0 +1,160 @@
+<h3>Bài 18 — Bộ công cụ xử lý văn bản: split, join &amp; làm sạch</h3>
+<p>Phần lớn lập trình thực tế là xoay xở với <b>văn bản</b>: một dòng người dùng gõ, một hàng chép từ bảng tính, một tin nhắn, một ô tìm kiếm. Dữ liệu gần như không bao giờ đến sạch sẽ hoàn hảo — có khoảng trắng thừa, chữ hoa chữ thường lẫn lộn, dấu phẩy ngăn các trường. Bài này là bộ công cụ của bạn để biến văn bản lộn xộn thành dữ liệu gọn gàng dùng được.</p>
+<p>Ba thao tác làm hầu hết việc: <b>split</b> một chuỗi thành list các mảnh, <b>join</b> một list trở lại thành chuỗi, và <b>làm sạch</b> từng mảnh bằng <code>strip</code>, <code>lower</code>, và <code>replace</code>. Thêm vài cách <b>tìm kiếm</b> trong văn bản là bạn trả lời được câu hỏi thật — bao nhiêu từ, có chứa cái này không, từ nào xuất hiện nhiều nhất.</p>
+<p>Đây cũng đúng là những kỹ năng đứng sau đồ án tốt nghiệp sắp tới, nơi bạn sẽ phân tích một đoạn văn bản. Hãy mài sắc chúng.</p>
+
+<h4>1. Tách văn bản thành các mảnh</h4>
+<p><code>split()</code> không đối số cắt một chuỗi tại các khoảng trắng thành list các từ. Cho nó một dấu phân cách để cắt theo thứ khác — dấu phẩy, dấu gạch chéo, dấu gạch ngang.</p>
+<pre class="run">print("the quick brown fox".split())   # ['the', 'quick', 'brown', 'fox']
+print("a,b,c".split(","))              # ['a', 'b', 'c']
+print("2024-01-15".split("-"))         # ['2024', '01', '15']</pre>
+<figure class="diagram">
+<svg viewBox="0 0 340 100" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a18v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#F5B942"/>
+    </marker>
+  </defs>
+  <rect x="24" y="36" width="110" height="32" rx="7" fill="#121C30" stroke="#22304C"/>
+  <text x="79" y="57" text-anchor="middle" fill="#E8E4D8">"a b c"</text>
+  <rect x="206" y="36" width="120" height="32" rx="7" fill="#0E1626" stroke="#22304C"/>
+  <text x="266" y="57" text-anchor="middle" fill="#7FD1C0">["a","b","c"]</text>
+  <g stroke="#F5B942" stroke-width="1.4" marker-end="url(#a18v)" fill="none">
+    <line x1="136" y1="45" x2="204" y2="45"/>
+    <line x1="204" y1="60" x2="136" y2="60"/>
+  </g>
+  <text x="170" y="40" text-anchor="middle" fill="#F5B942" font-size="10">.split()</text>
+  <text x="170" y="74" text-anchor="middle" fill="#7FD1C0" font-size="10">" ".join(...)</text>
+</svg>
+<figcaption><code>split</code> biến một chuỗi thành list các mảnh; <code>join</code> biến list các mảnh trở lại thành chuỗi. Chúng ngược nhau.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Cho <code>text = "the quick brown fox"</code>, dựng <code>words</code> = list các từ → <code>['the', 'quick', 'brown', 'fox']</code>.</span>
+<template class="st">text = "the quick brown fox"
+words = []
+# split into words
+</template>
+<template class="ts">assert words == ["the", "quick", "brown", "fox"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>row = "apple,pear,plum"</code>, dựng <code>parts</code> = list cắt theo dấu phẩy → <code>['apple', 'pear', 'plum']</code>.</span>
+<template class="st">row = "apple,pear,plum"
+parts = []
+# split on commas
+</template>
+<template class="ts">assert parts == ["apple", "pear", "plum"]
+</template></div>
+
+<h4>2. Ghép các mảnh lại</h4>
+<p><code>separator.join(list)</code> dán một list chuỗi thành một, đặt dấu phân cách giữa mỗi cái. Lưu ý dấu phân cách đứng trước: <code>", ".join(items)</code>.</p>
+<pre class="run">print(" ".join(["Hello", "world"]))      # Hello world
+print("-".join(["2024", "01", "15"]))    # 2024-01-15
+print(", ".join(["a", "b", "c"]))        # a, b, c</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>bits = ["2024", "01", "15"]</code>, ghép chúng bằng <code>"-"</code> vào <code>date</code> → <code>"2024-01-15"</code>.</span>
+<template class="st">bits = ["2024", "01", "15"]
+date = ""
+# join with dashes
+</template>
+<template class="ts">assert date == "2024-01-15"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>words = ["learn", "by", "doing"]</code>, ghép chúng bằng khoảng trắng vào <code>sentence</code> → <code>"learn by doing"</code>.</span>
+<template class="st">words = ["learn", "by", "doing"]
+sentence = ""
+# join with spaces
+</template>
+<template class="ts">assert sentence == "learn by doing"
+</template></div>
+
+<h4>3. Làm sạch văn bản</h4>
+<p>Ba công cụ làm sạch bạn sẽ dùng liên tục: <code>strip()</code> bỏ khoảng trắng đầu/cuối, <code>lower()</code> đưa mọi thứ về chữ thường (để <code>"Cat"</code> và <code>"cat"</code> khớp nhau), và <code>replace(old, new)</code> thay một đoạn con này bằng đoạn khác.</p>
+<pre class="run">print("  Hello World  ".strip())    # "Hello World"
+print("SHOUT".lower())             # "shout"
+print("a.b.c".replace(".", "/"))   # "a/b/c"</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>raw = "  Hello World  "</code>, bỏ khoảng trắng hai đầu vào <code>clean</code> → <code>"Hello World"</code>.</span>
+<template class="st">raw = "  Hello World  "
+clean = ""
+# strip the outer spaces
+</template>
+<template class="ts">assert clean == "Hello World"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>word = "SHOUT"</code>, đưa về chữ thường vào <code>quiet</code> → <code>"shout"</code>.</span>
+<template class="st">word = "SHOUT"
+quiet = ""
+# lowercase it
+</template>
+<template class="ts">assert quiet == "shout"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>path = "a.b.c"</code>, thay mọi <code>"."</code> bằng <code>"/"</code> vào <code>fixed</code> → <code>"a/b/c"</code>.</span>
+<template class="st">path = "a.b.c"
+fixed = ""
+# replace dots with slashes
+</template>
+<template class="ts">assert fixed == "a/b/c"
+</template></div>
+
+<h4>4. Tìm kiếm trong văn bản</h4>
+<p>Để hỏi về văn bản: <code>len(text.split())</code> đếm từ, <code>text.count(x)</code> đếm số lần một thứ xuất hiện, và <code>x in words</code> kiểm tra thành viên.</p>
+<pre class="run">text = "the cat sat on the mat"
+print(len(text.split()))     # 6  — sáu từ
+print(text.count("the"))     # 2  — "the" xuất hiện hai lần
+print("cat" in text.split()) # True</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>text = "one two three four"</code>, gán <code>word_count</code> bằng số từ. Kết quả <code>4</code>.</span>
+<template class="st">text = "one two three four"
+word_count = 0
+# count the words
+</template>
+<template class="ts">assert word_count == 4
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>word = "banana"</code>, gán <code>a_count</code> bằng số lần <code>"a"</code> xuất hiện. Kết quả <code>3</code>.</span>
+<template class="st">word = "banana"
+a_count = 0
+# count the letter "a"
+</template>
+<template class="ts">assert a_count == 3
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>text = "the cat sat on the mat"</code>, gán <code>has_dog</code> bằng việc <code>"dog"</code> có phải một trong các từ hay không. Kết quả <code>False</code>.</span>
+<template class="st">text = "the cat sat on the mat"
+has_dog = None
+# is "dog" among the words?
+</template>
+<template class="ts">assert has_dog == False
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (từ phổ biến nhất).</b> Cho <code>text = "red blue red green red blue"</code>, tìm từ xuất hiện nhiều nhất vào <code>top</code>. Tách thành từ, đếm bằng một dictionary, rồi chọn cái lớn nhất. Kết quả <code>"red"</code>.</span>
+<template class="st">text = "red blue red green red blue"
+top = ""
+# split, count each word, find the most common
+</template>
+<template class="ts">assert top == "red"
+</template></div>
+
+<div class="recap">Tóm tắt bài 18: <code>split()</code> cắt văn bản thành list các mảnh (truyền dấu phân cách như <code>","</code> cho định dạng khác) · <code>sep.join(list)</code> dán một list trở lại thành chuỗi · làm sạch bằng <code>strip()</code> (khoảng trắng ngoài), <code>lower()</code> (chữ hoa/thường), và <code>replace(old, new)</code> · tìm kiếm bằng <code>len(text.split())</code>, <code>text.count(x)</code>, và <code>x in words</code> · cùng nhau chúng chuẩn hóa văn bản lộn xộn thành dữ liệu gọn gàng. Bài sau: một bài <b>ôn tập</b> để gom mọi thứ lại và sẵn sàng cho đồ án tốt nghiệp.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — làm ngay tại đây trước bài kế tiếp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>path = "home/user/file.txt"</code>, dựng <code>parts</code> = list cắt theo <code>"/"</code> → <code>['home', 'user', 'file.txt']</code>.</span>
+<template class="st">path = "home/user/file.txt"
+parts = []
+# split on slashes
+</template>
+<template class="ts">assert parts == ["home", "user", "file.txt"]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>tags = ["python", "sql", "qa"]</code>, ghép chúng bằng <code>", "</code> vào <code>line</code> → <code>"python, sql, qa"</code>.</span>
+<template class="st">tags = ["python", "sql", "qa"]
+line = ""
+# join with ", "
+</template>
+<template class="ts">assert line == "python, sql, qa"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>raw = "  Data Science  "</code>, bỏ khoảng trắng hai đầu và đưa về chữ thường vào <code>clean</code> → <code>"data science"</code>.</span>
+<template class="st">raw = "  Data Science  "
+clean = ""
+# strip, then lowercase
+</template>
+<template class="ts">assert clean == "data science"
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Cho <code>text = "Cat cat CAT dog"</code> và <code>word = "cat"</code>, gán <code>count</code> bằng số lần <code>word</code> xuất hiện, <b>không phân biệt hoa thường</b>. Kết quả <code>3</code>. (Đưa văn bản về chữ thường, tách ra, rồi đếm.)</span>
+<template class="st">text = "Cat cat CAT dog"
+word = "cat"
+count = 0
+# count case-insensitively
+</template>
+<template class="ts">assert count == 3
+</template></div>

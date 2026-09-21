@@ -1,0 +1,187 @@
+<h3>Bài 10 — Đồ án nhỏ: trình quản lý công việc</h3>
+<p>Giờ bạn đã biết những viên gạch cốt lõi của Python: biến, chuỗi, điều kiện, list và vòng lặp. Từng cái một thì nhỏ — nhưng chương trình thật chỉ là những viên gạch ấy được <b>lắp ráp</b> để làm một việc hữu ích. Trong bài này bạn ngừng học từng mảnh và bắt đầu xây một thứ hoàn chỉnh: một <b>trình quản lý công việc</b> nhỏ, kiểu ứng dụng mà lập trình viên dựng lên suốt.</p>
+<p>Đây là bài <b>checkpoint</b>. Thay vì một ý tưởng mới, bạn sẽ kết hợp mọi thứ đã học, từng tính năng một: lưu công việc, thêm, liệt kê kèm ô đánh dấu, đánh dấu đã xong, xóa, và in bản tóm tắt. Mỗi bài tập xây một tính năng thật của ứng dụng — và đến cuối, chúng ghép lại thành một chương trình thật sự chạy được.</p>
+<p>Một trình quản lý công việc thật sẽ bọc phần này trong một vòng lặp menu đọc những gì người dùng gõ. Trong trình duyệt ta không đọc được nhập liệu trực tiếp, nên ở đây ta xây và kiểm tra phần <b>logic</b> — phần khó và quan trọng nhất — trên các list mà ta tự kiểm soát. Sau đó bài về nhà là bọc chính logic đó trong một vòng lặp menu thật trong VS Code.</p>
+
+<h4>1. Kế hoạch: ta đang xây gì</h4>
+<p>Trình quản lý công việc của ta giữ một <b>list các chuỗi công việc</b>. Một công việc là "đã xong" khi nó bắt đầu bằng nhãn <code>"[x] "</code> (bạn đã gặp ở Bài 9). Mọi việc ứng dụng làm đều là một trong vài thao tác đơn giản trên list đó.</p>
+<figure class="diagram">
+<svg viewBox="0 0 380 210" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a10v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7FD1C0"/>
+    </marker>
+  </defs>
+  <rect x="130" y="14" width="120" height="34" rx="7" fill="#121C30" stroke="#22304C"/>
+  <text x="190" y="35" text-anchor="middle" fill="#F5B942">Hiện menu</text>
+  <rect x="130" y="74" width="120" height="34" rx="7" fill="#121C30" stroke="#22304C"/>
+  <text x="190" y="95" text-anchor="middle" fill="#E8E4D8">Đọc lựa chọn</text>
+  <g fill="#121C30" stroke="#22304C">
+    <rect x="12" y="134" width="80" height="32" rx="7"/>
+    <rect x="102" y="134" width="80" height="32" rx="7"/>
+    <rect x="198" y="134" width="80" height="32" rx="7"/>
+    <rect x="288" y="134" width="80" height="32" rx="7"/>
+  </g>
+  <g fill="#E8E4D8" text-anchor="middle">
+    <text x="52" y="154">Thêm</text>
+    <text x="142" y="154">Liệt kê</text>
+    <text x="238" y="154">Xong</text>
+    <text x="328" y="154">Xóa</text>
+  </g>
+  <g stroke="#7FD1C0" stroke-width="1.4" marker-end="url(#a10v)" fill="none">
+    <line x1="190" y1="48" x2="190" y2="72"/>
+    <line x1="190" y1="108" x2="190" y2="132"/>
+  </g>
+  <path d="M288 150 C 360 150, 372 96, 372 60 C 372 30, 300 24, 252 24" fill="none" stroke="#22304C" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#a10v)"/>
+  <text x="300" y="196" text-anchor="middle" fill="#8FA0BC">…mỗi thao tác chạy xong rồi quay lại menu</text>
+</svg>
+<figcaption>Hình dáng của gần như mọi app nhỏ: hiện lựa chọn → đọc lựa chọn → làm một thao tác → quay lại menu. Ta sẽ xây từng thao tác thành một mảnh logic riêng.</figcaption>
+</figure>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna", "Wash car"]
+# "[x] " ở đầu nghĩa là đã xong. Không có nhãn nghĩa là còn phải làm.
+print(tasks[0].startswith("[x] "))   # True  -> đã xong
+print(tasks[1].startswith("[x] "))   # False -> còn phải làm</pre>
+
+<h4>2. Thêm công việc (và bỏ qua ô trống)</h4>
+<p>Khi người dùng thêm công việc, một app tốt sẽ <b>bỏ qua nhập liệu trống</b>. Ta dùng <code>.strip()</code> để cắt khoảng trắng và chỉ giữ những công việc còn chữ.</p>
+<pre class="run">adds = ["Buy milk", "   ", "Call Anna"]
+tasks = []
+for a in adds:
+    if a.strip() != "":
+        tasks.append(a.strip())
+print(tasks)   # ['Buy milk', 'Call Anna']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Cho <code>adds = ["Buy milk", "", "Call Anna", "  ", "Wash car"]</code>, dựng <code>tasks</code> bằng cách chỉ thêm các mục không rỗng (dùng <code>.strip()</code>). Kết quả <code>['Buy milk', 'Call Anna', 'Wash car']</code>.</span>
+<template class="st">adds = ["Buy milk", "", "Call Anna", "  ", "Wash car"]
+tasks = []
+# append only the non-empty tasks
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Call Anna", "Wash car"]
+</template></div>
+
+<h4>3. Liệt kê công việc kèm số và ô đánh dấu</h4>
+<p>Người dùng cần thấy danh sách. Ta hiện mỗi công việc kèm số thứ tự (<code>i + 1</code>) và một ô đánh dấu: <code>[x]</code> nếu đã xong, <code>[ ]</code> nếu chưa. Với công việc đã xong, ta cắt nhãn <code>"[x] "</code> khỏi tên cho gọn.</p>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna"]
+for i in range(len(tasks)):
+    t = tasks[i]
+    if t.startswith("[x] "):
+        print(f"{i + 1}. [x] {t[4:]}")
+    else:
+        print(f"{i + 1}. [ ] {t}")
+# 1. [x] Buy milk
+# 2. [ ] Call Anna</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Cho <code>tasks = ["[x] Buy milk", "Call Anna", "Wash car"]</code>, dựng list <code>lines</code> gồm các chuỗi hiển thị: công việc đã xong dạng <code>"N. [x] name"</code> (đã cắt nhãn) và các mục khác dạng <code>"N. [ ] name"</code> → <code>['1. [x] Buy milk', '2. [ ] Call Anna', '3. [ ] Wash car']</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "Wash car"]
+lines = []
+# build each display line with a number and a checkbox
+</template>
+<template class="ts">assert lines == ["1. [x] Buy milk", "2. [ ] Call Anna", "3. [ ] Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Với cùng <code>tasks</code>, <b>in</b> danh sách có số và ô đánh dấu (mỗi dòng một công việc, đúng như ví dụ trên). Kiểm tra phần in ra.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "Wash car"]
+# print each task as "N. [x] name" or "N. [ ] name"
+</template>
+<template class="ts">assert _OUT_.strip() == "1. [x] Buy milk\n2. [ ] Call Anna\n3. [ ] Wash car"
+</template></div>
+
+<h4>4. Đánh dấu công việc đã xong</h4>
+<p>Để đánh dấu công việc số <code>n</code> đã xong, gắn nhãn <code>"[x] "</code> vào phía trước — nhưng chỉ khi nó chưa xong, để không bao giờ bị <code>"[x] [x] "</code>.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna"]
+n = 1                       # đánh dấu công việc thứ 1 (index n-1 = 0)
+if not tasks[n - 1].startswith("[x] "):
+    tasks[n - 1] = "[x] " + tasks[n - 1]
+print(tasks)   # ['[x] Buy milk', 'Call Anna']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code> và <code>n = 2</code>, đánh dấu công việc số <code>n</code> đã xong bằng cách thêm <code>"[x] "</code> vào trước (chỉ khi chưa xong). Kết quả <code>['Buy milk', '[x] Call Anna', 'Wash car']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+n = 2
+# mark task number n as done
+</template>
+<template class="ts">assert tasks == ["Buy milk", "[x] Call Anna", "Wash car"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Cho <code>task = "[x] Buy milk"</code>, <b>đảo</b> nó vào <code>toggled</code>: nếu bắt đầu bằng <code>"[x] "</code> thì bỏ nhãn đó, ngược lại thì thêm vào. Ở đây kết quả là <code>"Buy milk"</code>.</span>
+<template class="st">task = "[x] Buy milk"
+toggled = ""
+# toggle the done tag
+</template>
+<template class="ts">assert toggled == "Buy milk"
+</template></div>
+
+<h4>5. Xóa một công việc</h4>
+<p>Để xóa công việc số <code>n</code>, bỏ phần tử ở index <code>n - 1</code>. <code>list.pop(index)</code> làm đúng việc đó.</p>
+<pre class="run">tasks = ["Buy milk", "Call Anna", "Wash car"]
+n = 2
+tasks.pop(n - 1)           # xóa công việc thứ 2
+print(tasks)   # ['Buy milk', 'Wash car']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>tasks = ["Buy milk", "Call Anna", "Wash car"]</code> và <code>n = 3</code>, xóa công việc số <code>n</code>. Kết quả <code>['Buy milk', 'Call Anna']</code>.</span>
+<template class="st">tasks = ["Buy milk", "Call Anna", "Wash car"]
+n = 3
+# remove task number n
+</template>
+<template class="ts">assert tasks == ["Buy milk", "Call Anna"]
+</template></div>
+
+<h4>6. Lọc: việc nào còn phải làm</h4>
+<p>Một góc nhìn hữu ích là "chỉ những việc tôi còn phải làm" — những việc <b>không</b> bắt đầu bằng <code>"[x] "</code>.</p>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+pending = []
+for t in tasks:
+    if not t.startswith("[x] "):
+        pending.append(t)
+print(pending)   # ['Call Anna', 'Pay bills']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]</code>, dựng <code>pending</code> = những việc chưa xong → <code>['Call Anna', 'Pay bills']</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+pending = []
+# collect the tasks that are not done
+</template>
+<template class="ts">assert pending == ["Call Anna", "Pay bills"]
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Với cùng <code>tasks</code>, đếm bao nhiêu việc <b>đã xong</b> vào <code>done_count</code>. Kết quả <code>2</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+done_count = 0
+# count the done tasks
+</template>
+<template class="ts">assert done_count == 2
+</template></div>
+
+<h4>7. Bản tóm tắt trạng thái</h4>
+<p>Cuối cùng, một dòng tóm tắt để app hiện ở đầu: tổng số, số đã xong, số còn lại, cùng mức hoàn thành theo phần trăm.</p>
+<pre class="run">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+total = len(tasks)
+done = 0
+for t in tasks:
+    if t.startswith("[x] "):
+        done += 1
+percent = round(done / total * 100)
+print(f"{done}/{total} done ({percent}%)")   # 2/3 done (67%)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]</code>, dựng <code>summary</code> = <code>"You have 4 tasks, 2 done, 2 pending"</code> (dùng <code>len</code>, một vòng lặp và f-string).</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+summary = ""
+# build the summary string
+</template>
+<template class="ts">assert summary == "You have 4 tasks, 2 done, 2 pending"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]</code>, tính <code>percent</code> hoàn thành là số nguyên: done ÷ total × 100, làm tròn. Ở đây <code>2 / 4 × 100 = 50</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car", "Pay bills"]
+percent = 0
+# compute the completion percentage (rounded whole number)
+</template>
+<template class="ts">assert percent == 50
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (ghép tất cả lại).</b> Cho <code>tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]</code>, dựng list <code>report</code>: dòng tiêu đề tóm tắt trước, rồi mỗi công việc một dòng có số và ô đánh dấu → <code>['Tasks: 3 | Done: 2 | Pending: 1', '1. [x] Buy milk', '2. [ ] Call Anna', '3. [x] Wash car']</code>.</span>
+<template class="st">tasks = ["[x] Buy milk", "Call Anna", "[x] Wash car"]
+report = []
+# 1) count done and pending, append the header line
+# 2) append one "N. [x/ ] name" line per task
+</template>
+<template class="ts">assert report == ["Tasks: 3 | Done: 2 | Pending: 1", "1. [x] Buy milk", "2. [ ] Call Anna", "3. [x] Wash car"]
+</template></div>
+
+<div class="recap">Tóm tắt bài 10: một app nhỏ chỉ là những thao tác đơn giản trên một cấu trúc dữ liệu — ở đây là <b>list các chuỗi công việc</b> · thêm (bỏ ô trống bằng <code>.strip()</code>) · liệt kê với <code>i + 1</code> và ô <code>[x]</code>/<code>[ ]</code> · đánh dấu xong bằng cách thêm nhãn <code>"[x] "</code> (chỉ một lần) · xóa bằng <code>pop(n - 1)</code> · lọc và đếm bằng vòng lặp và <code>startswith</code> · tóm tắt bằng f-string và <code>round</code>. Bạn vừa xây logic của một chương trình thật. Bài sau: <b>dictionary</b>, cách gọn gàng hơn để lưu dữ liệu có nhãn như tên, trạng thái và độ ưu tiên của mỗi công việc cùng nhau.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Làm trong <b>VS Code</b> trên máy bạn. Tạo <code>tasks.py</code> và biến logic ở trên thành một chương trình dùng được thật. Chạy bằng nút ▶ Run hoặc <code>python tasks.py</code>. <b>Khi xong, gửi cho tôi file <code>tasks.py</code> và một ảnh chụp màn hình lúc nó chạy</b> để tôi xem và góp ý.</p>
+<ol class="hw">
+<li><b>Hiện danh sách.</b> Bắt đầu với một list 3–4 công việc (vài cái gắn nhãn <code>"[x] "</code>) và in chúng thành danh sách có số và ô đánh dấu, rồi in dòng tóm tắt (<code>"You have N tasks, D done, P pending"</code>).</li>
+<li><b>Vòng lặp menu.</b> Thêm vòng lặp <code>while True</code> in ra menu (1 thêm · 2 đánh dấu xong · 3 xóa · 4 thoát) và đọc lựa chọn bằng <code>choice = input("Choose: ")</code>. Khi chọn <code>"4"</code>, dùng <code>break</code> để thoát.</li>
+<li><b>Thêm & xong.</b> Cho lựa chọn 1 đọc công việc mới bằng <code>input()</code> và thêm vào (bỏ ô trống), lựa chọn 2 đọc một số và đánh dấu công việc đó đã xong. In lại danh sách sau mỗi thao tác.</li>
+<li><b>🔥 Nâng cao — xóa & hoàn thiện.</b> Cho lựa chọn 3 xóa công việc theo số, và xử lý nhập liệu sai một cách nhẹ nhàng (ví dụ số không tồn tại, hoặc chữ rỗng) để chương trình không bao giờ bị crash.</li>
+</ol>

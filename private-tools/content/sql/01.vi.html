@@ -1,0 +1,89 @@
+<h3>Bài 1 — SELECT: những truy vấn đầu tiên</h3>
+<p>Cơ sở dữ liệu (database) chỉ đơn giản là các <b>bảng</b> — giống hệt bảng tính Excel: mỗi bảng có các <b>cột</b> (column) và các <b>dòng</b> (row). SQL là ngôn ngữ để <i>đặt câu hỏi</i> cho những bảng đó và nhận về câu trả lời. Không cần cài đặt gì cả: bên dưới là một cơ sở dữ liệu <b>thật</b> của một cửa hàng nhỏ, chạy ngay trong trình duyệt của bạn.</p>
+<p>Trong bài này ta chỉ học một câu lệnh duy nhất — <code>SELECT</code> — nhưng đó là câu lệnh bạn sẽ dùng nhiều nhất trong cả sự nghiệp. Nó dùng để <b>đọc</b> dữ liệu: chọn cột nào, từ bảng nào. Ta chưa lọc dòng (bài 2), chưa sắp xếp (bài 3) — chỉ tập trung lấy đúng cột mình cần.</p>
+<p>Hãy đi thật chậm. Mỗi ô "▶ Thử ngay" là một trình soạn thảo thật: gõ truy vấn, chạy, xem kết quả, và được chấm ngay. Sai cũng không sao — cứ thử lại.</p>
+
+<h4>1. Cửa hàng của chúng ta có gì?</h4>
+<p>Cơ sở dữ liệu này có <b>bốn bảng</b>. Bạn sẽ dùng cả bốn xuyên suốt khóa học:</p>
+<table class="res"><tr><th>Bảng</th><th>Chứa gì</th><th>Các cột</th></tr>
+<tr><td><code>products</code></td><td>sản phẩm bán ra</td><td><code>id, name, category, price, stock</code></td></tr>
+<tr><td><code>customers</code></td><td>khách hàng</td><td><code>id, name, city, joined_at</code></td></tr>
+<tr><td><code>orders</code></td><td>đơn hàng</td><td><code>id, customer_id, order_date</code></td></tr>
+<tr><td><code>order_items</code></td><td>chi tiết từng dòng trong đơn</td><td><code>id, order_id, product_id, qty</code></td></tr></table>
+<p>Bài này chủ yếu dùng bảng <code>products</code>. Giá (<code>price</code>) tính bằng đồng (₫).</p>
+
+<h4>2. Hình dạng của một truy vấn</h4>
+<p>Một câu <code>SELECT</code> cơ bản có hai phần: chọn <b>cột</b>, và chỉ ra <b>bảng</b>.</p>
+<pre class="run">SELECT name, price
+FROM products;</pre>
+<p>Đọc là: "<b>LẤY</b> các cột name, price <b>TỪ</b> bảng products". Dấu <code>;</code> kết thúc câu lệnh. SQL không phân biệt chữ hoa/thường, nhưng thói quen tốt là viết <b>HOA</b> các từ khóa (<code>SELECT</code>, <code>FROM</code>) để dễ đọc.</p>
+
+<h4>3. SELECT * — tất cả các cột</h4>
+<p>Dấu <code>*</code> nghĩa là "mọi cột". Rất tiện để xem nhanh một bảng có gì.</p>
+<pre class="run">SELECT * FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Hiển thị <b>tất cả các cột</b> của mọi sản phẩm trong bảng <code>products</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT * FROM products</template></div>
+
+<h4>4. Chọn đúng cột mình cần</h4>
+<p>Thực tế hiếm khi cần tất cả. Hãy nêu tên đúng những cột bạn muốn, cách nhau bằng dấu phẩy.</p>
+<pre class="run">SELECT name, price FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Chỉ hiển thị hai cột <code>name</code> và <code>price</code> của mọi sản phẩm.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT name, price FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Hiển thị ba cột <code>name</code>, <code>category</code>, <code>price</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT name, category, price FROM products</template></div>
+
+<h4>5. Thứ tự cột là do bạn quyết định</h4>
+<p>Các cột hiện ra <b>đúng theo thứ tự bạn viết</b> — không cần theo thứ tự trong bảng.</p>
+<pre class="run">SELECT price, name FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Hiển thị <code>price</code> <b>trước</b>, rồi mới đến <code>name</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT price, name FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Hiển thị <code>id</code> rồi đến <code>name</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT id, name FROM products</template></div>
+
+<h4>6. Làm việc với các bảng khác</h4>
+<p><code>SELECT</code> dùng được cho <b>bất kỳ</b> bảng nào — chỉ cần đổi tên sau <code>FROM</code>.</p>
+<pre class="run">SELECT * FROM customers;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Hiển thị <b>tất cả các cột</b> của mọi khách hàng trong bảng <code>customers</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT * FROM customers</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Từ bảng <code>customers</code>, hiển thị <code>name</code> và <code>city</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT name, city FROM customers</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Hiển thị <b>tất cả các cột</b> của mọi đơn hàng trong bảng <code>orders</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT * FROM orders</template></div>
+
+<h4>7. DISTINCT — loại bỏ trùng lặp</h4>
+<p>Nhiều sản phẩm cùng một danh mục. Nếu chỉ muốn biết "cửa hàng có những <i>loại</i> hàng nào?", thêm <code>DISTINCT</code> ngay sau <code>SELECT</code> để mỗi giá trị chỉ xuất hiện một lần.</p>
+<pre class="run">SELECT DISTINCT category FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Liệt kê mỗi <code>category</code> đúng <b>một lần</b> (dùng <code>DISTINCT</code>).</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT category FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Từ bảng <code>customers</code>, liệt kê mỗi <code>city</code> đúng một lần.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT city FROM customers</template></div>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Bảng <code>order_items</code> ghi từng dòng hàng trong mỗi đơn. Hiển thị ba cột <code>order_id</code>, <code>product_id</code>, <code>qty</code> của bảng này.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT order_id, product_id, qty FROM order_items</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Từ bảng <code>products</code>, hiển thị <code>name</code> và <code>stock</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT name, stock FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Hiển thị <b>tất cả các cột</b> của bảng <code>order_items</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT * FROM order_items</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Từ bảng <code>orders</code>, liệt kê mỗi <code>customer_id</code> đúng một lần (dùng <code>DISTINCT</code>).</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT customer_id FROM orders</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Từ bảng <code>customers</code>, hiển thị theo đúng thứ tự: <code>joined_at</code>, <code>name</code>, <code>city</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT joined_at, name, city FROM customers</template></div>
+
+<div class="hw"><b>Ghi nhớ bài 1:</b> <code>SELECT</code> chọn cột · <code>FROM</code> chọn bảng · <code>*</code> là tất cả · <code>DISTINCT</code> bỏ trùng · thứ tự cột do bạn quyết định. Chỉ vậy thôi — bài sau ta học cách <i>lọc dòng</i> với <code>WHERE</code>. Đi chậm mà chắc.</div>

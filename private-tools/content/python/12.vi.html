@@ -1,0 +1,193 @@
+<h3>Bài 12 — List các dictionary: dữ liệu thực tế</h3>
+<p>Một dictionary đơn mô tả <b>một</b> thứ: một người, một sản phẩm, một công việc. Nhưng chương trình thật xử lý <b>nhiều</b> thứ — một danh bạ, một giỏ hàng đầy sản phẩm, cả một danh sách việc cần làm. Hình dáng tự nhiên cho việc đó là <b>list các dictionary</b>: một tập hợp có thứ tự trong đó mỗi phần tử là một bản ghi có cùng các trường. Đây, đúng nghĩa đen, là một cái bảng — hàng và cột — và là cách gần như mọi dữ liệu thật xuất hiện, kể cả JSON từ web.</p>
+<p>Khi bạn duyệt được một list các dictionary, bạn làm được những việc mà mọi app và mọi công việc dữ liệu cần: liệt kê bản ghi, lọc chúng ("chỉ người trưởng thành", "chỉ việc chưa xong"), cộng dồn ("tổng giá"), và tìm cực trị ("món đắt nhất"). Vẫn là kỹ năng vòng lặp bạn đã có, nay chạm sâu thêm một tầng.</p>
+<p>Trong bài này bạn sẽ xây đúng những thao tác đó, và kết thúc bằng việc nâng cấp trình quản lý công việc: thay vì gắn nhãn chuỗi bằng <code>"[x] "</code>, mỗi công việc trở thành một dictionary gọn gàng với trường <code>name</code> và <code>done</code>.</p>
+
+<h4>1. Một list các bản ghi là một cái bảng</h4>
+<p>Để chạm tới một trường, bạn đi vào hai lần: trước hết chọn bản ghi theo vị trí, rồi chọn trường theo khóa.</p>
+<pre class="run">products = [
+    {"name": "Book", "price": 100},
+    {"name": "Pen", "price": 20},
+]
+print(products[0])            # {'name': 'Book', 'price': 100}  (cả một bản ghi)
+print(products[0]["name"])    # Book                            (một trường)
+print(products[1]["price"])   # 20</pre>
+<figure class="diagram">
+<svg viewBox="0 0 340 170" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <text x="170" y="16" text-anchor="middle" fill="#8FA0BC">products — một list các dictionary (một bảng)</text>
+  <rect x="16" y="28" width="308" height="120" rx="10" fill="none" stroke="#22304C" stroke-dasharray="4 3"/>
+  <g stroke="#22304C">
+    <rect x="34" y="46" width="130" height="84" rx="8" fill="#121C30"/>
+    <rect x="188" y="46" width="130" height="84" rx="8" fill="#121C30"/>
+  </g>
+  <g fill="#7FD1C0" font-size="10"><text x="42" y="42">[0]</text><text x="196" y="42">[1]</text></g>
+  <g font-size="11">
+    <text x="48" y="74" fill="#7FD1C0">"name"</text><text x="150" y="74" fill="#E8E4D8" text-anchor="end">"Book"</text>
+    <text x="48" y="104" fill="#7FD1C0">"price"</text><text x="150" y="104" fill="#E8E4D8" text-anchor="end">100</text>
+    <text x="202" y="74" fill="#7FD1C0">"name"</text><text x="304" y="74" fill="#E8E4D8" text-anchor="end">"Pen"</text>
+    <text x="202" y="104" fill="#7FD1C0">"price"</text><text x="304" y="104" fill="#E8E4D8" text-anchor="end">20</text>
+  </g>
+</svg>
+<figcaption>Mỗi phần tử của list là một bản ghi (một dictionary). <code>products[1]["price"]</code> = đến bản ghi 1, rồi đọc <code>price</code> của nó → <code>20</code>.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Cho <code>products = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}]</code>, đọc giá của sản phẩm thứ hai vào <code>p</code>. Kết quả <code>20</code>.</span>
+<template class="st">products = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}]
+p = 0
+# read the second product's price
+</template>
+<template class="ts">assert p == 20
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Với cùng <code>products</code>, dựng list <code>names</code> gồm tên của mọi sản phẩm → <code>['Book', 'Pen']</code>.</span>
+<template class="st">products = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}]
+names = []
+# collect each product's name
+</template>
+<template class="ts">assert names == ["Book", "Pen"]
+</template></div>
+
+<h4>2. Lọc bản ghi</h4>
+<p>Duyệt các bản ghi và giữ lại những cái vượt qua một điều kiện. Đây là cách mọi tính năng "chỉ hiện…" hoạt động.</p>
+<pre class="run">people = [
+    {"name": "A", "age": 20},
+    {"name": "B", "age": 15},
+    {"name": "C", "age": 30},
+]
+adults = []
+for person in people:
+    if person["age"] >= 18:
+        adults.append(person["name"])
+print(adults)   # ['A', 'C']</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Cho <code>people = [{"name": "A", "age": 20}, {"name": "B", "age": 15}, {"name": "C", "age": 30}]</code>, dựng <code>adults</code> = tên những người từ <b>18 tuổi trở lên</b> → <code>['A', 'C']</code>.</span>
+<template class="st">people = [{"name": "A", "age": 20}, {"name": "B", "age": 15}, {"name": "C", "age": 30}]
+adults = []
+# collect names of people 18+
+</template>
+<template class="ts">assert adults == ["A", "C"]
+</template></div>
+
+<h4>3. Cộng dồn một trường</h4>
+<p>Để tính tổng một cột, duyệt các bản ghi và cộng một trường mỗi lần.</p>
+<pre class="run">cart = [
+    {"name": "Book", "price": 100},
+    {"name": "Pen", "price": 20},
+    {"name": "Cup", "price": 50},
+]
+total = 0
+for item in cart:
+    total += item["price"]
+print(total)   # 170</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Cho <code>cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]</code>, cộng tất cả giá vào <code>total</code>. Kết quả <code>170</code>.</span>
+<template class="st">cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]
+total = 0
+# sum every price
+</template>
+<template class="ts">assert total == 170
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Với cùng <code>cart</code>, đếm bao nhiêu món giá <b>hơn 40</b> vào <code>pricey</code>. Kết quả <code>2</code>.</span>
+<template class="st">cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]
+pricey = 0
+# count items priced over 40
+</template>
+<template class="ts">assert pricey == 2
+</template></div>
+
+<h4>4. Tìm bản ghi cực trị</h4>
+<p>Để tìm cái lớn nhất (hoặc nhỏ nhất), giữ một "tốt nhất tới hiện tại" và cập nhật mỗi khi thấy cái tốt hơn. Bắt đầu bằng bản ghi đầu tiên.</p>
+<pre class="run">cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]
+best = cart[0]
+for item in cart:
+    if item["price"] > best["price"]:
+        best = item
+print(best["name"])   # Book</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Cho <code>cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]</code>, tìm <b>tên</b> món đắt nhất vào <code>top_name</code>. Kết quả <code>"Book"</code>.</span>
+<template class="st">cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]
+top_name = ""
+# find the name of the priciest item
+</template>
+<template class="ts">assert top_name == "Book"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Cho <code>cart = [{"name": "Book", "price": 100}]</code>, thêm một bản ghi mới <code>{"name": "Bag", "price": 80}</code> vào cuối. Kết quả <code>[{'name': 'Book', 'price': 100}, {'name': 'Bag', 'price': 80}]</code>.</span>
+<template class="st">cart = [{"name": "Book", "price": 100}]
+# append the new product record
+</template>
+<template class="ts">assert cart == [{"name": "Book", "price": 100}, {"name": "Bag", "price": 80}]
+</template></div>
+
+<h4>5. Cập nhật một bản ghi trong list</h4>
+<p>Duyệt tới khi tìm được bản ghi bạn muốn, rồi đổi một trường của nó. Sửa bản ghi là sửa ngay tại chỗ trong list.</p>
+<pre class="run">tasks = [
+    {"name": "Buy milk", "done": True},
+    {"name": "Call Anna", "done": False},
+]
+for task in tasks:
+    if task["name"] == "Call Anna":
+        task["done"] = True
+print(tasks[1])   # {'name': 'Call Anna', 'done': True}</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Cho <code>tasks = [{"name": "Buy milk", "done": True}, {"name": "Call Anna", "done": False}]</code>, đánh dấu công việc tên <code>"Call Anna"</code> là đã xong (<code>done = True</code>). Bản ghi thứ hai phải thành <code>{'name': 'Call Anna', 'done': True}</code>.</span>
+<template class="st">tasks = [{"name": "Buy milk", "done": True}, {"name": "Call Anna", "done": False}]
+# find "Call Anna" and mark it done
+</template>
+<template class="ts">assert tasks == [{"name": "Buy milk", "done": True}, {"name": "Call Anna", "done": True}]
+</template></div>
+
+<h4>6. Dữ liệu lồng nhau</h4>
+<p>Bản ghi có thể chứa list, và list đó có thể chứa thêm bản ghi. Bạn chỉ việc đi vào từng bước. Ở đây một đơn hàng chứa một list các bản ghi món hàng.</p>
+<pre class="run">order = {"id": 1, "items": [{"name": "Book", "qty": 2}, {"name": "Pen", "qty": 5}]}
+total_qty = 0
+for item in order["items"]:
+    total_qty += item["qty"]
+print(total_qty)   # 7</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Cho <code>order = {"id": 1, "items": [{"name": "Book", "qty": 2}, {"name": "Pen", "qty": 5}]}</code>, cộng số lượng của tất cả món vào <code>total_qty</code>. Kết quả <code>7</code>.</span>
+<template class="st">order = {"id": 1, "items": [{"name": "Book", "qty": 2}, {"name": "Pen", "qty": 5}]}
+total_qty = 0
+# sum the qty of every item
+</template>
+<template class="ts">assert total_qty == 7
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 10.</b> Cho <code>people = [{"name": "A", "age": 20}, {"name": "B", "age": 15}, {"name": "C", "age": 30}]</code>, tính tuổi <b>trung bình</b> vào <code>avg</code>, làm tròn tới 1 chữ số thập phân. <code>(20 + 15 + 30) / 3 = 21.7</code>.</span>
+<template class="st">people = [{"name": "A", "age": 20}, {"name": "B", "age": 15}, {"name": "C", "age": 30}]
+avg = 0
+# compute the average age, rounded to 1 decimal
+</template>
+<template class="ts">assert avg == 21.7
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (tóm tắt công việc).</b> Cho <code>tasks = [{"name": "a", "done": True}, {"name": "b", "done": False}, {"name": "c", "done": True}]</code>, dựng dictionary <code>summary</code> đếm các bản ghi → <code>{"total": 3, "done": 2, "pending": 1}</code>.</span>
+<template class="st">tasks = [{"name": "a", "done": True}, {"name": "b", "done": False}, {"name": "c", "done": True}]
+summary = {}
+# count total, done and pending
+</template>
+<template class="ts">assert summary == {"total": 3, "done": 2, "pending": 1}
+</template></div>
+
+<div class="recap">Tóm tắt bài 12: một <b>list các dictionary</b> là một bảng bản ghi — hình dáng của dữ liệu thực tế · đi vào bằng <code>data[i]["field"]</code> · duyệt các bản ghi để liệt kê, lọc, cộng dồn, đếm và tìm cực đại · thêm bản ghi bằng <code>append({...})</code> · cập nhật bằng cách tìm bản ghi rồi đổi một trường · dữ liệu lồng nhau (một dict chứa list các dict) chỉ là đi sâu thêm một tầng. Bài sau: <b>hàm</b> — đóng gói các thao tác này để đặt tên và tái sử dụng.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — làm ngay tại đây trước bài kế tiếp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Cho <code>cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]</code>, cộng tất cả giá vào <code>total</code>. Kết quả <code>170</code>.</span>
+<template class="st">cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]
+total = 0
+# sum every price
+</template>
+<template class="ts">assert total == 170
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Cho <code>products = [{"name": "Book", "stock": 3}, {"name": "Pen", "stock": 0}, {"name": "Cup", "stock": 5}]</code>, dựng <code>in_stock</code> = tên các sản phẩm có <code>stock &gt; 0</code> → <code>['Book', 'Cup']</code>.</span>
+<template class="st">products = [{"name": "Book", "stock": 3}, {"name": "Pen", "stock": 0}, {"name": "Cup", "stock": 5}]
+in_stock = []
+# collect names of products still in stock
+</template>
+<template class="ts">assert in_stock == ["Book", "Cup"]
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Cho <code>cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]</code>, tìm <b>tên</b> món <b>rẻ nhất</b> vào <code>cheapest</code>. Kết quả <code>"Pen"</code>.</span>
+<template class="st">cart = [{"name": "Book", "price": 100}, {"name": "Pen", "price": 20}, {"name": "Cup", "price": 50}]
+cheapest = ""
+# find the name of the cheapest item
+</template>
+<template class="ts">assert cheapest == "Pen"
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Cho <code>tasks = [{"name": "a", "done": True}, {"name": "b", "done": False}, {"name": "c", "done": False}]</code>, dựng <code>pending_names</code> = tên các công việc chưa xong → <code>['b', 'c']</code>.</span>
+<template class="st">tasks = [{"name": "a", "done": True}, {"name": "b", "done": False}, {"name": "c", "done": False}]
+pending_names = []
+# collect the names of tasks that are not done
+</template>
+<template class="ts">assert pending_names == ["b", "c"]
+</template></div>

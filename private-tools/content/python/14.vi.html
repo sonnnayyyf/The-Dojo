@@ -1,0 +1,185 @@
+<h3>Bài 14 — Hàm chuyên sâu: mặc định, trả về nhiều, phạm vi</h3>
+<p>Giờ bạn đã viết và gọi được hàm. Bài này thêm ba thứ khiến hàm thật sự mạnh trong code thực tế: <b>giá trị mặc định</b> (để vài đầu vào là tùy chọn), trả về <b>nhiều hơn một giá trị</b> cùng lúc, và hiểu <b>phạm vi (scope)</b> — biến nào hàm nhìn thấy được và biến nào ở riêng bên trong.</p>
+<p>Không có gì là cú pháp để học thuộc vô cớ. Mỗi thứ giải quyết một nỗi phiền thật: giá trị mặc định giúp bạn khỏi phải truyền cùng một đối số hết lần này tới lần khác; trả về nhiều giá trị để một hàm trả lời một câu hỏi phong phú hơn; và phạm vi là quy tắc giữ cho chương trình lớn không rối tung vì các biến giẫm lên nhau.</p>
+<p>Đến cuối bài bạn sẽ viết những hàm giống hệt trong các thư viện thật — linh hoạt, tự chứa, và an toàn để tái dùng ở bất cứ đâu.</p>
+
+<h4>1. Giá trị mặc định cho tham số</h4>
+<p>Cho một tham số một giá trị mặc định bằng <code>=</code>. Nếu người gọi truyền đối số đó thì nó được dùng; nếu không, giá trị mặc định được áp dụng. Đầu vào tùy chọn, miễn phí.</p>
+<pre class="run">def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+
+print(greet("Anna"))            # Hello, Anna!   (greeting mặc định)
+print(greet("Ben", "Hi"))       # Hi, Ben!       (ghi đè nó)</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Định nghĩa <code>greet</code> với tham số thứ hai <code>greeting</code> mặc định là <code>"Hello"</code>, trả về <code>"greeting, name!"</code>. Vậy <code>greet("Anna")</code> là <code>"Hello, Anna!"</code> và <code>greet("Ben", "Hi")</code> là <code>"Hi, Ben!"</code>.</span>
+<template class="st">def greet(name, greeting="Hello"):
+    # return "greeting, name!"
+    pass
+</template>
+<template class="ts">assert greet("Anna") == "Hello, Anna!"
+assert greet("Ben", "Hi") == "Hi, Ben!"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Định nghĩa <code>power</code> nhận <code>base</code> và <code>exp</code> (mặc định <code>2</code>) và trả về <code>base ** exp</code>. Vậy <code>power(5)</code> là <code>25</code> và <code>power(2, 3)</code> là <code>8</code>.</span>
+<template class="st">def power(base, exp=2):
+    # return base to the power exp
+    pass
+</template>
+<template class="ts">assert power(5) == 25
+assert power(2, 3) == 8
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Định nghĩa <code>apply_discount</code> nhận <code>price</code> và <code>percent</code> (mặc định <code>10</code>) và trả về giá sau khi trừ đi phần trăm đó. Vậy <code>apply_discount(100)</code> là <code>90.0</code> và <code>apply_discount(200, 25)</code> là <code>150.0</code>.</span>
+<template class="st">def apply_discount(price, percent=10):
+    # return the discounted price
+    pass
+</template>
+<template class="ts">assert apply_discount(100) == 90.0
+assert apply_discount(200, 25) == 150.0
+</template></div>
+
+<h4>2. Trả về nhiều giá trị</h4>
+<p>Một hàm có thể trả lại nhiều hơn một giá trị cùng lúc — chỉ cần phân cách bằng dấu phẩy. Python gói chúng thành một <b>tuple</b>, và người gọi có thể <b>bung (unpack)</b> chúng thành các tên riêng.</p>
+<pre class="run">def first_last(items):
+    return items[0], items[-1]
+
+pair = first_last([10, 20, 30])
+print(pair)                 # (10, 30)  — một tuple
+
+lo, hi = first_last([10, 20, 30])   # bung thành hai tên
+print(lo, hi)               # 10 30</pre>
+<figure class="diagram">
+<svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a14v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7FD1C0"/>
+    </marker>
+  </defs>
+  <rect x="20" y="40" width="130" height="40" rx="9" fill="#121C30" stroke="#22304C"/>
+  <text x="85" y="64" text-anchor="middle" fill="#F5B942">first_last(items)</text>
+  <rect x="196" y="42" width="60" height="36" rx="7" fill="#0E1626" stroke="#22304C"/>
+  <text x="226" y="65" text-anchor="middle" fill="#E8E4D8">(10, 30)</text>
+  <text x="226" y="34" text-anchor="middle" fill="#8FA0BC" font-size="10">một tuple</text>
+  <rect x="286" y="24" width="60" height="28" rx="6" fill="#121C30" stroke="#22304C"/>
+  <text x="316" y="42" text-anchor="middle" fill="#7FD1C0">lo = 10</text>
+  <rect x="286" y="66" width="60" height="28" rx="6" fill="#121C30" stroke="#22304C"/>
+  <text x="316" y="84" text-anchor="middle" fill="#7FD1C0">hi = 30</text>
+  <g stroke="#7FD1C0" stroke-width="1.4" marker-end="url(#a14v)" fill="none">
+    <line x1="150" y1="60" x2="192" y2="60"/>
+    <line x1="256" y1="54" x2="284" y2="40"/>
+    <line x1="256" y1="66" x2="284" y2="78"/>
+  </g>
+</svg>
+<figcaption>Trả về hai giá trị tạo thành một <b>tuple</b>; bung bằng <code>lo, hi = ...</code> tách nó lại thành các tên riêng.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Định nghĩa <code>first_last</code> nhận một list <code>items</code> và trả về tuple gồm phần tử đầu và cuối. Vậy <code>first_last([10, 20, 30])</code> là <code>(10, 30)</code>.</span>
+<template class="st">def first_last(items):
+    # return (first, last)
+    pass
+</template>
+<template class="ts">assert first_last([10, 20, 30]) == (10, 30)
+assert first_last([5, 9]) == (5, 9)
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Định nghĩa <code>split_name</code> nhận một họ tên như <code>"Anna Bui"</code> và trả về tuple <code>(first, last)</code> → <code>("Anna", "Bui")</code>. (Dùng <code>full.split()</code>.)</span>
+<template class="st">def split_name(full):
+    # return (first, last)
+    pass
+</template>
+<template class="ts">assert split_name("Anna Bui") == ("Anna", "Bui")
+assert split_name("Son Tran") == ("Son", "Tran")
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Định nghĩa <code>high_low</code> nhận một list số <code>nums</code> và trả về <code>(nhỏ nhất, lớn nhất)</code> bằng một vòng lặp. Vậy <code>high_low([3, 1, 2])</code> là <code>(1, 3)</code>.</span>
+<template class="st">def high_low(nums):
+    # return (smallest, largest)
+    pass
+</template>
+<template class="ts">assert high_low([3, 1, 2]) == (1, 3)
+assert high_low([5, 5, 5]) == (5, 5)
+</template></div>
+
+<h4>3. Phạm vi: hàm nhìn thấy được gì</h4>
+<p>Biến tạo ra <b>bên trong</b> một hàm là biến <b>cục bộ (local)</b> — chúng chỉ tồn tại khi hàm chạy và biến mất khi hàm trả về. Chương trình bên ngoài không thấy được chúng, và đó là điều tốt: nghĩa là phần ruột bên trong của một hàm không bao giờ vô tình đụng với các tên ở nơi khác.</p>
+<pre class="run">def make_label(n):
+    tag = "item"          # cục bộ — chỉ tồn tại ở đây
+    return f"{tag} {n}"
+
+print(make_label(3))      # item 3
+# print(tag)              # sẽ LỖI: tag không tồn tại ngoài này</pre>
+<p>Hãy hình dung mỗi hàm như một căn phòng có giấy nháp riêng. Mọi thứ nó viết nguệch ngoạc (biến cục bộ) đều bị vứt đi khi rời phòng; chỉ những gì nó <code>return</code> mới đi ra ngoài.</p>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Định nghĩa <code>make_label</code> nhận <code>n</code>, dùng một biến <b>cục bộ</b> <code>tag = "item"</code>, và trả về <code>"item n"</code>. Vậy <code>make_label(3)</code> là <code>"item 3"</code>.</span>
+<template class="st">def make_label(n):
+    # use a local variable tag, then return "item n"
+    pass
+</template>
+<template class="ts">assert make_label(3) == "item 3"
+assert make_label(9) == "item 9"
+</template></div>
+
+<h4>4. Những hàm làm việc thật</h4>
+<p>Ghép lại: tham số vào, một vòng lặp hay logic trong thân, một giá trị rõ ràng đi ra.</p>
+<pre class="run">def count_positive(nums):
+    count = 0
+    for n in nums:
+        if n > 0:
+            count += 1
+    return count
+
+print(count_positive([-1, 2, -3, 4]))   # 2</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Định nghĩa <code>count_positive</code> trả về bao nhiêu số trong <code>nums</code> lớn hơn 0. Vậy <code>count_positive([-1, 2, -3, 4])</code> là <code>2</code>.</span>
+<template class="st">def count_positive(nums):
+    # count and return the positive numbers
+    pass
+</template>
+<template class="ts">assert count_positive([-1, 2, -3, 4]) == 2
+assert count_positive([0, -5]) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Định nghĩa <code>average</code> trả về trung bình của một list <code>nums</code> không rỗng (tổng ÷ số phần tử). Vậy <code>average([2, 4, 6])</code> là <code>4.0</code>.</span>
+<template class="st">def average(nums):
+    # return the average
+    pass
+</template>
+<template class="ts">assert average([2, 4, 6]) == 4.0
+assert average([10]) == 10.0
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (thống kê trong một lần gọi).</b> Định nghĩa <code>stats</code> nhận một list <code>nums</code> không rỗng và trả về tuple <code>(count, total, average)</code> bằng một vòng lặp. Vậy <code>stats([2, 4, 6])</code> là <code>(3, 12, 4.0)</code>.</span>
+<template class="st">def stats(nums):
+    # return (count, total, average)
+    pass
+</template>
+<template class="ts">assert stats([2, 4, 6]) == (3, 12, 4.0)
+assert stats([10]) == (1, 10, 10.0)
+</template></div>
+
+<div class="recap">Tóm tắt bài 14: <b>giá trị mặc định</b> (<code>def f(x, y=10):</code>) làm tham số thành tùy chọn · một hàm có thể <b>trả về nhiều giá trị</b> — Python gói thành một <b>tuple</b> mà người gọi có thể <b>bung</b> (<code>lo, hi = ...</code>) · biến tạo bên trong hàm là <b>cục bộ</b> và biến mất khi hàm trả về — chỉ giá trị trả về thoát ra · kết hợp tham số, vòng lặp và một return rõ ràng để xây những công cụ nhỏ đáng tin. Bài sau: xử lý <b>lỗi</b> nhẹ nhàng với <code>try / except</code>.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — làm ngay tại đây trước bài kế tiếp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Định nghĩa <code>introduce</code> nhận <code>name</code> và <code>city</code> (mặc định <code>"Hanoi"</code>) và trả về <code>"name from city"</code>. Vậy <code>introduce("Anna")</code> là <code>"Anna from Hanoi"</code> và <code>introduce("Ben", "Hue")</code> là <code>"Ben from Hue"</code>.</span>
+<template class="st">def introduce(name, city="Hanoi"):
+    # return "name from city"
+    pass
+</template>
+<template class="ts">assert introduce("Anna") == "Anna from Hanoi"
+assert introduce("Ben", "Hue") == "Ben from Hue"
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Định nghĩa <code>apply_tax</code> nhận <code>price</code> và <code>rate</code> (mặc định <code>10</code>) và trả về giá cộng thêm phần trăm thuế đó. Vậy <code>apply_tax(100)</code> là <code>110.0</code> và <code>apply_tax(200, 5)</code> là <code>210.0</code>.</span>
+<template class="st">def apply_tax(price, rate=10):
+    # return the price with tax added
+    pass
+</template>
+<template class="ts">assert apply_tax(100) == 110.0
+assert apply_tax(200, 5) == 210.0
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Định nghĩa <code>middle_three</code> nhận một list ít nhất 3 phần tử và trả về tuple gồm phần tử <b>đầu, giữa, cuối</b>. Vậy <code>middle_three([1, 2, 3])</code> là <code>(1, 2, 3)</code> và <code>middle_three([10, 20, 30, 40, 50])</code> là <code>(10, 30, 50)</code>. (Chỉ số giữa là <code>len(items) // 2</code>.)</span>
+<template class="st">def middle_three(items):
+    # return (first, middle, last)
+    pass
+</template>
+<template class="ts">assert middle_three([1, 2, 3]) == (1, 2, 3)
+assert middle_three([10, 20, 30, 40, 50]) == (10, 30, 50)
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Định nghĩa <code>longest</code> nhận một list <code>words</code> và trả về từ dài nhất (dùng vòng lặp; nếu hòa, giữ từ đầu tiên). Vậy <code>longest(["a", "bbb", "cc"])</code> là <code>"bbb"</code>.</span>
+<template class="st">def longest(words):
+    # return the longest word
+    pass
+</template>
+<template class="ts">assert longest(["a", "bbb", "cc"]) == "bbb"
+assert longest(["dog", "cat", "mouse"]) == "mouse"
+</template></div>

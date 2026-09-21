@@ -1,0 +1,116 @@
+<h3>Lesson 7 — CASE WHEN & functions (text, number, date)</h3>
+<p>Raw data isn't always in the shape you need. A manager doesn't want to see <code>350000</code> — they want the label "premium". The <code>joined_at</code> column is <code>'2024-01-10'</code> but a report only needs the <b>year</b>. This is where <code>CASE WHEN</code> and SQL's built-in <b>functions</b> turn raw data into readable information.</p>
+<p><code>CASE WHEN</code> is SQL's "if/else": it looks at each row and returns a value depending on a condition. SQL also ships with functions for <b>text</b> (<code>LENGTH</code>, <code>SUBSTR</code>, <code>REPLACE</code>), <b>numbers</b> (<code>ROUND</code>), and <b>dates</b> (<code>strftime</code>).</p>
+<p>Every column you create here should get an <code>AS</code> alias for a clear name — as you learned in Lesson 4.</p>
+
+<h4>1. CASE WHEN — labels by condition</h4>
+<p>Syntax: <code>CASE WHEN condition THEN value ... ELSE default END</code>. SQL checks the branches <b>top to bottom</b> and stops at the first true one.</p>
+<pre class="run">SELECT name,
+  CASE WHEN price >= 100000 THEN 'high'
+       WHEN price >= 20000  THEN 'medium'
+       ELSE 'low' END AS tier
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> For each product, build a <code>tier</code> column: <code>'high'</code> if <code>price &gt;= 100000</code>, <code>'medium'</code> if <code>price &gt;= 20000</code>, otherwise <code>'low'</code>. Show <code>name</code> and <code>tier</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 100000 THEN 'high'
+       WHEN price >= 20000 THEN 'medium'
+       ELSE 'low' END AS tier
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 100000 THEN 'high' WHEN price >= 20000 THEN 'medium' ELSE 'low' END AS tier FROM products</template></div>
+
+<h4>2. A simple two-way CASE</h4>
+<p>One <code>WHEN</code> and one <code>ELSE</code> is enough to split into two buckets.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Build a <code>stock_level</code> column: <code>'plenty'</code> if <code>stock &gt;= 100</code>, otherwise <code>'low'</code>. Show <code>name</code> and <code>stock_level</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN stock >= 100 THEN 'plenty' ELSE 'low' END AS stock_level
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN stock >= 100 THEN 'plenty' ELSE 'low' END AS stock_level FROM products</template></div>
+
+<h4>3. CASE returning a number</h4>
+<p><code>CASE</code> doesn't only return text — it can return numbers too, perfect for a conditional calculation.</p>
+<pre class="run">SELECT name,
+  ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85
+             ELSE price * 0.95 END) AS final_price
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Compute <code>final_price</code>: <code>'Điện tử'</code> items get 15% off (<code>price * 0.85</code>), everything else 5% off (<code>price * 0.95</code>), then <code>ROUND</code>. Show <code>name</code> and <code>final_price</code>.</span>
+<template class="st">SELECT name,
+  ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85 ELSE price * 0.95 END) AS final_price
+FROM products</template>
+<template class="ref">SELECT name, ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85 ELSE price * 0.95 END) AS final_price FROM products</template></div>
+
+<h4>4. Text functions: LENGTH, SUBSTR</h4>
+<p><code>LENGTH(text)</code> counts characters. <code>SUBSTR(text, start, length)</code> cuts out a slice (the first position is 1).</p>
+<pre class="run">SELECT name, LENGTH(name) AS name_len
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Show <code>name</code> and its <b>length</b> <code>LENGTH(name) AS name_len</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, LENGTH(name) AS name_len FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Show <code>name</code> and the <b>first 3 characters</b> of the name: <code>SUBSTR(name, 1, 3) AS prefix</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, SUBSTR(name, 1, 3) AS prefix FROM products</template></div>
+
+<h4>5. Text functions: REPLACE</h4>
+<p><code>REPLACE(text, find, replace)</code> swaps every occurrence of a substring.</p>
+<pre class="run">SELECT name, REPLACE(city, 'TP. ', '') AS short_city
+FROM customers;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> From <code>customers</code>, strip the <code>'TP. '</code> prefix from <code>city</code>: <code>REPLACE(city, 'TP. ', '') AS short_city</code>. Show <code>name</code> and <code>short_city</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, REPLACE(city, 'TP. ', '') AS short_city FROM customers</template></div>
+
+<h4>6. Date functions</h4>
+<p>Dates are stored as <code>'YYYY-MM-DD'</code>. You can slice them with <code>SUBSTR</code>, or use <code>strftime</code> to extract a part: <code>strftime('%Y', date)</code> for the year, <code>'%m'</code> for the month.</p>
+<pre class="run">SELECT name, SUBSTR(joined_at, 1, 4) AS year
+FROM customers;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> From <code>customers</code>, get the <b>join year</b> by slicing the first 4 characters: <code>SUBSTR(joined_at, 1, 4) AS year</code>. Show <code>name</code> and <code>year</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, SUBSTR(joined_at, 1, 4) AS year FROM customers</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> From <code>customers</code>, get the <b>join month</b> (2 characters at position 6): <code>SUBSTR(joined_at, 6, 2) AS month</code>. Show <code>name</code> and <code>month</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, SUBSTR(joined_at, 6, 2) AS month FROM customers</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> From <code>orders</code>, get the <b>order year</b> with <code>strftime('%Y', order_date) AS year</code>. Show <code>id</code> and <code>year</code>.</span>
+<template class="st">SELECT id, 
+FROM orders</template>
+<template class="ref">SELECT id, strftime('%Y', order_date) AS year FROM orders</template></div>
+
+<h4>7. Number functions: ROUND with decimals</h4>
+<p><code>ROUND(number, k)</code> rounds to <code>k</code> decimal places.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Show <code>name</code> and the price (with 10% VAT) in <b>thousands, to one decimal</b>: <code>ROUND(price * 1.1 / 1000.0, 1) AS k_vat</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, ROUND(price * 1.1 / 1000.0, 1) AS k_vat FROM products</template></div>
+
+<h4>8. Combining CASE with filter and sort</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> For the <code>'Đồ uống'</code> and <code>'Đồ ăn'</code> categories only: show <code>name</code>, <code>price</code>, and a <code>tier</code> column = <code>'premium'</code> if <code>price &gt;= 30000</code>, otherwise <code>'regular'</code>. Sort by <code>price</code> descending.</span>
+<template class="st">SELECT name, price,
+  CASE WHEN price >= 30000 THEN 'premium' ELSE 'regular' END AS tier
+FROM products
+WHERE category IN ('Đồ uống', 'Đồ ăn')
+ORDER BY </template>
+<template class="ref">SELECT name, price, CASE WHEN price >= 30000 THEN 'premium' ELSE 'regular' END AS tier FROM products WHERE category IN ('Đồ uống', 'Đồ ăn') ORDER BY price DESC</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Build a <code>bucket</code> column: <code>'expensive'</code> if <code>price &gt;= 50000</code>, otherwise <code>'affordable'</code>. Show <code>name</code> and <code>bucket</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 50000 THEN 'expensive' ELSE 'affordable' END AS bucket
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 50000 THEN 'expensive' ELSE 'affordable' END AS bucket FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> From <code>customers</code>, show <code>name</code> and the <b>length of the city name</b>: <code>LENGTH(city) AS city_len</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, LENGTH(city) AS city_len FROM customers</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> From <code>customers</code>, get the <b>join year</b> with <code>strftime('%Y', joined_at) AS year</code>. Show <code>name</code> and <code>year</code>.</span>
+<template class="st">SELECT name, 
+FROM customers</template>
+<template class="ref">SELECT name, strftime('%Y', joined_at) AS year FROM customers</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Build a <code>kind</code> column: <code>'tech'</code> if <code>category = 'Điện tử'</code>, otherwise <code>'non-tech'</code>. Show <code>name</code>, <code>category</code>, <code>kind</code>, sorted by <code>kind</code> then <code>name</code>.</span>
+<template class="st">SELECT name, category,
+  CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind
+FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, category, CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind FROM products ORDER BY kind, name</template></div>

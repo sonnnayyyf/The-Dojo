@@ -1,0 +1,116 @@
+<h3>Bài 10 — Truy vấn con (subquery)</h3>
+<p>Đôi khi để trả lời một câu hỏi, bạn cần <i>kết quả của một câu hỏi khác</i> trước. "Sản phẩm nào <b>đắt hơn mức trung bình</b>?" — muốn biết, trước hết phải tính mức trung bình. "Khách nào <b>chưa từng đặt hàng</b>?" — cần danh sách các khách <i>đã</i> đặt để loại ra.</p>
+<p><b>Truy vấn con</b> (subquery) là một câu <code>SELECT</code> đặt lồng bên trong một câu <code>SELECT</code> khác, trong ngoặc đơn <code>( … )</code>. SQL chạy truy vấn con trước, lấy kết quả, rồi dùng nó cho truy vấn ngoài.</p>
+<p>Có hai kiểu bạn sẽ gặp nhiều nhất: truy vấn con trả về <b>một giá trị</b> (dùng để so sánh, như <code>&gt; (SELECT AVG(...))</code>), và truy vấn con trả về <b>một danh sách</b> (dùng với <code>IN</code> / <code>NOT IN</code>).</p>
+
+<h4>1. Truy vấn con trả về một giá trị</h4>
+<p>Một <code>SELECT</code> tổng hợp (như <code>AVG</code>, <code>MAX</code>) trả về đúng một số. Đặt nó trong ngoặc và so sánh trực tiếp.</p>
+<pre class="run">SELECT name, price
+FROM products
+WHERE price > (SELECT AVG(price) FROM products)
+ORDER BY price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Sản phẩm có giá <b>trên mức trung bình</b>: hiển thị <code>name</code>, <code>price</code>, lọc <code>price &gt; (SELECT AVG(price) FROM products)</code>, sắp theo <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price > (</template>
+<template class="ref">SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM products) ORDER BY price</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Sản phẩm có giá <b>dưới mức trung bình</b>: hiển thị <code>name</code>, <code>price</code>, lọc <code>price &lt; (SELECT AVG(price) FROM products)</code>, sắp theo <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price < (</template>
+<template class="ref">SELECT name, price FROM products WHERE price < (SELECT AVG(price) FROM products) ORDER BY price</template></div>
+
+<h4>2. So với một giá trị lọc từ nhóm</h4>
+<p>Truy vấn con có thể tự nó có <code>WHERE</code>. Ví dụ: "rẻ hơn món đắt nhất trong nhóm Đồ uống".</p>
+<pre class="run">SELECT name, price
+FROM products
+WHERE price < (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')
+ORDER BY price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Sản phẩm rẻ hơn <b>món đắt nhất nhóm 'Đồ uống'</b>: hiển thị <code>name</code>, <code>price</code>, lọc <code>price &lt; (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')</code>, sắp theo <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price < (</template>
+<template class="ref">SELECT name, price FROM products WHERE price < (SELECT MAX(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Sản phẩm đắt hơn <b>'Cà phê đen đá'</b>: hiển thị <code>name</code>, <code>price</code>, lọc <code>price &gt; (SELECT price FROM products WHERE name = 'Cà phê đen đá')</code>, sắp theo <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price > (</template>
+<template class="ref">SELECT name, price FROM products WHERE price > (SELECT price FROM products WHERE name = 'Cà phê đen đá') ORDER BY price</template></div>
+
+<h4>3. Truy vấn con trả về danh sách: IN</h4>
+<p>Nếu truy vấn con trả về <b>nhiều dòng một cột</b>, dùng <code>IN</code> để kiểm tra "có nằm trong danh sách này không".</p>
+<pre class="run">SELECT name
+FROM products
+WHERE id IN (SELECT product_id FROM order_items)
+ORDER BY id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Sản phẩm <b>đã từng được bán</b>: hiển thị <code>name</code>, lọc <code>id IN (SELECT product_id FROM order_items)</code>, sắp theo <code>id</code>.</span>
+<template class="st">SELECT name
+FROM products
+WHERE id IN (</template>
+<template class="ref">SELECT name FROM products WHERE id IN (SELECT product_id FROM order_items) ORDER BY id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Khách hàng <b>đã từng đặt hàng</b>: hiển thị <code>name</code>, lọc <code>id IN (SELECT customer_id FROM orders)</code>, sắp theo <code>id</code>.</span>
+<template class="st">SELECT name
+FROM customers
+WHERE id IN (</template>
+<template class="ref">SELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders) ORDER BY id</template></div>
+
+<h4>4. NOT IN — những cái không nằm trong danh sách</h4>
+<p>Đảo lại thành <code>NOT IN</code> để tìm "những cái vắng mặt" — một cách khác (bên cạnh <code>LEFT JOIN</code> ở Bài 9) để tìm khách/sản phẩm chưa hoạt động.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Sản phẩm <b>chưa từng được bán</b>: hiển thị <code>name</code>, lọc <code>id NOT IN (SELECT product_id FROM order_items)</code>, sắp theo <code>id</code>.</span>
+<template class="st">SELECT name
+FROM products
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name FROM products WHERE id NOT IN (SELECT product_id FROM order_items) ORDER BY id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Khách hàng <b>chưa từng đặt hàng</b>: hiển thị <code>name</code>, lọc <code>id NOT IN (SELECT customer_id FROM orders)</code>, sắp theo <code>id</code>.</span>
+<template class="st">SELECT name
+FROM customers
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name FROM customers WHERE id NOT IN (SELECT customer_id FROM orders) ORDER BY id</template></div>
+
+<h4>5. Truy vấn con trong SELECT</h4>
+<p>Bạn cũng có thể đặt một giá trị tính sẵn vào <i>mỗi dòng</i> để tiện so sánh — ví dụ kèm mức giá trung bình bên cạnh từng sản phẩm.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Với mỗi sản phẩm, hiển thị <code>name</code>, <code>price</code>, và <b>giá trung bình toàn cửa hàng</b> ở cột <code>avg_all</code>: <code>(SELECT ROUND(AVG(price)) FROM products) AS avg_all</code>. Sắp theo <code>id</code>.</span>
+<template class="st">SELECT name, price, (SELECT ROUND(AVG(price)) FROM products) AS avg_all
+FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, price, (SELECT ROUND(AVG(price)) FROM products) AS avg_all FROM products ORDER BY id</template></div>
+
+<h4>6. Truy vấn con lồng nhiều tầng</h4>
+<p>Một truy vấn con có thể chứa truy vấn con khác. "Những sản phẩm mà khách số 1 đã mua" = sản phẩm nằm trong các dòng hàng thuộc các đơn của khách số 1.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Sản phẩm mà <b>khách số 1 đã mua</b>: hiển thị <code>name</code>, lọc <code>id IN (SELECT product_id FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE customer_id = 1))</code>, sắp theo <code>id</code>.</span>
+<template class="st">SELECT name
+FROM products
+WHERE id IN (SELECT product_id FROM order_items WHERE order_id IN (
+  </template>
+<template class="ref">SELECT name FROM products WHERE id IN (SELECT product_id FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE customer_id = 1)) ORDER BY id</template></div>
+
+<h4>7. Kết hợp với GROUP BY</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Những <b>danh mục có giá trung bình cao hơn mức trung bình toàn cửa hàng</b>: gom nhóm theo <code>category</code>, hiển thị <code>category</code> và <code>ROUND(AVG(price)) AS avg_price</code>, giữ nhóm có <code>AVG(price) &gt; (SELECT AVG(price) FROM products)</code>, sắp theo <code>avg_price</code> giảm dần.</span>
+<template class="st">SELECT category, ROUND(AVG(price)) AS avg_price
+FROM products
+GROUP BY category
+HAVING AVG(price) > (</template>
+<template class="ref">SELECT category, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category HAVING AVG(price) > (SELECT AVG(price) FROM products) ORDER BY avg_price DESC</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Sản phẩm có <b>tồn kho trên mức trung bình</b>: hiển thị <code>name</code>, <code>stock</code>, lọc <code>stock &gt; (SELECT AVG(stock) FROM products)</code>, sắp theo <code>stock</code> giảm dần.</span>
+<template class="st">SELECT name, stock
+FROM products
+WHERE stock > (</template>
+<template class="ref">SELECT name, stock FROM products WHERE stock > (SELECT AVG(stock) FROM products) ORDER BY stock DESC</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Sản phẩm đắt hơn <b>giá trung bình của nhóm 'Đồ uống'</b>: hiển thị <code>name</code>, <code>price</code>, lọc <code>price &gt; (SELECT AVG(price) FROM products WHERE category = 'Đồ uống')</code>, sắp theo <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price > (</template>
+<template class="ref">SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Sản phẩm <b>chưa từng được bán</b> (kèm giá): hiển thị <code>name</code>, <code>price</code>, lọc <code>id NOT IN (SELECT product_id FROM order_items)</code>, sắp theo <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name, price FROM products WHERE id NOT IN (SELECT product_id FROM order_items) ORDER BY price</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Sản phẩm <b>đắt hơn mọi món trong nhóm 'Đồ uống'</b> (tức đắt hơn món đắt nhất của nhóm đó): hiển thị <code>name</code>, <code>price</code>, lọc <code>price &gt; (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')</code>, sắp theo <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price > (</template>
+<template class="ref">SELECT name, price FROM products WHERE price > (SELECT MAX(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>

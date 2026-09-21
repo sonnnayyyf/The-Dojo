@@ -1,0 +1,110 @@
+<h3>Bài 3 — ORDER BY & LIMIT: sắp xếp và lấy top</h3>
+<p>Kết quả truy vấn ở các bài trước trả về theo thứ tự "tự nhiên" của bảng — không có gì đảm bảo nó có ý nghĩa. Nhưng câu hỏi kinh doanh gần như luôn cần <b>thứ tự</b>: "sản phẩm <b>đắt nhất</b>?", "khách hàng <b>mới nhất</b>?", "5 mặt hàng <b>tồn kho nhiều nhất</b>?".</p>
+<p><code>ORDER BY</code> sắp xếp kết quả theo một (hoặc nhiều) cột. Kết hợp với <code>LIMIT</code> để chỉ lấy vài dòng đầu, bạn có ngay công cụ trả lời mọi câu hỏi dạng "top N" — thứ xuất hiện trong hầu hết báo cáo thực tế.</p>
+<p><code>ORDER BY</code> luôn đứng <b>sau</b> <code>WHERE</code> (nếu có), và <code>LIMIT</code> đứng <b>cuối cùng</b>. Hãy nhớ trật tự này: <code>SELECT … FROM … WHERE … ORDER BY … LIMIT …</code>.</p>
+
+<h4>1. ORDER BY — sắp xếp tăng dần</h4>
+<p>Mặc định <code>ORDER BY cột</code> sắp xếp <b>tăng dần</b> (nhỏ → lớn với số, A → Z với chữ):</p>
+<pre class="run">SELECT name, price
+FROM products
+ORDER BY price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Lấy <code>name</code>, <code>price</code> của mọi sản phẩm, sắp xếp theo <code>price</code> <b>tăng dần</b>.</span>
+<template class="st">SELECT name, price FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, price FROM products ORDER BY price</template></div>
+
+<h4>2. Giảm dần với DESC</h4>
+<p>Thêm <code>DESC</code> để đảo chiều — lớn → nhỏ. (Chiều mặc định là <code>ASC</code>, thường không cần viết.)</p>
+<pre class="run">SELECT name, price
+FROM products
+ORDER BY price DESC;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Lấy <code>name</code>, <code>price</code> của mọi sản phẩm, sắp xếp theo <code>price</code> <b>giảm dần</b>.</span>
+<template class="st">SELECT name, price FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC</template></div>
+
+<h4>3. Sắp xếp theo văn bản và ngày</h4>
+<p><code>ORDER BY</code> cũng dùng được với chữ (thứ tự bảng chữ cái) và với ngày dạng chuỗi <code>YYYY-MM-DD</code> (nhờ định dạng này, so sánh chuỗi cũng chính là so sánh thời gian).</p>
+<pre class="run">SELECT name FROM products
+ORDER BY name;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Lấy <code>name</code> của mọi sản phẩm, sắp xếp theo <b>bảng chữ cái</b> (theo cột <code>name</code>).</span>
+<template class="st">SELECT name FROM products
+ORDER BY </template>
+<template class="ref">SELECT name FROM products ORDER BY name</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Lấy <code>name</code>, <code>joined_at</code> của mọi khách hàng, sắp xếp theo <code>joined_at</code> <b>tăng dần</b> (người gia nhập sớm nhất lên trước).</span>
+<template class="st">SELECT name, joined_at FROM customers
+ORDER BY </template>
+<template class="ref">SELECT name, joined_at FROM customers ORDER BY joined_at</template></div>
+
+<h4>4. Sắp xếp nhiều cột</h4>
+<p>Liệt kê nhiều cột, cách nhau dấu phẩy. SQL sắp theo cột đầu trước; khi <b>bằng nhau</b> mới xét đến cột tiếp theo. Mỗi cột có thể có chiều riêng.</p>
+<pre class="run">SELECT name, category, price
+FROM products
+ORDER BY category, price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Lấy <code>name</code>, <code>category</code>, <code>price</code>, sắp xếp theo <code>category</code> rồi theo <code>price</code> (cả hai tăng dần).</span>
+<template class="st">SELECT name, category, price FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, category, price FROM products ORDER BY category, price</template></div>
+
+<h4>5. LIMIT — chỉ lấy vài dòng đầu</h4>
+<p><code>LIMIT n</code> cắt kết quả xuống còn tối đa <code>n</code> dòng. Rất hữu ích để xem nhanh, hoặc kết hợp với <code>ORDER BY</code> để lấy "top".</p>
+<pre class="run">SELECT name FROM products
+ORDER BY id
+LIMIT 3;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Lấy <code>name</code> của <b>3 sản phẩm đầu tiên theo <code>id</code></b> (sắp theo <code>id</code>, giới hạn 3 dòng).</span>
+<template class="st">SELECT name FROM products
+ORDER BY id
+</template>
+<template class="ref">SELECT name FROM products ORDER BY id LIMIT 3</template></div>
+
+<h4>6. Công thức "top N"</h4>
+<p>Ghép <code>ORDER BY … DESC</code> với <code>LIMIT n</code> là cách kinh điển để lấy "n cái lớn nhất". Đảo lại thành <code>ASC</code> để lấy "n cái nhỏ nhất".</p>
+<pre class="run">SELECT name, price
+FROM products
+ORDER BY price DESC
+LIMIT 3;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Lấy <code>name</code>, <code>price</code> của <b>3 sản phẩm đắt nhất</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 3</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Lấy <code>name</code>, <code>price</code> của <b>3 sản phẩm rẻ nhất</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price ASC LIMIT 3</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Lấy <code>name</code>, <code>price</code> của <b>đúng 1 sản phẩm đắt nhất</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 1</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Lấy <code>name</code>, <code>stock</code> của <b>5 sản phẩm tồn kho nhiều nhất</b>.</span>
+<template class="st">SELECT name, stock FROM products
+</template>
+<template class="ref">SELECT name, stock FROM products ORDER BY stock DESC LIMIT 5</template></div>
+
+<h4>7. Bỏ qua vài dòng đầu: OFFSET</h4>
+<p><code>LIMIT n OFFSET k</code> bỏ qua <code>k</code> dòng đầu rồi lấy <code>n</code> dòng tiếp theo — dùng cho phân trang, hoặc lấy "hạng nhì, hạng ba".</p>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Lấy <code>name</code>, <code>price</code> của <b>sản phẩm đắt thứ 2 và thứ 3</b> (bỏ qua cái đắt nhất). Gợi ý: <code>ORDER BY price DESC LIMIT 2 OFFSET 1</code>.</span>
+<template class="st">SELECT name, price FROM products
+ORDER BY price DESC
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 2 OFFSET 1</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Lấy <code>name</code>, <code>stock</code> của mọi sản phẩm, sắp xếp theo <code>stock</code> <b>tăng dần</b>.</span>
+<template class="st">SELECT name, stock FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, stock FROM products ORDER BY stock</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Lấy <code>name</code>, <code>price</code> của sản phẩm nhóm <code>'Đồ uống'</code>, sắp xếp theo <code>price</code> <b>giảm dần</b>.</span>
+<template class="st">SELECT name, price FROM products
+WHERE 
+ORDER BY </template>
+<template class="ref">SELECT name, price FROM products WHERE category = 'Đồ uống' ORDER BY price DESC</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Lấy <code>name</code>, <code>price</code> của <b>3 sản phẩm rẻ nhất KHÔNG thuộc nhóm <code>'Điện tử'</code></b>.</span>
+<template class="st">SELECT name, price FROM products
+WHERE 
+ORDER BY </template>
+<template class="ref">SELECT name, price FROM products WHERE category <> 'Điện tử' ORDER BY price ASC LIMIT 3</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Lấy <code>name</code>, <code>city</code> của mọi khách hàng, sắp xếp theo <code>city</code> rồi theo <code>name</code> (cả hai tăng dần).</span>
+<template class="st">SELECT name, city FROM customers
+ORDER BY </template>
+<template class="ref">SELECT name, city FROM customers ORDER BY city, name</template></div>

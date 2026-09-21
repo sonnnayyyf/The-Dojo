@@ -1,0 +1,89 @@
+<h3>Lesson 1 — SELECT: your first queries</h3>
+<p>A database is simply a set of <b>tables</b> — exactly like an Excel spreadsheet: each table has <b>columns</b> and <b>rows</b>. SQL is the language you use to <i>ask questions</i> of those tables and get answers back. Nothing to install: below is a <b>real</b> database for a small shop, running right in your browser.</p>
+<p>This lesson covers just one statement — <code>SELECT</code> — but it's the one you'll use most in your whole career. It <b>reads</b> data: which columns, from which table. We won't filter rows yet (Lesson 2) or sort them (Lesson 3) — we'll just focus on pulling out the columns you want.</p>
+<p>Take it slow. Every "▶ Try it" box is a real editor: type a query, run it, see the result, and get graded instantly. Getting it wrong is fine — just try again.</p>
+
+<h4>1. What's in our shop?</h4>
+<p>This database has <b>four tables</b>. You'll use all four throughout the course:</p>
+<table class="res"><tr><th>Table</th><th>Holds</th><th>Columns</th></tr>
+<tr><td><code>products</code></td><td>items for sale</td><td><code>id, name, category, price, stock</code></td></tr>
+<tr><td><code>customers</code></td><td>customers</td><td><code>id, name, city, joined_at</code></td></tr>
+<tr><td><code>orders</code></td><td>orders</td><td><code>id, customer_id, order_date</code></td></tr>
+<tr><td><code>order_items</code></td><td>each line within an order</td><td><code>id, order_id, product_id, qty</code></td></tr></table>
+<p>This lesson mainly uses the <code>products</code> table. Prices (<code>price</code>) are in Vietnamese đồng (₫).</p>
+
+<h4>2. The shape of a query</h4>
+<p>A basic <code>SELECT</code> has two parts: choose the <b>columns</b>, and name the <b>table</b>.</p>
+<pre class="run">SELECT name, price
+FROM products;</pre>
+<p>Read it as: "<b>SELECT</b> the columns name, price <b>FROM</b> the products table". The <code>;</code> ends the statement. SQL is not case-sensitive, but a good habit is to write keywords in <b>UPPERCASE</b> (<code>SELECT</code>, <code>FROM</code>) so they stand out.</p>
+
+<h4>3. SELECT * — every column</h4>
+<p>The <code>*</code> means "all columns". Handy for a quick peek at what a table contains.</p>
+<pre class="run">SELECT * FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Show <b>all columns</b> of every product in the <code>products</code> table.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT * FROM products</template></div>
+
+<h4>4. Choosing just the columns you need</h4>
+<p>In practice you rarely want everything. Name exactly the columns you want, separated by commas.</p>
+<pre class="run">SELECT name, price FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Show only the two columns <code>name</code> and <code>price</code> of every product.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT name, price FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Show three columns: <code>name</code>, <code>category</code>, <code>price</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT name, category, price FROM products</template></div>
+
+<h4>5. Column order is up to you</h4>
+<p>Columns appear <b>in the order you write them</b> — they don't have to follow the table's order.</p>
+<pre class="run">SELECT price, name FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Show <code>price</code> <b>first</b>, then <code>name</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT price, name FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Show <code>id</code> then <code>name</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT id, name FROM products</template></div>
+
+<h4>6. Working with the other tables</h4>
+<p><code>SELECT</code> works on <b>any</b> table — just change the name after <code>FROM</code>.</p>
+<pre class="run">SELECT * FROM customers;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Show <b>all columns</b> of every customer in the <code>customers</code> table.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT * FROM customers</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> From the <code>customers</code> table, show <code>name</code> and <code>city</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT name, city FROM customers</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Show <b>all columns</b> of every order in the <code>orders</code> table.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT * FROM orders</template></div>
+
+<h4>7. DISTINCT — remove duplicates</h4>
+<p>Many products share a category. If you only want to know "what <i>kinds</i> of items does the shop sell?", add <code>DISTINCT</code> right after <code>SELECT</code> so each value appears only once.</p>
+<pre class="run">SELECT DISTINCT category FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> List each <code>category</code> exactly <b>once</b> (use <code>DISTINCT</code>).</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT category FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> From the <code>customers</code> table, list each <code>city</code> exactly once.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT city FROM customers</template></div>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> The <code>order_items</code> table records each line of goods in an order. Show three columns <code>order_id</code>, <code>product_id</code>, <code>qty</code> from it.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT order_id, product_id, qty FROM order_items</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> From the <code>products</code> table, show <code>name</code> and <code>stock</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT name, stock FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Show <b>all columns</b> of the <code>order_items</code> table.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT * FROM order_items</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> From the <code>orders</code> table, list each <code>customer_id</code> exactly once (use <code>DISTINCT</code>).</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT customer_id FROM orders</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> From the <code>customers</code> table, show in this exact order: <code>joined_at</code>, <code>name</code>, <code>city</code>.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT joined_at, name, city FROM customers</template></div>
+
+<div class="hw"><b>Lesson 1 recap:</b> <code>SELECT</code> picks columns · <code>FROM</code> picks the table · <code>*</code> means all · <code>DISTINCT</code> removes duplicates · column order is your choice. That's it — next lesson we learn to <i>filter rows</i> with <code>WHERE</code>. Slow and steady.</div>

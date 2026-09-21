@@ -1,0 +1,193 @@
+<h3>Bài 15 — Xử lý lỗi: try / except</h3>
+<p>Cho tới giờ, khi có gì đó sai — chia cho 0, biến <code>"abc"</code> thành số, đọc một khóa không tồn tại — chương trình của bạn đơn giản là <b>crash</b> với một dòng lỗi đỏ rồi dừng hẳn. Điều đó ổn khi đang học, nhưng một chương trình thật không thể sụp đổ mỗi lần người dùng gõ gì đó lạ. Nó cần <b>lường trước</b> rắc rối và xử lý một cách bình tĩnh.</p>
+<p>Công cụ của Python cho việc này là <code>try / except</code>: bạn đặt đoạn code có rủi ro trong khối <code>try</code>, và nếu nó gây lỗi, Python nhảy sang khối <code>except</code> thay vì crash. Chương trình tiếp tục chạy và có thể đưa ra phản hồi hợp lý — một giá trị mặc định, một thông báo thân thiện, một mục bị bỏ qua.</p>
+<p>Đây là khác biệt giữa một script mong manh và phần mềm mà người ta thật sự dùng được. Xử lý nhập liệu xấu một cách nhẹ nhàng là một trong những dấu hiệu rõ nhất của một lập trình viên thật.</p>
+
+<h4>1. Một lỗi trông như thế nào</h4>
+<p>Một số thao tác thất bại lúc chạy và gây ra một <b>ngoại lệ (exception)</b> có tên. Vài cái bạn sẽ gặp liên tục:</p>
+<table class="res">
+<thead><tr><th>Code</th><th>Ngoại lệ</th><th>Vì sao</th></tr></thead>
+<tbody>
+<tr><td><code>int("abc")</code></td><td>ValueError</td><td>chữ không phải số</td></tr>
+<tr><td><code>10 / 0</code></td><td>ZeroDivisionError</td><td>không thể chia cho 0</td></tr>
+<tr><td><code>d["missing"]</code></td><td>KeyError</td><td>không có khóa đó trong dict</td></tr>
+<tr><td><code>items[99]</code></td><td>IndexError</td><td>vị trí vượt quá cuối list</td></tr>
+</tbody>
+</table>
+<p>Nếu không xử lý, bất kỳ cái nào cũng làm dừng cả chương trình.</p>
+
+<h4>2. try / except</h4>
+<p>Bọc dòng có rủi ro trong <code>try</code>. Nếu nó thất bại, khối <code>except</code> chạy thay thế.</p>
+<pre class="run">def safe_int(s):
+    try:
+        return int(s)        # rủi ro: có thể thất bại
+    except ValueError:
+        return 0             # chỉ chạy nếu int() thất bại
+
+print(safe_int("42"))    # 42
+print(safe_int("abc"))   # 0  — không crash</pre>
+<figure class="diagram">
+<svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+  <defs>
+    <marker id="a15v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7FD1C0"/>
+    </marker>
+  </defs>
+  <rect x="120" y="14" width="120" height="34" rx="8" fill="#121C30" stroke="#22304C"/>
+  <text x="180" y="35" text-anchor="middle" fill="#E8E4D8">chạy khối try</text>
+  <rect x="30" y="100" width="130" height="34" rx="8" fill="#0E1626" stroke="#22304C"/>
+  <text x="95" y="121" text-anchor="middle" fill="#7FD1C0">ổn → return</text>
+  <rect x="200" y="100" width="140" height="34" rx="8" fill="#0E1626" stroke="#22304C"/>
+  <text x="270" y="121" text-anchor="middle" fill="#E2604C">lỗi → except</text>
+  <g stroke="#7FD1C0" stroke-width="1.3" marker-end="url(#a15v)" fill="none">
+    <line x1="160" y1="48" x2="100" y2="96"/>
+  </g>
+  <g stroke="#E2604C" stroke-width="1.3" marker-end="url(#a15v)" fill="none" stroke-dasharray="4 3">
+    <line x1="200" y1="48" x2="262" y2="96"/>
+  </g>
+  <text x="120" y="78" fill="#8FA0BC" font-size="10">không lỗi</text>
+  <text x="238" y="78" fill="#8FA0BC" font-size="10">lỗi!</text>
+</svg>
+<figcaption>Nếu khối <code>try</code> thành công, khối <code>except</code> bị bỏ qua. Nếu nó gây lỗi, Python nhảy sang <code>except</code> thay vì crash.</figcaption>
+</figure>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 1.</b> Định nghĩa <code>safe_int</code> trả về <code>int(s)</code>, hoặc <code>0</code> nếu <code>s</code> không thể chuyển. Vậy <code>safe_int("42")</code> là <code>42</code> và <code>safe_int("abc")</code> là <code>0</code>.</span>
+<template class="st">def safe_int(s):
+    # try to convert, else return 0
+    pass
+</template>
+<template class="ts">assert safe_int("42") == 42
+assert safe_int("abc") == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 2.</b> Định nghĩa <code>safe_divide</code> trả về <code>a / b</code>, hoặc <code>0</code> nếu <code>b</code> bằng 0 (bắt <code>ZeroDivisionError</code>). Vậy <code>safe_divide(10, 2)</code> là <code>5.0</code> và <code>safe_divide(5, 0)</code> là <code>0</code>.</span>
+<template class="st">def safe_divide(a, b):
+    # divide safely
+    pass
+</template>
+<template class="ts">assert safe_divide(10, 2) == 5.0
+assert safe_divide(5, 0) == 0
+</template></div>
+
+<h4>3. Bắt đúng lỗi</h4>
+<p>Ghi tên ngoại lệ bạn dự đoán sau <code>except</code>. Điều này tránh việc vô tình che giấu những lỗi bạn không định bắt. Đọc một khóa dict không có gây ra <code>KeyError</code>; một chỉ số list ngoài phạm vi gây ra <code>IndexError</code>.</p>
+<pre class="run">def safe_get(d, key):
+    try:
+        return d[key]
+    except KeyError:
+        return "missing"
+
+person = {"name": "Anna"}
+print(safe_get(person, "name"))    # Anna
+print(safe_get(person, "email"))   # missing</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 3.</b> Định nghĩa <code>safe_get</code> trả về <code>d[key]</code>, hoặc <code>"missing"</code> nếu không có khóa. Vậy với <code>{"name": "Anna"}</code>, <code>safe_get(d, "name")</code> là <code>"Anna"</code> và <code>safe_get(d, "email")</code> là <code>"missing"</code>.</span>
+<template class="st">def safe_get(d, key):
+    # return the value or "missing"
+    pass
+</template>
+<template class="ts">assert safe_get({"name": "Anna"}, "name") == "Anna"
+assert safe_get({"name": "Anna"}, "email") == "missing"
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 4.</b> Định nghĩa <code>get_item</code> trả về <code>items[i]</code>, hoặc <code>None</code> nếu chỉ số ngoài phạm vi (bắt <code>IndexError</code>). Vậy <code>get_item([10, 20], 0)</code> là <code>10</code> và <code>get_item([10, 20], 5)</code> là <code>None</code>.</span>
+<template class="st">def get_item(items, i):
+    # return the item or None
+    pass
+</template>
+<template class="ts">assert get_item([10, 20], 0) == 10
+assert get_item([10, 20], 5) is None
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 5.</b> Định nghĩa <code>to_float</code> trả về <code>float(s)</code>, hoặc <code>None</code> nếu không thể chuyển. Vậy <code>to_float("3.5")</code> là <code>3.5</code> và <code>to_float("x")</code> là <code>None</code>.</span>
+<template class="st">def to_float(s):
+    # return the float or None
+    pass
+</template>
+<template class="ts">assert to_float("3.5") == 3.5
+assert to_float("x") is None
+</template></div>
+
+<h4>4. Xử lý phần tử xấu trong vòng lặp</h4>
+<p>Một việc rất thường gặp: xử lý một list mà <b>vài</b> mục bị hỏng. Bọc phần rủi ro trong <code>try</code> và chỉ cần bỏ qua (hoặc dùng mặc định) những cái thất bại — vòng lặp vẫn tiếp tục.</p>
+<pre class="run">values = ["1", "2", "x", "3"]
+total = 0
+for v in values:
+    try:
+        total += int(v)
+    except ValueError:
+        pass                 # bỏ qua cái xấu
+print(total)   # 6</pre>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 6.</b> Định nghĩa <code>sum_numbers</code> cộng các giá trị trong list có thể chuyển thành <code>int</code>, bỏ qua phần còn lại. Vậy <code>sum_numbers(["1", "2", "x", "3"])</code> là <code>6</code>.</span>
+<template class="st">def sum_numbers(values):
+    # sum the convertible values, skip the rest
+    pass
+</template>
+<template class="ts">assert sum_numbers(["1", "2", "x", "3"]) == 6
+assert sum_numbers(["a", "b"]) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 7.</b> Định nghĩa <code>count_valid</code> trả về bao nhiêu chuỗi trong <code>values</code> có thể chuyển thành <code>int</code>. Vậy <code>count_valid(["1", "2", "x", "3"])</code> là <code>3</code>.</span>
+<template class="st">def count_valid(values):
+    # count how many convert to int
+    pass
+</template>
+<template class="ts">assert count_valid(["1", "2", "x", "3"]) == 3
+assert count_valid(["a"]) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 8.</b> Định nghĩa <code>percent</code> trả về <code>round(part / whole * 100)</code>, hoặc <code>0</code> nếu <code>whole</code> bằng 0. Vậy <code>percent(1, 4)</code> là <code>25</code> và <code>percent(1, 0)</code> là <code>0</code>.</span>
+<template class="st">def percent(part, whole):
+    # return the percentage, or 0 if whole is 0
+    pass
+</template>
+<template class="ts">assert percent(1, 4) == 25
+assert percent(1, 0) == 0
+</template></div>
+<div class="ex" data-kind="py"><span class="exq"><b>Bài tập 9.</b> Định nghĩa <code>clean_ints</code> trả về một list các giá trị <code>int</code> từ <code>values</code>, bỏ đi những cái không chuyển được. Vậy <code>clean_ints(["10", "x", "20"])</code> là <code>[10, 20]</code>.</span>
+<template class="st">def clean_ints(values):
+    # return a list of the valid ints
+    pass
+</template>
+<template class="ts">assert clean_ints(["10", "x", "20"]) == [10, 20]
+assert clean_ints(["a", "b"]) == []
+</template></div>
+<div class="ex stretch" data-kind="py"><span class="exq"><b>🔥 Nâng cao (trung bình vững vàng).</b> Định nghĩa <code>safe_average</code> chỉ lấy trung bình những giá trị trong <code>values</code> chuyển được thành số, và trả về <code>0</code> nếu không có cái nào. Vậy <code>safe_average(["2", "x", "4"])</code> là <code>3.0</code> và <code>safe_average(["a"])</code> là <code>0</code>.</span>
+<template class="st">def safe_average(values):
+    # average the valid numbers, or 0 if none
+    pass
+</template>
+<template class="ts">assert safe_average(["2", "x", "4"]) == 3.0
+assert safe_average(["a"]) == 0
+</template></div>
+
+<div class="recap">Tóm tắt bài 15: các thao tác rủi ro gây ra <b>ngoại lệ</b> có tên (<code>ValueError</code>, <code>ZeroDivisionError</code>, <code>KeyError</code>, <code>IndexError</code>) làm crash chương trình nếu không xử lý · đặt code rủi ro trong <code>try</code> và phần khắc phục trong <code>except</code> · ghi tên đúng ngoại lệ bạn dự đoán để không che giấu lỗi khác · trong vòng lặp, <code>try/except</code> giúp bỏ qua hoặc dùng mặc định cho phần tử xấu và tiếp tục chạy. Bài sau: <b>tuple, unpacking &amp; enumerate</b> — cách gọn hơn để gói và duyệt dữ liệu.</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài tập được chấm điểm — làm ngay tại đây trước bài kế tiếp.</p>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 1.</b> Định nghĩa <code>to_int</code> trả về <code>int(s)</code>, hoặc một giá trị <code>default</code> (mặc định <code>0</code>) nếu không chuyển được. Vậy <code>to_int("5")</code> là <code>5</code>, <code>to_int("x")</code> là <code>0</code>, và <code>to_int("x", -1)</code> là <code>-1</code>.</span>
+<template class="st">def to_int(s, default=0):
+    # convert, or return the default
+    pass
+</template>
+<template class="ts">assert to_int("5") == 5
+assert to_int("x") == 0
+assert to_int("x", -1) == -1
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 2.</b> Định nghĩa <code>safe_ratio</code> trả về <code>a / b</code>, hoặc <code>None</code> nếu <code>b</code> bằng 0. Vậy <code>safe_ratio(10, 2)</code> là <code>5.0</code> và <code>safe_ratio(1, 0)</code> là <code>None</code>.</span>
+<template class="st">def safe_ratio(a, b):
+    # divide safely, else None
+    pass
+</template>
+<template class="ts">assert safe_ratio(10, 2) == 5.0
+assert safe_ratio(1, 0) is None
+</template></div>
+<div class="ex homework" data-kind="py"><span class="exq"><b>Bài về nhà 3.</b> Định nghĩa <code>lookup</code> trả về <code>d[key]</code>, hoặc <code>"N/A"</code> nếu khóa không có. Vậy với <code>{"a": 1}</code>, <code>lookup(d, "a")</code> là <code>1</code> và <code>lookup(d, "z")</code> là <code>"N/A"</code>.</span>
+<template class="st">def lookup(d, key):
+    # return the value or "N/A"
+    pass
+</template>
+<template class="ts">assert lookup({"a": 1}, "a") == 1
+assert lookup({"a": 1}, "z") == "N/A"
+</template></div>
+<div class="ex homework stretch" data-kind="py"><span class="exq"><b>🔥 Bài về nhà 4 (nâng cao).</b> Định nghĩa <code>total_valid</code> cộng các giá trị trong <code>values</code> chuyển được thành <code>int</code> và bỏ qua phần còn lại. Vậy <code>total_valid(["1", "2", "x"])</code> là <code>3</code> và <code>total_valid(["a", "b"])</code> là <code>0</code>.</span>
+<template class="st">def total_valid(values):
+    # sum only the convertible values
+    pass
+</template>
+<template class="ts">assert total_valid(["1", "2", "x"]) == 3
+assert total_valid(["a", "b"]) == 0
+</template></div>
