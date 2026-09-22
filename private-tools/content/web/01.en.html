@@ -1,7 +1,7 @@
 <h3>Lesson 1 — How the web works</h3>
 <p>Every time you open a website — a news page, a shop, a video app — a lot happens in the half-second before it appears. Your device sends a <b>request</b> across the internet to another computer, that computer sends files back, and your <b>browser</b> turns those files into the page you see and touch. Before you write a single line of code, it pays to understand this journey. It's the mental model everything else in this course hangs on.</p>
 <p>Here's the key idea we'll build on for sixteen lessons: a web page is made of <b>three separate languages</b>, each with one job. <b>HTML</b> is the <i>structure</i> — the headings, paragraphs, images and buttons (the "what"). <b>CSS</b> is the <i>style</i> — colours, spacing, fonts and layout (the "how it looks"). <b>JavaScript</b> is the <i>behaviour</i> — what happens when you click, type or scroll (the "what it does"). Same three languages power <i>every</i> website on earth, from a personal blog to a bank.</p>
-<p>This first lesson is about <i>seeing</i> that picture clearly, so you're never confused about which language does what. There's no syntax to memorise yet — instead you'll answer quick quizzes, <b>run real mini-pages</b> in the browser, and even <b>edit real HTML and CSS yourself and get graded on the spot</b>. Getting something wrong is fine: you just try again until it passes.</p>
+<p>You won't just read about this — you'll <b>build it</b>. Most of this lesson is real editing: you'll change headings, recolour text, restyle backgrounds and assemble tiny pages in a live editor, pressing <b>Run</b> to see the website render and get graded instantly. There's no syntax to memorise yet; you edit what's given and watch it come alive. Getting it wrong is fine — you just try again until it passes.</p>
 
 <h4>1. The request–response journey</h4>
 <p>When you type an address (a <b>URL</b>) and press Enter, your browser (the <b>client</b>) sends a <b>request</b> to a <b>server</b> — a computer somewhere whose job is to hold and hand out web files. The server sends back a <b>response</b>: the page's files. This back-and-forth is the heartbeat of the web.</p>
@@ -31,45 +31,17 @@
 <li>It decides what colour the buttons are.</li>
 <li>It is the same thing as your browser.</li>
 </ol></div>
-<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 2.</b> The message your browser sends to ask for a page is called the…</span>
-<ol class="opts">
-<li>response</li>
-<li>stylesheet</li>
-<li>request</li>
-<li>server</li>
-</ol></div>
 
 <h4>2. Three languages, three jobs</h4>
-<p>The response is (mostly) three kinds of file, each with a single responsibility. Keep this table in your head — the whole course is organised around it.</p>
+<p>The response is (mostly) three kinds of file, each with a single responsibility. Keep this table in your head — the whole course is organised around it. In the next sections you'll build a small page one layer at a time and <i>feel</i> the difference.</p>
 <table class="res"><tr><th>Language</th><th>Job</th><th>Think of a house</th></tr>
 <tr><td><code>HTML</code></td><td><b>Structure</b> — headings, text, images, buttons</td><td>the walls &amp; rooms</td></tr>
 <tr><td><code>CSS</code></td><td><b>Style</b> — colours, fonts, spacing, layout</td><td>the paint &amp; furniture</td></tr>
 <tr><td><code>JavaScript</code></td><td><b>Behaviour</b> — what happens on click/type/scroll</td><td>the electricity &amp; plumbing</td></tr></table>
-<div class="ex" data-kind="quiz" data-a="0"><span class="exq"><b>Exercise 3.</b> Which language is responsible for the <b>structure</b> of a page (its headings, paragraphs and images)?</span>
-<ol class="opts">
-<li>HTML</li>
-<li>CSS</li>
-<li>JavaScript</li>
-<li>The server</li>
-</ol></div>
-<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 4.</b> You want to change the page's <b>colours and spacing</b>. Which language do you reach for?</span>
-<ol class="opts">
-<li>HTML</li>
-<li>CSS</li>
-<li>JavaScript</li>
-<li>URL</li>
-</ol></div>
-<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 5.</b> A button should <b>show a message when clicked</b>. That's a job for…</span>
-<ol class="opts">
-<li>HTML</li>
-<li>CSS</li>
-<li>JavaScript</li>
-<li>the server</li>
-</ol></div>
 
-<h4>3. See HTML on its own</h4>
-<p>Let's make the three layers concrete. Below is a tiny page written in <b>HTML only</b> — pure structure, no styling. Press <b>▶ Run</b> and watch it render in the preview. Notice it works, but looks plain: black text on white, default fonts. That's HTML doing its one job — structure — and nothing more. Try changing the text between the tags, then Run again.</p>
-<div class="ex" data-kind="web"><span class="exq"><b>Exercise 6.</b> Run this HTML-only page and read the result. Then change the heading text and Run again.</span>
+<h4>3. HTML — structure you can edit</h4>
+<p>Below is a tiny page written in <b>HTML only</b> — pure structure, no styling. Press <b>▶ Run</b> and watch it render in the preview. It works, but looks plain: black text on white, default fonts. That's HTML doing its one job — structure — and nothing more.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 2.</b> Run this HTML-only page and read the result. Then change some text between the tags and Run again to see it update.</span>
 <template class="st">&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;body&gt;
@@ -79,17 +51,26 @@
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
-<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Here is a heading. Change the text between <code>&lt;h1&gt;</code> and <code>&lt;/h1&gt;</code> so it reads exactly <code>Dojo Daily</code>, then press Run to get graded.</span>
+<p>Now your turn. The text you see on a page lives <i>between</i> an opening tag like <code>&lt;h1&gt;</code> and a closing tag like <code>&lt;/h1&gt;</code>. Change that text and the page changes.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Change the text between <code>&lt;h1&gt;</code> and <code>&lt;/h1&gt;</code> so the heading reads exactly <code>Dojo Daily</code>, then press Run.</span>
 <template class="st">&lt;h1&gt;Change this text&lt;/h1&gt;</template>
 <template class="ts">
 assert(document.querySelector('h1'), 'keep the h1 heading');
 assert(document.querySelector('h1').textContent.trim() === 'Dojo Daily', 'the heading should read exactly "Dojo Daily"');
 </template>
 </div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> A paragraph uses <code>&lt;p&gt;…&lt;/p&gt;</code>. Change the paragraph text so it reads exactly <code>Welcome to my website.</code></span>
+<template class="st">&lt;h1&gt;Dojo Daily&lt;/h1&gt;
+&lt;p&gt;Old text here&lt;/p&gt;</template>
+<template class="ts">
+assert(document.querySelector('p'), 'keep the paragraph');
+assert(document.querySelector('p').textContent.trim() === 'Welcome to my website.', 'the paragraph should read exactly "Welcome to my website."');
+</template>
+</div>
 
-<h4>4. Add CSS and watch it change</h4>
-<p>Same structure — but now we've added a <b>CSS</b> block inside <code>&lt;style&gt;</code>. Nothing about the <i>content</i> changed; only the <i>look</i> did. Run it and compare with the previous page: colours, spacing and fonts appear, but it's the exact same headings and button underneath. This is the power of separating structure from style.</p>
-<div class="ex" data-kind="web"><span class="exq"><b>Exercise 8.</b> Run this page and see how CSS restyles the very same HTML. Try changing <code>tomato</code> to <code>teal</code>.</span>
+<h4>4. CSS — style you can change</h4>
+<p>Same structure — but now we've added a <b>CSS</b> block inside <code>&lt;style&gt;</code>. Nothing about the <i>content</i> changed; only the <i>look</i> did. Run it and compare: colours, spacing and fonts appear, but it's the exact same headings and button underneath. This is the power of separating structure from style.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 5.</b> Run this page and see how CSS restyles the very same HTML. Try changing <code>tomato</code> to <code>teal</code>.</span>
 <template class="st">&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -106,17 +87,26 @@ assert(document.querySelector('h1').textContent.trim() === 'Dojo Daily', 'the he
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
-<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> This title is styled black. In the <b>CSS</b> box, change <code>black</code> to <code>gold</code> so the title turns gold, then press Run.</span>
+<p>From here on, the <b>HTML</b> and <b>CSS</b> live in separate boxes — edit either one and press Run to combine them. A CSS rule looks like <code>selector { property: value; }</code>.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> In the <b>CSS</b> box, change <code>black</code> to <code>gold</code> so the title turns gold, then press Run.</span>
 <template class="html">&lt;h1 id="title"&gt;Sunset Blog&lt;/h1&gt;</template>
 <template class="css">#title { color: black; }</template>
 <template class="ts">
 assert(getComputedStyle(document.querySelector('#title')).color === 'rgb(255, 215, 0)', 'set the title colour to gold (change black to gold in the CSS)');
 </template>
 </div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Give the page a dark theme: in the <b>CSS</b>, change the <code>body</code> background from <code>white</code> to <code>navy</code>, then press Run.</span>
+<template class="html">&lt;h1&gt;Night mode&lt;/h1&gt;
+&lt;p&gt;A whole new mood.&lt;/p&gt;</template>
+<template class="css">body { background: white; color: white; padding: 16px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 128)', 'set the body background to navy (change white to navy)');
+</template>
+</div>
 
-<h4>5. Add JavaScript for behaviour</h4>
-<p>Structure and style are <b>static</b> — they just sit there. <b>JavaScript</b> makes a page <i>react</i>. The page below has a button wired with a tiny script: click it and the text changes. You don't need to understand the code yet (that's the second half of the course) — just run it, click the button, and notice that <i>something happens</i>. That "something happens on interaction" is exactly what JavaScript adds.</p>
-<div class="ex" data-kind="web"><span class="exq"><b>Exercise 10.</b> Run the page, then click the <b>Cheer!</b> button in the preview and watch the message change.</span>
+<h4>5. JavaScript — behaviour</h4>
+<p>Structure and style are <b>static</b> — they just sit there. <b>JavaScript</b> makes a page <i>react</i>. The page below has a button wired with a tiny script: click it and the text changes. You don't need to understand the code yet (that's the second half of the course) — just run it, click the button, and notice that <i>something happens</i>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 8.</b> Run the page, then click the <b>Cheer!</b> button in the preview and watch the message change.</span>
 <template class="st">&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;head&gt;&lt;style&gt;body{font-family:sans-serif;padding:20px}&lt;/style&gt;&lt;/head&gt;
@@ -126,7 +116,7 @@ assert(getComputedStyle(document.querySelector('#title')).color === 'rgb(255, 21
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
-<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 11.</b> Before you clicked, the heading said "Hello". After the click it changed. Which language made that <b>change happen on click</b>?</span>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 9.</b> Before you clicked, the heading said "Hello". After the click it changed. Which language made that <b>change happen on click</b>?</span>
 <ol class="opts">
 <li>HTML</li>
 <li>CSS</li>
@@ -134,9 +124,25 @@ assert(getComputedStyle(document.querySelector('#title')).color === 'rgb(255, 21
 <li>The URL</li>
 </ol></div>
 
-<h4>6. Putting the picture together</h4>
-<p>You now have the full mental model: a browser <b>requests</b> a page, a server <b>responds</b> with files, and the browser paints them using three languages — HTML for structure, CSS for style, JavaScript for behaviour. Everything else in this course is detail on top of this.</p>
-<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Fill in the blanks so the page has a heading that says <code>My First Page</code> and a paragraph that says <code>I am learning web.</code> — then press Run.</span>
+<h4>6. Put the layers together</h4>
+<p>You've now touched all three layers. Let's combine editing across them. Remember: <b>text</b> lives in the HTML, <b>colour</b> lives in the CSS.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Edit the <b>HTML</b> so the heading reads <code>My Shop</code> and the button reads <code>Buy now</code>, then press Run.</span>
+<template class="st">&lt;h1&gt;Store name&lt;/h1&gt;
+&lt;button&gt;Label&lt;/button&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'My Shop', 'the heading should read "My Shop"');
+assert(document.querySelector('button') && document.querySelector('button').textContent.trim() === 'Buy now', 'the button should read "Buy now"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Two files this time: in the <b>HTML</b> change the heading text to <code>Big Sale</code>, and in the <b>CSS</b> change its colour to <code>red</code>. Then press Run.</span>
+<template class="html">&lt;h1 id="hero"&gt;Change me&lt;/h1&gt;</template>
+<template class="css">#hero { color: black; }</template>
+<template class="ts">
+assert(document.querySelector('#hero') && document.querySelector('#hero').textContent.trim() === 'Big Sale', 'the heading should read "Big Sale"');
+assert(getComputedStyle(document.querySelector('#hero')).color === 'rgb(255, 0, 0)', 'set the heading colour to red in the CSS');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Build a tiny page from scratch of text. Replace the blanks so the heading says <code>My First Page</code> and the paragraph says <code>I am learning web.</code> — then press Run.</span>
 <template class="st">&lt;h1&gt;___&lt;/h1&gt;
 &lt;p&gt;___&lt;/p&gt;</template>
 <template class="ts">
@@ -146,32 +152,36 @@ assert(document.querySelector('p') && document.querySelector('p').textContent.tr
 </div>
 
 <h4>🏠 Homework</h4>
-<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
-<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> Your browser is best described as the…</span>
-<ol class="opts">
-<li>server that stores the files.</li>
-<li>client that requests pages and renders them.</li>
-<li>language used to style pages.</li>
-<li>internet cable.</li>
-</ol></div>
-<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Exercise 2.</b> Which trio lists the three core web languages in the order <b>structure, style, behaviour</b>?</span>
+<p>Four take-home exercises, auto-graded right on the page — mostly hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Exercise 1.</b> Which trio lists the three core web languages in the order <b>structure, style, behaviour</b>?</span>
 <ol class="opts">
 <li>HTML, CSS, JavaScript</li>
 <li>CSS, HTML, JavaScript</li>
 <li>JavaScript, CSS, HTML</li>
 <li>HTML, JavaScript, CSS</li>
 </ol></div>
-<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Change the button's label so it reads exactly <code>Sign up</code>, then press Run.</span>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Change the button's label so it reads exactly <code>Sign up</code>, then press Run.</span>
 <template class="st">&lt;button&gt;Click here&lt;/button&gt;</template>
 <template class="ts">
 assert(document.querySelector('button'), 'keep the button');
 assert(document.querySelector('button').textContent.trim() === 'Sign up', 'the button should read exactly "Sign up"');
 </template>
 </div>
-<div class="ex homework stretch" data-kind="quiz" data-a="3"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> A page loads instantly but a broken photo icon shows where a picture should be, and clicking a button does nothing. Which single-sentence diagnosis fits best?</span>
-<ol class="opts">
-<li>The CSS is missing, so there is no structure.</li>
-<li>The server never responded, so nothing loaded.</li>
-<li>The URL is a request, so the page cannot render.</li>
-<li>The HTML/response loaded, but an image file is missing and the button's JavaScript isn't working.</li>
-</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Two files: in the <b>HTML</b> change the heading text to <code>About Me</code>, and in the <b>CSS</b> change its colour to <code>green</code>. Then press Run.</span>
+<template class="html">&lt;h1 id="t"&gt;Heading&lt;/h1&gt;</template>
+<template class="css">#t { color: black; }</template>
+<template class="ts">
+assert(document.querySelector('#t') && document.querySelector('#t').textContent.trim() === 'About Me', 'the heading should read "About Me"');
+assert(getComputedStyle(document.querySelector('#t')).color === 'rgb(0, 128, 0)', 'set the heading colour to green in the CSS');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Build a little card. In the <b>HTML</b> make the heading say <code>Contact</code> and the paragraph say <code>Email me anytime.</code>, and in the <b>CSS</b> change the page background to <code>gold</code>. Then press Run.</span>
+<template class="html">&lt;h1&gt;___&lt;/h1&gt;
+&lt;p&gt;___&lt;/p&gt;</template>
+<template class="css">body { background: white; padding: 16px; }</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'Contact', 'the heading should say "Contact"');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'Email me anytime.', 'the paragraph should say "Email me anytime."');
+assert(getComputedStyle(document.body).backgroundColor === 'rgb(255, 215, 0)', 'set the page background to gold');
+</template>
+</div>

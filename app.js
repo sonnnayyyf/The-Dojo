@@ -6,7 +6,7 @@
   // ---------- editable contact config ----------
   const SENSEI = {
     zalo: '0986061705',            // your Zalo phone number
-    email: 'EDIT-ME@example.com',  // fallback email (edit me)
+    email: 'tranhoangson503@gmail.com',
   };
   window.DOJO_SENSEI = SENSEI;      // read by static pages (e.g. course overview) for the "Ask about" button
 
@@ -30,14 +30,14 @@
       tag: 'Học thật, làm thật, ngay trong trình duyệt.',
       explore: 'Khám phá', courses: 'Khóa học', pricing: 'Học phí', about: 'Giới thiệu',
       account: 'Tài khoản', login: 'Đăng nhập / Hồ sơ', buy: 'Mua khóa học',
-      contact: 'Liên hệ', zalo: 'Nhắn Zalo', teach: 'Học kèm 1-1',
+      contact: 'Liên hệ',
       rights: 'Bảo lưu mọi quyền.',
     },
     en: {
       tag: 'Real practice, right in your browser.',
       explore: 'Explore', courses: 'Courses', pricing: 'Pricing', about: 'About',
       account: 'Account', login: 'Log in / Profile', buy: 'Buy a course',
-      contact: 'Contact', zalo: 'Message on Zalo', teach: '1-on-1 tutoring',
+      contact: 'Contact',
       rights: 'All rights reserved.',
     },
   };
@@ -77,6 +77,7 @@
   function renderFooter() {
     const f = FOOTER_I18N[LANG];
     const zalo = (SENSEI && SENSEI.zalo) || '';
+    const email = (SENSEI && SENSEI.email) || '';
     const year = new Date().getFullYear();
     document.body.insertAdjacentHTML('beforeend',
       `<footer><div class="wrap footGrid">
@@ -97,8 +98,8 @@
         </div>
         <div class="footCol">
           <h4>${f.contact}</h4>
-          <a href="https://zalo.me/${zalo}" target="_blank" rel="noopener">${f.zalo}</a>
-          <a href="pricing.html">${f.teach}</a>
+          <span>Zalo: ${zalo}</span>
+          <span>Email: ${email}</span>
         </div>
       </div>
       <div class="wrap footBottom">© ${year} The Dojo. ${f.rights}</div></footer>`);
@@ -178,11 +179,14 @@
     maybePromptProfile();
   }
 
+  function profileComplete() {
+    return !!(Cloud.profile && Cloud.profile.full_name && Cloud.profile.phone);
+  }
+
   function maybePromptProfile() {
     if (!Cloud.user) return;
-    const incomplete = !Cloud.profile || !Cloud.profile.full_name;
-    if (incomplete && PAGE_FILE !== 'profile.html' && sessionStorage.getItem('dojoJustSignedUp') === '1') {
-      sessionStorage.removeItem('dojoJustSignedUp');
+    // hard onboarding gate: must fill name + phone before using anything else
+    if (!profileComplete() && PAGE_FILE !== 'profile.html') {
       location.href = 'profile.html';
     }
   }
@@ -257,6 +261,7 @@
       <div class="authOr">${vi ? 'hoặc' : 'or'}</div>
       <input type="email" id="authEmail" placeholder="Email" autocomplete="email">
       <input type="password" id="authPw" placeholder="${vi ? 'Mật khẩu' : 'Password'}" autocomplete="current-password">
+      <input type="password" id="authPw2" placeholder="${vi ? 'Xác nhận mật khẩu' : 'Confirm password'}" autocomplete="new-password" hidden>
       <button class="btn" id="authSubmit">${vi ? 'Đăng nhập' : 'Log in'}</button>
       <div class="authErr" id="authErr"></div>
       <div class="authSwitch">
@@ -273,7 +278,6 @@
     wrap.querySelector('#googleBtn').addEventListener('click', async () => {
       const sb = await getSupabase();
       if (!sb) { setErr('Cannot reach server.'); return; }
-      sessionStorage.setItem('dojoJustSignedUp', '1');
       await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href } });
     });
     wrap.querySelector('#authToggle').addEventListener('click', () => {
@@ -281,6 +285,7 @@
       const isLogin = mode === 'login';
       wrap.querySelector('#authTitle').textContent = isLogin ? (vi ? 'Đăng nhập' : 'Log in') : (vi ? 'Đăng ký' : 'Sign up');
       wrap.querySelector('#authSubmit').textContent = isLogin ? (vi ? 'Đăng nhập' : 'Log in') : (vi ? 'Đăng ký' : 'Sign up');
+      wrap.querySelector('#authPw2').hidden = isLogin;
       wrap.querySelector('#authToggle').textContent = isLogin
         ? (vi ? 'Chưa có tài khoản? Đăng ký' : 'No account? Sign up')
         : (vi ? 'Đã có tài khoản? Đăng nhập' : 'Have an account? Log in');
@@ -291,18 +296,25 @@
       const email = wrap.querySelector('#authEmail').value.trim();
       const pw = wrap.querySelector('#authPw').value;
       if (!email || !pw) { setErr(vi ? 'Nhập email và mật khẩu.' : 'Enter email and password.'); return; }
+      if (mode === 'signup') {
+        const pw2 = wrap.querySelector('#authPw2').value;
+        if (pw.length < 6) { setErr(vi ? 'Mật khẩu tối thiểu 6 ký tự.' : 'Password must be at least 6 characters.'); return; }
+        if (pw !== pw2) { setErr(vi ? 'Mật khẩu xác nhận không khớp.' : 'Passwords do not match.'); return; }
+      }
       const sb = await getSupabase();
       if (!sb) { setErr('Cannot reach server.'); return; }
+      // where the confirmation email link returns to (only meaningful on an http(s) site)
+      const dir = location.href.substring(0, location.href.lastIndexOf('/') + 1);
+      const emailRedirectTo = dir.startsWith('http') ? dir + 'profile.html' : undefined;
       const fn = mode === 'login'
         ? sb.auth.signInWithPassword({ email, password: pw })
-        : sb.auth.signUp({ email, password: pw });
+        : sb.auth.signUp({ email, password: pw, options: { emailRedirectTo } });
       const { data, error } = await fn;
       if (error) { setErr(error.message); return; }
       if (mode === 'signup' && !data.session) {
         setErr(vi ? 'Đã gửi email xác nhận — kiểm tra hộp thư.' : 'Confirmation email sent — check your inbox.');
         return;
       }
-      if (mode === 'signup') sessionStorage.setItem('dojoJustSignedUp', '1');
       close();
     });
   }
@@ -340,6 +352,7 @@
     getUser: () => Cloud.user,
     getProfile: () => Cloud.profile,
     isAdmin: () => !!Cloud.isAdmin,
+    isProfileComplete: () => profileComplete(),
     isReady: () => Cloud.ready,
     getClient: getSupabase,
     loadProfile,

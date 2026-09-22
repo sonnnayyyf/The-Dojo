@@ -1,7 +1,7 @@
 <h3>Bài 1 — Web hoạt động như thế nào</h3>
 <p>Mỗi lần bạn mở một trang web — trang tin tức, một cửa hàng, một ứng dụng xem video — rất nhiều thứ diễn ra trong nửa giây trước khi trang hiện ra. Thiết bị của bạn gửi một <b>yêu cầu (request)</b> qua internet đến một máy tính khác, máy tính đó gửi các tệp về, và <b>trình duyệt (browser)</b> của bạn biến những tệp đó thành trang mà bạn nhìn thấy và chạm vào. Trước khi viết dòng code đầu tiên, hiểu được hành trình này rất đáng giá. Đó là mô hình tư duy mà cả khóa học này dựa vào.</p>
 <p>Đây là ý tưởng cốt lõi ta sẽ xây dựng suốt mười sáu bài: một trang web được tạo từ <b>ba ngôn ngữ riêng biệt</b>, mỗi ngôn ngữ một nhiệm vụ. <b>HTML</b> là <i>cấu trúc</i> — tiêu đề, đoạn văn, hình ảnh và nút bấm (phần "cái gì"). <b>CSS</b> là <i>kiểu dáng</i> — màu sắc, khoảng cách, phông chữ và bố cục (phần "trông ra sao"). <b>JavaScript</b> là <i>hành vi</i> — điều gì xảy ra khi bạn nhấp, gõ hay cuộn (phần "làm được gì"). Cũng ba ngôn ngữ đó vận hành <i>mọi</i> trang web trên đời, từ một blog cá nhân đến một ngân hàng.</p>
-<p>Bài đầu tiên này là để <i>nhìn thấy</i> bức tranh đó thật rõ, để bạn không bao giờ lẫn lộn ngôn ngữ nào làm việc gì. Chưa cần thuộc cú pháp nào cả — thay vào đó bạn sẽ trả lời câu hỏi nhanh, <b>chạy những trang nhỏ thật</b> trong trình duyệt, và thậm chí <b>tự tay sửa HTML và CSS thật rồi được chấm ngay</b>. Làm sai cũng không sao: cứ thử lại đến khi đạt.</p>
+<p>Bạn sẽ không chỉ đọc về điều này — bạn sẽ <b>tự tay làm</b>. Phần lớn bài học là chỉnh sửa thật: bạn đổi tiêu đề, đổi màu chữ, đổi nền và ghép những trang nhỏ ngay trong trình soạn thảo, nhấn <b>Chạy</b> để thấy trang web hiện ra và được chấm ngay. Chưa cần thuộc cú pháp nào; bạn sửa cái có sẵn và xem nó sống dậy. Làm sai cũng không sao — cứ thử lại đến khi đạt.</p>
 
 <h4>1. Hành trình yêu cầu – phản hồi</h4>
 <p>Khi bạn gõ một địa chỉ (một <b>URL</b>) và nhấn Enter, trình duyệt của bạn (bên <b>client</b>) gửi một <b>yêu cầu (request)</b> đến một <b>máy chủ (server)</b> — một máy tính đâu đó có nhiệm vụ lưu và trao ra các tệp web. Máy chủ gửi lại một <b>phản hồi (response)</b>: các tệp của trang. Sự qua lại này chính là nhịp đập của web.</p>
@@ -31,45 +31,17 @@
 <li>Quyết định nút bấm có màu gì.</li>
 <li>Chính là trình duyệt của bạn.</li>
 </ol></div>
-<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 2.</b> Thông điệp trình duyệt gửi đi để xin một trang được gọi là…</span>
-<ol class="opts">
-<li>phản hồi (response)</li>
-<li>bảng kiểu (stylesheet)</li>
-<li>yêu cầu (request)</li>
-<li>máy chủ (server)</li>
-</ol></div>
 
 <h4>2. Ba ngôn ngữ, ba nhiệm vụ</h4>
-<p>Phản hồi (hầu như) gồm ba loại tệp, mỗi loại một trách nhiệm duy nhất. Hãy ghi bảng này vào đầu — cả khóa học được sắp xếp quanh nó.</p>
+<p>Phản hồi (hầu như) gồm ba loại tệp, mỗi loại một trách nhiệm duy nhất. Hãy ghi bảng này vào đầu — cả khóa học được sắp xếp quanh nó. Ở các phần sau bạn sẽ dựng một trang nhỏ từng lớp một và <i>cảm nhận</i> sự khác biệt.</p>
 <table class="res"><tr><th>Ngôn ngữ</th><th>Nhiệm vụ</th><th>Ví như một căn nhà</th></tr>
 <tr><td><code>HTML</code></td><td><b>Cấu trúc</b> — tiêu đề, chữ, hình, nút</td><td>tường &amp; các phòng</td></tr>
 <tr><td><code>CSS</code></td><td><b>Kiểu dáng</b> — màu, phông, khoảng cách, bố cục</td><td>sơn &amp; nội thất</td></tr>
 <tr><td><code>JavaScript</code></td><td><b>Hành vi</b> — điều xảy ra khi nhấp/gõ/cuộn</td><td>điện &amp; nước</td></tr></table>
-<div class="ex" data-kind="quiz" data-a="0"><span class="exq"><b>Bài tập 3.</b> Ngôn ngữ nào chịu trách nhiệm cho <b>cấu trúc</b> của trang (tiêu đề, đoạn văn, hình ảnh)?</span>
-<ol class="opts">
-<li>HTML</li>
-<li>CSS</li>
-<li>JavaScript</li>
-<li>Máy chủ</li>
-</ol></div>
-<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 4.</b> Bạn muốn đổi <b>màu sắc và khoảng cách</b> của trang. Bạn dùng ngôn ngữ nào?</span>
-<ol class="opts">
-<li>HTML</li>
-<li>CSS</li>
-<li>JavaScript</li>
-<li>URL</li>
-</ol></div>
-<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 5.</b> Một nút cần <b>hiện thông báo khi được nhấp</b>. Đó là việc của…</span>
-<ol class="opts">
-<li>HTML</li>
-<li>CSS</li>
-<li>JavaScript</li>
-<li>máy chủ</li>
-</ol></div>
 
-<h4>3. Xem HTML một mình</h4>
-<p>Hãy làm cho ba lớp trở nên cụ thể. Bên dưới là một trang nhỏ viết bằng <b>chỉ HTML</b> — thuần cấu trúc, không kiểu dáng. Nhấn <b>▶ Chạy</b> và xem nó hiển thị trong ô xem trước. Để ý là nó hoạt động, nhưng trông đơn sơ: chữ đen trên nền trắng, phông mặc định. Đó là HTML làm đúng một việc của mình — cấu trúc — và không gì hơn. Thử đổi chữ giữa các thẻ rồi Chạy lại.</p>
-<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 6.</b> Chạy trang chỉ-HTML này và đọc kết quả. Sau đó đổi chữ tiêu đề và Chạy lại.</span>
+<h4>3. HTML — cấu trúc bạn có thể sửa</h4>
+<p>Bên dưới là một trang nhỏ viết bằng <b>chỉ HTML</b> — thuần cấu trúc, không kiểu dáng. Nhấn <b>▶ Chạy</b> và xem nó hiển thị trong ô xem trước. Nó hoạt động, nhưng trông đơn sơ: chữ đen trên nền trắng, phông mặc định. Đó là HTML làm đúng một việc của mình — cấu trúc — và không gì hơn.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 2.</b> Chạy trang chỉ-HTML này và đọc kết quả. Rồi đổi vài chữ giữa các thẻ và Chạy lại để thấy nó cập nhật.</span>
 <template class="st">&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;body&gt;
@@ -79,17 +51,26 @@
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
-<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Đây là một tiêu đề. Đổi chữ giữa <code>&lt;h1&gt;</code> và <code>&lt;/h1&gt;</code> sao cho nó hiện đúng <code>Dojo Daily</code>, rồi nhấn Chạy để được chấm.</span>
+<p>Giờ đến lượt bạn. Chữ bạn thấy trên trang nằm <i>giữa</i> một thẻ mở như <code>&lt;h1&gt;</code> và một thẻ đóng như <code>&lt;/h1&gt;</code>. Đổi chữ đó là trang đổi.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Đổi chữ giữa <code>&lt;h1&gt;</code> và <code>&lt;/h1&gt;</code> sao cho tiêu đề hiện đúng <code>Dojo Daily</code>, rồi nhấn Chạy.</span>
 <template class="st">&lt;h1&gt;Change this text&lt;/h1&gt;</template>
 <template class="ts">
 assert(document.querySelector('h1'), 'giữ lại tiêu đề h1');
 assert(document.querySelector('h1').textContent.trim() === 'Dojo Daily', 'tiêu đề phải hiện đúng "Dojo Daily"');
 </template>
 </div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Một đoạn văn dùng <code>&lt;p&gt;…&lt;/p&gt;</code>. Đổi chữ đoạn văn sao cho nó hiện đúng <code>Welcome to my website.</code></span>
+<template class="st">&lt;h1&gt;Dojo Daily&lt;/h1&gt;
+&lt;p&gt;Old text here&lt;/p&gt;</template>
+<template class="ts">
+assert(document.querySelector('p'), 'giữ lại đoạn văn');
+assert(document.querySelector('p').textContent.trim() === 'Welcome to my website.', 'đoạn văn phải hiện đúng "Welcome to my website."');
+</template>
+</div>
 
-<h4>4. Thêm CSS và xem nó đổi thay</h4>
-<p>Vẫn cấu trúc đó — nhưng giờ ta thêm một khối <b>CSS</b> trong <code>&lt;style&gt;</code>. Không có gì về <i>nội dung</i> thay đổi; chỉ <i>vẻ ngoài</i> đổi. Chạy nó và so với trang trước: màu sắc, khoảng cách và phông chữ xuất hiện, nhưng bên dưới vẫn là đúng những tiêu đề và nút đó. Đây là sức mạnh của việc tách cấu trúc khỏi kiểu dáng.</p>
-<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 8.</b> Chạy trang này và xem CSS tô lại đúng phần HTML đó thế nào. Thử đổi <code>tomato</code> thành <code>teal</code>.</span>
+<h4>4. CSS — kiểu dáng bạn có thể đổi</h4>
+<p>Vẫn cấu trúc đó — nhưng giờ ta thêm một khối <b>CSS</b> trong <code>&lt;style&gt;</code>. Không có gì về <i>nội dung</i> thay đổi; chỉ <i>vẻ ngoài</i> đổi. Chạy nó và so sánh: màu sắc, khoảng cách và phông chữ xuất hiện, nhưng bên dưới vẫn là đúng những tiêu đề và nút đó. Đây là sức mạnh của việc tách cấu trúc khỏi kiểu dáng.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 5.</b> Chạy trang này và xem CSS tô lại đúng phần HTML đó thế nào. Thử đổi <code>tomato</code> thành <code>teal</code>.</span>
 <template class="st">&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -106,17 +87,26 @@ assert(document.querySelector('h1').textContent.trim() === 'Dojo Daily', 'tiêu 
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
-<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Tiêu đề này đang màu đen. Trong ô <b>CSS</b>, đổi <code>black</code> thành <code>gold</code> để tiêu đề chuyển sang vàng gold, rồi nhấn Chạy.</span>
+<p>Từ đây trở đi, <b>HTML</b> và <b>CSS</b> nằm ở hai ô riêng — sửa ô nào cũng được rồi nhấn Chạy để ghép chúng lại. Một luật CSS trông như <code>selector { property: value; }</code>.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Trong ô <b>CSS</b>, đổi <code>black</code> thành <code>gold</code> để tiêu đề chuyển sang vàng gold, rồi nhấn Chạy.</span>
 <template class="html">&lt;h1 id="title"&gt;Sunset Blog&lt;/h1&gt;</template>
 <template class="css">#title { color: black; }</template>
 <template class="ts">
 assert(getComputedStyle(document.querySelector('#title')).color === 'rgb(255, 215, 0)', 'đặt màu tiêu đề thành gold (đổi black thành gold trong CSS)');
 </template>
 </div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Cho trang một giao diện tối: trong <b>CSS</b>, đổi nền của <code>body</code> từ <code>white</code> thành <code>navy</code>, rồi nhấn Chạy.</span>
+<template class="html">&lt;h1&gt;Night mode&lt;/h1&gt;
+&lt;p&gt;A whole new mood.&lt;/p&gt;</template>
+<template class="css">body { background: white; color: white; padding: 16px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 128)', 'đặt nền body thành navy (đổi white thành navy)');
+</template>
+</div>
 
-<h4>5. Thêm JavaScript để có hành vi</h4>
-<p>Cấu trúc và kiểu dáng là <b>tĩnh</b> — chúng chỉ nằm đó. <b>JavaScript</b> làm trang biết <i>phản ứng</i>. Trang bên dưới có một nút gắn một đoạn script nhỏ: nhấp vào là chữ đổi. Bạn chưa cần hiểu code (đó là nửa sau khóa học) — chỉ cần chạy, nhấp nút, và để ý rằng <i>có điều gì đó xảy ra</i>. Cái "có điều gì đó xảy ra khi tương tác" chính là thứ JavaScript thêm vào.</p>
-<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 10.</b> Chạy trang, rồi nhấp nút <b>Cheer!</b> trong ô xem trước và xem thông báo đổi.</span>
+<h4>5. JavaScript — hành vi</h4>
+<p>Cấu trúc và kiểu dáng là <b>tĩnh</b> — chúng chỉ nằm đó. <b>JavaScript</b> làm trang biết <i>phản ứng</i>. Trang bên dưới có một nút gắn một đoạn script nhỏ: nhấp vào là chữ đổi. Bạn chưa cần hiểu code (đó là nửa sau khóa học) — chỉ cần chạy, nhấp nút, và để ý rằng <i>có điều gì đó xảy ra</i>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 8.</b> Chạy trang, rồi nhấp nút <b>Cheer!</b> trong ô xem trước và xem thông báo đổi.</span>
 <template class="st">&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;head&gt;&lt;style&gt;body{font-family:sans-serif;padding:20px}&lt;/style&gt;&lt;/head&gt;
@@ -126,7 +116,7 @@ assert(getComputedStyle(document.querySelector('#title')).color === 'rgb(255, 21
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
-<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 11.</b> Trước khi bạn nhấp, tiêu đề ghi "Hello". Sau khi nhấp nó đổi. Ngôn ngữ nào làm <b>thay đổi đó xảy ra khi nhấp</b>?</span>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 9.</b> Trước khi bạn nhấp, tiêu đề ghi "Hello". Sau khi nhấp nó đổi. Ngôn ngữ nào làm <b>thay đổi đó xảy ra khi nhấp</b>?</span>
 <ol class="opts">
 <li>HTML</li>
 <li>CSS</li>
@@ -134,9 +124,25 @@ assert(getComputedStyle(document.querySelector('#title')).color === 'rgb(255, 21
 <li>URL</li>
 </ol></div>
 
-<h4>6. Ghép bức tranh lại</h4>
-<p>Giờ bạn đã có mô hình tư duy đầy đủ: trình duyệt <b>yêu cầu</b> một trang, máy chủ <b>phản hồi</b> bằng các tệp, và trình duyệt vẽ chúng bằng ba ngôn ngữ — HTML cho cấu trúc, CSS cho kiểu dáng, JavaScript cho hành vi. Mọi thứ còn lại trong khóa học chỉ là chi tiết chồng lên nền này.</p>
-<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Điền vào chỗ trống để trang có một tiêu đề ghi <code>My First Page</code> và một đoạn văn ghi <code>I am learning web.</code> — rồi nhấn Chạy.</span>
+<h4>6. Ghép các lớp lại</h4>
+<p>Giờ bạn đã chạm cả ba lớp. Hãy kết hợp chỉnh sửa qua các lớp. Nhớ nhé: <b>chữ</b> nằm trong HTML, <b>màu</b> nằm trong CSS.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Sửa <b>HTML</b> sao cho tiêu đề hiện <code>My Shop</code> và nút hiện <code>Buy now</code>, rồi nhấn Chạy.</span>
+<template class="st">&lt;h1&gt;Store name&lt;/h1&gt;
+&lt;button&gt;Label&lt;/button&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'My Shop', 'tiêu đề phải hiện "My Shop"');
+assert(document.querySelector('button') && document.querySelector('button').textContent.trim() === 'Buy now', 'nút phải hiện "Buy now"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Lần này hai tệp: trong <b>HTML</b> đổi chữ tiêu đề thành <code>Big Sale</code>, và trong <b>CSS</b> đổi màu của nó thành <code>red</code>. Rồi nhấn Chạy.</span>
+<template class="html">&lt;h1 id="hero"&gt;Change me&lt;/h1&gt;</template>
+<template class="css">#hero { color: black; }</template>
+<template class="ts">
+assert(document.querySelector('#hero') && document.querySelector('#hero').textContent.trim() === 'Big Sale', 'tiêu đề phải hiện "Big Sale"');
+assert(getComputedStyle(document.querySelector('#hero')).color === 'rgb(255, 0, 0)', 'đặt màu tiêu đề thành red trong CSS');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Tự dựng một trang nhỏ toàn chữ. Thay các chỗ trống sao cho tiêu đề ghi <code>My First Page</code> và đoạn văn ghi <code>I am learning web.</code> — rồi nhấn Chạy.</span>
 <template class="st">&lt;h1&gt;___&lt;/h1&gt;
 &lt;p&gt;___&lt;/p&gt;</template>
 <template class="ts">
@@ -146,32 +152,36 @@ assert(document.querySelector('p') && document.querySelector('p').textContent.tr
 </div>
 
 <h4>🏠 Bài tập về nhà</h4>
-<p>Bốn bài mang về nhà, chấm tự động ngay trên trang. Bài cuối là bài nâng cao.</p>
-<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> Trình duyệt của bạn được mô tả đúng nhất là…</span>
-<ol class="opts">
-<li>máy chủ lưu các tệp.</li>
-<li>client yêu cầu các trang và hiển thị chúng.</li>
-<li>ngôn ngữ dùng để tạo kiểu cho trang.</li>
-<li>sợi cáp internet.</li>
-</ol></div>
-<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Bài tập 2.</b> Bộ ba nào liệt kê ba ngôn ngữ web cốt lõi theo thứ tự <b>cấu trúc, kiểu dáng, hành vi</b>?</span>
+<p>Bốn bài mang về nhà, chấm tự động ngay trên trang — phần lớn là thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Bài tập 1.</b> Bộ ba nào liệt kê ba ngôn ngữ web cốt lõi theo thứ tự <b>cấu trúc, kiểu dáng, hành vi</b>?</span>
 <ol class="opts">
 <li>HTML, CSS, JavaScript</li>
 <li>CSS, HTML, JavaScript</li>
 <li>JavaScript, CSS, HTML</li>
 <li>HTML, JavaScript, CSS</li>
 </ol></div>
-<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Đổi nhãn của nút sao cho nó hiện đúng <code>Sign up</code>, rồi nhấn Chạy.</span>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Đổi nhãn của nút sao cho nó hiện đúng <code>Sign up</code>, rồi nhấn Chạy.</span>
 <template class="st">&lt;button&gt;Click here&lt;/button&gt;</template>
 <template class="ts">
 assert(document.querySelector('button'), 'giữ lại nút');
 assert(document.querySelector('button').textContent.trim() === 'Sign up', 'nút phải hiện đúng "Sign up"');
 </template>
 </div>
-<div class="ex homework stretch" data-kind="quiz" data-a="3"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Một trang tải xong ngay lập tức nhưng có biểu tượng ảnh vỡ ở chỗ đáng lẽ là hình, và nhấp một nút thì không có gì xảy ra. Chẩn đoán một câu nào hợp nhất?</span>
-<ol class="opts">
-<li>Thiếu CSS, nên không có cấu trúc.</li>
-<li>Máy chủ không hề phản hồi, nên không gì tải được.</li>
-<li>URL là một yêu cầu, nên trang không thể hiển thị.</li>
-<li>HTML/phản hồi đã tải, nhưng một tệp ảnh bị thiếu và JavaScript của nút không chạy.</li>
-</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Hai tệp: trong <b>HTML</b> đổi chữ tiêu đề thành <code>About Me</code>, và trong <b>CSS</b> đổi màu của nó thành <code>green</code>. Rồi nhấn Chạy.</span>
+<template class="html">&lt;h1 id="t"&gt;Heading&lt;/h1&gt;</template>
+<template class="css">#t { color: black; }</template>
+<template class="ts">
+assert(document.querySelector('#t') && document.querySelector('#t').textContent.trim() === 'About Me', 'tiêu đề phải hiện "About Me"');
+assert(getComputedStyle(document.querySelector('#t')).color === 'rgb(0, 128, 0)', 'đặt màu tiêu đề thành green trong CSS');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Dựng một thẻ nhỏ. Trong <b>HTML</b> cho tiêu đề ghi <code>Contact</code> và đoạn văn ghi <code>Email me anytime.</code>, và trong <b>CSS</b> đổi nền trang thành <code>gold</code>. Rồi nhấn Chạy.</span>
+<template class="html">&lt;h1&gt;___&lt;/h1&gt;
+&lt;p&gt;___&lt;/p&gt;</template>
+<template class="css">body { background: white; padding: 16px; }</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'Contact', 'tiêu đề phải ghi "Contact"');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'Email me anytime.', 'đoạn văn phải ghi "Email me anytime."');
+assert(getComputedStyle(document.body).backgroundColor === 'rgb(255, 215, 0)', 'đặt nền trang thành gold');
+</template>
+</div>

@@ -17,6 +17,8 @@
     <p data-t="pf_p"></p>
   </div>
 
+  <div class="pfNotice" id="pfNotice" hidden></div>
+
   <!-- shown when logged out -->
   <div class="coCard" id="pfGuest" hidden style="max-width:520px">
     <p data-t="pf_guest"></p>
@@ -30,10 +32,10 @@
       <input type="email" id="pfEmail" class="coInput" disabled>
 
       <label class="coLabel" data-t="pf_name"></label>
-      <input type="text" id="pfName" class="coInput" data-t-ph="pf_name_ph">
+      <input type="text" id="pfName" class="coInput" data-t-ph="pf_name_ph" required>
 
       <label class="coLabel" data-t="pf_phone"></label>
-      <input type="tel" id="pfPhone" class="coInput" data-t-ph="pf_phone_ph">
+      <input type="tel" id="pfPhone" class="coInput" data-t-ph="pf_phone_ph" required>
 
       <label class="coLabel" data-t="pf_year"></label>
       <input type="text" id="pfYear" class="coInput" inputmode="numeric" data-t-ph="pf_year_ph">
@@ -70,11 +72,13 @@ vi:{
   pf_eyebrow:'Tài khoản', pf_h2:'Hồ sơ của bạn',
   pf_p:'Thông tin này giúp giáo viên biết bạn là ai và hỗ trợ bạn tốt hơn. Bạn có thể cập nhật bất cứ lúc nào.',
   pf_guest:'Bạn cần đăng nhập để xem và chỉnh sửa hồ sơ.',
-  pf_login:'Đăng nhập', pf_email:'Email', pf_name:'Họ và tên', pf_name_ph:'VD: Nguyễn Văn A',
-  pf_phone:'Số điện thoại / Zalo', pf_phone_ph:'VD: 0901 234 567',
+  pf_login:'Đăng nhập', pf_email:'Email', pf_name:'Họ và tên *', pf_name_ph:'VD: Nguyễn Văn A',
+  pf_phone:'Số điện thoại / Zalo *', pf_phone_ph:'VD: 0901 234 567',
   pf_year:'Năm sinh', pf_year_ph:'VD: 2005',
   pf_exp:'Kinh nghiệm lập trình', pf_goal:'Mục tiêu học tập', pf_goal_ph:'Bạn muốn đạt được điều gì sau khóa học?',
   pf_save:'Lưu hồ sơ', pf_saved:'Đã lưu hồ sơ ✓', pf_courses_h:'Khóa học của bạn',
+  pf_notice:'Vui lòng điền <b>Họ tên</b> và <b>Số điện thoại</b> để tiếp tục sử dụng The Dojo.',
+  pf_need:'Vui lòng điền họ tên và số điện thoại.',
   pf_none:'Bạn chưa sở hữu khóa học nào. Nhập mã mở khóa trong trang khóa học, hoặc mua một khóa.',
   pf_open:'Vào học →', pf_logout:'Đăng xuất',
   exp0:'Chưa có kinh nghiệm', exp1:'Biết một chút', exp2:'Đã học ở trường/khóa khác', exp3:'Đang đi làm liên quan',
@@ -83,11 +87,13 @@ en:{
   pf_eyebrow:'Account', pf_h2:'Your profile',
   pf_p:'This helps the teacher know who you are and support you better. You can update it anytime.',
   pf_guest:'You need to log in to view and edit your profile.',
-  pf_login:'Log in', pf_email:'Email', pf_name:'Full name', pf_name_ph:'e.g. Jane Doe',
-  pf_phone:'Phone / Zalo', pf_phone_ph:'e.g. 0901 234 567',
+  pf_login:'Log in', pf_email:'Email', pf_name:'Full name *', pf_name_ph:'e.g. Jane Doe',
+  pf_phone:'Phone / Zalo *', pf_phone_ph:'e.g. 0901 234 567',
   pf_year:'Birth year', pf_year_ph:'e.g. 2005',
   pf_exp:'Programming experience', pf_goal:'Learning goal', pf_goal_ph:'What do you want to achieve with this course?',
   pf_save:'Save profile', pf_saved:'Profile saved ✓', pf_courses_h:'Your courses',
+  pf_notice:'Please fill in your <b>Full name</b> and <b>Phone</b> to continue using The Dojo.',
+  pf_need:'Please fill in your full name and phone.',
   pf_none:'You don\u2019t own any course yet. Enter an unlock code on a course page, or buy one.',
   pf_open:'Open →', pf_logout:'Log out',
   exp0:'No experience', exp1:'A little', exp2:'Studied it before', exp3:'Work in a related field',
@@ -139,6 +145,10 @@ function render(){
   document.querySelectorAll('[data-t-ph]').forEach(el=>{
     const k=el.dataset.tPh; if (d[k]!=null) el.placeholder = d[k];
   });
+  const notice = document.getElementById('pfNotice');
+  const incomplete = loggedIn && !window.DOJO_CLOUD.isProfileComplete();
+  notice.hidden = !incomplete;
+  if (incomplete) notice.innerHTML = d.pf_notice;
   if (loggedIn){ fillForm(); renderCourses(); }
 }
 
@@ -153,16 +163,20 @@ document.getElementById('pfSave').addEventListener('click', async ()=>{
   const d = PAGE_I18N[LANG];
   const msg = document.getElementById('pfMsg');
   msg.textContent='';
+  const name = document.getElementById('pfName').value.trim();
+  const phone = document.getElementById('pfPhone').value.trim();
+  if (!name || !phone){ msg.style.color=''; msg.textContent = d.pf_need; return; }
   try{
     await window.DOJO_CLOUD.saveProfile({
-      full_name: document.getElementById('pfName').value.trim(),
-      phone: document.getElementById('pfPhone').value.trim(),
+      full_name: name,
+      phone: phone,
       birth_year: document.getElementById('pfYear').value.trim(),
       experience: document.getElementById('pfExp').value,
       goal: document.getElementById('pfGoal').value.trim(),
     });
     msg.style.color='var(--jade,#7FD1C0)';
     msg.textContent = d.pf_saved;
+    document.getElementById('pfNotice').hidden = true;
   }catch(e){ msg.style.color=''; msg.textContent = e.message || 'Error'; }
 });
 

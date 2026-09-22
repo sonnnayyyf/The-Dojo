@@ -80,9 +80,11 @@
   + `is_admin()` rpc, admin-read RLS on `profiles`/`entitlements`/`progress`, and an `on_auth_user_created`
   trigger that auto-creates a profile row on sign-up. To become admin: sign up, then in SQL editor
   `insert into public.admins(user_id) values ('<your-uuid>')`.
-- `app.js` `Cloud` module: Google + email/password auth (nav "Log in" → modal), progress upsert/merge,
-  `redeem_code` rpc. When logged in, entering a code grants account ownership of the course. Also loads
-  the student `profile`, checks `is_admin()`, and exposes `window.DOJO_CLOUD` for `profile.html`/`admin.html`.
+- `app.js` `Cloud` module: Google + email/password auth (nav "Log in" → modal; sign-up requires a
+  confirm-password match, min 6 chars), progress upsert/merge, `redeem_code` rpc. When logged in,
+  entering a code grants account ownership of the course. Also loads the student `profile`, checks
+  `is_admin()`, and exposes `window.DOJO_CLOUD` for `profile.html`/`admin.html`. After sign-in, an
+  incomplete profile (missing name/phone) is force-redirected to `profile.html` (hard onboarding gate).
 - **Payment flow (manual reconciliation):** `checkout.html` builds a **VietQR** via `img.vietqr.io`
   (bank VIB `970441`, acc `021704060240035`, TRAN HOANG SON) with the **amount pre-filled** and a
   **memo** like `DOJO PYTHON <name>`. Student scans → pays → messages the tutor a screenshot on Zalo →
@@ -128,8 +130,19 @@
    in **section 9**. Keep the Fundamentals course from bloating — push advanced topics to these.
    Do NOT start authoring any of them until the user confirms per-course.
 4. **Pre-launch:** encrypt lessons for real content-locking + wire content-key delivery via entitlement;
-   deploy (Netlify/Vercel/Cloudflare Pages); set Supabase Auth → Site URL + Redirect URLs for prod;
-   consider PWA (installable/offline). Then full account e2e test (signup → redeem → progress persists).
+   deploy (Netlify/Vercel/Cloudflare Pages); set Supabase Auth → Site URL + Redirect URLs for prod
+   (fixes the confirmation-link → `localhost:3000` "unreachable" landing; verification already succeeds
+   server-side, only the redirect target is missing on `file://`); set up **Custom SMTP** (Resend/Brevo
+   free tier) to remove the built-in email rate limit (~2–3/hr) and set a branded sender; edit the
+   **Confirm signup** email template (free, no SMTP needed) with Dojo branding; consider PWA
+   (installable/offline). Then full account e2e test (signup → redeem → progress persists).
+5. **Accounts / payments — build now DONE, config pending:** checkout.html (VietQR), profile.html
+   (forced onboarding: name+phone required before using the site), admin.html (dashboard) are built.
+   **You must (a) re-run `private-tools/supabase-schema.sql` in the SQL editor** to create the
+   `profiles`/`admins` tables + policies + trigger, and **(b) make yourself admin** (`insert into
+   public.admins(user_id) values ('<uuid>')`). For local testing, turn OFF Authentication → Email
+   → "Confirm email" so signup logs in instantly on `file://`. Future: Casso/SePay webhook →
+   Supabase Edge Function for auto-grant on payment.
 
 ## 8. Product decisions already made (don't relitigate)
 - General **IT/programming** theme (not finance/accounting).

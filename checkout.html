@@ -50,6 +50,7 @@
   </div>
 
   <p class="fact" data-t="co_help" style="margin-top:24px;text-align:center"></p>
+  <p class="coContact" id="coContact"></p>
 </div></section>
 
 <script src="app.js"></script>
@@ -171,6 +172,9 @@ window.onLang = function(){
   refreshTotal();
   // if the QR is already open, re-render it in the new language
   if (!document.getElementById('coQrCard').hidden) showQr();
+  // contact line
+  const s = window.DOJO_SENSEI || {};
+  document.getElementById('coContact').textContent = `Zalo: ${s.zalo||''}  ·  Email: ${s.email||''}`;
   // prefill name from signed-in profile if available
   const nm = document.getElementById('coName');
   if (!nm.value && window.DOJO_PROFILE && window.DOJO_PROFILE.full_name) nm.value = window.DOJO_PROFILE.full_name;
