@@ -1,0 +1,91 @@
+<h3>Lesson 13 — INSERT, UPDATE & DELETE: changing data</h3>
+<p>So far you've only <b>read</b> data. But real data is always changing: new customers sign up, prices get updated, products are discontinued. The three statements for that are <code>INSERT</code> (add rows), <code>UPDATE</code> (change rows), and <code>DELETE</code> (remove rows).</p>
+<p>Unlike <code>SELECT</code>, these three <b>don't return a result table</b> — they quietly change the data. So in each exercise you write the change <b>and then add a <code>SELECT</code></b> to <i>see the result</i> and get graded. The checking <code>SELECT</code> is already in the editor — your job is to add the change statement above it.</p>
+<p><b>Don't worry:</b> every time you run, the query works on a <b>fresh copy</b> of the database. Delete and edit freely — the original data is reset for the next exercise.</p>
+
+<h4>1. INSERT — add a new row</h4>
+<p>The clearest way is to name the columns then give matching values:</p>
+<pre class="run">INSERT INTO products (id, name, category, price, stock)
+VALUES (11, 'Kẹo dẻo mềm', 'Đồ ăn', 15000, 100);
+
+SELECT name, price FROM products WHERE id = 11;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Add the product <code>(11, 'Kẹo dẻo mềm', 'Đồ ăn', 15000, 100)</code> with <code>INSERT INTO products (id, name, category, price, stock) VALUES (...)</code>. The <code>SELECT</code> below shows the result.</span>
+<template class="st">
+SELECT name, price FROM products WHERE id = 11;</template>
+<template class="ref">INSERT INTO products (id, name, category, price, stock) VALUES (11, 'Kẹo dẻo mềm', 'Đồ ăn', 15000, 100); SELECT name, price FROM products WHERE id = 11</template></div>
+<p>If you provide values for <b>all</b> columns in order, you can drop the column list:</p>
+<pre class="run">INSERT INTO products VALUES (12, 'Trà sữa trân châu', 'Đồ uống', 40000, 60);</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Add the product <code>(12, 'Trà sữa trân châu', 'Đồ uống', 40000, 60)</code> with <code>INSERT INTO products VALUES (...)</code> (no column list).</span>
+<template class="st">
+SELECT name, category FROM products WHERE id = 12;</template>
+<template class="ref">INSERT INTO products VALUES (12, 'Trà sữa trân châu', 'Đồ uống', 40000, 60); SELECT name, category FROM products WHERE id = 12</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Add the customer <code>(5, 'Vũ Thị E', 'Cần Thơ', '2025-08-01')</code> to the <code>customers</code> table.</span>
+<template class="st">
+SELECT name, city FROM customers WHERE id = 5;</template>
+<template class="ref">INSERT INTO customers (id, name, city, joined_at) VALUES (5, 'Vũ Thị E', 'Cần Thơ', '2025-08-01'); SELECT name, city FROM customers WHERE id = 5</template></div>
+
+<h4>2. UPDATE — change existing rows</h4>
+<p><code>UPDATE table SET column = value WHERE condition</code>. <b>Always remember the <code>WHERE</code></b> — forget it and you change <i>every</i> row!</p>
+<pre class="run">UPDATE products SET price = 6000 WHERE id = 1;
+
+SELECT id, price FROM products WHERE id = 1;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Change the price of product <code>id = 1</code> to <code>6000</code> with <code>UPDATE products SET price = 6000 WHERE id = 1</code>.</span>
+<template class="st">
+SELECT id, price FROM products WHERE id = 1;</template>
+<template class="ref">UPDATE products SET price = 6000 WHERE id = 1; SELECT id, price FROM products WHERE id = 1</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Increase <code>stock</code> by 50 for <b>all 'Điện tử' items</b>: <code>UPDATE products SET stock = stock + 50 WHERE category = 'Điện tử'</code>.</span>
+<template class="st">
+SELECT id, stock FROM products WHERE category = 'Điện tử' ORDER BY id;</template>
+<template class="ref">UPDATE products SET stock = stock + 50 WHERE category = 'Điện tử'; SELECT id, stock FROM products WHERE category = 'Điện tử' ORDER BY id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Change <b>two columns at once</b> for product <code>id = 9</code>: set <code>price = 9000</code> and <code>stock = 200</code> (columns separated by a comma).</span>
+<template class="st">
+SELECT price, stock FROM products WHERE id = 9;</template>
+<template class="ref">UPDATE products SET price = 9000, stock = 200 WHERE id = 9; SELECT price, stock FROM products WHERE id = 9</template></div>
+
+<h4>3. DELETE — remove rows</h4>
+<p><code>DELETE FROM table WHERE condition</code>. As with <code>UPDATE</code>, <b>never forget the <code>WHERE</code></b> — otherwise the whole table is emptied.</p>
+<pre class="run">DELETE FROM products WHERE id = 10;
+
+SELECT COUNT(*) AS n FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Delete product <code>id = 10</code> with <code>DELETE FROM products WHERE id = 10</code>. (9 products remain.)</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM products;</template>
+<template class="ref">DELETE FROM products WHERE id = 10; SELECT COUNT(*) AS n FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Delete <b>all 'Điện tử' items</b>: <code>DELETE FROM products WHERE category = 'Điện tử'</code>. (8 remain.)</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM products;</template>
+<template class="ref">DELETE FROM products WHERE category = 'Điện tử'; SELECT COUNT(*) AS n FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Delete every product with a <b>price below 10000</b>: <code>DELETE FROM products WHERE price &lt; 10000</code>. (8 remain.)</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM products;</template>
+<template class="ref">DELETE FROM products WHERE price < 10000; SELECT COUNT(*) AS n FROM products</template></div>
+
+<h4>4. Combining several statements</h4>
+<p>You can run several statements in a row, each ending with <code>;</code>.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Add the product <code>(11, 'Sản phẩm mới', 'Đồ ăn', 10000, 10)</code>, <b>then</b> change its price to <code>12000</code>. (Write both statements above the <code>SELECT</code>.)</span>
+<template class="st">
+SELECT price FROM products WHERE id = 11;</template>
+<template class="ref">INSERT INTO products VALUES (11, 'Sản phẩm mới', 'Đồ ăn', 10000, 10); UPDATE products SET price = 12000 WHERE id = 11; SELECT price FROM products WHERE id = 11</template></div>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> Raise the price of <b>all 'Đồ uống' items</b> by 2000: <code>UPDATE products SET price = price + 2000 WHERE category = 'Đồ uống'</code>. The <code>SELECT</code> shows the list sorted by price.</span>
+<template class="st">
+SELECT name, price FROM products WHERE category = 'Đồ uống' ORDER BY price;</template>
+<template class="ref">UPDATE products SET price = price + 2000 WHERE category = 'Đồ uống'; SELECT name, price FROM products WHERE category = 'Đồ uống' ORDER BY price</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Add the customer <code>(5, 'Đỗ Văn F', 'Hải Phòng', '2025-09-10')</code> to <code>customers</code> with <code>INSERT INTO customers VALUES (...)</code>.</span>
+<template class="st">
+SELECT name, city FROM customers WHERE id = 5;</template>
+<template class="ref">INSERT INTO customers VALUES (5, 'Đỗ Văn F', 'Hải Phòng', '2025-09-10'); SELECT name, city FROM customers WHERE id = 5</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Set <code>stock = 0</code> for product <code>id = 7</code>.</span>
+<template class="st">
+SELECT stock FROM products WHERE id = 7;</template>
+<template class="ref">UPDATE products SET stock = 0 WHERE id = 7; SELECT stock FROM products WHERE id = 7</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Delete order <code>id = 4</code> from the <code>orders</code> table. (3 orders remain.)</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM orders;</template>
+<template class="ref">DELETE FROM orders WHERE id = 4; SELECT COUNT(*) AS n FROM orders</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Reduce the price of <b>all 'Văn phòng phẩm' items</b> by 1000: <code>UPDATE products SET price = price - 1000 WHERE category = 'Văn phòng phẩm'</code>. The <code>SELECT</code> shows the list by <code>id</code>.</span>
+<template class="st">
+SELECT name, price FROM products WHERE category = 'Văn phòng phẩm' ORDER BY id;</template>
+<template class="ref">UPDATE products SET price = price - 1000 WHERE category = 'Văn phòng phẩm'; SELECT name, price FROM products WHERE category = 'Văn phòng phẩm' ORDER BY id</template></div>

@@ -1,0 +1,139 @@
+<h3>Lesson 12 — Mini project: sales report</h3>
+<p>By now you have all the tools to do something very real: <b>build a complete sales report</b>. This is a consolidation lesson — each exercise is a piece of the report, together forming a full picture of the shop: revenue, best-sellers, top-spending customers, monthly trends.</p>
+<p>You'll reuse everything: <code>JOIN</code> to connect tables, <code>SUM</code>/<code>COUNT</code> to aggregate, <code>GROUP BY</code> to split into groups, <code>LEFT JOIN</code> + <code>COALESCE</code> to leave no one out, <code>ORDER BY</code>/<code>LIMIT</code> to rank, and <code>strftime</code> for time-based reports.</p>
+<p>Recall the revenue formula: each order line has a <b>line total = <code>p.price * oi.qty</code></b>. Add them up to get revenue. Let's go.</p>
+
+<h4>1. The headline numbers</h4>
+<p>Every report opens with a few big numbers. Total revenue = sum of every order line's total.</p>
+<pre class="run">SELECT SUM(p.price * oi.qty) AS total_revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Compute <b>total revenue</b>: join <code>order_items</code> to <code>products</code>, <code>SUM(p.price * oi.qty) AS total_revenue</code>.</span>
+<template class="st">SELECT SUM(p.price * oi.qty) AS total_revenue
+FROM order_items oi
+JOIN products p ON </template>
+<template class="ref">SELECT SUM(p.price * oi.qty) AS total_revenue FROM order_items oi JOIN products p ON oi.product_id = p.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Count the <b>total number of orders</b>: <code>COUNT(*) AS order_count</code> from <code>orders</code>.</span>
+<template class="st">SELECT 
+FROM orders</template>
+<template class="ref">SELECT COUNT(*) AS order_count FROM orders</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Count <b>how many customers have bought</b>: <code>COUNT(DISTINCT customer_id) AS buyers</code> from <code>orders</code>.</span>
+<template class="st">SELECT 
+FROM orders</template>
+<template class="ref">SELECT COUNT(DISTINCT customer_id) AS buyers FROM orders</template></div>
+
+<h4>2. Revenue by category and product</h4>
+<p>Join then group to see where the money comes from.</p>
+<pre class="run">SELECT p.category, SUM(p.price * oi.qty) AS revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY p.category
+ORDER BY revenue DESC;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> <b>Revenue per category</b>: <code>p.category</code>, <code>SUM(p.price * oi.qty) AS revenue</code>, grouped by <code>p.category</code>, sorted by <code>revenue</code> descending.</span>
+<template class="st">SELECT p.category, SUM(p.price * oi.qty) AS revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT p.category, SUM(p.price * oi.qty) AS revenue FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.category ORDER BY revenue DESC</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> <b>Top 3 products by revenue</b>: <code>p.name AS product</code>, <code>SUM(p.price * oi.qty) AS revenue</code>, grouped by <code>p.id</code>, sorted by <code>revenue</code> descending, take 3.</span>
+<template class="st">SELECT p.name AS product, SUM(p.price * oi.qty) AS revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, SUM(p.price * oi.qty) AS revenue FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.id ORDER BY revenue DESC LIMIT 3</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> <b>Units sold per product, including 0</b> (use <code>LEFT JOIN</code>): <code>p.name AS product</code>, <code>COALESCE(SUM(oi.qty), 0) AS units</code>, grouped by <code>p.id</code>, sorted by <code>units</code> descending then <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS units
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS units FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id ORDER BY units DESC, p.id</template></div>
+
+<h4>3. Customers</h4>
+<p>Join four tables to see how much each customer spent.</p>
+<pre class="run">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY spent DESC;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> <b>Spend per customer</b> (buyers only): <code>c.name AS customer</code>, <code>SUM(p.price * oi.qty) AS spent</code>, grouped by <code>c.id</code>, sorted by <code>spent</code> descending.</span>
+<template class="st">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY </template>
+<template class="ref">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id ORDER BY spent DESC</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> <b>Customers who never bought</b>: <code>name</code> from <code>customers</code> where <code>id NOT IN (SELECT customer_id FROM orders)</code>, sorted by <code>id</code>.</span>
+<template class="st">SELECT name FROM customers
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name FROM customers WHERE id NOT IN (SELECT customer_id FROM orders) ORDER BY id</template></div>
+
+<h4>4. Advanced metrics</h4>
+<p><b>Average order value</b> = total revenue divided by the number of orders. Use a subquery for the order count.</p>
+<pre class="run">SELECT ROUND(SUM(p.price * oi.qty) * 1.0 / (SELECT COUNT(*) FROM orders)) AS avg_order_value
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Compute the <b>average order value</b>: <code>ROUND(SUM(p.price * oi.qty) * 1.0 / (SELECT COUNT(*) FROM orders)) AS avg_order_value</code> (join <code>order_items</code> to <code>products</code>).</span>
+<template class="st">SELECT ROUND(SUM(p.price * oi.qty) * 1.0 / (SELECT COUNT(*) FROM orders)) AS avg_order_value
+FROM order_items oi
+JOIN products p ON </template>
+<template class="ref">SELECT ROUND(SUM(p.price * oi.qty) * 1.0 / (SELECT COUNT(*) FROM orders)) AS avg_order_value FROM order_items oi JOIN products p ON oi.product_id = p.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> <b>Revenue by month</b>: <code>strftime('%m', o.order_date) AS month</code>, <code>SUM(p.price * oi.qty) AS revenue</code> (join <code>orders</code> → <code>order_items</code> → <code>products</code>), grouped by <code>month</code>, sorted by <code>month</code>.</span>
+<template class="st">SELECT strftime('%m', o.order_date) AS month, SUM(p.price * oi.qty) AS revenue
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT strftime('%m', o.order_date) AS month, SUM(p.price * oi.qty) AS revenue FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id GROUP BY month ORDER BY month</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 11.</b> <b>Revenue per category with a label</b>: <code>p.category</code>, <code>SUM(p.price * oi.qty) AS revenue</code>, and <code>CASE WHEN SUM(p.price * oi.qty) &gt;= 100000 THEN 'high' ELSE 'low' END AS tier</code>, grouped by <code>p.category</code>, sorted by <code>revenue</code> descending.</span>
+<template class="st">SELECT p.category, SUM(p.price * oi.qty) AS revenue,
+  CASE WHEN SUM(p.price * oi.qty) >= 100000 THEN 'high' ELSE 'low' END AS tier
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT p.category, SUM(p.price * oi.qty) AS revenue, CASE WHEN SUM(p.price * oi.qty) >= 100000 THEN 'high' ELSE 'low' END AS tier FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.category ORDER BY revenue DESC</template></div>
+
+<h4>5. Report summary</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 12. 🔥 Stretch.</b> <b>Most valuable customer</b>: <code>c.name AS customer</code>, <code>COUNT(DISTINCT o.id) AS orders</code>, <code>SUM(p.price * oi.qty) AS spent</code> (join <code>orders</code> → <code>order_items</code> → <code>products</code> → <code>customers</code>), grouped by <code>c.id</code>, sorted by <code>spent</code> descending, take 1.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS spent FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id ORDER BY spent DESC LIMIT 1</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Compute the <b>total quantity sold</b>: <code>SUM(qty) AS total_units</code> from <code>order_items</code>.</span>
+<template class="st">SELECT 
+FROM order_items</template>
+<template class="ref">SELECT SUM(qty) AS total_units FROM order_items</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> <b>Spend per customer, including non-buyers (0)</b>: <code>LEFT JOIN</code> <code>customers</code> → <code>orders</code> → <code>order_items</code> → <code>products</code>, <code>c.name AS customer</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS spent</code>, grouped by <code>c.id</code>, sorted by <code>spent</code> descending then <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY spent DESC, c.id</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> <b>Best-selling product by units</b>: <code>p.name AS product</code>, <code>SUM(oi.qty) AS units</code> (join <code>order_items</code> to <code>products</code>), grouped by <code>p.id</code>, sorted by <code>units</code> descending, take 1.</span>
+<template class="st">SELECT p.name AS product, SUM(oi.qty) AS units
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, SUM(oi.qty) AS units FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.id ORDER BY units DESC LIMIT 1</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> <b>Monthly report</b>: <code>strftime('%m', o.order_date) AS month</code>, <code>COUNT(DISTINCT o.id) AS orders</code>, <code>SUM(p.price * oi.qty) AS revenue</code> (join <code>orders</code> → <code>order_items</code> → <code>products</code>), grouped by <code>month</code>, sorted by <code>month</code>.</span>
+<template class="st">SELECT strftime('%m', o.order_date) AS month, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS revenue
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT strftime('%m', o.order_date) AS month, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS revenue FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id GROUP BY month ORDER BY month</template></div>

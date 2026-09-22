@@ -1,0 +1,91 @@
+<h3>Bài 13 — INSERT, UPDATE & DELETE: thay đổi dữ liệu</h3>
+<p>Đến giờ bạn chỉ <b>đọc</b> dữ liệu. Nhưng dữ liệu thật luôn thay đổi: khách mới đăng ký, giá được cập nhật, sản phẩm ngừng bán. Ba câu lệnh lo việc đó là <code>INSERT</code> (thêm dòng), <code>UPDATE</code> (sửa dòng), <code>DELETE</code> (xóa dòng).</p>
+<p>Khác với <code>SELECT</code>, ba lệnh này <b>không trả về bảng kết quả</b> — chúng lặng lẽ thay đổi dữ liệu. Vì vậy trong mỗi bài tập, bạn viết lệnh thay đổi <b>rồi thêm một câu <code>SELECT</code></b> để <i>xem kết quả</i> và được chấm. Câu <code>SELECT</code> kiểm tra đã có sẵn ở khung soạn thảo — việc của bạn là thêm lệnh thay đổi phía trên nó.</p>
+<p><b>Yên tâm:</b> mỗi lần chạy, truy vấn thao tác trên một <b>bản sao mới</b> của cơ sở dữ liệu. Bạn có thể xóa, sửa thoải mái — dữ liệu gốc luôn được đặt lại cho bài tập tiếp theo.</p>
+
+<h4>1. INSERT — thêm dòng mới</h4>
+<p>Cách rõ ràng nhất là nêu tên cột rồi cho giá trị tương ứng:</p>
+<pre class="run">INSERT INTO products (id, name, category, price, stock)
+VALUES (11, 'Kẹo dẻo mềm', 'Đồ ăn', 15000, 100);
+
+SELECT name, price FROM products WHERE id = 11;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Thêm sản phẩm <code>(11, 'Kẹo dẻo mềm', 'Đồ ăn', 15000, 100)</code> bằng <code>INSERT INTO products (id, name, category, price, stock) VALUES (...)</code>. Câu <code>SELECT</code> bên dưới sẽ hiện kết quả.</span>
+<template class="st">
+SELECT name, price FROM products WHERE id = 11;</template>
+<template class="ref">INSERT INTO products (id, name, category, price, stock) VALUES (11, 'Kẹo dẻo mềm', 'Đồ ăn', 15000, 100); SELECT name, price FROM products WHERE id = 11</template></div>
+<p>Nếu cho giá trị cho <b>tất cả</b> các cột đúng thứ tự, có thể bỏ danh sách tên cột:</p>
+<pre class="run">INSERT INTO products VALUES (12, 'Trà sữa trân châu', 'Đồ uống', 40000, 60);</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Thêm sản phẩm <code>(12, 'Trà sữa trân châu', 'Đồ uống', 40000, 60)</code> bằng <code>INSERT INTO products VALUES (...)</code> (không cần liệt kê cột).</span>
+<template class="st">
+SELECT name, category FROM products WHERE id = 12;</template>
+<template class="ref">INSERT INTO products VALUES (12, 'Trà sữa trân châu', 'Đồ uống', 40000, 60); SELECT name, category FROM products WHERE id = 12</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Thêm khách hàng <code>(5, 'Vũ Thị E', 'Cần Thơ', '2025-08-01')</code> vào bảng <code>customers</code>.</span>
+<template class="st">
+SELECT name, city FROM customers WHERE id = 5;</template>
+<template class="ref">INSERT INTO customers (id, name, city, joined_at) VALUES (5, 'Vũ Thị E', 'Cần Thơ', '2025-08-01'); SELECT name, city FROM customers WHERE id = 5</template></div>
+
+<h4>2. UPDATE — sửa dòng đã có</h4>
+<p><code>UPDATE bảng SET cột = giá_trị WHERE điều_kiện</code>. <b>Luôn nhớ <code>WHERE</code></b> — nếu quên, bạn sẽ sửa <i>tất cả</i> các dòng!</p>
+<pre class="run">UPDATE products SET price = 6000 WHERE id = 1;
+
+SELECT id, price FROM products WHERE id = 1;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Đổi giá của sản phẩm <code>id = 1</code> thành <code>6000</code> bằng <code>UPDATE products SET price = 6000 WHERE id = 1</code>.</span>
+<template class="st">
+SELECT id, price FROM products WHERE id = 1;</template>
+<template class="ref">UPDATE products SET price = 6000 WHERE id = 1; SELECT id, price FROM products WHERE id = 1</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Tăng <code>stock</code> thêm 50 cho <b>mọi hàng 'Điện tử'</b>: <code>UPDATE products SET stock = stock + 50 WHERE category = 'Điện tử'</code>.</span>
+<template class="st">
+SELECT id, stock FROM products WHERE category = 'Điện tử' ORDER BY id;</template>
+<template class="ref">UPDATE products SET stock = stock + 50 WHERE category = 'Điện tử'; SELECT id, stock FROM products WHERE category = 'Điện tử' ORDER BY id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Sửa <b>hai cột cùng lúc</b> cho sản phẩm <code>id = 9</code>: đặt <code>price = 9000</code> và <code>stock = 200</code> (các cột cách nhau dấu phẩy).</span>
+<template class="st">
+SELECT price, stock FROM products WHERE id = 9;</template>
+<template class="ref">UPDATE products SET price = 9000, stock = 200 WHERE id = 9; SELECT price, stock FROM products WHERE id = 9</template></div>
+
+<h4>3. DELETE — xóa dòng</h4>
+<p><code>DELETE FROM bảng WHERE điều_kiện</code>. Cũng như <code>UPDATE</code>, <b>đừng bao giờ quên <code>WHERE</code></b> — không thì cả bảng sẽ trống.</p>
+<pre class="run">DELETE FROM products WHERE id = 10;
+
+SELECT COUNT(*) AS n FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Xóa sản phẩm <code>id = 10</code> bằng <code>DELETE FROM products WHERE id = 10</code>. (Sau khi xóa còn 9 sản phẩm.)</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM products;</template>
+<template class="ref">DELETE FROM products WHERE id = 10; SELECT COUNT(*) AS n FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Xóa <b>tất cả hàng 'Điện tử'</b>: <code>DELETE FROM products WHERE category = 'Điện tử'</code>. (Còn lại 8.)</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM products;</template>
+<template class="ref">DELETE FROM products WHERE category = 'Điện tử'; SELECT COUNT(*) AS n FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Xóa mọi sản phẩm có <b>giá dưới 10000</b>: <code>DELETE FROM products WHERE price &lt; 10000</code>. (Còn lại 8.)</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM products;</template>
+<template class="ref">DELETE FROM products WHERE price < 10000; SELECT COUNT(*) AS n FROM products</template></div>
+
+<h4>4. Kết hợp nhiều lệnh</h4>
+<p>Bạn có thể chạy nhiều lệnh liên tiếp, mỗi lệnh kết thúc bằng <code>;</code>.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Thêm sản phẩm <code>(11, 'Sản phẩm mới', 'Đồ ăn', 10000, 10)</code>, <b>rồi</b> đổi giá của nó thành <code>12000</code>. (Viết cả hai lệnh trên dòng <code>SELECT</code>.)</span>
+<template class="st">
+SELECT price FROM products WHERE id = 11;</template>
+<template class="ref">INSERT INTO products VALUES (11, 'Sản phẩm mới', 'Đồ ăn', 10000, 10); UPDATE products SET price = 12000 WHERE id = 11; SELECT price FROM products WHERE id = 11</template></div>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Tăng giá <b>mọi hàng 'Đồ uống'</b> thêm 2000: <code>UPDATE products SET price = price + 2000 WHERE category = 'Đồ uống'</code>. Câu <code>SELECT</code> sẽ hiện danh sách đã sắp theo giá.</span>
+<template class="st">
+SELECT name, price FROM products WHERE category = 'Đồ uống' ORDER BY price;</template>
+<template class="ref">UPDATE products SET price = price + 2000 WHERE category = 'Đồ uống'; SELECT name, price FROM products WHERE category = 'Đồ uống' ORDER BY price</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Thêm khách hàng <code>(5, 'Đỗ Văn F', 'Hải Phòng', '2025-09-10')</code> vào bảng <code>customers</code> bằng <code>INSERT INTO customers VALUES (...)</code>.</span>
+<template class="st">
+SELECT name, city FROM customers WHERE id = 5;</template>
+<template class="ref">INSERT INTO customers VALUES (5, 'Đỗ Văn F', 'Hải Phòng', '2025-09-10'); SELECT name, city FROM customers WHERE id = 5</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Đặt <code>stock = 0</code> cho sản phẩm <code>id = 7</code>.</span>
+<template class="st">
+SELECT stock FROM products WHERE id = 7;</template>
+<template class="ref">UPDATE products SET stock = 0 WHERE id = 7; SELECT stock FROM products WHERE id = 7</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Xóa đơn hàng <code>id = 4</code> khỏi bảng <code>orders</code>. (Sau khi xóa còn 3 đơn.)</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM orders;</template>
+<template class="ref">DELETE FROM orders WHERE id = 4; SELECT COUNT(*) AS n FROM orders</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Giảm giá <b>mọi hàng 'Văn phòng phẩm'</b> đi 1000: <code>UPDATE products SET price = price - 1000 WHERE category = 'Văn phòng phẩm'</code>. Câu <code>SELECT</code> sẽ hiện danh sách theo <code>id</code>.</span>
+<template class="st">
+SELECT name, price FROM products WHERE category = 'Văn phòng phẩm' ORDER BY id;</template>
+<template class="ref">UPDATE products SET price = price - 1000 WHERE category = 'Văn phòng phẩm'; SELECT name, price FROM products WHERE category = 'Văn phòng phẩm' ORDER BY id</template></div>

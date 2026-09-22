@@ -89,23 +89,23 @@
 - Platform features: CodeMirror + live syntax squiggles, runnable examples, auto-grading with specific
   feedback, progress + belts (white→black), Ask sensei (Zalo `0986061705`), lesson outlines, VI/EN toggle.
 - Accounts/Supabase live.
-- **SQL Fundamentals: Lessons 1–11 DONE** (bilingual, rich standard, built into `sql.html`, all `ref`
-  queries verified against the seed data, end-to-end grading confirmed in-browser). Course is **15 lessons**
-  (fundamentals only). 1 SELECT & WHERE · 2 ORDER BY, LIMIT & DISTINCT · 3 Calculations & AS · 4 Aggregates ·
-  5 GROUP BY & HAVING · 6 CASE WHEN (conditional logic) · 7 Text & number functions · 8 Dates & time ·
-  9 JOIN · 10 LEFT JOIN & NULL · 11 Subqueries. **Remaining: 12–15** (12 Mini project: sales report ·
-  13 INSERT, UPDATE & DELETE · 14 CREATE TABLE & data types · 15 Capstone: customer analysis) — still
-  placeholders.
+- **SQL Fundamentals COMPLETE: Lessons 1–15** (bilingual, rich standard, built into `sql.html`, all `ref`
+  queries verified against the seed data, end-to-end grading confirmed in-browser — including the
+  INSERT/UPDATE/DELETE and CREATE-TABLE lessons, which grade via a modification statement + a verifying
+  `SELECT` run on a fresh DB copy). Course is **15 lessons** (fundamentals only). 1 SELECT & WHERE ·
+  2 ORDER BY, LIMIT & DISTINCT · 3 Calculations & AS · 4 Aggregates · 5 GROUP BY & HAVING ·
+  6 CASE WHEN (conditional logic) · 7 Text & number functions · 8 Dates & time · 9 JOIN ·
+  10 LEFT JOIN & NULL · 11 Subqueries · 12 Mini project: sales report · 13 INSERT, UPDATE & DELETE ·
+  14 CREATE TABLE & data types · 15 Capstone: customer analysis.
 
 ## 7. Status — TODO / roadmap
 1. **Python Fundamentals (L1–L20) is done.** Do not re-author. If revisiting, keep it fundamentals-only:
    comprehensions, lambda/`key` sorting, OOP, generators, decorators etc. belong to the planned
    **Python Intermediate** / **Python Advanced** courses, not here.
-2. **Author QA** (12 lessons) and **SQL** content. **SQL is a 15-lesson fundamentals course**;
-   lessons **1–11 are authored bilingually** (`private-tools/content/sql/NN.{vi,en}.html`), lessons
-   **12–15 remain placeholder** (12 Mini project · 13 INSERT/UPDATE/DELETE · 14 CREATE TABLE & data types ·
-   15 Capstone). Advanced SQL (UNION, window functions, self-joins, indexes) is deferred to a future
-   SQL Intermediate/Advanced course. Can be delegated to the **Dojo Builder** agent or the dedicated
+2. **Author QA** (12 lessons). **SQL is COMPLETE** — a 15-lesson fundamentals course, all lessons authored
+   bilingually (`private-tools/content/sql/NN.{vi,en}.html`) and built into `sql.html`. Advanced SQL
+   (UNION, CTEs, window functions, self-joins, indexes) is deferred to a future SQL Intermediate/Advanced
+   course. QA can be delegated to the **Dojo Builder** agent or the dedicated
    **SQL Course Builder** agent (`.github/agents/sql-course-builder.agent.md`) in a separate session.
 3. Planned follow-on courses — **Python Intermediate** (13 lessons), **Python Advanced**, a standalone
    **Python DSA / Algorithms** course, and **Web Programming Fundamentals** (15 lessons). Full outlines

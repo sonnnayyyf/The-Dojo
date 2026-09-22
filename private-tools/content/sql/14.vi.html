@@ -1,0 +1,104 @@
+<h3>Bài 14 — CREATE TABLE & kiểu dữ liệu</h3>
+<p>Cho tới giờ các bảng <code>products</code>, <code>customers</code>… đã có sẵn. Nhưng khi xây một ứng dụng mới, chính bạn là người <b>thiết kế bảng</b>: đặt tên bảng, khai báo các cột và <b>kiểu dữ liệu</b> của chúng. Đó là việc của <code>CREATE TABLE</code>.</p>
+<p>Ba kiểu dữ liệu cơ bản nhất trong SQLite: <code>INTEGER</code> (số nguyên), <code>TEXT</code> (chuỗi), và <code>REAL</code> (số thực, có phần thập phân). Bạn cũng có thể đặt <b>ràng buộc</b>: <code>PRIMARY KEY</code> (khóa chính, định danh duy nhất), <code>NOT NULL</code> (bắt buộc có giá trị), <code>DEFAULT</code> (giá trị mặc định).</p>
+<p>Như bài trước, mỗi bài tập bạn <b>tạo bảng, thêm dữ liệu, rồi <code>SELECT</code></b> để xem kết quả. Mỗi lần chạy dùng một cơ sở dữ liệu mới nên bạn cứ tạo bảng thoải mái.</p>
+
+<h4>1. CREATE TABLE — tạo bảng</h4>
+<p>Khai báo tên bảng, rồi trong ngoặc là danh sách <code>tên_cột kiểu</code>, cách nhau bằng dấu phẩy.</p>
+<pre class="run">CREATE TABLE suppliers (id INTEGER, name TEXT);
+INSERT INTO suppliers VALUES (1, 'Công ty A');
+
+SELECT * FROM suppliers;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Tạo bảng <code>suppliers (id INTEGER, name TEXT)</code>, thêm dòng <code>(1, 'Công ty A')</code>, rồi câu <code>SELECT</code> bên dưới sẽ hiện nó.</span>
+<template class="st">
+SELECT * FROM suppliers;</template>
+<template class="ref">CREATE TABLE suppliers (id INTEGER, name TEXT); INSERT INTO suppliers VALUES (1, 'Công ty A'); SELECT * FROM suppliers</template></div>
+
+<h4>2. Kiểu dữ liệu: INTEGER, TEXT, REAL</h4>
+<p><code>REAL</code> dùng cho số có phần thập phân (ví dụ cân nặng, tỉ lệ).</p>
+<pre class="run">CREATE TABLE items (id INTEGER, name TEXT, weight REAL);
+INSERT INTO items VALUES (1, 'Gạo', 5.5);
+
+SELECT name, weight FROM items;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tạo bảng <code>items (id INTEGER, name TEXT, weight REAL)</code>, thêm <code>(1, 'Gạo', 5.5)</code>.</span>
+<template class="st">
+SELECT name, weight FROM items;</template>
+<template class="ref">CREATE TABLE items (id INTEGER, name TEXT, weight REAL); INSERT INTO items VALUES (1, 'Gạo', 5.5); SELECT name, weight FROM items</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tạo bảng <code>sales (id INTEGER, price REAL, qty INTEGER)</code>, thêm <code>(1, 10.5, 3)</code>, rồi tính <code>price * qty AS total</code>.</span>
+<template class="st">
+SELECT price * qty AS total FROM sales;</template>
+<template class="ref">CREATE TABLE sales (id INTEGER, price REAL, qty INTEGER); INSERT INTO sales VALUES (1, 10.5, 3); SELECT price * qty AS total FROM sales</template></div>
+
+<h4>3. PRIMARY KEY — khóa chính</h4>
+<p><code>PRIMARY KEY</code> đánh dấu cột định danh duy nhất cho mỗi dòng (giống cột <code>id</code> ở các bảng bạn đã dùng).</p>
+<pre class="run">CREATE TABLE tags (id INTEGER PRIMARY KEY, label TEXT);
+INSERT INTO tags VALUES (1, 'new'), (2, 'sale');
+
+SELECT COUNT(*) AS n FROM tags;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Tạo bảng <code>tags (id INTEGER PRIMARY KEY, label TEXT)</code>, thêm <b>hai dòng</b> <code>(1, 'new'), (2, 'sale')</code>.</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM tags;</template>
+<template class="ref">CREATE TABLE tags (id INTEGER PRIMARY KEY, label TEXT); INSERT INTO tags VALUES (1, 'new'), (2, 'sale'); SELECT COUNT(*) AS n FROM tags</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Tạo bảng <code>colors (id INTEGER, name TEXT)</code>, thêm ba dòng <code>(1, 'red'), (2, 'green'), (3, 'blue')</code>, rồi <code>SELECT name ... ORDER BY id</code>.</span>
+<template class="st">
+SELECT name FROM colors ORDER BY id;</template>
+<template class="ref">CREATE TABLE colors (id INTEGER, name TEXT); INSERT INTO colors VALUES (1, 'red'), (2, 'green'), (3, 'blue'); SELECT name FROM colors ORDER BY id</template></div>
+
+<h4>4. NOT NULL và DEFAULT</h4>
+<p><code>NOT NULL</code> bắt buộc cột phải có giá trị. <code>DEFAULT</code> cung cấp giá trị mặc định khi bạn không nêu cột đó lúc <code>INSERT</code>.</p>
+<pre class="run">CREATE TABLE tickets (id INTEGER, status TEXT DEFAULT 'open');
+INSERT INTO tickets (id) VALUES (1);
+
+SELECT status FROM tickets WHERE id = 1;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Tạo bảng <code>staff (id INTEGER PRIMARY KEY, name TEXT NOT NULL)</code>, thêm <code>(1, 'An')</code>.</span>
+<template class="st">
+SELECT name FROM staff;</template>
+<template class="ref">CREATE TABLE staff (id INTEGER PRIMARY KEY, name TEXT NOT NULL); INSERT INTO staff VALUES (1, 'An'); SELECT name FROM staff</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Tạo bảng <code>tickets (id INTEGER, status TEXT DEFAULT 'open')</code>, thêm <b>chỉ id</b>: <code>INSERT INTO tickets (id) VALUES (1)</code>. Cột <code>status</code> sẽ tự nhận <code>'open'</code>.</span>
+<template class="st">
+SELECT status FROM tickets WHERE id = 1;</template>
+<template class="ref">CREATE TABLE tickets (id INTEGER, status TEXT DEFAULT 'open'); INSERT INTO tickets (id) VALUES (1); SELECT status FROM tickets WHERE id = 1</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Tạo bảng <code>members (id INTEGER PRIMARY KEY, name TEXT NOT NULL, points INTEGER DEFAULT 0)</code>, thêm <b>chỉ id và name</b> <code>(1, 'Minh')</code>. Cột <code>points</code> mặc định 0.</span>
+<template class="st">
+SELECT name, points FROM members;</template>
+<template class="ref">CREATE TABLE members (id INTEGER PRIMARY KEY, name TEXT NOT NULL, points INTEGER DEFAULT 0); INSERT INTO members (id, name) VALUES (1, 'Minh'); SELECT name, points FROM members</template></div>
+
+<h4>5. Tạo bảng từ dữ liệu có sẵn</h4>
+<p><code>CREATE TABLE … AS SELECT …</code> tạo bảng mới và đổ ngay kết quả một truy vấn vào. <code>INSERT INTO … SELECT …</code> thì chép dữ liệu vào bảng đã có.</p>
+<pre class="run">CREATE TABLE cheap AS
+  SELECT name, price FROM products WHERE price < 15000;
+
+SELECT COUNT(*) AS n FROM cheap;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Tạo bảng <code>cheap</code> chứa <code>name, price</code> của sản phẩm giá dưới 15000: <code>CREATE TABLE cheap AS SELECT name, price FROM products WHERE price &lt; 15000</code>.</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM cheap;</template>
+<template class="ref">CREATE TABLE cheap AS SELECT name, price FROM products WHERE price < 15000; SELECT COUNT(*) AS n FROM cheap</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Tạo bảng rỗng <code>drinks (name TEXT, price INTEGER)</code>, rồi chép mọi hàng <code>'Đồ uống'</code> vào bằng <code>INSERT INTO drinks SELECT name, price FROM products WHERE category = 'Đồ uống'</code>.</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM drinks;</template>
+<template class="ref">CREATE TABLE drinks (name TEXT, price INTEGER); INSERT INTO drinks SELECT name, price FROM products WHERE category = 'Đồ uống'; SELECT COUNT(*) AS n FROM drinks</template></div>
+
+<h4>6. Ghép mọi thứ lại</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Tạo bảng <code>scores (student TEXT, score INTEGER)</code>, thêm <code>('A', 8), ('B', 6), ('C', 10)</code>, rồi tính <code>ROUND(AVG(score), 1) AS avg_score</code> và <code>MAX(score) AS best</code>.</span>
+<template class="st">
+SELECT ROUND(AVG(score), 1) AS avg_score, MAX(score) AS best FROM scores;</template>
+<template class="ref">CREATE TABLE scores (student TEXT, score INTEGER); INSERT INTO scores VALUES ('A', 8), ('B', 6), ('C', 10); SELECT ROUND(AVG(score), 1) AS avg_score, MAX(score) AS best FROM scores</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Tạo bảng <code>cities (id INTEGER, name TEXT)</code>, thêm <code>(1, 'Hà Nội'), (2, 'Huế')</code>, rồi <code>SELECT name ... ORDER BY id</code>.</span>
+<template class="st">
+SELECT name FROM cities ORDER BY id;</template>
+<template class="ref">CREATE TABLE cities (id INTEGER, name TEXT); INSERT INTO cities VALUES (1, 'Hà Nội'), (2, 'Huế'); SELECT name FROM cities ORDER BY id</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tạo bảng <code>measures (id INTEGER, value REAL)</code>, thêm <code>(1, 3.14)</code>.</span>
+<template class="st">
+SELECT value FROM measures;</template>
+<template class="ref">CREATE TABLE measures (id INTEGER, value REAL); INSERT INTO measures VALUES (1, 3.14); SELECT value FROM measures</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tạo bảng <code>electronics</code> chứa <code>name, price</code> của hàng <code>'Điện tử'</code>: <code>CREATE TABLE electronics AS SELECT name, price FROM products WHERE category = 'Điện tử'</code>.</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM electronics;</template>
+<template class="ref">CREATE TABLE electronics AS SELECT name, price FROM products WHERE category = 'Điện tử'; SELECT COUNT(*) AS n FROM electronics</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Tạo bảng <code>tasks (id INTEGER PRIMARY KEY, title TEXT NOT NULL, done INTEGER DEFAULT 0)</code>, thêm <b>chỉ id và title</b> <code>(1, 'A'), (2, 'B')</code>, rồi tính <code>SUM(done) AS total_done</code> và <code>COUNT(*) AS n</code>.</span>
+<template class="st">
+SELECT SUM(done) AS total_done, COUNT(*) AS n FROM tasks;</template>
+<template class="ref">CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT NOT NULL, done INTEGER DEFAULT 0); INSERT INTO tasks (id, title) VALUES (1, 'A'), (2, 'B'); SELECT SUM(done) AS total_done, COUNT(*) AS n FROM tasks</template></div>

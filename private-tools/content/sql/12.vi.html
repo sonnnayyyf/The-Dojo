@@ -1,0 +1,139 @@
+<h3>Bài 12 — Đồ án nhỏ: báo cáo bán hàng</h3>
+<p>Đến đây bạn đã có đủ công cụ để làm một việc rất thật: <b>dựng một bản báo cáo bán hàng hoàn chỉnh</b>. Đây là bài tổng hợp — mỗi bài tập là một mảnh của báo cáo, ghép lại thành bức tranh đầy đủ về cửa hàng: doanh thu, sản phẩm bán chạy, khách hàng chi nhiều nhất, xu hướng theo tháng.</p>
+<p>Bạn sẽ dùng lại tất cả: <code>JOIN</code> để nối bảng, <code>SUM</code>/<code>COUNT</code> để tổng hợp, <code>GROUP BY</code> để chia nhóm, <code>LEFT JOIN</code> + <code>COALESCE</code> để không bỏ sót ai, <code>ORDER BY</code>/<code>LIMIT</code> để xếp hạng, và <code>strftime</code> cho báo cáo theo thời gian.</p>
+<p>Nhắc lại công thức doanh thu: mỗi dòng hàng có <b>thành tiền = <code>p.price * oi.qty</code></b>. Cộng dồn là ra doanh thu. Bắt đầu nào.</p>
+
+<h4>1. Những con số tổng quan</h4>
+<p>Mọi báo cáo mở đầu bằng vài con số lớn. Doanh thu tổng = cộng thành tiền của mọi dòng hàng.</p>
+<pre class="run">SELECT SUM(p.price * oi.qty) AS total_revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Tính <b>tổng doanh thu</b>: nối <code>order_items</code> với <code>products</code>, <code>SUM(p.price * oi.qty) AS total_revenue</code>.</span>
+<template class="st">SELECT SUM(p.price * oi.qty) AS total_revenue
+FROM order_items oi
+JOIN products p ON </template>
+<template class="ref">SELECT SUM(p.price * oi.qty) AS total_revenue FROM order_items oi JOIN products p ON oi.product_id = p.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Đếm <b>tổng số đơn hàng</b>: <code>COUNT(*) AS order_count</code> từ <code>orders</code>.</span>
+<template class="st">SELECT 
+FROM orders</template>
+<template class="ref">SELECT COUNT(*) AS order_count FROM orders</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Đếm <b>số khách đã từng mua</b>: <code>COUNT(DISTINCT customer_id) AS buyers</code> từ <code>orders</code>.</span>
+<template class="st">SELECT 
+FROM orders</template>
+<template class="ref">SELECT COUNT(DISTINCT customer_id) AS buyers FROM orders</template></div>
+
+<h4>2. Doanh thu theo danh mục và sản phẩm</h4>
+<p>Nối rồi gom nhóm để biết tiền đến từ đâu.</p>
+<pre class="run">SELECT p.category, SUM(p.price * oi.qty) AS revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY p.category
+ORDER BY revenue DESC;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> <b>Doanh thu mỗi danh mục</b>: <code>p.category</code>, <code>SUM(p.price * oi.qty) AS revenue</code>, gom theo <code>p.category</code>, sắp theo <code>revenue</code> giảm dần.</span>
+<template class="st">SELECT p.category, SUM(p.price * oi.qty) AS revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT p.category, SUM(p.price * oi.qty) AS revenue FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.category ORDER BY revenue DESC</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> <b>Top 3 sản phẩm doanh thu cao nhất</b>: <code>p.name AS product</code>, <code>SUM(p.price * oi.qty) AS revenue</code>, gom theo <code>p.id</code>, sắp <code>revenue</code> giảm dần, lấy 3.</span>
+<template class="st">SELECT p.name AS product, SUM(p.price * oi.qty) AS revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, SUM(p.price * oi.qty) AS revenue FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.id ORDER BY revenue DESC LIMIT 3</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> <b>Số lượng bán ra mỗi sản phẩm, kể cả 0</b> (dùng <code>LEFT JOIN</code>): <code>p.name AS product</code>, <code>COALESCE(SUM(oi.qty), 0) AS units</code>, gom theo <code>p.id</code>, sắp <code>units</code> giảm dần rồi <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS units
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS units FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id ORDER BY units DESC, p.id</template></div>
+
+<h4>3. Khách hàng</h4>
+<p>Nối bốn bảng để biết mỗi khách chi bao nhiêu.</p>
+<pre class="run">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY spent DESC;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> <b>Chi tiêu mỗi khách</b> (chỉ khách đã mua): <code>c.name AS customer</code>, <code>SUM(p.price * oi.qty) AS spent</code>, gom theo <code>c.id</code>, sắp <code>spent</code> giảm dần.</span>
+<template class="st">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY </template>
+<template class="ref">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id ORDER BY spent DESC</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> <b>Khách chưa từng mua</b>: <code>name</code> từ <code>customers</code> có <code>id NOT IN (SELECT customer_id FROM orders)</code>, sắp theo <code>id</code>.</span>
+<template class="st">SELECT name FROM customers
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name FROM customers WHERE id NOT IN (SELECT customer_id FROM orders) ORDER BY id</template></div>
+
+<h4>4. Chỉ số nâng cao</h4>
+<p><b>Giá trị đơn hàng trung bình</b> = tổng doanh thu chia số đơn. Dùng truy vấn con để lấy số đơn.</p>
+<pre class="run">SELECT ROUND(SUM(p.price * oi.qty) * 1.0 / (SELECT COUNT(*) FROM orders)) AS avg_order_value
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Tính <b>giá trị đơn hàng trung bình</b>: <code>ROUND(SUM(p.price * oi.qty) * 1.0 / (SELECT COUNT(*) FROM orders)) AS avg_order_value</code> (nối <code>order_items</code> với <code>products</code>).</span>
+<template class="st">SELECT ROUND(SUM(p.price * oi.qty) * 1.0 / (SELECT COUNT(*) FROM orders)) AS avg_order_value
+FROM order_items oi
+JOIN products p ON </template>
+<template class="ref">SELECT ROUND(SUM(p.price * oi.qty) * 1.0 / (SELECT COUNT(*) FROM orders)) AS avg_order_value FROM order_items oi JOIN products p ON oi.product_id = p.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> <b>Doanh thu theo tháng</b>: <code>strftime('%m', o.order_date) AS month</code>, <code>SUM(p.price * oi.qty) AS revenue</code> (nối <code>orders</code> → <code>order_items</code> → <code>products</code>), gom theo <code>month</code>, sắp theo <code>month</code>.</span>
+<template class="st">SELECT strftime('%m', o.order_date) AS month, SUM(p.price * oi.qty) AS revenue
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT strftime('%m', o.order_date) AS month, SUM(p.price * oi.qty) AS revenue FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id GROUP BY month ORDER BY month</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 11.</b> <b>Doanh thu mỗi danh mục kèm nhãn</b>: <code>p.category</code>, <code>SUM(p.price * oi.qty) AS revenue</code>, và <code>CASE WHEN SUM(p.price * oi.qty) &gt;= 100000 THEN 'high' ELSE 'low' END AS tier</code>, gom theo <code>p.category</code>, sắp <code>revenue</code> giảm dần.</span>
+<template class="st">SELECT p.category, SUM(p.price * oi.qty) AS revenue,
+  CASE WHEN SUM(p.price * oi.qty) >= 100000 THEN 'high' ELSE 'low' END AS tier
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT p.category, SUM(p.price * oi.qty) AS revenue, CASE WHEN SUM(p.price * oi.qty) >= 100000 THEN 'high' ELSE 'low' END AS tier FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.category ORDER BY revenue DESC</template></div>
+
+<h4>5. Tổng kết báo cáo</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao.</b> <b>Khách hàng giá trị nhất</b>: <code>c.name AS customer</code>, <code>COUNT(DISTINCT o.id) AS orders</code>, <code>SUM(p.price * oi.qty) AS spent</code> (nối <code>orders</code> → <code>order_items</code> → <code>products</code> → <code>customers</code>), gom theo <code>c.id</code>, sắp <code>spent</code> giảm dần, lấy 1.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS spent FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id ORDER BY spent DESC LIMIT 1</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Tính <b>tổng số lượng đã bán</b>: <code>SUM(qty) AS total_units</code> từ <code>order_items</code>.</span>
+<template class="st">SELECT 
+FROM order_items</template>
+<template class="ref">SELECT SUM(qty) AS total_units FROM order_items</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> <b>Chi tiêu mỗi khách, kể cả khách chưa mua (0)</b>: <code>LEFT JOIN</code> <code>customers</code> → <code>orders</code> → <code>order_items</code> → <code>products</code>, <code>c.name AS customer</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS spent</code>, gom theo <code>c.id</code>, sắp <code>spent</code> giảm dần rồi <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY spent DESC, c.id</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> <b>Sản phẩm bán chạy nhất theo số lượng</b>: <code>p.name AS product</code>, <code>SUM(oi.qty) AS units</code> (nối <code>order_items</code> với <code>products</code>), gom theo <code>p.id</code>, sắp <code>units</code> giảm dần, lấy 1.</span>
+<template class="st">SELECT p.name AS product, SUM(oi.qty) AS units
+FROM order_items oi
+JOIN products p ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, SUM(oi.qty) AS units FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.id ORDER BY units DESC LIMIT 1</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> <b>Báo cáo theo tháng</b>: <code>strftime('%m', o.order_date) AS month</code>, <code>COUNT(DISTINCT o.id) AS orders</code>, <code>SUM(p.price * oi.qty) AS revenue</code> (nối <code>orders</code> → <code>order_items</code> → <code>products</code>), gom theo <code>month</code>, sắp theo <code>month</code>.</span>
+<template class="st">SELECT strftime('%m', o.order_date) AS month, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS revenue
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT strftime('%m', o.order_date) AS month, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS revenue FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id GROUP BY month ORDER BY month</template></div>

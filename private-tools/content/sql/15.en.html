@@ -1,0 +1,154 @@
+<h3>Lesson 15 — Capstone: customer analysis</h3>
+<p>Congratulations — you've reached the final lesson! This is a <b>comprehensive exam</b>: a series of real customer-analysis queries that combine <i>everything</i> you've learned. No new concepts here — just you, the database, and some tough business questions.</p>
+<p>The running theme: <b>understanding customers</b>. Who spends the most? Who hasn't come back? Which segment does each customer belong to? You'll use <code>JOIN</code>, <code>LEFT JOIN</code>, <code>GROUP BY</code>, <code>HAVING</code>, <code>CASE</code>, subqueries, <code>COALESCE</code>, and date functions — all in one lesson.</p>
+<p>Read each task carefully and hit "▶" to self-grade. Finish this and you're ready to use SQL for real work.</p>
+
+<h4>1. The customer overview</h4>
+<p>Start with a summary table: each customer, their order count, and total spend — <b>leaving no one out</b> (including non-buyers).</p>
+<pre class="run">SELECT c.name AS customer,
+       COUNT(DISTINCT o.id) AS orders,
+       COALESCE(SUM(p.price * oi.qty), 0) AS spent
+FROM customers c
+LEFT JOIN orders o       ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p     ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY spent DESC, c.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Build the table above: <code>c.name AS customer</code>, <code>COUNT(DISTINCT o.id) AS orders</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS spent</code>; <code>LEFT JOIN</code> all four tables; group by <code>c.id</code>; sort by <code>spent</code> descending then <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, COALESCE(SUM(p.price * oi.qty), 0) AS spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, COALESCE(SUM(p.price * oi.qty), 0) AS spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY spent DESC, c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> <b>Top-spending customer</b> (buyers only): <code>c.name AS customer</code>, <code>SUM(p.price * oi.qty) AS spent</code>, join <code>orders</code> → <code>order_items</code> → <code>products</code> → <code>customers</code>, group by <code>c.id</code>, sort by <code>spent</code> descending, take 1.</span>
+<template class="st">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id ORDER BY spent DESC LIMIT 1</template></div>
+
+<h4>2. Filtering by behaviour</h4>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> <b>Customers who spent over 100000</b>: <code>c.name AS customer</code>, <code>SUM(p.price * oi.qty) AS spent</code> (join four tables), group by <code>c.id</code>, use <code>HAVING SUM(p.price * oi.qty) &gt; 100000</code>, sort by <code>spent</code> descending.</span>
+<template class="st">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+HAVING </template>
+<template class="ref">SELECT c.name AS customer, SUM(p.price * oi.qty) AS spent FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id HAVING SUM(p.price * oi.qty) > 100000 ORDER BY spent DESC</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> <b>Number of distinct products each customer bought</b>: <code>c.name AS customer</code>, <code>COUNT(DISTINCT oi.product_id) AS products</code> (join <code>orders</code> → <code>order_items</code> → <code>customers</code>), group by <code>c.id</code>, sort by <code>products</code> descending then <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT oi.product_id) AS products
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT oi.product_id) AS products FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id ORDER BY products DESC, c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> <b>Repeat customers (more than 1 order)</b>: <code>c.name AS customer</code>, <code>COUNT(*) AS orders</code> (join <code>orders</code> to <code>customers</code>), group by <code>c.id</code>, use <code>HAVING COUNT(*) &gt; 1</code>, sort by <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(*) AS orders
+FROM orders o
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+HAVING </template>
+<template class="ref">SELECT c.name AS customer, COUNT(*) AS orders FROM orders o JOIN customers c ON o.customer_id = c.id GROUP BY c.id HAVING COUNT(*) > 1 ORDER BY c.id</template></div>
+
+<h4>3. Deeper analysis</h4>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> <b>Customer 1's spend by category</b>: <code>p.category</code>, <code>SUM(p.price * oi.qty) AS spent</code>, join <code>orders</code> → <code>order_items</code> → <code>products</code>, filter <code>o.customer_id = 1</code>, group by <code>p.category</code>, sort by <code>spent</code> descending.</span>
+<template class="st">SELECT p.category, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+WHERE o.customer_id = 1
+GROUP BY </template>
+<template class="ref">SELECT p.category, SUM(p.price * oi.qty) AS spent FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id WHERE o.customer_id = 1 GROUP BY p.category ORDER BY spent DESC</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> <b>Each customer's first order date</b>: <code>c.name AS customer</code>, <code>MIN(o.order_date) AS first_order</code> (join <code>customers</code> to <code>orders</code>), group by <code>c.id</code>, sort by <code>first_order</code>.</span>
+<template class="st">SELECT c.name AS customer, MIN(o.order_date) AS first_order
+FROM customers c
+JOIN orders o ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, MIN(o.order_date) AS first_order FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.id ORDER BY first_order</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> <b>Revenue by city</b> (buyers only): <code>c.city</code>, <code>SUM(p.price * oi.qty) AS spent</code> (join four tables), group by <code>c.city</code>, sort by <code>spent</code> descending.</span>
+<template class="st">SELECT c.city, SUM(p.price * oi.qty) AS spent
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY </template>
+<template class="ref">SELECT c.city, SUM(p.price * oi.qty) AS spent FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.city ORDER BY spent DESC</template></div>
+
+<h4>4. Segmentation and contribution</h4>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> <b>Customer segments</b> (leaving no one out): <code>c.name AS customer</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS spent</code>, and a <code>segment</code> column = <code>'VIP'</code> if spend &ge; 100000, <code>'regular'</code> if spend &gt; 0, otherwise <code>'inactive'</code>. Use <code>LEFT JOIN</code> on four tables, group by <code>c.id</code>, sort by <code>spent</code> descending then <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent,
+  CASE WHEN COALESCE(SUM(p.price * oi.qty), 0) >= 100000 THEN 'VIP'
+       WHEN COALESCE(SUM(p.price * oi.qty), 0) > 0 THEN 'regular'
+       ELSE 'inactive' END AS segment
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent, CASE WHEN COALESCE(SUM(p.price * oi.qty), 0) >= 100000 THEN 'VIP' WHEN COALESCE(SUM(p.price * oi.qty), 0) > 0 THEN 'regular' ELSE 'inactive' END AS segment FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY spent DESC, c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> <b>Each customer's share of total revenue</b> (buyers only): <code>c.name AS customer</code>, <code>ROUND(SUM(p.price * oi.qty) * 100.0 / (SELECT SUM(pp.price * oii.qty) FROM order_items oii JOIN products pp ON oii.product_id = pp.id)) AS pct</code>, join four tables, group by <code>c.id</code>, sort by <code>pct</code> descending.</span>
+<template class="st">SELECT c.name AS customer,
+  ROUND(SUM(p.price * oi.qty) * 100.0 / (SELECT SUM(pp.price * oii.qty) FROM order_items oii JOIN products pp ON oii.product_id = pp.id)) AS pct
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, ROUND(SUM(p.price * oi.qty) * 100.0 / (SELECT SUM(pp.price * oii.qty) FROM order_items oii JOIN products pp ON oii.product_id = pp.id)) AS pct FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id ORDER BY pct DESC</template></div>
+
+<h4>5. The final report</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> <b>Full customer report</b> (buyers only): <code>c.name AS customer</code>, <code>COUNT(DISTINCT o.id) AS orders</code>, <code>SUM(p.price * oi.qty) AS spent</code>, and <code>ROUND(SUM(p.price * oi.qty) * 1.0 / COUNT(DISTINCT o.id)) AS avg_order</code> (that customer's average order value). Join four tables, group by <code>c.id</code>, sort by <code>spent</code> descending.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS spent,
+  ROUND(SUM(p.price * oi.qty) * 1.0 / COUNT(DISTINCT o.id)) AS avg_order
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN customers c ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, SUM(p.price * oi.qty) AS spent, ROUND(SUM(p.price * oi.qty) * 1.0 / COUNT(DISTINCT o.id)) AS avg_order FROM orders o JOIN order_items oi ON oi.order_id = o.id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id GROUP BY c.id ORDER BY spent DESC</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch. Finish these and you graduate from SQL Fundamentals! 🎓</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Compute the <b>store-wide total revenue</b>: <code>SUM(p.price * oi.qty) AS total_revenue</code> (join <code>order_items</code> to <code>products</code>).</span>
+<template class="st">SELECT SUM(p.price * oi.qty) AS total_revenue
+FROM order_items oi
+JOIN products p ON </template>
+<template class="ref">SELECT SUM(p.price * oi.qty) AS total_revenue FROM order_items oi JOIN products p ON oi.product_id = p.id</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> <b>Spend ranking (including non-buyers)</b>: <code>c.name AS customer</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS spent</code>, <code>LEFT JOIN</code> four tables, group by <code>c.id</code>, sort by <code>spent</code> descending then <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY spent DESC, c.id</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> <b>Products that never sold</b>: <code>name</code> from <code>products</code> where <code>id NOT IN (SELECT product_id FROM order_items)</code>, sorted by <code>id</code>.</span>
+<template class="st">SELECT name FROM products
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name FROM products WHERE id NOT IN (SELECT product_id FROM order_items) ORDER BY id</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> <b>Customer segments</b> (leaving no one out): <code>c.name AS customer</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS spent</code>, and <code>segment</code> = <code>'VIP'</code> if spend &ge; 100000, <code>'regular'</code> if spend &gt; 0, otherwise <code>'inactive'</code>. <code>LEFT JOIN</code> four tables, group by <code>c.id</code>, sort by <code>spent</code> descending then <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent,
+  CASE WHEN COALESCE(SUM(p.price * oi.qty), 0) >= 100000 THEN 'VIP'
+       WHEN COALESCE(SUM(p.price * oi.qty), 0) > 0 THEN 'regular'
+       ELSE 'inactive' END AS segment
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS spent, CASE WHEN COALESCE(SUM(p.price * oi.qty), 0) >= 100000 THEN 'VIP' WHEN COALESCE(SUM(p.price * oi.qty), 0) > 0 THEN 'regular' ELSE 'inactive' END AS segment FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY spent DESC, c.id</template></div>

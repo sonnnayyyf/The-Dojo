@@ -1,0 +1,104 @@
+<h3>Lesson 14 — CREATE TABLE & data types</h3>
+<p>Until now the tables <code>products</code>, <code>customers</code>… already existed. But when you build a new app, <b>you</b> design the tables: pick a table name, declare the columns and their <b>data types</b>. That's the job of <code>CREATE TABLE</code>.</p>
+<p>The three most basic data types in SQLite: <code>INTEGER</code> (whole numbers), <code>TEXT</code> (strings), and <code>REAL</code> (decimals). You can also add <b>constraints</b>: <code>PRIMARY KEY</code> (a unique identifier), <code>NOT NULL</code> (a value is required), <code>DEFAULT</code> (a fallback value).</p>
+<p>As in the last lesson, each exercise has you <b>create a table, add data, then <code>SELECT</code></b> to see the result. Each run uses a fresh database, so create tables freely.</p>
+
+<h4>1. CREATE TABLE — make a table</h4>
+<p>Declare the table name, then in parentheses a list of <code>column_name type</code>, separated by commas.</p>
+<pre class="run">CREATE TABLE suppliers (id INTEGER, name TEXT);
+INSERT INTO suppliers VALUES (1, 'Công ty A');
+
+SELECT * FROM suppliers;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Create the table <code>suppliers (id INTEGER, name TEXT)</code>, add the row <code>(1, 'Công ty A')</code>, then the <code>SELECT</code> below shows it.</span>
+<template class="st">
+SELECT * FROM suppliers;</template>
+<template class="ref">CREATE TABLE suppliers (id INTEGER, name TEXT); INSERT INTO suppliers VALUES (1, 'Công ty A'); SELECT * FROM suppliers</template></div>
+
+<h4>2. Data types: INTEGER, TEXT, REAL</h4>
+<p><code>REAL</code> is for numbers with a decimal part (e.g. weight, ratio).</p>
+<pre class="run">CREATE TABLE items (id INTEGER, name TEXT, weight REAL);
+INSERT INTO items VALUES (1, 'Gạo', 5.5);
+
+SELECT name, weight FROM items;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Create <code>items (id INTEGER, name TEXT, weight REAL)</code>, add <code>(1, 'Gạo', 5.5)</code>.</span>
+<template class="st">
+SELECT name, weight FROM items;</template>
+<template class="ref">CREATE TABLE items (id INTEGER, name TEXT, weight REAL); INSERT INTO items VALUES (1, 'Gạo', 5.5); SELECT name, weight FROM items</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Create <code>sales (id INTEGER, price REAL, qty INTEGER)</code>, add <code>(1, 10.5, 3)</code>, then compute <code>price * qty AS total</code>.</span>
+<template class="st">
+SELECT price * qty AS total FROM sales;</template>
+<template class="ref">CREATE TABLE sales (id INTEGER, price REAL, qty INTEGER); INSERT INTO sales VALUES (1, 10.5, 3); SELECT price * qty AS total FROM sales</template></div>
+
+<h4>3. PRIMARY KEY</h4>
+<p><code>PRIMARY KEY</code> marks the column that uniquely identifies each row (like the <code>id</code> column in the tables you've been using).</p>
+<pre class="run">CREATE TABLE tags (id INTEGER PRIMARY KEY, label TEXT);
+INSERT INTO tags VALUES (1, 'new'), (2, 'sale');
+
+SELECT COUNT(*) AS n FROM tags;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Create <code>tags (id INTEGER PRIMARY KEY, label TEXT)</code>, add <b>two rows</b> <code>(1, 'new'), (2, 'sale')</code>.</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM tags;</template>
+<template class="ref">CREATE TABLE tags (id INTEGER PRIMARY KEY, label TEXT); INSERT INTO tags VALUES (1, 'new'), (2, 'sale'); SELECT COUNT(*) AS n FROM tags</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Create <code>colors (id INTEGER, name TEXT)</code>, add three rows <code>(1, 'red'), (2, 'green'), (3, 'blue')</code>, then <code>SELECT name ... ORDER BY id</code>.</span>
+<template class="st">
+SELECT name FROM colors ORDER BY id;</template>
+<template class="ref">CREATE TABLE colors (id INTEGER, name TEXT); INSERT INTO colors VALUES (1, 'red'), (2, 'green'), (3, 'blue'); SELECT name FROM colors ORDER BY id</template></div>
+
+<h4>4. NOT NULL and DEFAULT</h4>
+<p><code>NOT NULL</code> requires a value. <code>DEFAULT</code> provides a fallback value when you don't name that column during <code>INSERT</code>.</p>
+<pre class="run">CREATE TABLE tickets (id INTEGER, status TEXT DEFAULT 'open');
+INSERT INTO tickets (id) VALUES (1);
+
+SELECT status FROM tickets WHERE id = 1;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Create <code>staff (id INTEGER PRIMARY KEY, name TEXT NOT NULL)</code>, add <code>(1, 'An')</code>.</span>
+<template class="st">
+SELECT name FROM staff;</template>
+<template class="ref">CREATE TABLE staff (id INTEGER PRIMARY KEY, name TEXT NOT NULL); INSERT INTO staff VALUES (1, 'An'); SELECT name FROM staff</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Create <code>tickets (id INTEGER, status TEXT DEFAULT 'open')</code>, add <b>only the id</b>: <code>INSERT INTO tickets (id) VALUES (1)</code>. The <code>status</code> column defaults to <code>'open'</code>.</span>
+<template class="st">
+SELECT status FROM tickets WHERE id = 1;</template>
+<template class="ref">CREATE TABLE tickets (id INTEGER, status TEXT DEFAULT 'open'); INSERT INTO tickets (id) VALUES (1); SELECT status FROM tickets WHERE id = 1</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Create <code>members (id INTEGER PRIMARY KEY, name TEXT NOT NULL, points INTEGER DEFAULT 0)</code>, add <b>only id and name</b> <code>(1, 'Minh')</code>. The <code>points</code> column defaults to 0.</span>
+<template class="st">
+SELECT name, points FROM members;</template>
+<template class="ref">CREATE TABLE members (id INTEGER PRIMARY KEY, name TEXT NOT NULL, points INTEGER DEFAULT 0); INSERT INTO members (id, name) VALUES (1, 'Minh'); SELECT name, points FROM members</template></div>
+
+<h4>5. Building a table from existing data</h4>
+<p><code>CREATE TABLE … AS SELECT …</code> makes a new table and fills it with a query's result. <code>INSERT INTO … SELECT …</code> copies data into an existing table.</p>
+<pre class="run">CREATE TABLE cheap AS
+  SELECT name, price FROM products WHERE price < 15000;
+
+SELECT COUNT(*) AS n FROM cheap;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Create a table <code>cheap</code> holding <code>name, price</code> of products priced below 15000: <code>CREATE TABLE cheap AS SELECT name, price FROM products WHERE price &lt; 15000</code>.</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM cheap;</template>
+<template class="ref">CREATE TABLE cheap AS SELECT name, price FROM products WHERE price < 15000; SELECT COUNT(*) AS n FROM cheap</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Create an empty table <code>drinks (name TEXT, price INTEGER)</code>, then copy all <code>'Đồ uống'</code> rows into it with <code>INSERT INTO drinks SELECT name, price FROM products WHERE category = 'Đồ uống'</code>.</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM drinks;</template>
+<template class="ref">CREATE TABLE drinks (name TEXT, price INTEGER); INSERT INTO drinks SELECT name, price FROM products WHERE category = 'Đồ uống'; SELECT COUNT(*) AS n FROM drinks</template></div>
+
+<h4>6. Putting it together</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> Create <code>scores (student TEXT, score INTEGER)</code>, add <code>('A', 8), ('B', 6), ('C', 10)</code>, then compute <code>ROUND(AVG(score), 1) AS avg_score</code> and <code>MAX(score) AS best</code>.</span>
+<template class="st">
+SELECT ROUND(AVG(score), 1) AS avg_score, MAX(score) AS best FROM scores;</template>
+<template class="ref">CREATE TABLE scores (student TEXT, score INTEGER); INSERT INTO scores VALUES ('A', 8), ('B', 6), ('C', 10); SELECT ROUND(AVG(score), 1) AS avg_score, MAX(score) AS best FROM scores</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Create <code>cities (id INTEGER, name TEXT)</code>, add <code>(1, 'Hà Nội'), (2, 'Huế')</code>, then <code>SELECT name ... ORDER BY id</code>.</span>
+<template class="st">
+SELECT name FROM cities ORDER BY id;</template>
+<template class="ref">CREATE TABLE cities (id INTEGER, name TEXT); INSERT INTO cities VALUES (1, 'Hà Nội'), (2, 'Huế'); SELECT name FROM cities ORDER BY id</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Create <code>measures (id INTEGER, value REAL)</code>, add <code>(1, 3.14)</code>.</span>
+<template class="st">
+SELECT value FROM measures;</template>
+<template class="ref">CREATE TABLE measures (id INTEGER, value REAL); INSERT INTO measures VALUES (1, 3.14); SELECT value FROM measures</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Create a table <code>electronics</code> holding <code>name, price</code> of <code>'Điện tử'</code> items: <code>CREATE TABLE electronics AS SELECT name, price FROM products WHERE category = 'Điện tử'</code>.</span>
+<template class="st">
+SELECT COUNT(*) AS n FROM electronics;</template>
+<template class="ref">CREATE TABLE electronics AS SELECT name, price FROM products WHERE category = 'Điện tử'; SELECT COUNT(*) AS n FROM electronics</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Create <code>tasks (id INTEGER PRIMARY KEY, title TEXT NOT NULL, done INTEGER DEFAULT 0)</code>, add <b>only id and title</b> <code>(1, 'A'), (2, 'B')</code>, then compute <code>SUM(done) AS total_done</code> and <code>COUNT(*) AS n</code>.</span>
+<template class="st">
+SELECT SUM(done) AS total_done, COUNT(*) AS n FROM tasks;</template>
+<template class="ref">CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT NOT NULL, done INTEGER DEFAULT 0); INSERT INTO tasks (id, title) VALUES (1, 'A'), (2, 'B'); SELECT SUM(done) AS total_done, COUNT(*) AS n FROM tasks</template></div>
