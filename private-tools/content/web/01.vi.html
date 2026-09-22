@@ -1,0 +1,180 @@
+<h3>Bài 1 — Web hoạt động như thế nào</h3>
+<p>Mỗi lần bạn mở một trang web — trang tin tức, một cửa hàng, một ứng dụng xem video — rất nhiều thứ diễn ra trong nửa giây trước khi trang hiện ra. Thiết bị của bạn gửi một <b>yêu cầu (request)</b> qua internet đến một máy tính khác, máy tính đó gửi các tệp về, và <b>trình duyệt (browser)</b> của bạn biến những tệp đó thành trang mà bạn nhìn thấy và chạm vào. Trước khi viết dòng code đầu tiên, hiểu được hành trình này rất đáng giá. Đó là mô hình tư duy mà cả khóa học này dựa vào.</p>
+<p>Đây là ý tưởng cốt lõi ta sẽ xây dựng suốt mười sáu bài: một trang web được tạo từ <b>ba ngôn ngữ riêng biệt</b>, mỗi ngôn ngữ một nhiệm vụ. <b>HTML</b> là <i>cấu trúc</i> — tiêu đề, đoạn văn, hình ảnh và nút bấm (phần "cái gì"). <b>CSS</b> là <i>kiểu dáng</i> — màu sắc, khoảng cách, phông chữ và bố cục (phần "trông ra sao"). <b>JavaScript</b> là <i>hành vi</i> — điều gì xảy ra khi bạn nhấp, gõ hay cuộn (phần "làm được gì"). Cũng ba ngôn ngữ đó vận hành <i>mọi</i> trang web trên đời, từ một blog cá nhân đến một ngân hàng.</p>
+<p>Bài đầu tiên này là để <i>nhìn thấy</i> bức tranh đó thật rõ, để bạn không bao giờ lẫn lộn ngôn ngữ nào làm việc gì. Chưa cần thuộc cú pháp nào cả — thay vào đó bạn sẽ trả lời các câu hỏi nhanh và <b>chạy những trang nhỏ thật</b> ngay tại đây trong trình duyệt để thấy từng lớp hoạt động. Trả lời sai cũng không sao: đáp án đúng sẽ sáng lên để bạn học ngay.</p>
+
+<h4>1. Hành trình yêu cầu – phản hồi</h4>
+<p>Khi bạn gõ một địa chỉ (một <b>URL</b>) và nhấn Enter, trình duyệt của bạn (bên <b>client</b>) gửi một <b>yêu cầu (request)</b> đến một <b>máy chủ (server)</b> — một máy tính đâu đó có nhiệm vụ lưu và trao ra các tệp web. Máy chủ gửi lại một <b>phản hồi (response)</b>: các tệp của trang. Sự qua lại này chính là nhịp đập của web.</p>
+<figure class="diagram">
+<svg viewBox="0 0 470 170" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="13">
+  <rect x="20" y="55" width="130" height="60" rx="8" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="85" y="82" text-anchor="middle" fill="#E8E4D8" font-size="14">Trình duyệt</text>
+  <text x="85" y="102" text-anchor="middle" fill="#8FA0BC" font-size="11">(client)</text>
+  <rect x="320" y="55" width="130" height="60" rx="8" fill="#121C30" stroke="#F5B942"/>
+  <text x="385" y="82" text-anchor="middle" fill="#E8E4D8" font-size="14">Máy chủ</text>
+  <text x="385" y="102" text-anchor="middle" fill="#8FA0BC" font-size="11">(giữ các tệp)</text>
+  <line x1="152" y1="72" x2="316" y2="72" stroke="#F5B942" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="234" y="64" text-anchor="middle" fill="#F5B942" font-size="12">1. yêu cầu →</text>
+  <line x1="318" y1="100" x2="154" y2="100" stroke="#7FD1C0" stroke-width="2" marker-end="url(#ar2)"/>
+  <text x="236" y="118" text-anchor="middle" fill="#7FD1C0" font-size="12">← 2. phản hồi (HTML, CSS, JS)</text>
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#F5B942"/></marker>
+    <marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7FD1C0"/></marker>
+  </defs>
+</svg>
+<figcaption>Trình duyệt hỏi; máy chủ trả lời bằng các tệp tạo nên trang.</figcaption>
+</figure>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> Trong hành trình này, <b>máy chủ (server)</b> làm gì?</span>
+<ol class="opts">
+<li>Vẽ trang lên màn hình của bạn.</li>
+<li>Lưu các tệp web và gửi trả lại khi được yêu cầu.</li>
+<li>Quyết định nút bấm có màu gì.</li>
+<li>Chính là trình duyệt của bạn.</li>
+</ol></div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 2.</b> Thông điệp trình duyệt gửi đi để xin một trang được gọi là…</span>
+<ol class="opts">
+<li>phản hồi (response)</li>
+<li>bảng kiểu (stylesheet)</li>
+<li>yêu cầu (request)</li>
+<li>máy chủ (server)</li>
+</ol></div>
+
+<h4>2. Ba ngôn ngữ, ba nhiệm vụ</h4>
+<p>Phản hồi (hầu như) gồm ba loại tệp, mỗi loại một trách nhiệm duy nhất. Hãy ghi bảng này vào đầu — cả khóa học được sắp xếp quanh nó.</p>
+<table class="res"><tr><th>Ngôn ngữ</th><th>Nhiệm vụ</th><th>Ví như một căn nhà</th></tr>
+<tr><td><code>HTML</code></td><td><b>Cấu trúc</b> — tiêu đề, chữ, hình, nút</td><td>tường &amp; các phòng</td></tr>
+<tr><td><code>CSS</code></td><td><b>Kiểu dáng</b> — màu, phông, khoảng cách, bố cục</td><td>sơn &amp; nội thất</td></tr>
+<tr><td><code>JavaScript</code></td><td><b>Hành vi</b> — điều xảy ra khi nhấp/gõ/cuộn</td><td>điện &amp; nước</td></tr></table>
+<div class="ex" data-kind="quiz" data-a="0"><span class="exq"><b>Bài tập 3.</b> Ngôn ngữ nào chịu trách nhiệm cho <b>cấu trúc</b> của trang (tiêu đề, đoạn văn, hình ảnh)?</span>
+<ol class="opts">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>Máy chủ</li>
+</ol></div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 4.</b> Bạn muốn đổi <b>màu sắc và khoảng cách</b> của trang. Bạn dùng ngôn ngữ nào?</span>
+<ol class="opts">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>URL</li>
+</ol></div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 5.</b> Một nút cần <b>hiện thông báo khi được nhấp</b>. Đó là việc của…</span>
+<ol class="opts">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>máy chủ</li>
+</ol></div>
+
+<h4>3. Xem HTML một mình</h4>
+<p>Hãy làm cho ba lớp trở nên cụ thể. Bên dưới là một trang nhỏ viết bằng <b>chỉ HTML</b> — thuần cấu trúc, không kiểu dáng. Nhấn <b>▶ Chạy</b> và xem nó hiển thị trong ô xem trước. Để ý là nó hoạt động, nhưng trông đơn sơ: chữ đen trên nền trắng, phông mặc định. Đó là HTML làm đúng một việc của mình — cấu trúc — và không gì hơn. Thử đổi chữ giữa các thẻ rồi Chạy lại.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 6.</b> Chạy trang chỉ-HTML này và đọc kết quả. Sau đó đổi chữ tiêu đề và Chạy lại.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Dojo News&lt;/h1&gt;
+    &lt;p&gt;Structure with no styling looks plain — and that's fine.&lt;/p&gt;
+    &lt;button&gt;Read more&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+
+<h4>4. Thêm CSS và xem nó đổi thay</h4>
+<p>Vẫn cấu trúc đó — nhưng giờ ta thêm một khối <b>CSS</b> trong <code>&lt;style&gt;</code>. Không có gì về <i>nội dung</i> thay đổi; chỉ <i>vẻ ngoài</i> đổi. Chạy nó và so với trang trước: màu sắc, khoảng cách và phông chữ xuất hiện, nhưng bên dưới vẫn là đúng những tiêu đề và nút đó. Đây là sức mạnh của việc tách cấu trúc khỏi kiểu dáng.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 7.</b> Chạy trang này và xem CSS tô lại đúng phần HTML đó thế nào. Thử đổi <code>tomato</code> thành <code>teal</code>.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;style&gt;
+      body { font-family: sans-serif; padding: 20px; background: #0E1626; color: #E8E4D8; }
+      h1 { color: tomato; }
+      button { background: #F5B942; border: none; padding: 8px 14px; border-radius: 6px; }
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Dojo News&lt;/h1&gt;
+    &lt;p&gt;Same structure — new look, thanks to CSS.&lt;/p&gt;
+    &lt;button&gt;Read more&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 8.</b> Giữa hai trang ở trên, tiêu đề và nút hoàn toàn giống nhau. Vậy điều gì thực sự làm vẻ ngoài thay đổi?</span>
+<ol class="opts">
+<li>Cấu trúc HTML được viết lại.</li>
+<li>Một khối CSS <code>&lt;style&gt;</code> được thêm vào.</li>
+<li>Máy chủ gửi một trang khác.</li>
+<li>JavaScript di chuyển các phần tử.</li>
+</ol></div>
+
+<h4>5. Thêm JavaScript để có hành vi</h4>
+<p>Cấu trúc và kiểu dáng là <b>tĩnh</b> — chúng chỉ nằm đó. <b>JavaScript</b> làm trang biết <i>phản ứng</i>. Trang bên dưới có một nút gắn một đoạn script nhỏ: nhấp vào là chữ đổi. Bạn chưa cần hiểu code (đó là nửa sau khóa học) — chỉ cần chạy, nhấp nút, và để ý rằng <i>có điều gì đó xảy ra</i>. Cái "có điều gì đó xảy ra khi tương tác" chính là thứ JavaScript thêm vào.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 9.</b> Chạy trang, rồi nhấp nút <b>Cheer!</b> trong ô xem trước và xem thông báo đổi.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;&lt;style&gt;body{font-family:sans-serif;padding:20px}&lt;/style&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1 id="msg"&gt;Hello&lt;/h1&gt;
+    &lt;button onclick="document.getElementById('msg').textContent = 'You clicked! 🎉'"&gt;Cheer!&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 10.</b> Trước khi bạn nhấp, tiêu đề ghi "Hello". Sau khi nhấp nó đổi. Ngôn ngữ nào làm <b>thay đổi đó xảy ra khi nhấp</b>?</span>
+<ol class="opts">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>URL</li>
+</ol></div>
+
+<h4>6. Ghép bức tranh lại</h4>
+<p>Giờ bạn đã có mô hình tư duy đầy đủ: trình duyệt <b>yêu cầu</b> một trang, máy chủ <b>phản hồi</b> bằng các tệp, và trình duyệt vẽ chúng bằng ba ngôn ngữ — HTML cho cấu trúc, CSS cho kiểu dáng, JavaScript cho hành vi. Mọi thứ còn lại trong khóa học chỉ là chi tiết chồng lên nền này.</p>
+<div class="ex stretch" data-kind="quiz" data-a="3"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Một trang bán hàng bày sản phẩm thành lưới gọn gàng (bố cục), và nhấp "Thêm vào giỏ" làm bộ đếm tăng lên. Hãy ghép việc: <b>bố cục lưới</b> và <b>bộ đếm tăng khi nhấp</b> được xử lý bởi…</span>
+<ol class="opts">
+<li>CSS cho cả hai.</li>
+<li>JavaScript cho cả hai.</li>
+<li>HTML cho lưới, máy chủ cho bộ đếm.</li>
+<li>CSS cho bố cục lưới, JavaScript cho bộ đếm.</li>
+</ol></div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động ngay trên trang. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> Trình duyệt của bạn được mô tả đúng nhất là…</span>
+<ol class="opts">
+<li>máy chủ lưu các tệp.</li>
+<li>client yêu cầu các trang và hiển thị chúng.</li>
+<li>ngôn ngữ dùng để tạo kiểu cho trang.</li>
+<li>sợi cáp internet.</li>
+</ol></div>
+<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Bài tập 2.</b> Bộ ba nào liệt kê ba ngôn ngữ web cốt lõi theo thứ tự <b>cấu trúc, kiểu dáng, hành vi</b>?</span>
+<ol class="opts">
+<li>HTML, CSS, JavaScript</li>
+<li>CSS, HTML, JavaScript</li>
+<li>JavaScript, CSS, HTML</li>
+<li>HTML, JavaScript, CSS</li>
+</ol></div>
+<div class="ex homework" data-kind="web"><span class="exq"><b>Bài tập 3.</b> Chạy trang này. Nó dùng cả ba ngôn ngữ cùng lúc — đọc các chú thích để nhận ra dòng nào là HTML, dòng nào là CSS, dòng nào là JavaScript.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;style&gt;
+      /* CSS: the style */
+      body { font-family: sans-serif; padding: 20px; }
+      h1 { color: teal; }
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- HTML: the structure --&gt;
+    &lt;h1 id="title"&gt;Three in one&lt;/h1&gt;
+    &lt;button onclick="document.getElementById('title').textContent = 'Behaviour!'"&gt;Click me&lt;/button&gt;
+    &lt;!-- JavaScript: the behaviour is in the onclick above --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex homework stretch" data-kind="quiz" data-a="3"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Một trang tải xong ngay lập tức nhưng có biểu tượng ảnh vỡ ở chỗ đáng lẽ là hình, và nhấp một nút thì không có gì xảy ra. Chẩn đoán một câu nào hợp nhất?</span>
+<ol class="opts">
+<li>Thiếu CSS, nên không có cấu trúc.</li>
+<li>Máy chủ không hề phản hồi, nên không gì tải được.</li>
+<li>URL là một yêu cầu, nên trang không thể hiển thị.</li>
+<li>HTML/phản hồi đã tải, nhưng một tệp ảnh bị thiếu và JavaScript của nút không chạy.</li>
+</ol></div>

@@ -1,0 +1,180 @@
+<h3>Lesson 1 — How the web works</h3>
+<p>Every time you open a website — a news page, a shop, a video app — a lot happens in the half-second before it appears. Your device sends a <b>request</b> across the internet to another computer, that computer sends files back, and your <b>browser</b> turns those files into the page you see and touch. Before you write a single line of code, it pays to understand this journey. It's the mental model everything else in this course hangs on.</p>
+<p>Here's the key idea we'll build on for sixteen lessons: a web page is made of <b>three separate languages</b>, each with one job. <b>HTML</b> is the <i>structure</i> — the headings, paragraphs, images and buttons (the "what"). <b>CSS</b> is the <i>style</i> — colours, spacing, fonts and layout (the "how it looks"). <b>JavaScript</b> is the <i>behaviour</i> — what happens when you click, type or scroll (the "what it does"). Same three languages power <i>every</i> website on earth, from a personal blog to a bank.</p>
+<p>This first lesson is about <i>seeing</i> that picture clearly, so you're never confused about which language does what. There's no syntax to memorise yet — instead you'll answer quick quizzes and <b>run real mini-pages</b> right here in the browser to watch each layer in action. Getting a quiz wrong is fine: the correct answer lights up so you learn instantly.</p>
+
+<h4>1. The request–response journey</h4>
+<p>When you type an address (a <b>URL</b>) and press Enter, your browser (the <b>client</b>) sends a <b>request</b> to a <b>server</b> — a computer somewhere whose job is to hold and hand out web files. The server sends back a <b>response</b>: the page's files. This back-and-forth is the heartbeat of the web.</p>
+<figure class="diagram">
+<svg viewBox="0 0 470 170" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="13">
+  <rect x="20" y="55" width="130" height="60" rx="8" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="85" y="82" text-anchor="middle" fill="#E8E4D8" font-size="14">Your browser</text>
+  <text x="85" y="102" text-anchor="middle" fill="#8FA0BC" font-size="11">(the client)</text>
+  <rect x="320" y="55" width="130" height="60" rx="8" fill="#121C30" stroke="#F5B942"/>
+  <text x="385" y="82" text-anchor="middle" fill="#E8E4D8" font-size="14">The server</text>
+  <text x="385" y="102" text-anchor="middle" fill="#8FA0BC" font-size="11">(holds the files)</text>
+  <line x1="152" y1="72" x2="316" y2="72" stroke="#F5B942" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="234" y="64" text-anchor="middle" fill="#F5B942" font-size="12">1. request →</text>
+  <line x1="318" y1="100" x2="154" y2="100" stroke="#7FD1C0" stroke-width="2" marker-end="url(#ar2)"/>
+  <text x="236" y="118" text-anchor="middle" fill="#7FD1C0" font-size="12">← 2. response (HTML, CSS, JS)</text>
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#F5B942"/></marker>
+    <marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#7FD1C0"/></marker>
+  </defs>
+</svg>
+<figcaption>The browser asks; the server answers with the files that make up the page.</figcaption>
+</figure>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> In this journey, what does the <b>server</b> do?</span>
+<ol class="opts">
+<li>It draws the page on your screen.</li>
+<li>It stores the web files and sends them back when asked.</li>
+<li>It decides what colour the buttons are.</li>
+<li>It is the same thing as your browser.</li>
+</ol></div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 2.</b> The message your browser sends to ask for a page is called the…</span>
+<ol class="opts">
+<li>response</li>
+<li>stylesheet</li>
+<li>request</li>
+<li>server</li>
+</ol></div>
+
+<h4>2. Three languages, three jobs</h4>
+<p>The response is (mostly) three kinds of file, each with a single responsibility. Keep this table in your head — the whole course is organised around it.</p>
+<table class="res"><tr><th>Language</th><th>Job</th><th>Think of a house</th></tr>
+<tr><td><code>HTML</code></td><td><b>Structure</b> — headings, text, images, buttons</td><td>the walls &amp; rooms</td></tr>
+<tr><td><code>CSS</code></td><td><b>Style</b> — colours, fonts, spacing, layout</td><td>the paint &amp; furniture</td></tr>
+<tr><td><code>JavaScript</code></td><td><b>Behaviour</b> — what happens on click/type/scroll</td><td>the electricity &amp; plumbing</td></tr></table>
+<div class="ex" data-kind="quiz" data-a="0"><span class="exq"><b>Exercise 3.</b> Which language is responsible for the <b>structure</b> of a page (its headings, paragraphs and images)?</span>
+<ol class="opts">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>The server</li>
+</ol></div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 4.</b> You want to change the page's <b>colours and spacing</b>. Which language do you reach for?</span>
+<ol class="opts">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>URL</li>
+</ol></div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 5.</b> A button should <b>show a message when clicked</b>. That's a job for…</span>
+<ol class="opts">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>the server</li>
+</ol></div>
+
+<h4>3. See HTML on its own</h4>
+<p>Let's make the three layers concrete. Below is a tiny page written in <b>HTML only</b> — pure structure, no styling. Press <b>▶ Run</b> and watch it render in the preview. Notice it works, but looks plain: black text on white, default fonts. That's HTML doing its one job — structure — and nothing more. Try changing the text between the tags, then Run again.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 6.</b> Run this HTML-only page and read the result. Then change the heading text and Run again.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Dojo News&lt;/h1&gt;
+    &lt;p&gt;Structure with no styling looks plain — and that's fine.&lt;/p&gt;
+    &lt;button&gt;Read more&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+
+<h4>4. Add CSS and watch it change</h4>
+<p>Same structure — but now we've added a <b>CSS</b> block inside <code>&lt;style&gt;</code>. Nothing about the <i>content</i> changed; only the <i>look</i> did. Run it and compare with the previous page: colours, spacing and fonts appear, but it's the exact same headings and button underneath. This is the power of separating structure from style.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 7.</b> Run this page and see how CSS restyles the very same HTML. Try changing <code>tomato</code> to <code>teal</code>.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;style&gt;
+      body { font-family: sans-serif; padding: 20px; background: #0E1626; color: #E8E4D8; }
+      h1 { color: tomato; }
+      button { background: #F5B942; border: none; padding: 8px 14px; border-radius: 6px; }
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Dojo News&lt;/h1&gt;
+    &lt;p&gt;Same structure — new look, thanks to CSS.&lt;/p&gt;
+    &lt;button&gt;Read more&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 8.</b> Between the two pages above, the headings and button were identical. What actually changed the appearance?</span>
+<ol class="opts">
+<li>The HTML structure was rewritten.</li>
+<li>A CSS <code>&lt;style&gt;</code> block was added.</li>
+<li>The server sent a different page.</li>
+<li>JavaScript moved the elements.</li>
+</ol></div>
+
+<h4>5. Add JavaScript for behaviour</h4>
+<p>Structure and style are <b>static</b> — they just sit there. <b>JavaScript</b> makes a page <i>react</i>. The page below has a button wired with a tiny script: click it and the text changes. You don't need to understand the code yet (that's the second half of the course) — just run it, click the button, and notice that <i>something happens</i>. That "something happens on interaction" is exactly what JavaScript adds.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 9.</b> Run the page, then click the <b>Cheer!</b> button in the preview and watch the message change.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;&lt;style&gt;body{font-family:sans-serif;padding:20px}&lt;/style&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1 id="msg"&gt;Hello&lt;/h1&gt;
+    &lt;button onclick="document.getElementById('msg').textContent = 'You clicked! 🎉'"&gt;Cheer!&lt;/button&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 10.</b> Before you clicked, the heading said "Hello". After the click it changed. Which language made that <b>change happen on click</b>?</span>
+<ol class="opts">
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+<li>The URL</li>
+</ol></div>
+
+<h4>6. Putting the picture together</h4>
+<p>You now have the full mental model: a browser <b>requests</b> a page, a server <b>responds</b> with files, and the browser paints them using three languages — HTML for structure, CSS for style, JavaScript for behaviour. Everything else in this course is detail on top of this.</p>
+<div class="ex stretch" data-kind="quiz" data-a="3"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> A shopping page shows products in a neat grid (layout), and clicking "Add to cart" updates a counter. Match the work: <b>grid layout</b> and <b>the counter updating on click</b> are handled by…</span>
+<ol class="opts">
+<li>CSS for both.</li>
+<li>JavaScript for both.</li>
+<li>HTML for the grid, the server for the counter.</li>
+<li>CSS for the grid layout, JavaScript for the counter update.</li>
+</ol></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> Your browser is best described as the…</span>
+<ol class="opts">
+<li>server that stores the files.</li>
+<li>client that requests pages and renders them.</li>
+<li>language used to style pages.</li>
+<li>internet cable.</li>
+</ol></div>
+<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Exercise 2.</b> Which trio lists the three core web languages in the order <b>structure, style, behaviour</b>?</span>
+<ol class="opts">
+<li>HTML, CSS, JavaScript</li>
+<li>CSS, HTML, JavaScript</li>
+<li>JavaScript, CSS, HTML</li>
+<li>HTML, JavaScript, CSS</li>
+</ol></div>
+<div class="ex homework" data-kind="web"><span class="exq"><b>Exercise 3.</b> Run this page. It uses all three languages at once — read the comments to spot which line is HTML, which is CSS, and which is JavaScript.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;style&gt;
+      /* CSS: the style */
+      body { font-family: sans-serif; padding: 20px; }
+      h1 { color: teal; }
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- HTML: the structure --&gt;
+    &lt;h1 id="title"&gt;Three in one&lt;/h1&gt;
+    &lt;button onclick="document.getElementById('title').textContent = 'Behaviour!'"&gt;Click me&lt;/button&gt;
+    &lt;!-- JavaScript: the behaviour is in the onclick above --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex homework stretch" data-kind="quiz" data-a="3"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> A page loads instantly but a broken photo icon shows where a picture should be, and clicking a button does nothing. Which single-sentence diagnosis fits best?</span>
+<ol class="opts">
+<li>The CSS is missing, so there is no structure.</li>
+<li>The server never responded, so nothing loaded.</li>
+<li>The URL is a request, so the page cannot render.</li>
+<li>The HTML/response loaded, but an image file is missing and the button's JavaScript isn't working.</li>
+</ol></div>

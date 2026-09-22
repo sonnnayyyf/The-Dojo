@@ -282,6 +282,7 @@
       run: 'Chạy', reset: 'Đặt lại', pass: 'Đạt', fail: 'Chưa đạt', loading: 'Đang tải môi trường chạy code…',
       showAnswer: 'Xem đáp án mẫu', hideAnswer: 'Ẩn đáp án mẫu', output: 'Kết quả in ra', tryAgain: 'Chưa đúng, thử lại nhé',
       askSensei: 'Hỏi giáo viên', tryExample: 'Chạy thử', outline: 'Nội dung bài học', done: 'Xong',
+      preview: 'Xem trước', webTimeout: 'Hết thời gian chạy — kiểm tra vòng lặp vô hạn?',
       senseiIntro: 'Viết câu hỏi của bạn — chúng tôi sẽ tự động kèm bài học và code của bạn.',
       questionPh: 'Bạn đang kẹt ở đâu?', sendZalo: 'Gửi qua Zalo', sendEmail: 'Gửi email',
       copied: 'Đã copy câu hỏi + code. Sang Zalo, dán (Ctrl+V) vào ô chat và gửi nhé!', progressLabel: 'Tiến độ' },
@@ -290,6 +291,7 @@
       run: 'Run', reset: 'Reset', pass: 'Pass', fail: 'Fail', loading: 'Loading the code runner…',
       showAnswer: 'Show sample answer', hideAnswer: 'Hide sample answer', output: 'Output', tryAgain: 'Not quite — try again',
       askSensei: 'Ask teacher', tryExample: 'Try it', outline: 'In this lesson', done: 'Done',
+      preview: 'Preview', webTimeout: 'Run timed out — check for an infinite loop?',
       senseiIntro: 'Write your question — we\'ll attach the lesson and your code automatically.',
       questionPh: 'Where are you stuck?', sendZalo: 'Send via Zalo', sendEmail: 'Send email',
       copied: 'Question + code copied. Open Zalo, paste (Ctrl+V) into the chat and send!', progressLabel: 'Progress' },
@@ -542,6 +544,8 @@
       if (kind === 'quiz') wireQuiz(ex, ctx, idx);
       else if (kind === 'py') wirePyExercise(ex, ctx, idx);
       else if (kind === 'sql') wireSqlExercise(ex, ctx, idx);
+      else if (kind === 'web') wireWebExercise(ex, ctx, idx, false);
+      else if (kind === 'webjs') wireWebExercise(ex, ctx, idx, true);
     });
   }
 
@@ -581,10 +585,15 @@
         await Promise.all([
           loadScript(base + 'mode/python/python.min.js'),
           loadScript(base + 'mode/sql/sql.min.js'),
+          loadScript(base + 'mode/xml/xml.min.js'),
+          loadScript(base + 'mode/javascript/javascript.min.js'),
+          loadScript(base + 'mode/css/css.min.js'),
           loadScript(base + 'addon/edit/matchbrackets.min.js'),
           loadScript(base + 'addon/edit/closebrackets.min.js'),
           loadScript(base + 'addon/lint/lint.min.js'),
         ]);
+        // htmlmixed depends on xml/javascript/css being present first.
+        await loadScript(base + 'mode/htmlmixed/htmlmixed.min.js');
         return window.CodeMirror;
       })();
     }
@@ -1068,6 +1077,181 @@ def _dojo_lint(src):
       }
       out.innerHTML = html;
     });
+  }
+
+  // ----- Web (live HTML/CSS/JS preview + JS auto-grader) -----
+  // The student's code runs only inside a sandboxed iframe (sandbox="allow-scripts", opaque origin):
+  // no same-origin access to this page, no network, no top-navigation. We never eval student code here.
+  // Capture script: overrides console.log so tests can assert on printed output, and records the first
+  // runtime error. Injected before the student's markup so logging is captured from the start.
+  const WEB_CAPTURE = `<script>
+    window.__dojoOut = '';
+    (function () {
+      var log = console.log;
+      console.log = function () {
+        window.__dojoOut += Array.prototype.map.call(arguments, String).join(' ') + '\\n';
+        try { log.apply(console, arguments); } catch (e) {}
+      };
+      window.addEventListener('error', function (e) { if (!window.__dojoErr) window.__dojoErr = e.message; });
+    })();
+  <\/script>`;
+
+  // Wraps a body fragment (+ optional <head> extras like <style>) in a full document and appends the
+  // grader. After load, the test block (from <template class="ts">) runs with access to document,
+  // window, assert(cond,msg) and _OUT_ (captured console output). The verdict is posted back to the
+  // parent, keyed by a one-time token.
+  function buildGradeDoc(bodyFrag, testCode, token, headExtra) {
+    return `<!doctype html><html><head><meta charset="utf-8">${headExtra || ''}</head><body>
+${WEB_CAPTURE}
+${bodyFrag}
+<script>
+window.addEventListener('load', function () {
+  setTimeout(function () {
+    var pass = true, message = '';
+    function assert(cond, msg) { if (!cond) throw new Error(msg || 'assertion failed'); }
+    var _OUT_ = window.__dojoOut || '';
+    try {
+${testCode}
+    } catch (e) { pass = false; message = (e && e.message) || String(e); }
+    if (!pass && !message && window.__dojoErr) message = window.__dojoErr;
+    parent.postMessage({ __dojoToken: ${JSON.stringify(token)}, pass: pass, message: message, out: window.__dojoOut || '' }, '*');
+  }, 30);
+});
+<\/script>
+</body></html>`;
+  }
+
+  // Assembles a runnable document from separate HTML/CSS/JS parts (multi-file exercises).
+  function partsToDoc(parts) {
+    const style = parts.css != null ? `<style>\n${parts.css}\n</style>` : '';
+    const script = parts.js != null ? `<script>\n${parts.js}\n<\/script>` : '';
+    return `<!doctype html><html><head><meta charset="utf-8">${style}</head><body>\n${parts.html || ''}\n${script}\n</body></html>`;
+  }
+
+  // Renders the graded document in the iframe and resolves with the verdict from its postMessage.
+  // event.origin is "null" (opaque sandbox) so we authenticate on the one-time token, not the origin.
+  function runGradedWeb(iframe, bodyFrag, testCode, headExtra) {
+    return new Promise((resolve) => {
+      const token = 'dojo-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      let done = false;
+      function onMsg(e) {
+        const d = e.data;
+        if (!d || d.__dojoToken !== token) return;
+        done = true;
+        window.removeEventListener('message', onMsg);
+        resolve({ pass: !!d.pass, message: d.message || '', out: d.out || '' });
+      }
+      window.addEventListener('message', onMsg);
+      iframe.srcdoc = buildGradeDoc(bodyFrag, testCode, token, headExtra);
+      setTimeout(() => {
+        if (done) return;
+        window.removeEventListener('message', onMsg);
+        resolve({ pass: false, message: UI[LANG].webTimeout, out: '' });
+      }, 4000);
+    });
+  }
+
+  // graded=false → live preview only ("web"); graded=true → JS auto-grader ("webjs").
+  // Single-file: <template class="st"> holds a full HTML document (web) or a body fragment (webjs).
+  // Multi-file: any of <template class="html"|"css"|"js"> — each becomes its own editor, combined on Run.
+  function wireWebExercise(ex, ctx, exIndex, graded) {
+    if (ex.dataset.wired) return;
+    ex.dataset.wired = '1';
+    const u = UI[LANG];
+    const tests = ex.querySelector('template.ts')?.content.textContent ?? '';
+    const hintMode = ex.dataset.feedback === 'hint';
+    const hintText = ex.querySelector('template.hint')?.content.textContent?.trim() ?? '';
+
+    // Which files does this exercise use?
+    const fileDefs = [
+      { key: 'html', label: 'HTML', mode: 'htmlmixed' },
+      { key: 'css', label: 'CSS', mode: 'css' },
+      { key: 'js', label: 'JavaScript', mode: 'javascript' },
+    ].map((f) => ({ ...f, tpl: ex.querySelector(`template.${f.key}`) })).filter((f) => f.tpl);
+    const multi = fileDefs.length > 0;
+
+    const wrap = document.createElement('div');
+    if (multi) {
+      wrap.innerHTML = `<div class="webfiles">${fileDefs.map((f) =>
+        `<div class="webfile"><span class="lbl">${f.label}</span><textarea class="code" spellcheck="false">${escapeHtml((f.tpl.content.textContent ?? '').trim())}</textarea></div>`).join('')}</div>
+        <div class="exrun">
+          <button type="button" class="btn run">${u.run}</button>
+          <button type="button" class="btn ghost reset">${u.reset}</button>
+        </div>
+        <div class="webprev"><span class="lbl">${u.preview}</span><iframe class="prev" title="${u.preview}" sandbox="allow-scripts"></iframe></div>
+        <div class="out"></div>`;
+    } else {
+      const initial = (ex.querySelector('template.st')?.content.textContent ?? '').trim();
+      wrap.innerHTML = `<textarea class="code" spellcheck="false">${escapeHtml(initial)}</textarea>
+        <div class="exrun">
+          <button type="button" class="btn run">${u.run}</button>
+          <button type="button" class="btn ghost reset">${u.reset}</button>
+        </div>
+        <div class="webprev"><span class="lbl">${u.preview}</span><iframe class="prev" title="${u.preview}" sandbox="allow-scripts"></iframe></div>
+        <div class="out"></div>`;
+    }
+    ex.appendChild(wrap);
+
+    const iframe = wrap.querySelector('iframe.prev');
+    const out = wrap.querySelector('.out');
+    const textareas = [...wrap.querySelectorAll('textarea.code')];
+
+    let editors; // [{ key, get/set, initial }] for multi, or single { get/set, initial }
+    if (multi) {
+      editors = fileDefs.map((f, i) => {
+        const initial = textareas[i].value;
+        return { key: f.key, api: attachEditor(textareas[i], f.mode), initial };
+      });
+    } else {
+      const initial = textareas[0].value;
+      editors = { api: attachEditor(textareas[0], 'htmlmixed'), initial };
+    }
+
+    // Combined source (for Ask sensei and single-file preview).
+    const combinedSource = () => multi
+      ? partsToDoc(Object.fromEntries(editors.map((e) => [e.key, e.api.get()])))
+      : editors.api.get();
+    addSenseiButton(wrap.querySelector('.exrun'), ctx, exLabelOf(ex, exIndex), { get: combinedSource });
+
+    const renderPreview = () => {
+      iframe.srcdoc = multi
+        ? partsToDoc(Object.fromEntries(editors.map((e) => [e.key, e.api.get()])))
+        : editors.api.get();
+    };
+
+    wrap.querySelector('.reset').addEventListener('click', () => {
+      if (multi) editors.forEach((e) => e.api.set(e.initial));
+      else editors.api.set(editors.initial);
+      out.classList.remove('show');
+      out.innerHTML = '';
+      renderPreview();
+    });
+
+    wrap.querySelector('.run').addEventListener('click', async () => {
+      if (!graded) { renderPreview(); recordPass(ex, ctx, exIndex); return; } // "run & observe" completes on Run
+      out.classList.add('show');
+      out.innerHTML = `<span>${u.loading}</span>`;
+      let bodyFrag, headExtra = '';
+      if (multi) {
+        const parts = Object.fromEntries(editors.map((e) => [e.key, e.api.get()]));
+        if (parts.css != null) headExtra = `<style>\n${parts.css}\n</style>`;
+        bodyFrag = `${parts.html || ''}\n${parts.js != null ? `<script>\n${parts.js}\n<\/script>` : ''}`;
+      } else {
+        bodyFrag = editors.api.get();
+      }
+      const r = await runGradedWeb(iframe, bodyFrag, tests, headExtra);
+      const okClass = r.pass ? 'ok' : 'bad';
+      const label = r.pass ? u.pass : u.fail;
+      const msg = r.pass ? '' : (hintMode ? (hintText || u.tryAgain) : r.message);
+      const termHtml = r.out && r.out.trim()
+        ? `<div class="term"><span class="lbl">${u.output}</span>${escapeHtml(r.out.replace(/\n$/, ''))}</div>`
+        : '';
+      out.innerHTML = termHtml +
+        `<div class="verdict ${okClass}">${label}${msg ? ': ' + escapeHtml(msg) : ''}</div>`;
+      if (r.pass) recordPass(ex, ctx, exIndex);
+    });
+
+    renderPreview(); // show the starter page immediately
   }
 
   // ---------- boot ----------

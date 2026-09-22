@@ -159,16 +159,21 @@ descriptors/metaclasses · advanced testing (pytest fixtures, mocking).
 Sorting & searching, Big-O, recursion, stacks/queues, linked lists, trees/graphs, hashing, common
 interview patterns (two-pointer, sliding window, etc.). Kept separate from Intermediate on purpose.
 
-### 9d. Web Programming Fundamentals — 15 lessons (front-end)
-Beginner front-end: HTML → CSS → JavaScript → interactivity. Sequence:
-1. How the web works (browser, HTML/CSS/JS roles, request/response — conceptual) · 2. HTML essentials
-(elements, text, links, images) · 3. HTML lists & tables · 4. HTML forms & inputs · 5. HTML semantic
-layout (header/nav/main/section/footer, attributes) · 6. CSS essentials (selectors, colors, text, box
-model) · 7. CSS layout with flexbox · 8. CSS responsive (media queries, units, intro grid) ·
-9. **Mini-project:** build & style a landing page · 10. JavaScript basics (variables, types, operators) ·
-11. JS control flow & data (if, loops, arrays, objects) · 12. JS functions & the DOM (select & change
-elements) · 13. JS events & interactivity (clicks, input) · 14. JS forms, validation & `fetch` (JSON/APIs,
-light) · 15. **Capstone:** a small interactive web app (e.g. to-do UI, quiz, widget), submitted via VS Code.
+### 9d. Web Programming Fundamentals — 16 lessons (front-end) — CONFIRMED, IN PROGRESS
+Beginner front-end: HTML → CSS → JavaScript → interactivity. **9 structure/style + 7 JS**, Lesson 1 free.
+Content files live in `private-tools/content/web/NN.{vi,en}.html`; build with
+`node private-tools/build-course.mjs web` into `web.html`. **Prioritise heavy visualisation**: lots of
+live website previews (`web` kind), SVG diagrams, and show the rendered result itself wherever possible.
+Part 1 — HTML + CSS: 1. How the web works (browser, HTML/CSS/JS roles, request/response — conceptual) ·
+2. HTML essentials (elements, text, links, images) · 3. HTML structure (lists, tables, forms & semantic
+layout) · 4. CSS essentials (selectors, colours, text, the box model) · 5. CSS layout with flexbox ·
+6. CSS positioning & moving things (`position`, `z-index`, centering, containers) · 7. CSS grid &
+responsive design (media queries, units) · 8. CSS transitions, transforms & animations (`@keyframes`) ·
+9. **Mini-project:** build & style a landing page.
+Part 2 — JavaScript: 10. JS basics (variables, types, operators, `console.log`) · 11. JS control flow &
+data (if, loops, arrays, objects) · 12. JS functions · 13. The DOM (select & change elements) ·
+14. Events & interactivity (clicks, input) · 15. Forms, validation & `fetch` (JSON/APIs, light) ·
+16. **Capstone:** a small interactive web app, submitted via VS Code.
 
 **PLATFORM PREREQUISITE (DONE):** the engine now supports exercise kinds `quiz`, `py` (Pyodide),
 `sql` (sql.js), plus **`web`** (live HTML/CSS/JS preview in a sandboxed `<iframe>`) and **`webjs`**
