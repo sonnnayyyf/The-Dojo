@@ -1,0 +1,116 @@
+<h3>Lesson 11 — Subqueries</h3>
+<p>Sometimes, to answer one question you first need <i>the result of another question</i>. "Which products are <b>above the average price</b>?" — to know that, you first have to compute the average. "Which customer has <b>never ordered</b>?" — you need the list of customers who <i>did</i> order, to exclude them.</p>
+<p>A <b>subquery</b> is a <code>SELECT</code> nested inside another <code>SELECT</code>, wrapped in parentheses <code>( … )</code>. SQL runs the subquery first, takes its result, then uses it in the outer query.</p>
+<p>Two kinds show up most: a subquery that returns <b>a single value</b> (for comparison, like <code>&gt; (SELECT AVG(...))</code>), and one that returns <b>a list</b> (used with <code>IN</code> / <code>NOT IN</code>).</p>
+
+<h4>1. A subquery returning one value</h4>
+<p>An aggregate <code>SELECT</code> (like <code>AVG</code>, <code>MAX</code>) returns exactly one number. Put it in parentheses and compare directly.</p>
+<pre class="run">SELECT name, price
+FROM products
+WHERE price > (SELECT AVG(price) FROM products)
+ORDER BY price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Products priced <b>above average</b>: show <code>name</code>, <code>price</code>, filter <code>price &gt; (SELECT AVG(price) FROM products)</code>, sorted by <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price > (</template>
+<template class="ref">SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM products) ORDER BY price</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Products priced <b>below average</b>: show <code>name</code>, <code>price</code>, filter <code>price &lt; (SELECT AVG(price) FROM products)</code>, sorted by <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price < (</template>
+<template class="ref">SELECT name, price FROM products WHERE price < (SELECT AVG(price) FROM products) ORDER BY price</template></div>
+
+<h4>2. Comparing to a value filtered from a group</h4>
+<p>The subquery can have its own <code>WHERE</code>. For example: "cheaper than the priciest drink".</p>
+<pre class="run">SELECT name, price
+FROM products
+WHERE price < (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')
+ORDER BY price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Products cheaper than the <b>priciest 'Đồ uống' item</b>: show <code>name</code>, <code>price</code>, filter <code>price &lt; (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')</code>, sorted by <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price < (</template>
+<template class="ref">SELECT name, price FROM products WHERE price < (SELECT MAX(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Products more expensive than <b>'Cà phê đen đá'</b>: show <code>name</code>, <code>price</code>, filter <code>price &gt; (SELECT price FROM products WHERE name = 'Cà phê đen đá')</code>, sorted by <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price > (</template>
+<template class="ref">SELECT name, price FROM products WHERE price > (SELECT price FROM products WHERE name = 'Cà phê đen đá') ORDER BY price</template></div>
+
+<h4>3. A subquery returning a list: IN</h4>
+<p>If the subquery returns <b>many rows of one column</b>, use <code>IN</code> to test "is it in this list?".</p>
+<pre class="run">SELECT name
+FROM products
+WHERE id IN (SELECT product_id FROM order_items)
+ORDER BY id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Products that <b>have been sold</b>: show <code>name</code>, filter <code>id IN (SELECT product_id FROM order_items)</code>, sorted by <code>id</code>.</span>
+<template class="st">SELECT name
+FROM products
+WHERE id IN (</template>
+<template class="ref">SELECT name FROM products WHERE id IN (SELECT product_id FROM order_items) ORDER BY id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Customers who <b>have ordered</b>: show <code>name</code>, filter <code>id IN (SELECT customer_id FROM orders)</code>, sorted by <code>id</code>.</span>
+<template class="st">SELECT name
+FROM customers
+WHERE id IN (</template>
+<template class="ref">SELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders) ORDER BY id</template></div>
+
+<h4>4. NOT IN — the ones not in the list</h4>
+<p>Flip it to <code>NOT IN</code> to find "the ones missing" — another way (besides <code>LEFT JOIN</code> from Lesson 10) to find inactive customers/products.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Products that have <b>never sold</b>: show <code>name</code>, filter <code>id NOT IN (SELECT product_id FROM order_items)</code>, sorted by <code>id</code>.</span>
+<template class="st">SELECT name
+FROM products
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name FROM products WHERE id NOT IN (SELECT product_id FROM order_items) ORDER BY id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Customers who have <b>never ordered</b>: show <code>name</code>, filter <code>id NOT IN (SELECT customer_id FROM orders)</code>, sorted by <code>id</code>.</span>
+<template class="st">SELECT name
+FROM customers
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name FROM customers WHERE id NOT IN (SELECT customer_id FROM orders) ORDER BY id</template></div>
+
+<h4>5. A subquery inside SELECT</h4>
+<p>You can also drop a precomputed value onto <i>every row</i> for easy comparison — e.g. showing the average price next to each product.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> For each product, show <code>name</code>, <code>price</code>, and the <b>store-wide average price</b> in an <code>avg_all</code> column: <code>(SELECT ROUND(AVG(price)) FROM products) AS avg_all</code>. Sort by <code>id</code>.</span>
+<template class="st">SELECT name, price, (SELECT ROUND(AVG(price)) FROM products) AS avg_all
+FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, price, (SELECT ROUND(AVG(price)) FROM products) AS avg_all FROM products ORDER BY id</template></div>
+
+<h4>6. Nesting subqueries</h4>
+<p>A subquery can contain another subquery. "Products that customer 1 bought" = products found in the line items of customer 1's orders.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Products that <b>customer 1 bought</b>: show <code>name</code>, filter <code>id IN (SELECT product_id FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE customer_id = 1))</code>, sorted by <code>id</code>.</span>
+<template class="st">SELECT name
+FROM products
+WHERE id IN (SELECT product_id FROM order_items WHERE order_id IN (
+  </template>
+<template class="ref">SELECT name FROM products WHERE id IN (SELECT product_id FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE customer_id = 1)) ORDER BY id</template></div>
+
+<h4>7. Combining with GROUP BY</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> Categories whose <b>average price is higher than the store-wide average</b>: group by <code>category</code>, show <code>category</code> and <code>ROUND(AVG(price)) AS avg_price</code>, keep groups with <code>AVG(price) &gt; (SELECT AVG(price) FROM products)</code>, sorted by <code>avg_price</code> descending.</span>
+<template class="st">SELECT category, ROUND(AVG(price)) AS avg_price
+FROM products
+GROUP BY category
+HAVING AVG(price) > (</template>
+<template class="ref">SELECT category, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category HAVING AVG(price) > (SELECT AVG(price) FROM products) ORDER BY avg_price DESC</template></div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Products with <b>above-average stock</b>: show <code>name</code>, <code>stock</code>, filter <code>stock &gt; (SELECT AVG(stock) FROM products)</code>, sorted by <code>stock</code> descending.</span>
+<template class="st">SELECT name, stock
+FROM products
+WHERE stock > (</template>
+<template class="ref">SELECT name, stock FROM products WHERE stock > (SELECT AVG(stock) FROM products) ORDER BY stock DESC</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Products more expensive than the <b>average price of the 'Đồ uống' category</b>: show <code>name</code>, <code>price</code>, filter <code>price &gt; (SELECT AVG(price) FROM products WHERE category = 'Đồ uống')</code>, sorted by <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price > (</template>
+<template class="ref">SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Products that have <b>never sold</b> (with price): show <code>name</code>, <code>price</code>, filter <code>id NOT IN (SELECT product_id FROM order_items)</code>, sorted by <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE id NOT IN (</template>
+<template class="ref">SELECT name, price FROM products WHERE id NOT IN (SELECT product_id FROM order_items) ORDER BY price</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Products more expensive than <b>every item in the 'Đồ uống' category</b> (i.e. pricier than that category's most expensive item): show <code>name</code>, <code>price</code>, filter <code>price &gt; (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')</code>, sorted by <code>price</code>.</span>
+<template class="st">SELECT name, price
+FROM products
+WHERE price > (</template>
+<template class="ref">SELECT name, price FROM products WHERE price > (SELECT MAX(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>

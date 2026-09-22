@@ -1,140 +1,121 @@
-<h3>Bài 6 — GROUP BY & HAVING: báo cáo theo nhóm</h3>
-<p>Ở Bài 5 bạn tính được <i>một</i> con số cho cả bảng: tổng tồn kho, giá trung bình… Nhưng báo cáo thật luôn hỏi theo <b>nhóm</b>: "doanh thu <b>từng danh mục</b>?", "số đơn <b>của mỗi khách</b>?", "đã bán bao nhiêu <b>mỗi sản phẩm</b>?". Bạn không muốn chạy 4 truy vấn cho 4 danh mục — bạn muốn <b>một</b> truy vấn trả về một dòng cho mỗi nhóm.</p>
-<p>Đó chính là <code>GROUP BY</code>. Nó chia các dòng thành nhóm theo giá trị một cột, rồi <b>áp dụng hàm tổng hợp cho từng nhóm</b>. Kết quả: mỗi nhóm một dòng, kèm con số bạn tính.</p>
-<p>Và khi muốn <b>lọc chính các nhóm</b> đó (ví dụ "chỉ danh mục có hơn 2 sản phẩm"), bạn dùng <code>HAVING</code> — giống <code>WHERE</code> nhưng dành cho kết quả sau khi gộp nhóm.</p>
+<h3>Bài 6 — CASE WHEN: logic điều kiện trong truy vấn</h3>
+<p>Dữ liệu thô không phải lúc nào cũng ở dạng bạn cần. Sếp không muốn thấy con số <code>350000</code> — họ muốn nhãn "hàng cao cấp". Một cột <code>stock</code> thấp cần được đánh dấu "cần nhập thêm". Đây là lúc dùng <code>CASE WHEN</code> — chính là câu lệnh "if/else" của SQL.</p>
+<p><code>CASE WHEN</code> xét <b>từng dòng</b> và trả về một giá trị tùy điều kiện. Nó dùng được ở <code>SELECT</code> (tạo cột mới), ở <code>ORDER BY</code> (sắp theo nhãn), và thậm chí bên trong hàm tổng hợp để <b>đếm/cộng có điều kiện</b> — một kỹ thuật cực mạnh cho báo cáo.</p>
+<p>Mọi cột tạo ra ở đây đều nên có <code>AS</code> để đặt tên rõ ràng — như bạn đã quen từ Bài 3.</p>
 
-<h4>1. GROUP BY — một dòng cho mỗi nhóm</h4>
-<p>Quy tắc vàng: cột nào đứng sau <code>GROUP BY</code> thì được phép đưa vào <code>SELECT</code>; các cột còn lại phải nằm trong hàm tổng hợp.</p>
-<pre class="run">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY category
-ORDER BY category;</pre>
-<p>Kết quả: mỗi danh mục một dòng, kèm số sản phẩm trong danh mục đó. (Thêm <code>ORDER BY</code> để thứ tự luôn ổn định.)</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Đếm <b>số sản phẩm trong mỗi <code>category</code></b>: hiển thị <code>category</code> và <code>COUNT(*) AS n</code>, gom nhóm theo <code>category</code>, sắp theo <code>category</code>.</span>
-<template class="st">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY 
-ORDER BY category</template>
-<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category ORDER BY category</template></div>
+<h4>1. CASE WHEN — gán nhãn theo điều kiện</h4>
+<p>Cú pháp: <code>CASE WHEN điều_kiện THEN giá_trị ... ELSE giá_trị_mặc_định END</code>. SQL xét các nhánh <b>từ trên xuống</b>, dừng ở nhánh đầu tiên đúng.</p>
+<pre class="run">SELECT name,
+  CASE WHEN price >= 100000 THEN 'high'
+       WHEN price >= 20000  THEN 'medium'
+       ELSE 'low' END AS tier
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Với mỗi sản phẩm, tạo cột <code>tier</code>: <code>'high'</code> nếu <code>price &gt;= 100000</code>, <code>'medium'</code> nếu <code>price &gt;= 20000</code>, còn lại <code>'low'</code>. Hiển thị <code>name</code> và <code>tier</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 100000 THEN 'high'
+       WHEN price >= 20000 THEN 'medium'
+       ELSE 'low' END AS tier
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 100000 THEN 'high' WHEN price >= 20000 THEN 'medium' ELSE 'low' END AS tier FROM products</template></div>
 
-<h4>2. SUM và AVG theo nhóm</h4>
-<p>Đổi <code>COUNT</code> thành <code>SUM</code> hay <code>AVG</code> để có tổng/trung bình cho từng nhóm.</p>
-<pre class="run">SELECT category, SUM(stock) AS total_stock
-FROM products
-GROUP BY category
-ORDER BY category;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tính <b>tổng tồn kho mỗi danh mục</b>: <code>category</code>, <code>SUM(stock) AS total_stock</code>, gom theo <code>category</code>, sắp theo <code>category</code>.</span>
-<template class="st">SELECT category, SUM(stock) AS total_stock
-FROM products
-GROUP BY 
-ORDER BY category</template>
-<template class="ref">SELECT category, SUM(stock) AS total_stock FROM products GROUP BY category ORDER BY category</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tính <b>giá trung bình mỗi danh mục</b>, làm tròn: <code>category</code>, <code>ROUND(AVG(price)) AS avg_price</code>, gom theo <code>category</code>, sắp theo <code>category</code>.</span>
-<template class="st">SELECT category, ROUND(AVG(price)) AS avg_price
-FROM products
-GROUP BY 
-ORDER BY category</template>
-<template class="ref">SELECT category, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category ORDER BY category</template></div>
+<h4>2. CASE hai nhánh đơn giản</h4>
+<p>Chỉ cần một <code>WHEN</code> và một <code>ELSE</code> là đủ để chia hai loại.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tạo cột <code>stock_level</code>: <code>'plenty'</code> nếu <code>stock &gt;= 100</code>, còn lại <code>'low'</code>. Hiển thị <code>name</code> và <code>stock_level</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN stock >= 100 THEN 'plenty' ELSE 'low' END AS stock_level
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN stock >= 100 THEN 'plenty' ELSE 'low' END AS stock_level FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tạo cột <code>status</code>: <code>'reorder'</code> nếu <code>stock &lt; 50</code>, còn lại <code>'ok'</code>. Hiển thị <code>name</code>, <code>stock</code>, <code>status</code>.</span>
+<template class="st">SELECT name, stock,
+  CASE WHEN stock < 50 THEN 'reorder' ELSE 'ok' END AS status
+FROM products</template>
+<template class="ref">SELECT name, stock, CASE WHEN stock < 50 THEN 'reorder' ELSE 'ok' END AS status FROM products</template></div>
 
-<h4>3. Nhiều số liệu cho mỗi nhóm</h4>
-<p>Bạn có thể đặt nhiều hàm tổng hợp cùng lúc — mỗi nhóm ra một "hàng tóm tắt".</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Với mỗi <code>category</code>, hiển thị <code>MIN(price) AS cheapest</code> và <code>MAX(price) AS most_expensive</code>. Gom theo <code>category</code>, sắp theo <code>category</code>.</span>
-<template class="st">SELECT category, MIN(price) AS cheapest, MAX(price) AS most_expensive
-FROM products
-GROUP BY 
-ORDER BY category</template>
-<template class="ref">SELECT category, MIN(price) AS cheapest, MAX(price) AS most_expensive FROM products GROUP BY category ORDER BY category</template></div>
+<h4>3. CASE trả về số</h4>
+<p><code>CASE</code> không chỉ trả về chữ — nó trả về được cả số, nên rất hợp để tính giá trị có điều kiện.</p>
+<pre class="run">SELECT name,
+  ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85
+             ELSE price * 0.95 END) AS final_price
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Tính <code>final_price</code>: hàng <code>'Điện tử'</code> giảm 15% (<code>price * 0.85</code>), còn lại giảm 5% (<code>price * 0.95</code>), rồi <code>ROUND</code>. Hiển thị <code>name</code> và <code>final_price</code>.</span>
+<template class="st">SELECT name,
+  ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85 ELSE price * 0.95 END) AS final_price
+FROM products</template>
+<template class="ref">SELECT name, ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85 ELSE price * 0.95 END) AS final_price FROM products</template></div>
 
-<h4>4. Sắp xếp theo con số vừa tính</h4>
-<p>Rất hay dùng: gộp nhóm rồi sắp theo chính con số tổng hợp để tìm nhóm "nhiều nhất".</p>
-<pre class="run">SELECT category, COUNT(*) AS n
+<h4>4. Phân loại theo danh mục và nhiều nhánh</h4>
+<p>Điều kiện của <code>CASE</code> dùng được với cả chữ, và bạn có thể có nhiều <code>WHEN</code>.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Tạo cột <code>kind</code>: <code>'tech'</code> nếu <code>category = 'Điện tử'</code>, còn lại <code>'non-tech'</code>. Hiển thị <code>name</code> và <code>kind</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Từ <code>customers</code>, tạo cột <code>region</code>: <code>'North'</code> nếu <code>city = 'Hà Nội'</code>, <code>'Central'</code> nếu <code>city = 'Đà Nẵng'</code>, còn lại <code>'South'</code>. Hiển thị <code>name</code> và <code>region</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN city = 'Hà Nội' THEN 'North'
+       WHEN city = 'Đà Nẵng' THEN 'Central'
+       ELSE 'South' END AS region
+FROM customers</template>
+<template class="ref">SELECT name, CASE WHEN city = 'Hà Nội' THEN 'North' WHEN city = 'Đà Nẵng' THEN 'Central' ELSE 'South' END AS region FROM customers</template></div>
+
+<h4>5. Điều kiện kết hợp trong CASE</h4>
+<p>Mỗi <code>WHEN</code> có thể chứa <code>AND</code>/<code>OR</code> như một mệnh đề <code>WHERE</code> thu nhỏ.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Tạo cột <code>label</code>: <code>'premium tech'</code> nếu <code>category = 'Điện tử'</code> <b>và</b> <code>price &gt; 300000</code>, còn lại <code>'other'</code>. Hiển thị <code>name</code> và <code>label</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN category = 'Điện tử' AND price > 300000 THEN 'premium tech' ELSE 'other' END AS label
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN category = 'Điện tử' AND price > 300000 THEN 'premium tech' ELSE 'other' END AS label FROM products</template></div>
+
+<h4>6. Sắp xếp theo kết quả CASE</h4>
+<p>Bí danh của cột <code>CASE</code> dùng được trong <code>ORDER BY</code> — sắp xếp theo nhãn bạn tự đặt.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Hiển thị <code>name</code>, <code>price</code>, và cột <code>tier</code> = <code>'high'</code> nếu <code>price &gt;= 100000</code> còn lại <code>'normal'</code>. Sắp theo <code>tier</code> rồi <code>price</code> giảm dần (<code>ORDER BY tier, price DESC</code>).</span>
+<template class="st">SELECT name, price,
+  CASE WHEN price >= 100000 THEN 'high' ELSE 'normal' END AS tier
 FROM products
-GROUP BY category
-ORDER BY n DESC, category;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Đếm số sản phẩm mỗi <code>category</code>, sắp theo số lượng <b>giảm dần</b>; nếu bằng nhau sắp theo <code>category</code>. (Gợi ý: <code>ORDER BY n DESC, category</code>.)</span>
-<template class="st">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY category
 ORDER BY </template>
-<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category ORDER BY n DESC, category</template></div>
+<template class="ref">SELECT name, price, CASE WHEN price >= 100000 THEN 'high' ELSE 'normal' END AS tier FROM products ORDER BY tier, price DESC</template></div>
 
-<h4>5. HAVING — lọc chính các nhóm</h4>
-<p><code>WHERE</code> lọc <i>dòng</i> trước khi gộp; <code>HAVING</code> lọc <i>nhóm</i> sau khi gộp. Vì vậy điều kiện dùng hàm tổng hợp (như <code>COUNT(*) &gt; 2</code>) phải đặt ở <code>HAVING</code>.</p>
-<pre class="run">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY category
-HAVING COUNT(*) > 2
-ORDER BY category;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Chỉ những <code>category</code> có <b>hơn 2 sản phẩm</b>: hiển thị <code>category</code>, <code>COUNT(*) AS n</code>. Dùng <code>HAVING COUNT(*) &gt; 2</code>, sắp theo <code>category</code>.</span>
-<template class="st">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY category
-HAVING 
-ORDER BY category</template>
-<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category HAVING COUNT(*) > 2 ORDER BY category</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Chỉ những <code>category</code> có <b>tổng tồn kho từ 300 trở lên</b>: hiển thị <code>category</code>, <code>SUM(stock) AS total_stock</code>. Dùng <code>HAVING SUM(stock) &gt;= 300</code>, sắp theo <code>category</code>.</span>
-<template class="st">SELECT category, SUM(stock) AS total_stock
-FROM products
-GROUP BY category
-HAVING 
-ORDER BY category</template>
-<template class="ref">SELECT category, SUM(stock) AS total_stock FROM products GROUP BY category HAVING SUM(stock) >= 300 ORDER BY category</template></div>
+<h4>7. Đếm và cộng có điều kiện</h4>
+<p>Đặt <code>CASE</code> <b>bên trong</b> <code>SUM</code> để đếm hoặc cộng chỉ những dòng thỏa điều kiện — một mẹo báo cáo rất hay: <code>SUM(CASE WHEN … THEN 1 ELSE 0 END)</code> đếm số dòng đúng điều kiện.</p>
+<pre class="run">SELECT SUM(CASE WHEN price >= 50000 THEN 1 ELSE 0 END) AS expensive_count
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Đếm số sản phẩm <b>đắt</b> (<code>price &gt;= 50000</code>) bằng <code>SUM(CASE WHEN price &gt;= 50000 THEN 1 ELSE 0 END) AS expensive_count</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT SUM(CASE WHEN price >= 50000 THEN 1 ELSE 0 END) AS expensive_count FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Tính <b>tổng giá của riêng hàng 'Điện tử'</b> bằng <code>SUM(CASE WHEN category = 'Điện tử' THEN price ELSE 0 END) AS electronics_value</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT SUM(CASE WHEN category = 'Điện tử' THEN price ELSE 0 END) AS electronics_value FROM products</template></div>
 
-<h4>6. Gom nhóm trên các bảng khác</h4>
-<p><code>GROUP BY</code> tỏa sáng nhất với bảng chi tiết. Bảng <code>order_items</code> có nhiều dòng cho mỗi sản phẩm và mỗi đơn.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Từ <code>order_items</code>, tính <b>tổng số lượng bán ra của mỗi sản phẩm</b>: <code>product_id</code>, <code>SUM(qty) AS total_qty</code>, gom theo <code>product_id</code>, sắp theo <code>product_id</code>.</span>
-<template class="st">SELECT product_id, SUM(qty) AS total_qty
-FROM order_items
-GROUP BY 
-ORDER BY product_id</template>
-<template class="ref">SELECT product_id, SUM(qty) AS total_qty FROM order_items GROUP BY product_id ORDER BY product_id</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Từ <code>orders</code>, đếm <b>số đơn của mỗi khách</b>: <code>customer_id</code>, <code>COUNT(*) AS order_count</code>, gom theo <code>customer_id</code>, sắp theo <code>customer_id</code>.</span>
-<template class="st">SELECT customer_id, COUNT(*) AS order_count
-FROM orders
-GROUP BY 
-ORDER BY customer_id</template>
-<template class="ref">SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id ORDER BY customer_id</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Từ <code>order_items</code>, đếm <b>số dòng hàng trong mỗi đơn</b>: <code>order_id</code>, <code>COUNT(*) AS lines</code>, gom theo <code>order_id</code>, sắp theo <code>order_id</code>.</span>
-<template class="st">SELECT order_id, COUNT(*) AS lines
-FROM order_items
-GROUP BY 
-ORDER BY order_id</template>
-<template class="ref">SELECT order_id, COUNT(*) AS lines FROM order_items GROUP BY order_id ORDER BY order_id</template></div>
-
-<h4>7. Ghép GROUP BY + HAVING + ORDER BY</h4>
-<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Chỉ những <code>category</code> có <b>giá trung bình từ 20000 trở lên</b>: hiển thị <code>category</code>, <code>COUNT(*) AS n</code>, <code>ROUND(AVG(price)) AS avg_price</code>. Dùng <code>HAVING AVG(price) &gt;= 20000</code>, sắp theo <code>avg_price</code> giảm dần.</span>
-<template class="st">SELECT category, COUNT(*) AS n, ROUND(AVG(price)) AS avg_price
+<h4>8. Ghép CASE với lọc và sắp xếp</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Chỉ với nhóm <code>'Đồ uống'</code> và <code>'Đồ ăn'</code>: hiển thị <code>name</code>, <code>price</code>, và cột <code>tier</code> = <code>'premium'</code> nếu <code>price &gt;= 30000</code>, còn lại <code>'regular'</code>. Sắp theo <code>price</code> giảm dần.</span>
+<template class="st">SELECT name, price,
+  CASE WHEN price >= 30000 THEN 'premium' ELSE 'regular' END AS tier
 FROM products
-GROUP BY category
-HAVING 
+WHERE category IN ('Đồ uống', 'Đồ ăn')
 ORDER BY </template>
-<template class="ref">SELECT category, COUNT(*) AS n, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category HAVING AVG(price) >= 20000 ORDER BY avg_price DESC</template></div>
+<template class="ref">SELECT name, price, CASE WHEN price >= 30000 THEN 'premium' ELSE 'regular' END AS tier FROM products WHERE category IN ('Đồ uống', 'Đồ ăn') ORDER BY price DESC</template></div>
 
 <h4>🏠 Homework</h4>
 <p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Từ <code>customers</code>, đếm <b>số khách mỗi thành phố</b>: <code>city</code>, <code>COUNT(*) AS n</code>, gom theo <code>city</code>, sắp theo <code>city</code>.</span>
-<template class="st">SELECT city, COUNT(*) AS n
-FROM customers
-GROUP BY 
-ORDER BY city</template>
-<template class="ref">SELECT city, COUNT(*) AS n FROM customers GROUP BY city ORDER BY city</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tính <b>tổng giá niêm yết mỗi danh mục</b>: <code>category</code>, <code>SUM(price) AS total_price</code>, gom theo <code>category</code>, sắp theo <code>total_price</code> <b>giảm dần</b>.</span>
-<template class="st">SELECT category, SUM(price) AS total_price
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Tạo cột <code>bucket</code>: <code>'expensive'</code> nếu <code>price &gt;= 50000</code>, còn lại <code>'affordable'</code>. Hiển thị <code>name</code> và <code>bucket</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 50000 THEN 'expensive' ELSE 'affordable' END AS bucket
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 50000 THEN 'expensive' ELSE 'affordable' END AS bucket FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tạo cột <code>kind</code>: <code>'big ticket'</code> nếu <code>price &gt;= 100000</code>, còn lại <code>'everyday'</code>. Hiển thị <code>name</code> và <code>kind</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 100000 THEN 'big ticket' ELSE 'everyday' END AS kind
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 100000 THEN 'big ticket' ELSE 'everyday' END AS kind FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Đếm số sản phẩm nhóm <code>'Đồ uống'</code> bằng đếm có điều kiện: <code>SUM(CASE WHEN category = 'Đồ uống' THEN 1 ELSE 0 END) AS drink_count</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT SUM(CASE WHEN category = 'Đồ uống' THEN 1 ELSE 0 END) AS drink_count FROM products</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Tạo cột <code>kind</code>: <code>'tech'</code> nếu <code>category = 'Điện tử'</code>, còn lại <code>'non-tech'</code>. Hiển thị <code>name</code>, <code>category</code>, <code>kind</code>, sắp theo <code>kind</code> rồi <code>name</code>.</span>
+<template class="st">SELECT name, category,
+  CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind
 FROM products
-GROUP BY category
 ORDER BY </template>
-<template class="ref">SELECT category, SUM(price) AS total_price FROM products GROUP BY category ORDER BY total_price DESC</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Từ <code>order_items</code>, chỉ những sản phẩm <b>bán được từ 2 đơn vị trở lên</b>: <code>product_id</code>, <code>SUM(qty) AS total_qty</code>. Dùng <code>HAVING SUM(qty) &gt;= 2</code>, sắp theo <code>total_qty</code> giảm dần rồi <code>product_id</code>.</span>
-<template class="st">SELECT product_id, SUM(qty) AS total_qty
-FROM order_items
-GROUP BY product_id
-HAVING 
-ORDER BY </template>
-<template class="ref">SELECT product_id, SUM(qty) AS total_qty FROM order_items GROUP BY product_id HAVING SUM(qty) >= 2 ORDER BY total_qty DESC, product_id</template></div>
-<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Chỉ những <code>category</code> có <b>sản phẩm đắt nhất trên 40000</b>: hiển thị <code>category</code>, <code>COUNT(*) AS n</code>, <code>MAX(price) AS most_expensive</code>. Dùng <code>HAVING MAX(price) &gt; 40000</code>, sắp theo <code>most_expensive</code> giảm dần.</span>
-<template class="st">SELECT category, COUNT(*) AS n, MAX(price) AS most_expensive
-FROM products
-GROUP BY category
-HAVING 
-ORDER BY </template>
-<template class="ref">SELECT category, COUNT(*) AS n, MAX(price) AS most_expensive FROM products GROUP BY category HAVING MAX(price) > 40000 ORDER BY most_expensive DESC</template></div>
+<template class="ref">SELECT name, category, CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind FROM products ORDER BY kind, name</template></div>

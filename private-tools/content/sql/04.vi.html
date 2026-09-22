@@ -1,106 +1,108 @@
-<h3>Bài 4 — Tính toán trong SELECT & đặt tên với AS</h3>
-<p>Cho tới giờ <code>SELECT</code> chỉ <i>lấy ra</i> những giá trị có sẵn. Nhưng SQL còn <b>tính toán</b> được: nhân giá với số lượng để ra doanh thu, cộng thuế VAT, giảm giá 10%, ghép chữ lại thành một nhãn dễ đọc. Bạn không cần export sang Excel — làm ngay trong truy vấn.</p>
-<p>Khi bạn viết một biểu thức trong <code>SELECT</code>, kết quả là một <b>cột mới</b> được tính cho từng dòng. Mặc định cột đó có cái tên xấu xí (chính là biểu thức bạn viết), nên ta dùng <code>AS</code> để <b>đặt tên</b> gọn gàng cho nó.</p>
-<p>Bài này giới thiệu bốn công cụ: phép tính số học, ghép chuỗi <code>||</code>, làm tròn <code>ROUND</code>, và bí danh <code>AS</code>. Chúng biến những cột thô thành thông tin có ý nghĩa.</p>
+<h3>Bài 4 — Hàm tổng hợp: COUNT, SUM, AVG, MIN, MAX</h3>
+<p>Đến giờ mỗi truy vấn trả về <i>từng dòng</i>. Nhưng sếp hiếm khi hỏi "liệt kê 10.000 đơn hàng" — họ hỏi <b>một con số</b>: "có <b>bao nhiêu</b> sản phẩm?", "<b>tổng</b> tồn kho là bao nhiêu?", "giá <b>trung bình</b>?", "món <b>đắt nhất</b> giá bao nhiêu?".</p>
+<p>Đó là việc của <b>hàm tổng hợp</b> (aggregate function). Chúng "gộp" nhiều dòng thành <b>một giá trị duy nhất</b>: <code>COUNT</code> đếm, <code>SUM</code> cộng, <code>AVG</code> tính trung bình, <code>MIN</code>/<code>MAX</code> tìm nhỏ nhất/lớn nhất.</p>
+<p>Kết hợp với <code>WHERE</code>, bạn tính được con số cho đúng nhóm mình quan tâm. Đây là nền tảng của mọi báo cáo — và ở Bài 5 bạn sẽ học <code>GROUP BY</code> để tính các con số này cho <i>từng nhóm</i> cùng lúc.</p>
 
-<h4>1. Phép tính số học</h4>
-<p>Bạn có <code>+ - * /</code> ngay trong <code>SELECT</code>. SQL tính cho từng dòng:</p>
-<pre class="run">SELECT name, price * stock
+<h4>1. COUNT — đếm số dòng</h4>
+<p><code>COUNT(*)</code> đếm số dòng khớp truy vấn. Luôn đặt tên cột bằng <code>AS</code> cho gọn.</p>
+<pre class="run">SELECT COUNT(*) AS total
 FROM products;</pre>
-<p>Để cột kết quả có tên đẹp, thêm <code>AS tên_cột</code>:</p>
-<pre class="run">SELECT name, price * stock AS inventory_value
-FROM products;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Với mỗi sản phẩm, hiển thị <code>name</code> và giá trị tồn kho <code>price * stock</code>, đặt tên cột là <code>inventory_value</code>.</span>
-<template class="st">SELECT name, price * stock AS 
-FROM products</template>
-<template class="ref">SELECT name, price * stock AS inventory_value FROM products</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Hiển thị <code>name</code> và <b>gấp đôi giá</b> (<code>price * 2</code>), đặt tên cột là <code>double_price</code>.</span>
-<template class="st">SELECT name, 
-FROM products</template>
-<template class="ref">SELECT name, price * 2 AS double_price FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Đếm tổng số sản phẩm trong bảng <code>products</code>, đặt tên cột là <code>total</code>.</span>
+<template class="st">SELECT COUNT(*) AS total
+FROM </template>
+<template class="ref">SELECT COUNT(*) AS total FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Đếm số sản phẩm thuộc nhóm <code>'Đồ uống'</code>, đặt tên cột là <code>n</code>.</span>
+<template class="st">SELECT COUNT(*) AS n
+FROM products
+WHERE </template>
+<template class="ref">SELECT COUNT(*) AS n FROM products WHERE category = 'Đồ uống'</template></div>
 
-<h4>2. AS — đặt tên cho cột</h4>
-<p><code>AS</code> không chỉ dùng cho biểu thức — bạn có thể đổi tên cả cột có sẵn để báo cáo dễ đọc hơn.</p>
-<pre class="run">SELECT name AS product_name, price AS vnd
+<h4>2. Đếm giá trị khác nhau: COUNT(DISTINCT …)</h4>
+<p>Muốn biết có <b>bao nhiêu loại</b> khác nhau, dùng <code>COUNT(DISTINCT cột)</code> — nó bỏ qua các giá trị lặp.</p>
+<pre class="run">SELECT COUNT(DISTINCT category) AS categories
 FROM products;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Hiển thị <code>name</code> đổi tên thành <code>product_name</code> và <code>price</code> đổi tên thành <code>vnd</code>.</span>
-<template class="st">SELECT name AS product_name, 
-FROM products</template>
-<template class="ref">SELECT name AS product_name, price AS vnd FROM products</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Hiển thị <code>name</code> và giá sau khi <b>giảm phẳng 3000₫</b> (<code>price - 3000</code>), đặt tên cột là <code>discounted</code>.</span>
-<template class="st">SELECT name, 
-FROM products</template>
-<template class="ref">SELECT name, price - 3000 AS discounted FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Đếm số <b>nhóm hàng khác nhau</b> (<code>category</code>) trong bảng <code>products</code>, đặt tên cột là <code>categories</code>.</span>
+<template class="st">SELECT COUNT(DISTINCT category) AS categories
+FROM </template>
+<template class="ref">SELECT COUNT(DISTINCT category) AS categories FROM products</template></div>
 
-<h4>3. Ghép chuỗi với ||</h4>
-<p>Toán tử <code>||</code> nối các chuỗi lại. Chèn thêm ký tự tĩnh (đặt trong dấu nháy) để tạo nhãn dễ đọc.</p>
-<pre class="run">SELECT name || ' (' || category || ')' AS label
+<h4>3. SUM — cộng dồn</h4>
+<p><code>SUM(cột)</code> cộng tất cả giá trị của một cột số.</p>
+<pre class="run">SELECT SUM(stock) AS total_stock
 FROM products;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Tạo cột <code>label</code> có dạng <code>name (category)</code> — ví dụ <code>Cà phê đen đá (Đồ uống)</code>. Dùng đúng mẫu <code>name || ' (' || category || ')'</code>.</span>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Tính <b>tổng tồn kho</b> (<code>SUM(stock)</code>) của tất cả sản phẩm, đặt tên cột là <code>total_stock</code>.</span>
 <template class="st">SELECT 
 FROM products</template>
-<template class="ref">SELECT name || ' (' || category || ')' AS label FROM products</template></div>
+<template class="ref">SELECT SUM(stock) AS total_stock FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Tính <b>tổng giá</b> (<code>SUM(price)</code>) của các sản phẩm nhóm <code>'Điện tử'</code>, đặt tên cột là <code>total</code>.</span>
+<template class="st">SELECT SUM(price) AS total
+FROM products
+WHERE </template>
+<template class="ref">SELECT SUM(price) AS total FROM products WHERE category = 'Điện tử'</template></div>
 
-<h4>4. Làm tròn với ROUND</h4>
-<p>Phép nhân với số thập phân (như giảm giá, thuế) cho ra số lẻ. <code>ROUND(biểu_thức)</code> làm tròn về số nguyên gần nhất.</p>
-<pre class="run">SELECT name, ROUND(price * 0.9) AS sale_price
-FROM products;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Hiển thị <code>name</code> và giá sau khi <b>giảm 10%</b>: <code>ROUND(price * 0.9)</code>, đặt tên cột là <code>sale_price</code>.</span>
-<template class="st">SELECT name, 
-FROM products</template>
-<template class="ref">SELECT name, ROUND(price * 0.9) AS sale_price FROM products</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Hiển thị <code>name</code> và giá đã <b>cộng 10% VAT</b>: <code>ROUND(price * 1.1)</code>, đặt tên cột là <code>price_with_vat</code>.</span>
-<template class="st">SELECT name, 
-FROM products</template>
-<template class="ref">SELECT name, ROUND(price * 1.1) AS price_with_vat FROM products</template></div>
+<h4>4. AVG — trung bình</h4>
+<p><code>AVG(cột)</code> tính trung bình cộng. Kết quả thường là số lẻ, nên hay bọc thêm <code>ROUND(…)</code>.</p>
+<pre class="run">SELECT AVG(price) AS avg_price
+FROM products;
 
-<h4>5. Tính toán kết hợp với WHERE</h4>
-<p>Bạn có thể vừa lọc vừa tính. (Lưu ý: <code>WHERE</code> không dùng được bí danh <code>AS</code> — phải viết lại biểu thức đầy đủ trong <code>WHERE</code>.)</p>
-<pre class="run">SELECT name, ROUND(price * 0.8) AS sale_price
+SELECT ROUND(AVG(price)) AS avg_price
 FROM products
 WHERE category = 'Đồ uống';</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Chỉ với nhóm <code>'Đồ uống'</code>: hiển thị <code>name</code> và giá <b>giảm 20%</b> (<code>ROUND(price * 0.8)</code>), đặt tên cột <code>sale_price</code>.</span>
-<template class="st">SELECT name, ROUND(price * 0.8) AS sale_price
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Tính <b>giá trung bình</b> (<code>AVG(price)</code>) của tất cả sản phẩm, đặt tên cột là <code>avg_price</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT AVG(price) AS avg_price FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Tính giá trung bình của nhóm <code>'Đồ uống'</code>, <b>làm tròn</b> bằng <code>ROUND(AVG(price))</code>, đặt tên cột là <code>avg_price</code>.</span>
+<template class="st">SELECT ROUND(AVG(price)) AS avg_price
 FROM products
 WHERE </template>
-<template class="ref">SELECT name, ROUND(price * 0.8) AS sale_price FROM products WHERE category = 'Đồ uống'</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Chỉ những sản phẩm có <b>giá trị tồn kho từ 1.000.000 trở lên</b>: hiển thị <code>name</code> và <code>price * stock AS inventory_value</code>. Nhớ dùng biểu thức <code>price * stock</code> trong <code>WHERE</code>.</span>
-<template class="st">SELECT name, price * stock AS inventory_value
-FROM products
-WHERE </template>
-<template class="ref">SELECT name, price * stock AS inventory_value FROM products WHERE price * stock >= 1000000</template></div>
+<template class="ref">SELECT ROUND(AVG(price)) AS avg_price FROM products WHERE category = 'Đồ uống'</template></div>
 
-<h4>6. Sắp xếp theo giá trị đã tính</h4>
-<p><code>ORDER BY</code> cũng dùng được với biểu thức tính toán — rất hợp để tìm "top" theo một chỉ số bạn tự tạo.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Lấy <b>3 sản phẩm có giá trị tồn kho lớn nhất</b>: hiển thị <code>name</code> và <code>price * stock AS inventory_value</code>, sắp theo giá trị đó <b>giảm dần</b>; nếu bằng nhau thì sắp theo <code>name</code>. Gợi ý: <code>ORDER BY price * stock DESC, name LIMIT 3</code>.</span>
-<template class="st">SELECT name, price * stock AS inventory_value
+<h4>5. MIN và MAX</h4>
+<p><code>MIN</code> tìm giá trị nhỏ nhất, <code>MAX</code> tìm lớn nhất — dùng được cho cả số, chữ và ngày.</p>
+<pre class="run">SELECT MIN(price) AS cheapest, MAX(price) AS most_expensive
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Tìm <b>giá thấp nhất</b> trong bảng <code>products</code> (<code>MIN(price)</code>), đặt tên cột là <code>cheapest</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT MIN(price) AS cheapest FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Tìm <b>giá cao nhất</b> trong bảng <code>products</code> (<code>MAX(price)</code>), đặt tên cột là <code>most_expensive</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT MAX(price) AS most_expensive FROM products</template></div>
+
+<h4>6. Tổng hợp trên bảng khác</h4>
+<p>Hàm tổng hợp dùng cho bảng nào cũng được. Bảng <code>order_items</code> ghi số lượng bán ra ở cột <code>qty</code>.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Tính <b>tổng số lượng đã bán</b> (<code>SUM(qty)</code>) trong bảng <code>order_items</code>, đặt tên cột là <code>total_qty</code>.</span>
+<template class="st">SELECT 
+FROM order_items</template>
+<template class="ref">SELECT SUM(qty) AS total_qty FROM order_items</template></div>
+
+<h4>7. Nhiều số liệu trong một truy vấn</h4>
+<p>Bạn có thể đặt nhiều hàm tổng hợp cạnh nhau để có cả một "bảng tóm tắt" trong một dòng.</p>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Chỉ với nhóm <code>'Đồ uống'</code>, tạo một dòng tóm tắt gồm 4 cột: <code>COUNT(*) AS n</code>, <code>MIN(price) AS cheapest</code>, <code>MAX(price) AS most_expensive</code>, và <code>ROUND(AVG(price)) AS avg_price</code>.</span>
+<template class="st">SELECT COUNT(*) AS n, MIN(price) AS cheapest, 
 FROM products
-ORDER BY </template>
-<template class="ref">SELECT name, price * stock AS inventory_value FROM products ORDER BY price * stock DESC, name LIMIT 3</template></div>
-<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Chỉ với nhóm <code>'Điện tử'</code>: hiển thị <code>name</code>, <code>price</code>, và giá <b>giảm 15%</b> <code>ROUND(price * 0.85) AS sale_price</code>, sắp theo <code>price</code> giảm dần.</span>
-<template class="st">SELECT name, price, ROUND(price * 0.85) AS sale_price
-FROM products
-WHERE 
-ORDER BY </template>
-<template class="ref">SELECT name, price, ROUND(price * 0.85) AS sale_price FROM products WHERE category = 'Điện tử' ORDER BY price DESC</template></div>
+WHERE </template>
+<template class="ref">SELECT COUNT(*) AS n, MIN(price) AS cheapest, MAX(price) AS most_expensive, ROUND(AVG(price)) AS avg_price FROM products WHERE category = 'Đồ uống'</template></div>
 
 <h4>🏠 Homework</h4>
 <p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Hiển thị <code>name</code> và <b>giá tính theo nghìn đồng</b> <code>price / 1000</code>, đặt tên cột là <code>price_k</code>. (Vì cả hai là số nguyên, đây là phép chia lấy phần nguyên.)</span>
-<template class="st">SELECT name, 
-FROM products</template>
-<template class="ref">SELECT name, price / 1000 AS price_k FROM products</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Từ bảng <code>customers</code>, tạo cột <code>who</code> dạng <code>name, city</code> — ví dụ <code>Nguyễn Văn A, Hà Nội</code>. Dùng mẫu <code>name || ', ' || city</code>.</span>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Đếm tổng số khách hàng trong bảng <code>customers</code>, đặt tên cột là <code>total</code>.</span>
 <template class="st">SELECT 
 FROM customers</template>
-<template class="ref">SELECT name || ', ' || city AS who FROM customers</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Hiển thị <code>name</code> và giá cộng <b>8% VAT</b>: <code>ROUND(price * 1.08)</code>, đặt tên cột là <code>price_vat8</code>.</span>
-<template class="st">SELECT name, 
-FROM products</template>
-<template class="ref">SELECT name, ROUND(price * 1.08) AS price_vat8 FROM products</template></div>
-<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Chỉ với nhóm <code>'Văn phòng phẩm'</code>: hiển thị <code>name</code> và <code>price * stock AS inventory_value</code>, sắp theo giá trị đó <b>giảm dần</b>; nếu bằng nhau thì sắp theo <code>name</code>.</span>
-<template class="st">SELECT name, price * stock AS inventory_value
+<template class="ref">SELECT COUNT(*) AS total FROM customers</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tính tổng tồn kho (<code>SUM(stock)</code>) của nhóm <code>'Văn phòng phẩm'</code>, đặt tên cột là <code>total_stock</code>.</span>
+<template class="st">SELECT SUM(stock) AS total_stock
 FROM products
-WHERE 
-ORDER BY </template>
-<template class="ref">SELECT name, price * stock AS inventory_value FROM products WHERE category = 'Văn phòng phẩm' ORDER BY price * stock DESC, name</template></div>
+WHERE </template>
+<template class="ref">SELECT SUM(stock) AS total_stock FROM products WHERE category = 'Văn phòng phẩm'</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tìm giá cao nhất (<code>MAX(price)</code>) trong nhóm <code>'Đồ ăn'</code>, đặt tên cột là <code>most_expensive</code>.</span>
+<template class="st">SELECT MAX(price) AS most_expensive
+FROM products
+WHERE </template>
+<template class="ref">SELECT MAX(price) AS most_expensive FROM products WHERE category = 'Đồ ăn'</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Từ bảng <code>order_items</code>, tạo một dòng tóm tắt gồm 3 cột: <code>COUNT(*) AS lines</code> (số dòng đơn), <code>SUM(qty) AS total_qty</code> (tổng số lượng), và <code>MAX(qty) AS biggest_line</code> (dòng có số lượng lớn nhất).</span>
+<template class="st">SELECT COUNT(*) AS lines, 
+FROM order_items</template>
+<template class="ref">SELECT COUNT(*) AS lines, SUM(qty) AS total_qty, MAX(qty) AS biggest_line FROM order_items</template></div>

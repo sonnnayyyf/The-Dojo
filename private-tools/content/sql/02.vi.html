@@ -1,118 +1,124 @@
-<h3>Bài 2 — WHERE: lọc đúng dòng bạn cần</h3>
-<p>Ở Bài 1 bạn đã lấy được các cột từ một bảng. Nhưng bảng thật có hàng nghìn, hàng triệu dòng — bạn hiếm khi muốn xem <i>tất cả</i>. Câu hỏi thực tế luôn có điều kiện: "sản phẩm nào <b>đắt hơn</b> 30.000₫?", "khách hàng nào ở <b>Hà Nội</b>?", "món nào thuộc nhóm <b>Đồ uống</b>?".</p>
-<p>Mệnh đề <code>WHERE</code> chính là bộ lọc. Nó đứng ngay sau <code>FROM</code> và giữ lại <b>chỉ những dòng</b> thỏa điều kiện bạn đặt ra. Mọi dòng khác bị loại khỏi kết quả — dữ liệu gốc không hề thay đổi, bạn chỉ đang <i>đặt câu hỏi</i>.</p>
-<p>Trong bài này bạn sẽ học cách so sánh số và chữ, kết hợp nhiều điều kiện bằng <code>AND</code>/<code>OR</code>, và khớp mẫu văn bản bằng <code>LIKE</code>. Đây là kỹ năng bạn sẽ dùng trong <i>gần như mọi</i> truy vấn về sau.</p>
+<h3>Bài 2 — ORDER BY, LIMIT & DISTINCT: sắp xếp, lấy top và loại trùng</h3>
+<p>Kết quả truy vấn ở các bài trước trả về theo thứ tự "tự nhiên" của bảng — không có gì đảm bảo nó có ý nghĩa. Nhưng câu hỏi kinh doanh gần như luôn cần <b>thứ tự</b>: "sản phẩm <b>đắt nhất</b>?", "khách hàng <b>mới nhất</b>?", "5 mặt hàng <b>tồn kho nhiều nhất</b>?".</p>
+<p><code>ORDER BY</code> sắp xếp kết quả theo một (hoặc nhiều) cột. Kết hợp với <code>LIMIT</code> để chỉ lấy vài dòng đầu, bạn có ngay công cụ trả lời mọi câu hỏi dạng "top N" — thứ xuất hiện trong hầu hết báo cáo thực tế.</p>
+<p><code>ORDER BY</code> luôn đứng <b>sau</b> <code>WHERE</code> (nếu có), và <code>LIMIT</code> đứng <b>cuối cùng</b>. Hãy nhớ trật tự này: <code>SELECT … FROM … WHERE … ORDER BY … LIMIT …</code>. Cuối bài ta cũng học <code>DISTINCT</code> để <b>loại bỏ các dòng trùng nhau</b>.</p>
 
-<h4>1. Hình dạng của WHERE</h4>
-<p>Thêm một dòng <code>WHERE điều_kiện</code> vào sau <code>FROM</code>:</p>
+<h4>1. ORDER BY — sắp xếp tăng dần</h4>
+<p>Mặc định <code>ORDER BY cột</code> sắp xếp <b>tăng dần</b> (nhỏ → lớn với số, A → Z với chữ):</p>
 <pre class="run">SELECT name, price
 FROM products
-WHERE category = 'Đồ uống';</pre>
-<p>SQL xét từng dòng: nếu <code>category</code> đúng bằng <code>'Đồ uống'</code> thì giữ lại, ngược lại bỏ đi. Chuỗi văn bản phải nằm trong <b>dấu nháy đơn</b> <code>'...'</code>.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Hiển thị <b>tất cả các cột</b> của những sản phẩm thuộc nhóm <code>'Đồ uống'</code>.</span>
-<template class="st">SELECT * FROM products
-WHERE </template>
-<template class="ref">SELECT * FROM products WHERE category = 'Đồ uống'</template></div>
-
-<h4>2. Các toán tử so sánh</h4>
-<p>Với số, bạn có đủ bộ so sánh quen thuộc:</p>
-<table class="res"><tr><th>Toán tử</th><th>Ý nghĩa</th></tr>
-<tr><td><code>=</code></td><td>bằng</td></tr>
-<tr><td><code>&lt;&gt;</code></td><td>khác (không bằng)</td></tr>
-<tr><td><code>&gt;</code> <code>&lt;</code></td><td>lớn hơn, nhỏ hơn</td></tr>
-<tr><td><code>&gt;=</code> <code>&lt;=</code></td><td>lớn hơn hoặc bằng, nhỏ hơn hoặc bằng</td></tr></table>
-<pre class="run">SELECT name, price
-FROM products
-WHERE price > 30000;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Lấy <code>name</code> và <code>price</code> của các sản phẩm có giá <b>lớn hơn</b> 30000.</span>
+ORDER BY price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Lấy <code>name</code>, <code>price</code> của mọi sản phẩm, sắp xếp theo <code>price</code> <b>tăng dần</b>.</span>
 <template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE price > 30000</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Lấy <code>name</code> và <code>price</code> của các sản phẩm có giá <b>nhỏ hơn hoặc bằng</b> 12000.</span>
-<template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE price <= 12000</template></div>
-
-<h4>3. Lọc theo văn bản</h4>
-<p>So sánh chuỗi cũng dùng <code>=</code> hoặc <code>&lt;&gt;</code>. Nhớ đặt giá trị trong dấu nháy đơn, và gõ đúng dấu tiếng Việt.</p>
-<pre class="run">SELECT name FROM customers
-WHERE city = 'Hà Nội';</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Lấy <code>name</code> của các khách hàng ở <code>'Hà Nội'</code>.</span>
-<template class="st">SELECT name FROM customers
-WHERE </template>
-<template class="ref">SELECT name FROM customers WHERE city = 'Hà Nội'</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Lấy <code>name</code> và <code>category</code> của mọi sản phẩm <b>không</b> thuộc nhóm <code>'Văn phòng phẩm'</code> (dùng <code>&lt;&gt;</code>).</span>
-<template class="st">SELECT name, category FROM products
-WHERE </template>
-<template class="ref">SELECT name, category FROM products WHERE category <> 'Văn phòng phẩm'</template></div>
-
-<h4>4. Kết hợp điều kiện: AND, OR</h4>
-<p>Nối nhiều điều kiện bằng <code>AND</code> (phải thỏa <b>cả hai</b>) hoặc <code>OR</code> (thỏa <b>ít nhất một</b>).</p>
-<pre class="run">SELECT name, price
-FROM products
-WHERE category = 'Đồ uống' AND price < 30000;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Lấy <code>name</code>, <code>price</code> của sản phẩm nhóm <code>'Đồ uống'</code> <b>và</b> giá nhỏ hơn 30000.</span>
-<template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE category = 'Đồ uống' AND price < 30000</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Lấy <code>name</code> của sản phẩm thuộc nhóm <code>'Điện tử'</code> <b>hoặc</b> có giá lớn hơn 40000.</span>
-<template class="st">SELECT name FROM products
-WHERE </template>
-<template class="ref">SELECT name FROM products WHERE category = 'Điện tử' OR price > 40000</template></div>
-
-<h4>5. Khoảng giá trị: BETWEEN và IN</h4>
-<p><code>BETWEEN a AND b</code> chọn giá trị trong khoảng, <b>bao gồm cả hai đầu</b>. <code>IN (…)</code> chọn giá trị khớp một trong danh sách — gọn hơn nhiều so với chuỗi <code>OR</code> dài.</p>
-<pre class="run">SELECT name, price FROM products
-WHERE price BETWEEN 10000 AND 30000;
-
-SELECT name, category FROM products
-WHERE category IN ('Đồ ăn', 'Điện tử');</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Lấy <code>name</code>, <code>price</code> của sản phẩm có giá <b>từ 10000 đến 30000</b> (dùng <code>BETWEEN</code>).</span>
-<template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE price BETWEEN 10000 AND 30000</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Lấy <code>name</code>, <code>category</code> của sản phẩm thuộc nhóm <code>'Đồ ăn'</code> hoặc <code>'Điện tử'</code> (dùng <code>IN</code>).</span>
-<template class="st">SELECT name, category FROM products
-WHERE </template>
-<template class="ref">SELECT name, category FROM products WHERE category IN ('Đồ ăn', 'Điện tử')</template></div>
-
-<h4>6. Khớp mẫu văn bản: LIKE</h4>
-<p>Khi chỉ nhớ một phần tên, dùng <code>LIKE</code> với ký tự đại diện: <code>%</code> thay cho <b>bất kỳ chuỗi nào</b> (kể cả rỗng), <code>_</code> thay cho <b>đúng một ký tự</b>.</p>
-<table class="res"><tr><th>Mẫu</th><th>Khớp</th></tr>
-<tr><td><code>'S%'</code></td><td>bắt đầu bằng S</td></tr>
-<tr><td><code>'%đá'</code></td><td>kết thúc bằng đá</td></tr>
-<tr><td><code>'%cam%'</code></td><td>chứa "cam" ở bất kỳ đâu</td></tr></table>
-<pre class="run">SELECT name FROM products
-WHERE name LIKE 'S%';</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Lấy <code>name</code> của các sản phẩm có tên <b>bắt đầu bằng chữ "S"</b> (dùng <code>LIKE 'S%'</code>).</span>
-<template class="st">SELECT name FROM products
-WHERE </template>
-<template class="ref">SELECT name FROM products WHERE name LIKE 'S%'</template></div>
-
-<h4>7. Ghép mọi thứ lại</h4>
-<p>Sức mạnh thật sự đến khi bạn kết hợp bộ lọc với sắp xếp (bạn sẽ học kỹ <code>ORDER BY</code> ở Bài 3). Thử ngay bài tập nâng cao:</p>
-<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Lấy <code>name</code>, <code>price</code> của sản phẩm nhóm <code>'Đồ uống'</code> có giá <b>từ 10000 đến 40000</b>, sắp xếp theo <code>price</code> <b>giảm dần</b> (<code>ORDER BY price DESC</code>).</span>
-<template class="st">SELECT name, price FROM products
-WHERE 
 ORDER BY </template>
-<template class="ref">SELECT name, price FROM products WHERE category = 'Đồ uống' AND price BETWEEN 10000 AND 40000 ORDER BY price DESC</template></div>
+<template class="ref">SELECT name, price FROM products ORDER BY price</template></div>
+
+<h4>2. Giảm dần với DESC</h4>
+<p>Thêm <code>DESC</code> để đảo chiều — lớn → nhỏ. (Chiều mặc định là <code>ASC</code>, thường không cần viết.)</p>
+<pre class="run">SELECT name, price
+FROM products
+ORDER BY price DESC;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Lấy <code>name</code>, <code>price</code> của mọi sản phẩm, sắp xếp theo <code>price</code> <b>giảm dần</b>.</span>
+<template class="st">SELECT name, price FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC</template></div>
+
+<h4>3. Sắp xếp theo văn bản và ngày</h4>
+<p><code>ORDER BY</code> cũng dùng được với chữ (thứ tự bảng chữ cái) và với ngày dạng chuỗi <code>YYYY-MM-DD</code> (nhờ định dạng này, so sánh chuỗi cũng chính là so sánh thời gian).</p>
+<pre class="run">SELECT name FROM products
+ORDER BY name;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Lấy <code>name</code> của mọi sản phẩm, sắp xếp theo <b>bảng chữ cái</b> (theo cột <code>name</code>).</span>
+<template class="st">SELECT name FROM products
+ORDER BY </template>
+<template class="ref">SELECT name FROM products ORDER BY name</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Lấy <code>name</code>, <code>joined_at</code> của mọi khách hàng, sắp xếp theo <code>joined_at</code> <b>tăng dần</b> (người gia nhập sớm nhất lên trước).</span>
+<template class="st">SELECT name, joined_at FROM customers
+ORDER BY </template>
+<template class="ref">SELECT name, joined_at FROM customers ORDER BY joined_at</template></div>
+
+<h4>4. Sắp xếp nhiều cột</h4>
+<p>Liệt kê nhiều cột, cách nhau dấu phẩy. SQL sắp theo cột đầu trước; khi <b>bằng nhau</b> mới xét đến cột tiếp theo. Mỗi cột có thể có chiều riêng.</p>
+<pre class="run">SELECT name, category, price
+FROM products
+ORDER BY category, price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Lấy <code>name</code>, <code>category</code>, <code>price</code>, sắp xếp theo <code>category</code> rồi theo <code>price</code> (cả hai tăng dần).</span>
+<template class="st">SELECT name, category, price FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, category, price FROM products ORDER BY category, price</template></div>
+
+<h4>5. LIMIT — chỉ lấy vài dòng đầu</h4>
+<p><code>LIMIT n</code> cắt kết quả xuống còn tối đa <code>n</code> dòng. Rất hữu ích để xem nhanh, hoặc kết hợp với <code>ORDER BY</code> để lấy "top".</p>
+<pre class="run">SELECT name FROM products
+ORDER BY id
+LIMIT 3;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Lấy <code>name</code> của <b>3 sản phẩm đầu tiên theo <code>id</code></b> (sắp theo <code>id</code>, giới hạn 3 dòng).</span>
+<template class="st">SELECT name FROM products
+ORDER BY id
+</template>
+<template class="ref">SELECT name FROM products ORDER BY id LIMIT 3</template></div>
+
+<h4>6. Công thức "top N"</h4>
+<p>Ghép <code>ORDER BY … DESC</code> với <code>LIMIT n</code> là cách kinh điển để lấy "n cái lớn nhất". Đảo lại thành <code>ASC</code> để lấy "n cái nhỏ nhất".</p>
+<pre class="run">SELECT name, price
+FROM products
+ORDER BY price DESC
+LIMIT 3;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Lấy <code>name</code>, <code>price</code> của <b>3 sản phẩm đắt nhất</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 3</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Lấy <code>name</code>, <code>price</code> của <b>3 sản phẩm rẻ nhất</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price ASC LIMIT 3</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Lấy <code>name</code>, <code>price</code> của <b>đúng 1 sản phẩm đắt nhất</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 1</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Lấy <code>name</code>, <code>stock</code> của <b>5 sản phẩm tồn kho nhiều nhất</b>.</span>
+<template class="st">SELECT name, stock FROM products
+</template>
+<template class="ref">SELECT name, stock FROM products ORDER BY stock DESC LIMIT 5</template></div>
+
+<h4>7. Bỏ qua vài dòng đầu: OFFSET</h4>
+<p><code>LIMIT n OFFSET k</code> bỏ qua <code>k</code> dòng đầu rồi lấy <code>n</code> dòng tiếp theo — dùng cho phân trang, hoặc lấy "hạng nhì, hạng ba".</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 11.</b> Lấy <code>name</code>, <code>price</code> của <b>sản phẩm đắt thứ 2 và thứ 3</b> (bỏ qua cái đắt nhất). Gợi ý: <code>ORDER BY price DESC LIMIT 2 OFFSET 1</code>.</span>
+<template class="st">SELECT name, price FROM products
+ORDER BY price DESC
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 2 OFFSET 1</template></div>
+
+<h4>8. DISTINCT — loại bỏ trùng lặp</h4>
+<p>Nhiều dòng có thể trùng giá trị ở cột bạn chọn. Thêm <code>DISTINCT</code> ngay sau <code>SELECT</code> để mỗi giá trị chỉ xuất hiện <b>một lần</b> — rất hợp để trả lời "cửa hàng có những <i>loại</i> hàng nào?".</p>
+<pre class="run">SELECT DISTINCT category FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 12.</b> Liệt kê mỗi <code>category</code> đúng <b>một lần</b> (dùng <code>DISTINCT</code>).</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT category FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 13.</b> Từ bảng <code>customers</code>, liệt kê mỗi <code>city</code> đúng một lần.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT city FROM customers</template></div>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 14. 🔥 Nâng cao.</b> Từ bảng <code>orders</code>, liệt kê mỗi <code>customer_id</code> đúng một lần, <b>sắp xếp tăng dần</b> (kết hợp <code>DISTINCT</code> với <code>ORDER BY</code>).</span>
+<template class="st">SELECT DISTINCT customer_id FROM orders
+ORDER BY </template>
+<template class="ref">SELECT DISTINCT customer_id FROM orders ORDER BY customer_id</template></div>
 
 <h4>🏠 Homework</h4>
 <p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Lấy <code>name</code>, <code>stock</code> của các sản phẩm còn <b>ít hơn 50</b> trong kho.</span>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Lấy <code>name</code>, <code>stock</code> của mọi sản phẩm, sắp xếp theo <code>stock</code> <b>tăng dần</b>.</span>
 <template class="st">SELECT name, stock FROM products
-WHERE </template>
-<template class="ref">SELECT name, stock FROM products WHERE stock < 50</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Lấy <code>name</code>, <code>price</code> của sản phẩm nhóm <code>'Văn phòng phẩm'</code> <b>và</b> có giá nhỏ hơn 15000.</span>
-<template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE category = 'Văn phòng phẩm' AND price < 15000</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Lấy <code>name</code>, <code>joined_at</code> của các khách hàng <b>gia nhập trong năm 2024</b> (dùng <code>LIKE '2024%'</code> trên cột <code>joined_at</code>).</span>
-<template class="st">SELECT name, joined_at FROM customers
-WHERE </template>
-<template class="ref">SELECT name, joined_at FROM customers WHERE joined_at LIKE '2024%'</template></div>
-<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Lấy <code>name</code>, <code>price</code> của sản phẩm <b>không</b> thuộc nhóm <code>'Điện tử'</code> <b>và</b> có giá <b>từ 20000 trở lên</b>, sắp xếp theo <code>price</code> giảm dần.</span>
+ORDER BY </template>
+<template class="ref">SELECT name, stock FROM products ORDER BY stock</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Lấy <code>name</code>, <code>price</code> của sản phẩm nhóm <code>'Đồ uống'</code>, sắp xếp theo <code>price</code> <b>giảm dần</b>.</span>
 <template class="st">SELECT name, price FROM products
 WHERE 
 ORDER BY </template>
-<template class="ref">SELECT name, price FROM products WHERE category <> 'Điện tử' AND price >= 20000 ORDER BY price DESC</template></div>
+<template class="ref">SELECT name, price FROM products WHERE category = 'Đồ uống' ORDER BY price DESC</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Lấy <code>name</code>, <code>price</code> của <b>3 sản phẩm rẻ nhất KHÔNG thuộc nhóm <code>'Điện tử'</code></b>.</span>
+<template class="st">SELECT name, price FROM products
+WHERE 
+ORDER BY </template>
+<template class="ref">SELECT name, price FROM products WHERE category <> 'Điện tử' ORDER BY price ASC LIMIT 3</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Lấy <code>name</code>, <code>city</code> của mọi khách hàng, sắp xếp theo <code>city</code> rồi theo <code>name</code> (cả hai tăng dần).</span>
+<template class="st">SELECT name, city FROM customers
+ORDER BY </template>
+<template class="ref">SELECT name, city FROM customers ORDER BY city, name</template></div>

@@ -1,116 +1,146 @@
-<h3>Lesson 10 — Subqueries</h3>
-<p>Sometimes, to answer one question you first need <i>the result of another question</i>. "Which products are <b>above the average price</b>?" — to know that, you first have to compute the average. "Which customer has <b>never ordered</b>?" — you need the list of customers who <i>did</i> order, to exclude them.</p>
-<p>A <b>subquery</b> is a <code>SELECT</code> nested inside another <code>SELECT</code>, wrapped in parentheses <code>( … )</code>. SQL runs the subquery first, takes its result, then uses it in the outer query.</p>
-<p>Two kinds show up most: a subquery that returns <b>a single value</b> (for comparison, like <code>&gt; (SELECT AVG(...))</code>), and one that returns <b>a list</b> (used with <code>IN</code> / <code>NOT IN</code>).</p>
+<h3>Lesson 10 — LEFT JOIN & NULL</h3>
+<p>The <code>JOIN</code> from Lesson 9 (also called <b>INNER JOIN</b>) keeps only rows that <b>match</b> in both tables. But many important questions live in the <i>non</i>-matches: "which customer has <b>never</b> ordered?", "which product has <b>never</b> sold?". An INNER JOIN <b>hides</b> exactly the rows you're looking for.</p>
+<p><code>LEFT JOIN</code> solves this: it keeps <b>all</b> rows from the left table, and for rows with no match on the right it fills in <code>NULL</code> (the "empty" value). So a customer with no orders still appears — with <code>NULL</code> in the order columns.</p>
+<p>Customer <b>Phạm Thị D</b> has no orders, and several products never sold — perfect data to practise <code>LEFT JOIN</code> and handling <code>NULL</code> with <code>IS NULL</code> and <code>COALESCE</code>.</p>
 
-<h4>1. A subquery returning one value</h4>
-<p>An aggregate <code>SELECT</code> (like <code>AVG</code>, <code>MAX</code>) returns exactly one number. Put it in parentheses and compare directly.</p>
-<pre class="run">SELECT name, price
-FROM products
-WHERE price > (SELECT AVG(price) FROM products)
-ORDER BY price;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Products priced <b>above average</b>: show <code>name</code>, <code>price</code>, filter <code>price &gt; (SELECT AVG(price) FROM products)</code>, sorted by <code>price</code>.</span>
-<template class="st">SELECT name, price
-FROM products
-WHERE price > (</template>
-<template class="ref">SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM products) ORDER BY price</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Products priced <b>below average</b>: show <code>name</code>, <code>price</code>, filter <code>price &lt; (SELECT AVG(price) FROM products)</code>, sorted by <code>price</code>.</span>
-<template class="st">SELECT name, price
-FROM products
-WHERE price < (</template>
-<template class="ref">SELECT name, price FROM products WHERE price < (SELECT AVG(price) FROM products) ORDER BY price</template></div>
+<h4>1. LEFT JOIN — keep every left row</h4>
+<p>Change <code>JOIN</code> to <code>LEFT JOIN</code>: every customer appears, even those with no orders (the order columns will be <code>NULL</code>).</p>
+<pre class="run">SELECT c.name AS customer, o.id AS order_id
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+ORDER BY c.id, o.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Join <code>customers</code> to <code>orders</code> with <code>LEFT JOIN</code>, show <code>c.name AS customer</code> and <code>o.id AS order_id</code> (every customer, including those with no orders), sorted by <code>c.id, o.id</code>.</span>
+<template class="st">SELECT c.name AS customer, o.id AS order_id
+FROM customers c
+LEFT JOIN orders o ON </template>
+<template class="ref">SELECT c.name AS customer, o.id AS order_id FROM customers c LEFT JOIN orders o ON o.customer_id = c.id ORDER BY c.id, o.id</template></div>
 
-<h4>2. Comparing to a value filtered from a group</h4>
-<p>The subquery can have its own <code>WHERE</code>. For example: "cheaper than the priciest drink".</p>
-<pre class="run">SELECT name, price
-FROM products
-WHERE price < (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')
-ORDER BY price;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Products cheaper than the <b>priciest 'Đồ uống' item</b>: show <code>name</code>, <code>price</code>, filter <code>price &lt; (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')</code>, sorted by <code>price</code>.</span>
-<template class="st">SELECT name, price
-FROM products
-WHERE price < (</template>
-<template class="ref">SELECT name, price FROM products WHERE price < (SELECT MAX(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Products more expensive than <b>'Cà phê đen đá'</b>: show <code>name</code>, <code>price</code>, filter <code>price &gt; (SELECT price FROM products WHERE name = 'Cà phê đen đá')</code>, sorted by <code>price</code>.</span>
-<template class="st">SELECT name, price
-FROM products
-WHERE price > (</template>
-<template class="ref">SELECT name, price FROM products WHERE price > (SELECT price FROM products WHERE name = 'Cà phê đen đá') ORDER BY price</template></div>
+<h4>2. IS NULL — find the non-matches</h4>
+<p>You can't compare <code>NULL</code> with <code>=</code>. You must use <code>IS NULL</code> (or <code>IS NOT NULL</code>). The combination <code>LEFT JOIN</code> + <code>WHERE ... IS NULL</code> is the classic way to find "the ones with no match".</p>
+<pre class="run">SELECT c.name AS customer
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+WHERE o.id IS NULL;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Find customers who have <b>never ordered</b>: <code>LEFT JOIN</code> <code>customers</code> to <code>orders</code>, filter <code>o.id IS NULL</code>, show <code>c.name AS customer</code>, sorted by <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+WHERE </template>
+<template class="ref">SELECT c.name AS customer FROM customers c LEFT JOIN orders o ON o.customer_id = c.id WHERE o.id IS NULL ORDER BY c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Find products that have <b>never sold</b>: <code>LEFT JOIN</code> <code>products</code> to <code>order_items</code>, filter <code>oi.id IS NULL</code>, show <code>p.name AS product</code>, sorted by <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+WHERE </template>
+<template class="ref">SELECT p.name AS product FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id WHERE oi.id IS NULL ORDER BY p.id</template></div>
 
-<h4>3. A subquery returning a list: IN</h4>
-<p>If the subquery returns <b>many rows of one column</b>, use <code>IN</code> to test "is it in this list?".</p>
-<pre class="run">SELECT name
-FROM products
-WHERE id IN (SELECT product_id FROM order_items)
-ORDER BY id;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Products that <b>have been sold</b>: show <code>name</code>, filter <code>id IN (SELECT product_id FROM order_items)</code>, sorted by <code>id</code>.</span>
-<template class="st">SELECT name
-FROM products
-WHERE id IN (</template>
-<template class="ref">SELECT name FROM products WHERE id IN (SELECT product_id FROM order_items) ORDER BY id</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Customers who <b>have ordered</b>: show <code>name</code>, filter <code>id IN (SELECT customer_id FROM orders)</code>, sorted by <code>id</code>.</span>
-<template class="st">SELECT name
-FROM customers
-WHERE id IN (</template>
-<template class="ref">SELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders) ORDER BY id</template></div>
+<h4>3. Counting including zero</h4>
+<p>A subtle difference: <code>COUNT(*)</code> counts rows, but <code>COUNT(column)</code> <b>skips NULL</b>. So <code>COUNT(o.id)</code> over a <code>LEFT JOIN</code> correctly gives <b>0</b> for a customer with no orders.</p>
+<pre class="run">SELECT c.name AS customer, COUNT(o.id) AS order_count
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+GROUP BY c.id
+ORDER BY c.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Count the <b>number of orders per customer, including 0</b>: <code>LEFT JOIN</code> <code>customers</code> to <code>orders</code>, group by <code>c.id</code>, show <code>c.name AS customer</code> and <code>COUNT(o.id) AS order_count</code>, sorted by <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(o.id) AS order_count
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+GROUP BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(o.id) AS order_count FROM customers c LEFT JOIN orders o ON o.customer_id = c.id GROUP BY c.id ORDER BY c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Count the <b>number of line items per customer, including 0</b>: <code>LEFT JOIN</code> <code>customers</code> → <code>orders</code> → <code>order_items</code>, group by <code>c.id</code>, show <code>c.name AS customer</code> and <code>COUNT(oi.id) AS line_count</code>, sorted by <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(oi.id) AS line_count
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+GROUP BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(oi.id) AS line_count FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id GROUP BY c.id ORDER BY c.id</template></div>
 
-<h4>4. NOT IN — the ones not in the list</h4>
-<p>Flip it to <code>NOT IN</code> to find "the ones missing" — another way (besides <code>LEFT JOIN</code> from Lesson 9) to find inactive customers/products.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Products that have <b>never sold</b>: show <code>name</code>, filter <code>id NOT IN (SELECT product_id FROM order_items)</code>, sorted by <code>id</code>.</span>
-<template class="st">SELECT name
-FROM products
-WHERE id NOT IN (</template>
-<template class="ref">SELECT name FROM products WHERE id NOT IN (SELECT product_id FROM order_items) ORDER BY id</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Customers who have <b>never ordered</b>: show <code>name</code>, filter <code>id NOT IN (SELECT customer_id FROM orders)</code>, sorted by <code>id</code>.</span>
-<template class="st">SELECT name
-FROM customers
-WHERE id NOT IN (</template>
-<template class="ref">SELECT name FROM customers WHERE id NOT IN (SELECT customer_id FROM orders) ORDER BY id</template></div>
+<h4>4. COALESCE — replace NULL with something else</h4>
+<p><code>SUM</code> over an empty group returns <code>NULL</code>, not 0. <code>COALESCE(x, 0)</code> means "if <code>x</code> is NULL, use 0 instead". Perfect for money reports.</p>
+<pre class="run">SELECT c.name AS customer,
+       COALESCE(SUM(p.price * oi.qty), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o      ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p     ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY c.id;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Total spend per customer, with <b>0 for non-buyers</b>: use the <code>LEFT JOIN</code> chain shown, show <code>c.name AS customer</code> and <code>COALESCE(SUM(p.price * oi.qty), 0) AS total_spent</code>, group by <code>c.id</code>, sorted by <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT c.name AS customer, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY c.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Total quantity sold per product, with <b>0 for unsold</b>: <code>LEFT JOIN</code> <code>products</code> to <code>order_items</code>, show <code>p.name AS product</code> and <code>COALESCE(SUM(oi.qty), 0) AS total_qty</code>, group by <code>p.id</code>, sorted by <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS total_qty
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY </template>
+<template class="ref">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS total_qty FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id ORDER BY p.id</template></div>
 
-<h4>5. A subquery inside SELECT</h4>
-<p>You can also drop a precomputed value onto <i>every row</i> for easy comparison — e.g. showing the average price next to each product.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> For each product, show <code>name</code>, <code>price</code>, and the <b>store-wide average price</b> in an <code>avg_all</code> column: <code>(SELECT ROUND(AVG(price)) FROM products) AS avg_all</code>. Sort by <code>id</code>.</span>
-<template class="st">SELECT name, price, (SELECT ROUND(AVG(price)) FROM products) AS avg_all
-FROM products
+<h4>5. IS NOT NULL and HAVING</h4>
+<p>Conversely, <code>IS NOT NULL</code> keeps rows that <i>did</i> match. And you can filter for "empty" groups with <code>HAVING COUNT(...) = 0</code>.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Count <b>how many line items each product appears in, including 0</b>: <code>LEFT JOIN</code> <code>products</code> to <code>order_items</code>, show <code>p.name AS product</code> and <code>COUNT(oi.id) AS times_ordered</code>, group by <code>p.id</code>, sorted by <code>times_ordered</code> descending then <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product, COUNT(oi.id) AS times_ordered
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY p.id
 ORDER BY </template>
-<template class="ref">SELECT name, price, (SELECT ROUND(AVG(price)) FROM products) AS avg_all FROM products ORDER BY id</template></div>
+<template class="ref">SELECT p.name AS product, COUNT(oi.id) AS times_ordered FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id ORDER BY times_ordered DESC, p.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Find unsold products <b>using HAVING</b>: <code>LEFT JOIN</code> <code>products</code> to <code>order_items</code>, group by <code>p.id</code>, keep groups with <code>COUNT(oi.id) = 0</code>, show <code>p.name AS product</code>, sorted by <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY p.id
+HAVING </template>
+<template class="ref">SELECT p.name AS product FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id HAVING COUNT(oi.id) = 0 ORDER BY p.id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> List the names of customers who have <b>at least one order</b> (using <code>IS NOT NULL</code>): <code>LEFT JOIN</code> <code>customers</code> to <code>orders</code>, filter <code>o.id IS NOT NULL</code>, show <code>DISTINCT c.name AS customer</code>, sorted by <code>c.id</code>.</span>
+<template class="st">SELECT DISTINCT c.name AS customer
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+WHERE </template>
+<template class="ref">SELECT DISTINCT c.name AS customer FROM customers c LEFT JOIN orders o ON o.customer_id = c.id WHERE o.id IS NOT NULL ORDER BY c.id</template></div>
 
-<h4>6. Nesting subqueries</h4>
-<p>A subquery can contain another subquery. "Products that customer 1 bought" = products found in the line items of customer 1's orders.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Products that <b>customer 1 bought</b>: show <code>name</code>, filter <code>id IN (SELECT product_id FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE customer_id = 1))</code>, sorted by <code>id</code>.</span>
-<template class="st">SELECT name
-FROM products
-WHERE id IN (SELECT product_id FROM order_items WHERE order_id IN (
-  </template>
-<template class="ref">SELECT name FROM products WHERE id IN (SELECT product_id FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE customer_id = 1)) ORDER BY id</template></div>
-
-<h4>7. Combining with GROUP BY</h4>
-<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> Categories whose <b>average price is higher than the store-wide average</b>: group by <code>category</code>, show <code>category</code> and <code>ROUND(AVG(price)) AS avg_price</code>, keep groups with <code>AVG(price) &gt; (SELECT AVG(price) FROM products)</code>, sorted by <code>avg_price</code> descending.</span>
-<template class="st">SELECT category, ROUND(AVG(price)) AS avg_price
-FROM products
-GROUP BY category
-HAVING AVG(price) > (</template>
-<template class="ref">SELECT category, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category HAVING AVG(price) > (SELECT AVG(price) FROM products) ORDER BY avg_price DESC</template></div>
+<h4>6. A report that leaves no one out</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> Per-customer report of <b>order count</b> and <b>total spend</b>, <b>leaving no customer out</b>. Use the <code>LEFT JOIN</code> chain <code>customers</code> → <code>orders</code> → <code>order_items</code> → <code>products</code>; show <code>c.name AS customer</code>, <code>COUNT(DISTINCT o.id) AS order_count</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS total_spent</code>; group by <code>c.id</code>; sort by <code>total_spent</code> descending then <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS order_count, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS order_count, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY total_spent DESC, c.id</template></div>
 
 <h4>🏠 Homework</h4>
 <p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Products with <b>above-average stock</b>: show <code>name</code>, <code>stock</code>, filter <code>stock &gt; (SELECT AVG(stock) FROM products)</code>, sorted by <code>stock</code> descending.</span>
-<template class="st">SELECT name, stock
-FROM products
-WHERE stock > (</template>
-<template class="ref">SELECT name, stock FROM products WHERE stock > (SELECT AVG(stock) FROM products) ORDER BY stock DESC</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Products more expensive than the <b>average price of the 'Đồ uống' category</b>: show <code>name</code>, <code>price</code>, filter <code>price &gt; (SELECT AVG(price) FROM products WHERE category = 'Đồ uống')</code>, sorted by <code>price</code>.</span>
-<template class="st">SELECT name, price
-FROM products
-WHERE price > (</template>
-<template class="ref">SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Products that have <b>never sold</b> (with price): show <code>name</code>, <code>price</code>, filter <code>id NOT IN (SELECT product_id FROM order_items)</code>, sorted by <code>price</code>.</span>
-<template class="st">SELECT name, price
-FROM products
-WHERE id NOT IN (</template>
-<template class="ref">SELECT name, price FROM products WHERE id NOT IN (SELECT product_id FROM order_items) ORDER BY price</template></div>
-<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Products more expensive than <b>every item in the 'Đồ uống' category</b> (i.e. pricier than that category's most expensive item): show <code>name</code>, <code>price</code>, filter <code>price &gt; (SELECT MAX(price) FROM products WHERE category = 'Đồ uống')</code>, sorted by <code>price</code>.</span>
-<template class="st">SELECT name, price
-FROM products
-WHERE price > (</template>
-<template class="ref">SELECT name, price FROM products WHERE price > (SELECT MAX(price) FROM products WHERE category = 'Đồ uống') ORDER BY price</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> <code>LEFT JOIN</code> <code>customers</code> to <code>orders</code>, show <code>c.name AS customer</code> and <code>o.order_date</code> (every customer, including those with no orders), sorted by <code>c.id, o.order_date</code>.</span>
+<template class="st">SELECT c.name AS customer, o.order_date
+FROM customers c
+LEFT JOIN orders o ON </template>
+<template class="ref">SELECT c.name AS customer, o.order_date FROM customers c LEFT JOIN orders o ON o.customer_id = c.id ORDER BY c.id, o.order_date</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Find customers with no orders <b>using HAVING</b>: <code>LEFT JOIN</code> <code>customers</code> to <code>orders</code>, group by <code>c.id</code>, keep groups with <code>COUNT(o.id) = 0</code>, show <code>c.name AS customer</code> and <code>COUNT(o.id) AS order_count</code>, sorted by <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(o.id) AS order_count
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+GROUP BY c.id
+HAVING </template>
+<template class="ref">SELECT c.name AS customer, COUNT(o.id) AS order_count FROM customers c LEFT JOIN orders o ON o.customer_id = c.id GROUP BY c.id HAVING COUNT(o.id) = 0 ORDER BY c.id</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Total quantity sold per product (0 for unsold), sorted by amount sold: <code>LEFT JOIN</code> <code>products</code> to <code>order_items</code>, show <code>p.name AS product</code> and <code>COALESCE(SUM(oi.qty), 0) AS total_qty</code>, group by <code>p.id</code>, sorted by <code>total_qty</code> descending then <code>p.id</code>.</span>
+<template class="st">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS total_qty
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.id
+GROUP BY p.id
+ORDER BY </template>
+<template class="ref">SELECT p.name AS product, COALESCE(SUM(oi.qty), 0) AS total_qty FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id ORDER BY total_qty DESC, p.id</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Per-customer report of order count and total spend (no customer left out), sorted <b>ascending</b> by spend so non-buyers come first. Use <code>LEFT JOIN</code> <code>customers</code> → <code>orders</code> → <code>order_items</code> → <code>products</code>; show <code>c.name AS customer</code>, <code>COUNT(DISTINCT o.id) AS orders</code>, <code>COALESCE(SUM(p.price * oi.qty), 0) AS total_spent</code>; group by <code>c.id</code>; sort by <code>total_spent</code> ascending then <code>c.id</code>.</span>
+<template class="st">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY c.id
+ORDER BY </template>
+<template class="ref">SELECT c.name AS customer, COUNT(DISTINCT o.id) AS orders, COALESCE(SUM(p.price * oi.qty), 0) AS total_spent FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id LEFT JOIN products p ON oi.product_id = p.id GROUP BY c.id ORDER BY total_spent ASC, c.id</template></div>

@@ -89,21 +89,22 @@
 - Platform features: CodeMirror + live syntax squiggles, runnable examples, auto-grading with specific
   feedback, progress + belts (white→black), Ask sensei (Zalo `0986061705`), lesson outlines, VI/EN toggle.
 - Accounts/Supabase live.
-- **SQL Fundamentals: Lessons 1–10 DONE** (bilingual, rich standard, built into `sql.html`, all `ref`
-  queries verified against the seed data, end-to-end grading confirmed in-browser). Course was trimmed
-  from 20 → **14 lessons** (fundamentals only). 1 SELECT · 2 WHERE · 3 ORDER BY & LIMIT · 4 Calculations
-  & AS · 5 Aggregates · 6 GROUP BY & HAVING · 7 CASE WHEN & functions · 8 JOIN · 9 LEFT JOIN & NULL ·
-  10 Subqueries. **Remaining: 11–14** (11 Mini project: sales report · 12 INSERT, UPDATE & DELETE ·
-  13 CREATE TABLE & data types · 14 Capstone: customer analysis) — still placeholders.
+- **SQL Fundamentals: Lessons 1–11 DONE** (bilingual, rich standard, built into `sql.html`, all `ref`
+  queries verified against the seed data, end-to-end grading confirmed in-browser). Course is **15 lessons**
+  (fundamentals only). 1 SELECT & WHERE · 2 ORDER BY, LIMIT & DISTINCT · 3 Calculations & AS · 4 Aggregates ·
+  5 GROUP BY & HAVING · 6 CASE WHEN (conditional logic) · 7 Text & number functions · 8 Dates & time ·
+  9 JOIN · 10 LEFT JOIN & NULL · 11 Subqueries. **Remaining: 12–15** (12 Mini project: sales report ·
+  13 INSERT, UPDATE & DELETE · 14 CREATE TABLE & data types · 15 Capstone: customer analysis) — still
+  placeholders.
 
 ## 7. Status — TODO / roadmap
 1. **Python Fundamentals (L1–L20) is done.** Do not re-author. If revisiting, keep it fundamentals-only:
    comprehensions, lambda/`key` sorting, OOP, generators, decorators etc. belong to the planned
    **Python Intermediate** / **Python Advanced** courses, not here.
-2. **Author QA** (12 lessons) and **SQL** content. **SQL was trimmed to 14 lessons (fundamentals only)**;
-   lessons **1–10 are authored bilingually** (`private-tools/content/sql/NN.{vi,en}.html`), lessons
-   **11–14 remain placeholder** (11 Mini project · 12 INSERT/UPDATE/DELETE · 13 CREATE TABLE & data types ·
-   14 Capstone). Advanced SQL (UNION, window functions, self-joins, indexes) is deferred to a future
+2. **Author QA** (12 lessons) and **SQL** content. **SQL is a 15-lesson fundamentals course**;
+   lessons **1–11 are authored bilingually** (`private-tools/content/sql/NN.{vi,en}.html`), lessons
+   **12–15 remain placeholder** (12 Mini project · 13 INSERT/UPDATE/DELETE · 14 CREATE TABLE & data types ·
+   15 Capstone). Advanced SQL (UNION, window functions, self-joins, indexes) is deferred to a future
    SQL Intermediate/Advanced course. Can be delegated to the **Dojo Builder** agent or the dedicated
    **SQL Course Builder** agent (`.github/agents/sql-course-builder.agent.md`) in a separate session.
 3. Planned follow-on courses — **Python Intermediate** (13 lessons), **Python Advanced**, a standalone
@@ -169,8 +170,11 @@ model) · 7. CSS layout with flexbox · 8. CSS responsive (media queries, units,
 elements) · 13. JS events & interactivity (clicks, input) · 14. JS forms, validation & `fetch` (JSON/APIs,
 light) · 15. **Capstone:** a small interactive web app (e.g. to-do UI, quiz, widget), submitted via VS Code.
 
-**PLATFORM PREREQUISITE (build before authoring web lessons):** the engine currently supports
-exercise kinds `quiz`, `py` (Pyodide), `sql` (sql.js) only. Web lessons need a new **live HTML/CSS/JS
-preview** exercise (render student code in a sandboxed `<iframe>`) and a **JS auto-grader** (run student
-JS and assert on output/return/DOM). This new exercise type must be added to `app.js` first. A dedicated
-**Web Course Builder** agent can be created once the platform approach is decided.
+**PLATFORM PREREQUISITE (DONE):** the engine now supports exercise kinds `quiz`, `py` (Pyodide),
+`sql` (sql.js), plus **`web`** (live HTML/CSS/JS preview in a sandboxed `<iframe>`) and **`webjs`**
+(JS auto-grader — runs student JS in the sandbox and asserts on `document`/`window`/`_OUT_` via an
+`assert(cond,msg)` + `<template class="ts">` block, verdict returned by `postMessage`). Both reuse the
+existing render/grade/progress/i18n plumbing in `app.js`; student code is only ever run inside the
+sandboxed iframe (never eval'd in the host page). Formats documented in
+`.github/instructions/lesson-content.instructions.md`. A dedicated **Web Course Builder** agent can be
+created once the platform approach is decided.

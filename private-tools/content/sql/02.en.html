@@ -1,118 +1,124 @@
-<h3>Lesson 2 — WHERE: filter to the rows you need</h3>
-<p>In Lesson 1 you pulled columns out of a table. But real tables have thousands or millions of rows — you rarely want to see <i>all</i> of them. Real questions always come with a condition: "which products cost <b>more than</b> 30,000₫?", "which customers are in <b>Hà Nội</b>?", "which items are in the <b>Đồ uống</b> (drinks) category?".</p>
-<p>The <code>WHERE</code> clause is your filter. It sits right after <code>FROM</code> and keeps <b>only the rows</b> that satisfy your condition. Every other row is dropped from the result — the underlying data never changes, you are simply <i>asking a question</i>.</p>
-<p>In this lesson you'll compare numbers and text, combine conditions with <code>AND</code>/<code>OR</code>, and match text patterns with <code>LIKE</code>. You will use this skill in <i>almost every</i> query from here on.</p>
+<h3>Lesson 2 — ORDER BY, LIMIT & DISTINCT: sort, top-N and dedupe</h3>
+<p>Query results so far came back in the table's "natural" order — nothing guarantees it means anything. But business questions almost always need an <b>order</b>: "the <b>most expensive</b> product?", "the <b>newest</b> customer?", "the 5 items with the <b>most stock</b>?".</p>
+<p><code>ORDER BY</code> sorts your results by one (or more) columns. Combine it with <code>LIMIT</code> to take just the first few rows and you have a tool for every "top N" question — which shows up in almost every real report.</p>
+<p><code>ORDER BY</code> always comes <b>after</b> <code>WHERE</code> (if present), and <code>LIMIT</code> comes <b>last</b>. Remember the order: <code>SELECT … FROM … WHERE … ORDER BY … LIMIT …</code>. At the end we also learn <code>DISTINCT</code> to <b>remove duplicate rows</b>.</p>
 
-<h4>1. The shape of WHERE</h4>
-<p>Add a <code>WHERE condition</code> line after <code>FROM</code>:</p>
+<h4>1. ORDER BY — ascending sort</h4>
+<p>By default <code>ORDER BY column</code> sorts <b>ascending</b> (small → large for numbers, A → Z for text):</p>
 <pre class="run">SELECT name, price
 FROM products
-WHERE category = 'Đồ uống';</pre>
-<p>SQL checks each row: if <code>category</code> equals <code>'Đồ uống'</code> it stays, otherwise it is dropped. Text values must sit inside <b>single quotes</b> <code>'...'</code>.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Show <b>all columns</b> of every product in the <code>'Đồ uống'</code> category.</span>
-<template class="st">SELECT * FROM products
-WHERE </template>
-<template class="ref">SELECT * FROM products WHERE category = 'Đồ uống'</template></div>
-
-<h4>2. Comparison operators</h4>
-<p>For numbers you have the full set of comparisons:</p>
-<table class="res"><tr><th>Operator</th><th>Meaning</th></tr>
-<tr><td><code>=</code></td><td>equal to</td></tr>
-<tr><td><code>&lt;&gt;</code></td><td>not equal to</td></tr>
-<tr><td><code>&gt;</code> <code>&lt;</code></td><td>greater than, less than</td></tr>
-<tr><td><code>&gt;=</code> <code>&lt;=</code></td><td>greater/less than or equal to</td></tr></table>
-<pre class="run">SELECT name, price
-FROM products
-WHERE price > 30000;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Get <code>name</code> and <code>price</code> of products priced <b>greater than</b> 30000.</span>
+ORDER BY price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Get <code>name</code>, <code>price</code> of every product, sorted by <code>price</code> <b>ascending</b>.</span>
 <template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE price > 30000</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Get <code>name</code> and <code>price</code> of products priced <b>less than or equal to</b> 12000.</span>
-<template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE price <= 12000</template></div>
-
-<h4>3. Filtering by text</h4>
-<p>Comparing text also uses <code>=</code> or <code>&lt;&gt;</code>. Remember the single quotes, and type the Vietnamese accents exactly.</p>
-<pre class="run">SELECT name FROM customers
-WHERE city = 'Hà Nội';</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Get the <code>name</code> of customers in <code>'Hà Nội'</code>.</span>
-<template class="st">SELECT name FROM customers
-WHERE </template>
-<template class="ref">SELECT name FROM customers WHERE city = 'Hà Nội'</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Get <code>name</code> and <code>category</code> of every product that is <b>not</b> in the <code>'Văn phòng phẩm'</code> category (use <code>&lt;&gt;</code>).</span>
-<template class="st">SELECT name, category FROM products
-WHERE </template>
-<template class="ref">SELECT name, category FROM products WHERE category <> 'Văn phòng phẩm'</template></div>
-
-<h4>4. Combining conditions: AND, OR</h4>
-<p>Join conditions with <code>AND</code> (<b>both</b> must be true) or <code>OR</code> (<b>at least one</b> is true).</p>
-<pre class="run">SELECT name, price
-FROM products
-WHERE category = 'Đồ uống' AND price < 30000;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Get <code>name</code>, <code>price</code> of products in the <code>'Đồ uống'</code> category <b>and</b> priced below 30000.</span>
-<template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE category = 'Đồ uống' AND price < 30000</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Get the <code>name</code> of products in the <code>'Điện tử'</code> category <b>or</b> priced above 40000.</span>
-<template class="st">SELECT name FROM products
-WHERE </template>
-<template class="ref">SELECT name FROM products WHERE category = 'Điện tử' OR price > 40000</template></div>
-
-<h4>5. Ranges: BETWEEN and IN</h4>
-<p><code>BETWEEN a AND b</code> selects values in a range, <b>inclusive of both ends</b>. <code>IN (…)</code> matches any value in a list — much tidier than a long chain of <code>OR</code>.</p>
-<pre class="run">SELECT name, price FROM products
-WHERE price BETWEEN 10000 AND 30000;
-
-SELECT name, category FROM products
-WHERE category IN ('Đồ ăn', 'Điện tử');</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Get <code>name</code>, <code>price</code> of products priced <b>from 10000 to 30000</b> (use <code>BETWEEN</code>).</span>
-<template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE price BETWEEN 10000 AND 30000</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Get <code>name</code>, <code>category</code> of products in the <code>'Đồ ăn'</code> or <code>'Điện tử'</code> category (use <code>IN</code>).</span>
-<template class="st">SELECT name, category FROM products
-WHERE </template>
-<template class="ref">SELECT name, category FROM products WHERE category IN ('Đồ ăn', 'Điện tử')</template></div>
-
-<h4>6. Pattern matching: LIKE</h4>
-<p>When you only remember part of a name, use <code>LIKE</code> with wildcards: <code>%</code> stands for <b>any string</b> (including empty), <code>_</code> stands for <b>exactly one character</b>.</p>
-<table class="res"><tr><th>Pattern</th><th>Matches</th></tr>
-<tr><td><code>'S%'</code></td><td>starts with S</td></tr>
-<tr><td><code>'%đá'</code></td><td>ends with đá</td></tr>
-<tr><td><code>'%cam%'</code></td><td>contains "cam" anywhere</td></tr></table>
-<pre class="run">SELECT name FROM products
-WHERE name LIKE 'S%';</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Get the <code>name</code> of products whose name <b>starts with "S"</b> (use <code>LIKE 'S%'</code>).</span>
-<template class="st">SELECT name FROM products
-WHERE </template>
-<template class="ref">SELECT name FROM products WHERE name LIKE 'S%'</template></div>
-
-<h4>7. Putting it together</h4>
-<p>The real power appears when you combine a filter with sorting (you'll learn <code>ORDER BY</code> properly in Lesson 3). Try the stretch:</p>
-<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> Get <code>name</code>, <code>price</code> of products in the <code>'Đồ uống'</code> category priced <b>from 10000 to 40000</b>, sorted by <code>price</code> <b>descending</b> (<code>ORDER BY price DESC</code>).</span>
-<template class="st">SELECT name, price FROM products
-WHERE 
 ORDER BY </template>
-<template class="ref">SELECT name, price FROM products WHERE category = 'Đồ uống' AND price BETWEEN 10000 AND 40000 ORDER BY price DESC</template></div>
+<template class="ref">SELECT name, price FROM products ORDER BY price</template></div>
+
+<h4>2. Descending with DESC</h4>
+<p>Add <code>DESC</code> to reverse it — large → small. (The default direction is <code>ASC</code>, which you usually don't write.)</p>
+<pre class="run">SELECT name, price
+FROM products
+ORDER BY price DESC;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Get <code>name</code>, <code>price</code> of every product, sorted by <code>price</code> <b>descending</b>.</span>
+<template class="st">SELECT name, price FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC</template></div>
+
+<h4>3. Sorting text and dates</h4>
+<p><code>ORDER BY</code> also works on text (alphabetical order) and on dates stored as <code>YYYY-MM-DD</code> strings (thanks to that format, comparing the strings is the same as comparing the dates).</p>
+<pre class="run">SELECT name FROM products
+ORDER BY name;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Get the <code>name</code> of every product, sorted <b>alphabetically</b> (by the <code>name</code> column).</span>
+<template class="st">SELECT name FROM products
+ORDER BY </template>
+<template class="ref">SELECT name FROM products ORDER BY name</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Get <code>name</code>, <code>joined_at</code> of every customer, sorted by <code>joined_at</code> <b>ascending</b> (earliest joiner first).</span>
+<template class="st">SELECT name, joined_at FROM customers
+ORDER BY </template>
+<template class="ref">SELECT name, joined_at FROM customers ORDER BY joined_at</template></div>
+
+<h4>4. Sorting by multiple columns</h4>
+<p>List several columns separated by commas. SQL sorts by the first; only when values <b>tie</b> does it look at the next column. Each column can have its own direction.</p>
+<pre class="run">SELECT name, category, price
+FROM products
+ORDER BY category, price;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Get <code>name</code>, <code>category</code>, <code>price</code>, sorted by <code>category</code> then by <code>price</code> (both ascending).</span>
+<template class="st">SELECT name, category, price FROM products
+ORDER BY </template>
+<template class="ref">SELECT name, category, price FROM products ORDER BY category, price</template></div>
+
+<h4>5. LIMIT — take only the first few rows</h4>
+<p><code>LIMIT n</code> trims the result to at most <code>n</code> rows. Great for a quick peek, or combined with <code>ORDER BY</code> to grab the "top".</p>
+<pre class="run">SELECT name FROM products
+ORDER BY id
+LIMIT 3;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Get the <code>name</code> of the <b>first 3 products by <code>id</code></b> (sort by <code>id</code>, limit to 3 rows).</span>
+<template class="st">SELECT name FROM products
+ORDER BY id
+</template>
+<template class="ref">SELECT name FROM products ORDER BY id LIMIT 3</template></div>
+
+<h4>6. The "top N" formula</h4>
+<p>Pairing <code>ORDER BY … DESC</code> with <code>LIMIT n</code> is the classic way to get "the n largest". Flip it to <code>ASC</code> for "the n smallest".</p>
+<pre class="run">SELECT name, price
+FROM products
+ORDER BY price DESC
+LIMIT 3;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Get <code>name</code>, <code>price</code> of the <b>3 most expensive products</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 3</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Get <code>name</code>, <code>price</code> of the <b>3 cheapest products</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price ASC LIMIT 3</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Get <code>name</code>, <code>price</code> of the <b>single most expensive product</b>.</span>
+<template class="st">SELECT name, price FROM products
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 1</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Get <code>name</code>, <code>stock</code> of the <b>5 products with the most stock</b>.</span>
+<template class="st">SELECT name, stock FROM products
+</template>
+<template class="ref">SELECT name, stock FROM products ORDER BY stock DESC LIMIT 5</template></div>
+
+<h4>7. Skipping rows: OFFSET</h4>
+<p><code>LIMIT n OFFSET k</code> skips the first <code>k</code> rows then takes the next <code>n</code> — useful for paging, or for "2nd and 3rd place".</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 11.</b> Get <code>name</code>, <code>price</code> of the <b>2nd and 3rd most expensive products</b> (skip the most expensive one). Hint: <code>ORDER BY price DESC LIMIT 2 OFFSET 1</code>.</span>
+<template class="st">SELECT name, price FROM products
+ORDER BY price DESC
+</template>
+<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 2 OFFSET 1</template></div>
+
+<h4>8. DISTINCT — remove duplicates</h4>
+<p>Many rows can share the same value in the column you pick. Add <code>DISTINCT</code> right after <code>SELECT</code> so each value appears <b>once</b> — perfect for "what <i>kinds</i> of items does the shop sell?".</p>
+<pre class="run">SELECT DISTINCT category FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 12.</b> List each <code>category</code> exactly <b>once</b> (use <code>DISTINCT</code>).</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT category FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 13.</b> From the <code>customers</code> table, list each <code>city</code> exactly once.</span>
+<template class="st">SELECT </template>
+<template class="ref">SELECT DISTINCT city FROM customers</template></div>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 14. 🔥 Stretch.</b> From the <code>orders</code> table, list each <code>customer_id</code> exactly once, <b>sorted ascending</b> (combine <code>DISTINCT</code> with <code>ORDER BY</code>).</span>
+<template class="st">SELECT DISTINCT customer_id FROM orders
+ORDER BY </template>
+<template class="ref">SELECT DISTINCT customer_id FROM orders ORDER BY customer_id</template></div>
 
 <h4>🏠 Homework</h4>
 <p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Get <code>name</code>, <code>stock</code> of products with <b>fewer than 50</b> in stock.</span>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Get <code>name</code>, <code>stock</code> of every product, sorted by <code>stock</code> <b>ascending</b>.</span>
 <template class="st">SELECT name, stock FROM products
-WHERE </template>
-<template class="ref">SELECT name, stock FROM products WHERE stock < 50</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Get <code>name</code>, <code>price</code> of products in the <code>'Văn phòng phẩm'</code> category <b>and</b> priced below 15000.</span>
-<template class="st">SELECT name, price FROM products
-WHERE </template>
-<template class="ref">SELECT name, price FROM products WHERE category = 'Văn phòng phẩm' AND price < 15000</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Get <code>name</code>, <code>joined_at</code> of customers who <b>joined in 2024</b> (use <code>LIKE '2024%'</code> on <code>joined_at</code>).</span>
-<template class="st">SELECT name, joined_at FROM customers
-WHERE </template>
-<template class="ref">SELECT name, joined_at FROM customers WHERE joined_at LIKE '2024%'</template></div>
-<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Get <code>name</code>, <code>price</code> of products <b>not</b> in the <code>'Điện tử'</code> category <b>and</b> priced <b>20000 or above</b>, sorted by <code>price</code> descending.</span>
+ORDER BY </template>
+<template class="ref">SELECT name, stock FROM products ORDER BY stock</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Get <code>name</code>, <code>price</code> of products in the <code>'Đồ uống'</code> category, sorted by <code>price</code> <b>descending</b>.</span>
 <template class="st">SELECT name, price FROM products
 WHERE 
 ORDER BY </template>
-<template class="ref">SELECT name, price FROM products WHERE category <> 'Điện tử' AND price >= 20000 ORDER BY price DESC</template></div>
+<template class="ref">SELECT name, price FROM products WHERE category = 'Đồ uống' ORDER BY price DESC</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Get <code>name</code>, <code>price</code> of the <b>3 cheapest products NOT in the <code>'Điện tử'</code> category</b>.</span>
+<template class="st">SELECT name, price FROM products
+WHERE 
+ORDER BY </template>
+<template class="ref">SELECT name, price FROM products WHERE category <> 'Điện tử' ORDER BY price ASC LIMIT 3</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Get <code>name</code>, <code>city</code> of every customer, sorted by <code>city</code> then by <code>name</code> (both ascending).</span>
+<template class="st">SELECT name, city FROM customers
+ORDER BY </template>
+<template class="ref">SELECT name, city FROM customers ORDER BY city, name</template></div>

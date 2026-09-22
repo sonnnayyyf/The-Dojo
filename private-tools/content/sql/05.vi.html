@@ -1,108 +1,140 @@
-<h3>Bài 5 — Hàm tổng hợp: COUNT, SUM, AVG, MIN, MAX</h3>
-<p>Đến giờ mỗi truy vấn trả về <i>từng dòng</i>. Nhưng sếp hiếm khi hỏi "liệt kê 10.000 đơn hàng" — họ hỏi <b>một con số</b>: "có <b>bao nhiêu</b> sản phẩm?", "<b>tổng</b> tồn kho là bao nhiêu?", "giá <b>trung bình</b>?", "món <b>đắt nhất</b> giá bao nhiêu?".</p>
-<p>Đó là việc của <b>hàm tổng hợp</b> (aggregate function). Chúng "gộp" nhiều dòng thành <b>một giá trị duy nhất</b>: <code>COUNT</code> đếm, <code>SUM</code> cộng, <code>AVG</code> tính trung bình, <code>MIN</code>/<code>MAX</code> tìm nhỏ nhất/lớn nhất.</p>
-<p>Kết hợp với <code>WHERE</code>, bạn tính được con số cho đúng nhóm mình quan tâm. Đây là nền tảng của mọi báo cáo — và ở Bài 6 bạn sẽ học <code>GROUP BY</code> để tính các con số này cho <i>từng nhóm</i> cùng lúc.</p>
+<h3>Bài 5 — GROUP BY & HAVING: báo cáo theo nhóm</h3>
+<p>Ở Bài 4 bạn tính được <i>một</i> con số cho cả bảng: tổng tồn kho, giá trung bình… Nhưng báo cáo thật luôn hỏi theo <b>nhóm</b>: "doanh thu <b>từng danh mục</b>?", "số đơn <b>của mỗi khách</b>?", "đã bán bao nhiêu <b>mỗi sản phẩm</b>?". Bạn không muốn chạy 4 truy vấn cho 4 danh mục — bạn muốn <b>một</b> truy vấn trả về một dòng cho mỗi nhóm.</p>
+<p>Đó chính là <code>GROUP BY</code>. Nó chia các dòng thành nhóm theo giá trị một cột, rồi <b>áp dụng hàm tổng hợp cho từng nhóm</b>. Kết quả: mỗi nhóm một dòng, kèm con số bạn tính.</p>
+<p>Và khi muốn <b>lọc chính các nhóm</b> đó (ví dụ "chỉ danh mục có hơn 2 sản phẩm"), bạn dùng <code>HAVING</code> — giống <code>WHERE</code> nhưng dành cho kết quả sau khi gộp nhóm.</p>
 
-<h4>1. COUNT — đếm số dòng</h4>
-<p><code>COUNT(*)</code> đếm số dòng khớp truy vấn. Luôn đặt tên cột bằng <code>AS</code> cho gọn.</p>
-<pre class="run">SELECT COUNT(*) AS total
-FROM products;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Đếm tổng số sản phẩm trong bảng <code>products</code>, đặt tên cột là <code>total</code>.</span>
-<template class="st">SELECT COUNT(*) AS total
-FROM </template>
-<template class="ref">SELECT COUNT(*) AS total FROM products</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Đếm số sản phẩm thuộc nhóm <code>'Đồ uống'</code>, đặt tên cột là <code>n</code>.</span>
-<template class="st">SELECT COUNT(*) AS n
+<h4>1. GROUP BY — một dòng cho mỗi nhóm</h4>
+<p>Quy tắc vàng: cột nào đứng sau <code>GROUP BY</code> thì được phép đưa vào <code>SELECT</code>; các cột còn lại phải nằm trong hàm tổng hợp.</p>
+<pre class="run">SELECT category, COUNT(*) AS n
 FROM products
-WHERE </template>
-<template class="ref">SELECT COUNT(*) AS n FROM products WHERE category = 'Đồ uống'</template></div>
-
-<h4>2. Đếm giá trị khác nhau: COUNT(DISTINCT …)</h4>
-<p>Muốn biết có <b>bao nhiêu loại</b> khác nhau, dùng <code>COUNT(DISTINCT cột)</code> — nó bỏ qua các giá trị lặp.</p>
-<pre class="run">SELECT COUNT(DISTINCT category) AS categories
-FROM products;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Đếm số <b>nhóm hàng khác nhau</b> (<code>category</code>) trong bảng <code>products</code>, đặt tên cột là <code>categories</code>.</span>
-<template class="st">SELECT COUNT(DISTINCT category) AS categories
-FROM </template>
-<template class="ref">SELECT COUNT(DISTINCT category) AS categories FROM products</template></div>
-
-<h4>3. SUM — cộng dồn</h4>
-<p><code>SUM(cột)</code> cộng tất cả giá trị của một cột số.</p>
-<pre class="run">SELECT SUM(stock) AS total_stock
-FROM products;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Tính <b>tổng tồn kho</b> (<code>SUM(stock)</code>) của tất cả sản phẩm, đặt tên cột là <code>total_stock</code>.</span>
-<template class="st">SELECT 
-FROM products</template>
-<template class="ref">SELECT SUM(stock) AS total_stock FROM products</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Tính <b>tổng giá</b> (<code>SUM(price)</code>) của các sản phẩm nhóm <code>'Điện tử'</code>, đặt tên cột là <code>total</code>.</span>
-<template class="st">SELECT SUM(price) AS total
+GROUP BY category
+ORDER BY category;</pre>
+<p>Kết quả: mỗi danh mục một dòng, kèm số sản phẩm trong danh mục đó. (Thêm <code>ORDER BY</code> để thứ tự luôn ổn định.)</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Đếm <b>số sản phẩm trong mỗi <code>category</code></b>: hiển thị <code>category</code> và <code>COUNT(*) AS n</code>, gom nhóm theo <code>category</code>, sắp theo <code>category</code>.</span>
+<template class="st">SELECT category, COUNT(*) AS n
 FROM products
-WHERE </template>
-<template class="ref">SELECT SUM(price) AS total FROM products WHERE category = 'Điện tử'</template></div>
+GROUP BY 
+ORDER BY category</template>
+<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category ORDER BY category</template></div>
 
-<h4>4. AVG — trung bình</h4>
-<p><code>AVG(cột)</code> tính trung bình cộng. Kết quả thường là số lẻ, nên hay bọc thêm <code>ROUND(…)</code>.</p>
-<pre class="run">SELECT AVG(price) AS avg_price
-FROM products;
-
-SELECT ROUND(AVG(price)) AS avg_price
+<h4>2. SUM và AVG theo nhóm</h4>
+<p>Đổi <code>COUNT</code> thành <code>SUM</code> hay <code>AVG</code> để có tổng/trung bình cho từng nhóm.</p>
+<pre class="run">SELECT category, SUM(stock) AS total_stock
 FROM products
-WHERE category = 'Đồ uống';</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Tính <b>giá trung bình</b> (<code>AVG(price)</code>) của tất cả sản phẩm, đặt tên cột là <code>avg_price</code>.</span>
-<template class="st">SELECT 
-FROM products</template>
-<template class="ref">SELECT AVG(price) AS avg_price FROM products</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Tính giá trung bình của nhóm <code>'Đồ uống'</code>, <b>làm tròn</b> bằng <code>ROUND(AVG(price))</code>, đặt tên cột là <code>avg_price</code>.</span>
-<template class="st">SELECT ROUND(AVG(price)) AS avg_price
+GROUP BY category
+ORDER BY category;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tính <b>tổng tồn kho mỗi danh mục</b>: <code>category</code>, <code>SUM(stock) AS total_stock</code>, gom theo <code>category</code>, sắp theo <code>category</code>.</span>
+<template class="st">SELECT category, SUM(stock) AS total_stock
 FROM products
-WHERE </template>
-<template class="ref">SELECT ROUND(AVG(price)) AS avg_price FROM products WHERE category = 'Đồ uống'</template></div>
-
-<h4>5. MIN và MAX</h4>
-<p><code>MIN</code> tìm giá trị nhỏ nhất, <code>MAX</code> tìm lớn nhất — dùng được cho cả số, chữ và ngày.</p>
-<pre class="run">SELECT MIN(price) AS cheapest, MAX(price) AS most_expensive
-FROM products;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Tìm <b>giá thấp nhất</b> trong bảng <code>products</code> (<code>MIN(price)</code>), đặt tên cột là <code>cheapest</code>.</span>
-<template class="st">SELECT 
-FROM products</template>
-<template class="ref">SELECT MIN(price) AS cheapest FROM products</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Tìm <b>giá cao nhất</b> trong bảng <code>products</code> (<code>MAX(price)</code>), đặt tên cột là <code>most_expensive</code>.</span>
-<template class="st">SELECT 
-FROM products</template>
-<template class="ref">SELECT MAX(price) AS most_expensive FROM products</template></div>
-
-<h4>6. Tổng hợp trên bảng khác</h4>
-<p>Hàm tổng hợp dùng cho bảng nào cũng được. Bảng <code>order_items</code> ghi số lượng bán ra ở cột <code>qty</code>.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Tính <b>tổng số lượng đã bán</b> (<code>SUM(qty)</code>) trong bảng <code>order_items</code>, đặt tên cột là <code>total_qty</code>.</span>
-<template class="st">SELECT 
-FROM order_items</template>
-<template class="ref">SELECT SUM(qty) AS total_qty FROM order_items</template></div>
-
-<h4>7. Nhiều số liệu trong một truy vấn</h4>
-<p>Bạn có thể đặt nhiều hàm tổng hợp cạnh nhau để có cả một "bảng tóm tắt" trong một dòng.</p>
-<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Chỉ với nhóm <code>'Đồ uống'</code>, tạo một dòng tóm tắt gồm 4 cột: <code>COUNT(*) AS n</code>, <code>MIN(price) AS cheapest</code>, <code>MAX(price) AS most_expensive</code>, và <code>ROUND(AVG(price)) AS avg_price</code>.</span>
-<template class="st">SELECT COUNT(*) AS n, MIN(price) AS cheapest, 
+GROUP BY 
+ORDER BY category</template>
+<template class="ref">SELECT category, SUM(stock) AS total_stock FROM products GROUP BY category ORDER BY category</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tính <b>giá trung bình mỗi danh mục</b>, làm tròn: <code>category</code>, <code>ROUND(AVG(price)) AS avg_price</code>, gom theo <code>category</code>, sắp theo <code>category</code>.</span>
+<template class="st">SELECT category, ROUND(AVG(price)) AS avg_price
 FROM products
-WHERE </template>
-<template class="ref">SELECT COUNT(*) AS n, MIN(price) AS cheapest, MAX(price) AS most_expensive, ROUND(AVG(price)) AS avg_price FROM products WHERE category = 'Đồ uống'</template></div>
+GROUP BY 
+ORDER BY category</template>
+<template class="ref">SELECT category, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category ORDER BY category</template></div>
+
+<h4>3. Nhiều số liệu cho mỗi nhóm</h4>
+<p>Bạn có thể đặt nhiều hàm tổng hợp cùng lúc — mỗi nhóm ra một "hàng tóm tắt".</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 4.</b> Với mỗi <code>category</code>, hiển thị <code>MIN(price) AS cheapest</code> và <code>MAX(price) AS most_expensive</code>. Gom theo <code>category</code>, sắp theo <code>category</code>.</span>
+<template class="st">SELECT category, MIN(price) AS cheapest, MAX(price) AS most_expensive
+FROM products
+GROUP BY 
+ORDER BY category</template>
+<template class="ref">SELECT category, MIN(price) AS cheapest, MAX(price) AS most_expensive FROM products GROUP BY category ORDER BY category</template></div>
+
+<h4>4. Sắp xếp theo con số vừa tính</h4>
+<p>Rất hay dùng: gộp nhóm rồi sắp theo chính con số tổng hợp để tìm nhóm "nhiều nhất".</p>
+<pre class="run">SELECT category, COUNT(*) AS n
+FROM products
+GROUP BY category
+ORDER BY n DESC, category;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 5.</b> Đếm số sản phẩm mỗi <code>category</code>, sắp theo số lượng <b>giảm dần</b>; nếu bằng nhau sắp theo <code>category</code>. (Gợi ý: <code>ORDER BY n DESC, category</code>.)</span>
+<template class="st">SELECT category, COUNT(*) AS n
+FROM products
+GROUP BY category
+ORDER BY </template>
+<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category ORDER BY n DESC, category</template></div>
+
+<h4>5. HAVING — lọc chính các nhóm</h4>
+<p><code>WHERE</code> lọc <i>dòng</i> trước khi gộp; <code>HAVING</code> lọc <i>nhóm</i> sau khi gộp. Vì vậy điều kiện dùng hàm tổng hợp (như <code>COUNT(*) &gt; 2</code>) phải đặt ở <code>HAVING</code>.</p>
+<pre class="run">SELECT category, COUNT(*) AS n
+FROM products
+GROUP BY category
+HAVING COUNT(*) > 2
+ORDER BY category;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 6.</b> Chỉ những <code>category</code> có <b>hơn 2 sản phẩm</b>: hiển thị <code>category</code>, <code>COUNT(*) AS n</code>. Dùng <code>HAVING COUNT(*) &gt; 2</code>, sắp theo <code>category</code>.</span>
+<template class="st">SELECT category, COUNT(*) AS n
+FROM products
+GROUP BY category
+HAVING 
+ORDER BY category</template>
+<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category HAVING COUNT(*) > 2 ORDER BY category</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 7.</b> Chỉ những <code>category</code> có <b>tổng tồn kho từ 300 trở lên</b>: hiển thị <code>category</code>, <code>SUM(stock) AS total_stock</code>. Dùng <code>HAVING SUM(stock) &gt;= 300</code>, sắp theo <code>category</code>.</span>
+<template class="st">SELECT category, SUM(stock) AS total_stock
+FROM products
+GROUP BY category
+HAVING 
+ORDER BY category</template>
+<template class="ref">SELECT category, SUM(stock) AS total_stock FROM products GROUP BY category HAVING SUM(stock) >= 300 ORDER BY category</template></div>
+
+<h4>6. Gom nhóm trên các bảng khác</h4>
+<p><code>GROUP BY</code> tỏa sáng nhất với bảng chi tiết. Bảng <code>order_items</code> có nhiều dòng cho mỗi sản phẩm và mỗi đơn.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 8.</b> Từ <code>order_items</code>, tính <b>tổng số lượng bán ra của mỗi sản phẩm</b>: <code>product_id</code>, <code>SUM(qty) AS total_qty</code>, gom theo <code>product_id</code>, sắp theo <code>product_id</code>.</span>
+<template class="st">SELECT product_id, SUM(qty) AS total_qty
+FROM order_items
+GROUP BY 
+ORDER BY product_id</template>
+<template class="ref">SELECT product_id, SUM(qty) AS total_qty FROM order_items GROUP BY product_id ORDER BY product_id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 9.</b> Từ <code>orders</code>, đếm <b>số đơn của mỗi khách</b>: <code>customer_id</code>, <code>COUNT(*) AS order_count</code>, gom theo <code>customer_id</code>, sắp theo <code>customer_id</code>.</span>
+<template class="st">SELECT customer_id, COUNT(*) AS order_count
+FROM orders
+GROUP BY 
+ORDER BY customer_id</template>
+<template class="ref">SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id ORDER BY customer_id</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Bài tập 10.</b> Từ <code>order_items</code>, đếm <b>số dòng hàng trong mỗi đơn</b>: <code>order_id</code>, <code>COUNT(*) AS lines</code>, gom theo <code>order_id</code>, sắp theo <code>order_id</code>.</span>
+<template class="st">SELECT order_id, COUNT(*) AS lines
+FROM order_items
+GROUP BY 
+ORDER BY order_id</template>
+<template class="ref">SELECT order_id, COUNT(*) AS lines FROM order_items GROUP BY order_id ORDER BY order_id</template></div>
+
+<h4>7. Ghép GROUP BY + HAVING + ORDER BY</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao.</b> Chỉ những <code>category</code> có <b>giá trung bình từ 20000 trở lên</b>: hiển thị <code>category</code>, <code>COUNT(*) AS n</code>, <code>ROUND(AVG(price)) AS avg_price</code>. Dùng <code>HAVING AVG(price) &gt;= 20000</code>, sắp theo <code>avg_price</code> giảm dần.</span>
+<template class="st">SELECT category, COUNT(*) AS n, ROUND(AVG(price)) AS avg_price
+FROM products
+GROUP BY category
+HAVING 
+ORDER BY </template>
+<template class="ref">SELECT category, COUNT(*) AS n, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category HAVING AVG(price) >= 20000 ORDER BY avg_price DESC</template></div>
 
 <h4>🏠 Homework</h4>
 <p>Bốn bài làm ở nhà, tự động chấm ngay trên trang. Bài cuối là bài nâng cao.</p>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Đếm tổng số khách hàng trong bảng <code>customers</code>, đặt tên cột là <code>total</code>.</span>
-<template class="st">SELECT 
-FROM customers</template>
-<template class="ref">SELECT COUNT(*) AS total FROM customers</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tính tổng tồn kho (<code>SUM(stock)</code>) của nhóm <code>'Văn phòng phẩm'</code>, đặt tên cột là <code>total_stock</code>.</span>
-<template class="st">SELECT SUM(stock) AS total_stock
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 1.</b> Từ <code>customers</code>, đếm <b>số khách mỗi thành phố</b>: <code>city</code>, <code>COUNT(*) AS n</code>, gom theo <code>city</code>, sắp theo <code>city</code>.</span>
+<template class="st">SELECT city, COUNT(*) AS n
+FROM customers
+GROUP BY 
+ORDER BY city</template>
+<template class="ref">SELECT city, COUNT(*) AS n FROM customers GROUP BY city ORDER BY city</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 2.</b> Tính <b>tổng giá niêm yết mỗi danh mục</b>: <code>category</code>, <code>SUM(price) AS total_price</code>, gom theo <code>category</code>, sắp theo <code>total_price</code> <b>giảm dần</b>.</span>
+<template class="st">SELECT category, SUM(price) AS total_price
 FROM products
-WHERE </template>
-<template class="ref">SELECT SUM(stock) AS total_stock FROM products WHERE category = 'Văn phòng phẩm'</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Tìm giá cao nhất (<code>MAX(price)</code>) trong nhóm <code>'Đồ ăn'</code>, đặt tên cột là <code>most_expensive</code>.</span>
-<template class="st">SELECT MAX(price) AS most_expensive
+GROUP BY category
+ORDER BY </template>
+<template class="ref">SELECT category, SUM(price) AS total_price FROM products GROUP BY category ORDER BY total_price DESC</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Bài tập 3.</b> Từ <code>order_items</code>, chỉ những sản phẩm <b>bán được từ 2 đơn vị trở lên</b>: <code>product_id</code>, <code>SUM(qty) AS total_qty</code>. Dùng <code>HAVING SUM(qty) &gt;= 2</code>, sắp theo <code>total_qty</code> giảm dần rồi <code>product_id</code>.</span>
+<template class="st">SELECT product_id, SUM(qty) AS total_qty
+FROM order_items
+GROUP BY product_id
+HAVING 
+ORDER BY </template>
+<template class="ref">SELECT product_id, SUM(qty) AS total_qty FROM order_items GROUP BY product_id HAVING SUM(qty) >= 2 ORDER BY total_qty DESC, product_id</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Chỉ những <code>category</code> có <b>sản phẩm đắt nhất trên 40000</b>: hiển thị <code>category</code>, <code>COUNT(*) AS n</code>, <code>MAX(price) AS most_expensive</code>. Dùng <code>HAVING MAX(price) &gt; 40000</code>, sắp theo <code>most_expensive</code> giảm dần.</span>
+<template class="st">SELECT category, COUNT(*) AS n, MAX(price) AS most_expensive
 FROM products
-WHERE </template>
-<template class="ref">SELECT MAX(price) AS most_expensive FROM products WHERE category = 'Đồ ăn'</template></div>
-<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao.</b> Từ bảng <code>order_items</code>, tạo một dòng tóm tắt gồm 3 cột: <code>COUNT(*) AS lines</code> (số dòng đơn), <code>SUM(qty) AS total_qty</code> (tổng số lượng), và <code>MAX(qty) AS biggest_line</code> (dòng có số lượng lớn nhất).</span>
-<template class="st">SELECT COUNT(*) AS lines, 
-FROM order_items</template>
-<template class="ref">SELECT COUNT(*) AS lines, SUM(qty) AS total_qty, MAX(qty) AS biggest_line FROM order_items</template></div>
+GROUP BY category
+HAVING 
+ORDER BY </template>
+<template class="ref">SELECT category, COUNT(*) AS n, MAX(price) AS most_expensive FROM products GROUP BY category HAVING MAX(price) > 40000 ORDER BY most_expensive DESC</template></div>

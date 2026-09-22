@@ -1,140 +1,121 @@
-<h3>Lesson 6 — GROUP BY & HAVING: grouped reports</h3>
-<p>In Lesson 5 you computed <i>one</i> number for the whole table: total stock, average price… But real reports always ask <b>per group</b>: "revenue <b>per category</b>?", "orders <b>per customer</b>?", "how many sold <b>per product</b>?". You don't want to run 4 queries for 4 categories — you want <b>one</b> query that returns one row per group.</p>
-<p>That's <code>GROUP BY</code>. It splits rows into groups by a column's value, then <b>applies an aggregate function to each group</b>. The result: one row per group, with the number you computed.</p>
-<p>And when you want to <b>filter the groups themselves</b> (e.g. "only categories with more than 2 products"), you use <code>HAVING</code> — like <code>WHERE</code>, but for the results after grouping.</p>
+<h3>Lesson 6 — CASE WHEN: conditional logic in queries</h3>
+<p>Raw data isn't always in the shape you need. A manager doesn't want to see <code>350000</code> — they want the label "premium". A low <code>stock</code> value needs flagging as "reorder". This is where <code>CASE WHEN</code> comes in — it's SQL's "if/else".</p>
+<p><code>CASE WHEN</code> looks at <b>each row</b> and returns a value depending on a condition. You can use it in <code>SELECT</code> (to build a new column), in <code>ORDER BY</code> (to sort by a label), and even inside an aggregate to <b>count/sum conditionally</b> — a very powerful reporting trick.</p>
+<p>Every column you create here should get an <code>AS</code> alias for a clear name — as you learned in Lesson 3.</p>
 
-<h4>1. GROUP BY — one row per group</h4>
-<p>Golden rule: a column after <code>GROUP BY</code> may appear in <code>SELECT</code>; every other column must be inside an aggregate function.</p>
-<pre class="run">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY category
-ORDER BY category;</pre>
-<p>The result: one row per category with its product count. (Add <code>ORDER BY</code> so the order is always stable.)</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Count the <b>number of products in each <code>category</code></b>: show <code>category</code> and <code>COUNT(*) AS n</code>, grouped by <code>category</code>, sorted by <code>category</code>.</span>
-<template class="st">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY 
-ORDER BY category</template>
-<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category ORDER BY category</template></div>
+<h4>1. CASE WHEN — labels by condition</h4>
+<p>Syntax: <code>CASE WHEN condition THEN value ... ELSE default END</code>. SQL checks the branches <b>top to bottom</b> and stops at the first true one.</p>
+<pre class="run">SELECT name,
+  CASE WHEN price >= 100000 THEN 'high'
+       WHEN price >= 20000  THEN 'medium'
+       ELSE 'low' END AS tier
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> For each product, build a <code>tier</code> column: <code>'high'</code> if <code>price &gt;= 100000</code>, <code>'medium'</code> if <code>price &gt;= 20000</code>, otherwise <code>'low'</code>. Show <code>name</code> and <code>tier</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 100000 THEN 'high'
+       WHEN price >= 20000 THEN 'medium'
+       ELSE 'low' END AS tier
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 100000 THEN 'high' WHEN price >= 20000 THEN 'medium' ELSE 'low' END AS tier FROM products</template></div>
 
-<h4>2. SUM and AVG per group</h4>
-<p>Swap <code>COUNT</code> for <code>SUM</code> or <code>AVG</code> to get a total/average for each group.</p>
-<pre class="run">SELECT category, SUM(stock) AS total_stock
-FROM products
-GROUP BY category
-ORDER BY category;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Compute the <b>total stock per category</b>: <code>category</code>, <code>SUM(stock) AS total_stock</code>, grouped by <code>category</code>, sorted by <code>category</code>.</span>
-<template class="st">SELECT category, SUM(stock) AS total_stock
-FROM products
-GROUP BY 
-ORDER BY category</template>
-<template class="ref">SELECT category, SUM(stock) AS total_stock FROM products GROUP BY category ORDER BY category</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Compute the <b>average price per category</b>, rounded: <code>category</code>, <code>ROUND(AVG(price)) AS avg_price</code>, grouped by <code>category</code>, sorted by <code>category</code>.</span>
-<template class="st">SELECT category, ROUND(AVG(price)) AS avg_price
-FROM products
-GROUP BY 
-ORDER BY category</template>
-<template class="ref">SELECT category, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category ORDER BY category</template></div>
+<h4>2. A simple two-way CASE</h4>
+<p>One <code>WHEN</code> and one <code>ELSE</code> is enough to split into two buckets.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Build a <code>stock_level</code> column: <code>'plenty'</code> if <code>stock &gt;= 100</code>, otherwise <code>'low'</code>. Show <code>name</code> and <code>stock_level</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN stock >= 100 THEN 'plenty' ELSE 'low' END AS stock_level
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN stock >= 100 THEN 'plenty' ELSE 'low' END AS stock_level FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Build a <code>status</code> column: <code>'reorder'</code> if <code>stock &lt; 50</code>, otherwise <code>'ok'</code>. Show <code>name</code>, <code>stock</code>, <code>status</code>.</span>
+<template class="st">SELECT name, stock,
+  CASE WHEN stock < 50 THEN 'reorder' ELSE 'ok' END AS status
+FROM products</template>
+<template class="ref">SELECT name, stock, CASE WHEN stock < 50 THEN 'reorder' ELSE 'ok' END AS status FROM products</template></div>
 
-<h4>3. Several numbers per group</h4>
-<p>You can place multiple aggregates at once — each group gets a "summary row".</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> For each <code>category</code>, show <code>MIN(price) AS cheapest</code> and <code>MAX(price) AS most_expensive</code>. Grouped by <code>category</code>, sorted by <code>category</code>.</span>
-<template class="st">SELECT category, MIN(price) AS cheapest, MAX(price) AS most_expensive
-FROM products
-GROUP BY 
-ORDER BY category</template>
-<template class="ref">SELECT category, MIN(price) AS cheapest, MAX(price) AS most_expensive FROM products GROUP BY category ORDER BY category</template></div>
+<h4>3. CASE returning a number</h4>
+<p><code>CASE</code> doesn't only return text — it can return numbers too, perfect for a conditional calculation.</p>
+<pre class="run">SELECT name,
+  ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85
+             ELSE price * 0.95 END) AS final_price
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Compute <code>final_price</code>: <code>'Điện tử'</code> items get 15% off (<code>price * 0.85</code>), everything else 5% off (<code>price * 0.95</code>), then <code>ROUND</code>. Show <code>name</code> and <code>final_price</code>.</span>
+<template class="st">SELECT name,
+  ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85 ELSE price * 0.95 END) AS final_price
+FROM products</template>
+<template class="ref">SELECT name, ROUND(CASE WHEN category = 'Điện tử' THEN price * 0.85 ELSE price * 0.95 END) AS final_price FROM products</template></div>
 
-<h4>4. Sorting by the computed number</h4>
-<p>Very common: group, then sort by the aggregate itself to find the "biggest" group.</p>
-<pre class="run">SELECT category, COUNT(*) AS n
+<h4>4. Classifying by text, with multiple branches</h4>
+<p><code>CASE</code> conditions work on text too, and you can have several <code>WHEN</code> branches.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Build a <code>kind</code> column: <code>'tech'</code> if <code>category = 'Điện tử'</code>, otherwise <code>'non-tech'</code>. Show <code>name</code> and <code>kind</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> From <code>customers</code>, build a <code>region</code> column: <code>'North'</code> if <code>city = 'Hà Nội'</code>, <code>'Central'</code> if <code>city = 'Đà Nẵng'</code>, otherwise <code>'South'</code>. Show <code>name</code> and <code>region</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN city = 'Hà Nội' THEN 'North'
+       WHEN city = 'Đà Nẵng' THEN 'Central'
+       ELSE 'South' END AS region
+FROM customers</template>
+<template class="ref">SELECT name, CASE WHEN city = 'Hà Nội' THEN 'North' WHEN city = 'Đà Nẵng' THEN 'Central' ELSE 'South' END AS region FROM customers</template></div>
+
+<h4>5. Combined conditions inside CASE</h4>
+<p>Each <code>WHEN</code> can contain <code>AND</code>/<code>OR</code>, like a mini <code>WHERE</code>.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Build a <code>label</code> column: <code>'premium tech'</code> if <code>category = 'Điện tử'</code> <b>and</b> <code>price &gt; 300000</code>, otherwise <code>'other'</code>. Show <code>name</code> and <code>label</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN category = 'Điện tử' AND price > 300000 THEN 'premium tech' ELSE 'other' END AS label
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN category = 'Điện tử' AND price > 300000 THEN 'premium tech' ELSE 'other' END AS label FROM products</template></div>
+
+<h4>6. Sorting by a CASE result</h4>
+<p>A <code>CASE</code> column's alias works in <code>ORDER BY</code> — sort by the label you invented.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Show <code>name</code>, <code>price</code>, and a <code>tier</code> column = <code>'high'</code> if <code>price &gt;= 100000</code> else <code>'normal'</code>. Sort by <code>tier</code> then <code>price</code> descending (<code>ORDER BY tier, price DESC</code>).</span>
+<template class="st">SELECT name, price,
+  CASE WHEN price >= 100000 THEN 'high' ELSE 'normal' END AS tier
 FROM products
-GROUP BY category
-ORDER BY n DESC, category;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Count products per <code>category</code>, sorted by count <b>descending</b>; break ties by <code>category</code>. (Hint: <code>ORDER BY n DESC, category</code>.)</span>
-<template class="st">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY category
 ORDER BY </template>
-<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category ORDER BY n DESC, category</template></div>
+<template class="ref">SELECT name, price, CASE WHEN price >= 100000 THEN 'high' ELSE 'normal' END AS tier FROM products ORDER BY tier, price DESC</template></div>
 
-<h4>5. HAVING — filter the groups</h4>
-<p><code>WHERE</code> filters <i>rows</i> before grouping; <code>HAVING</code> filters <i>groups</i> after grouping. So a condition using an aggregate (like <code>COUNT(*) &gt; 2</code>) must go in <code>HAVING</code>.</p>
-<pre class="run">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY category
-HAVING COUNT(*) > 2
-ORDER BY category;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Only categories with <b>more than 2 products</b>: show <code>category</code>, <code>COUNT(*) AS n</code>. Use <code>HAVING COUNT(*) &gt; 2</code>, sorted by <code>category</code>.</span>
-<template class="st">SELECT category, COUNT(*) AS n
-FROM products
-GROUP BY category
-HAVING 
-ORDER BY category</template>
-<template class="ref">SELECT category, COUNT(*) AS n FROM products GROUP BY category HAVING COUNT(*) > 2 ORDER BY category</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Only categories with <b>total stock of 300 or more</b>: show <code>category</code>, <code>SUM(stock) AS total_stock</code>. Use <code>HAVING SUM(stock) &gt;= 300</code>, sorted by <code>category</code>.</span>
-<template class="st">SELECT category, SUM(stock) AS total_stock
-FROM products
-GROUP BY category
-HAVING 
-ORDER BY category</template>
-<template class="ref">SELECT category, SUM(stock) AS total_stock FROM products GROUP BY category HAVING SUM(stock) >= 300 ORDER BY category</template></div>
+<h4>7. Conditional counting and summing</h4>
+<p>Put <code>CASE</code> <b>inside</b> <code>SUM</code> to count or add only the rows that meet a condition — a very handy reporting trick: <code>SUM(CASE WHEN … THEN 1 ELSE 0 END)</code> counts matching rows.</p>
+<pre class="run">SELECT SUM(CASE WHEN price >= 50000 THEN 1 ELSE 0 END) AS expensive_count
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Count the number of <b>expensive</b> products (<code>price &gt;= 50000</code>) with <code>SUM(CASE WHEN price &gt;= 50000 THEN 1 ELSE 0 END) AS expensive_count</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT SUM(CASE WHEN price >= 50000 THEN 1 ELSE 0 END) AS expensive_count FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Compute the <b>total price of only 'Điện tử' items</b> with <code>SUM(CASE WHEN category = 'Điện tử' THEN price ELSE 0 END) AS electronics_value</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT SUM(CASE WHEN category = 'Điện tử' THEN price ELSE 0 END) AS electronics_value FROM products</template></div>
 
-<h4>6. Grouping other tables</h4>
-<p><code>GROUP BY</code> shines most on detail tables. The <code>order_items</code> table has many rows per product and per order.</p>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> From <code>order_items</code>, compute the <b>total quantity sold per product</b>: <code>product_id</code>, <code>SUM(qty) AS total_qty</code>, grouped by <code>product_id</code>, sorted by <code>product_id</code>.</span>
-<template class="st">SELECT product_id, SUM(qty) AS total_qty
-FROM order_items
-GROUP BY 
-ORDER BY product_id</template>
-<template class="ref">SELECT product_id, SUM(qty) AS total_qty FROM order_items GROUP BY product_id ORDER BY product_id</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> From <code>orders</code>, count the <b>number of orders per customer</b>: <code>customer_id</code>, <code>COUNT(*) AS order_count</code>, grouped by <code>customer_id</code>, sorted by <code>customer_id</code>.</span>
-<template class="st">SELECT customer_id, COUNT(*) AS order_count
-FROM orders
-GROUP BY 
-ORDER BY customer_id</template>
-<template class="ref">SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id ORDER BY customer_id</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> From <code>order_items</code>, count the <b>number of line items per order</b>: <code>order_id</code>, <code>COUNT(*) AS lines</code>, grouped by <code>order_id</code>, sorted by <code>order_id</code>.</span>
-<template class="st">SELECT order_id, COUNT(*) AS lines
-FROM order_items
-GROUP BY 
-ORDER BY order_id</template>
-<template class="ref">SELECT order_id, COUNT(*) AS lines FROM order_items GROUP BY order_id ORDER BY order_id</template></div>
-
-<h4>7. Combining GROUP BY + HAVING + ORDER BY</h4>
-<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> Only categories with an <b>average price of 20000 or more</b>: show <code>category</code>, <code>COUNT(*) AS n</code>, <code>ROUND(AVG(price)) AS avg_price</code>. Use <code>HAVING AVG(price) &gt;= 20000</code>, sorted by <code>avg_price</code> descending.</span>
-<template class="st">SELECT category, COUNT(*) AS n, ROUND(AVG(price)) AS avg_price
+<h4>8. Combining CASE with filter and sort</h4>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> For the <code>'Đồ uống'</code> and <code>'Đồ ăn'</code> categories only: show <code>name</code>, <code>price</code>, and a <code>tier</code> column = <code>'premium'</code> if <code>price &gt;= 30000</code>, otherwise <code>'regular'</code>. Sort by <code>price</code> descending.</span>
+<template class="st">SELECT name, price,
+  CASE WHEN price >= 30000 THEN 'premium' ELSE 'regular' END AS tier
 FROM products
-GROUP BY category
-HAVING 
+WHERE category IN ('Đồ uống', 'Đồ ăn')
 ORDER BY </template>
-<template class="ref">SELECT category, COUNT(*) AS n, ROUND(AVG(price)) AS avg_price FROM products GROUP BY category HAVING AVG(price) >= 20000 ORDER BY avg_price DESC</template></div>
+<template class="ref">SELECT name, price, CASE WHEN price >= 30000 THEN 'premium' ELSE 'regular' END AS tier FROM products WHERE category IN ('Đồ uống', 'Đồ ăn') ORDER BY price DESC</template></div>
 
 <h4>🏠 Homework</h4>
 <p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> From <code>customers</code>, count the <b>number of customers per city</b>: <code>city</code>, <code>COUNT(*) AS n</code>, grouped by <code>city</code>, sorted by <code>city</code>.</span>
-<template class="st">SELECT city, COUNT(*) AS n
-FROM customers
-GROUP BY 
-ORDER BY city</template>
-<template class="ref">SELECT city, COUNT(*) AS n FROM customers GROUP BY city ORDER BY city</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Compute the <b>total list price per category</b>: <code>category</code>, <code>SUM(price) AS total_price</code>, grouped by <code>category</code>, sorted by <code>total_price</code> <b>descending</b>.</span>
-<template class="st">SELECT category, SUM(price) AS total_price
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Build a <code>bucket</code> column: <code>'expensive'</code> if <code>price &gt;= 50000</code>, otherwise <code>'affordable'</code>. Show <code>name</code> and <code>bucket</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 50000 THEN 'expensive' ELSE 'affordable' END AS bucket
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 50000 THEN 'expensive' ELSE 'affordable' END AS bucket FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Build a <code>kind</code> column: <code>'big ticket'</code> if <code>price &gt;= 100000</code>, otherwise <code>'everyday'</code>. Show <code>name</code> and <code>kind</code>.</span>
+<template class="st">SELECT name,
+  CASE WHEN price >= 100000 THEN 'big ticket' ELSE 'everyday' END AS kind
+FROM products</template>
+<template class="ref">SELECT name, CASE WHEN price >= 100000 THEN 'big ticket' ELSE 'everyday' END AS kind FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Count the products in the <code>'Đồ uống'</code> category with conditional counting: <code>SUM(CASE WHEN category = 'Đồ uống' THEN 1 ELSE 0 END) AS drink_count</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT SUM(CASE WHEN category = 'Đồ uống' THEN 1 ELSE 0 END) AS drink_count FROM products</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Build a <code>kind</code> column: <code>'tech'</code> if <code>category = 'Điện tử'</code>, otherwise <code>'non-tech'</code>. Show <code>name</code>, <code>category</code>, <code>kind</code>, sorted by <code>kind</code> then <code>name</code>.</span>
+<template class="st">SELECT name, category,
+  CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind
 FROM products
-GROUP BY category
 ORDER BY </template>
-<template class="ref">SELECT category, SUM(price) AS total_price FROM products GROUP BY category ORDER BY total_price DESC</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> From <code>order_items</code>, only products that <b>sold 2 or more units</b>: <code>product_id</code>, <code>SUM(qty) AS total_qty</code>. Use <code>HAVING SUM(qty) &gt;= 2</code>, sorted by <code>total_qty</code> descending then <code>product_id</code>.</span>
-<template class="st">SELECT product_id, SUM(qty) AS total_qty
-FROM order_items
-GROUP BY product_id
-HAVING 
-ORDER BY </template>
-<template class="ref">SELECT product_id, SUM(qty) AS total_qty FROM order_items GROUP BY product_id HAVING SUM(qty) >= 2 ORDER BY total_qty DESC, product_id</template></div>
-<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Only categories whose <b>most expensive product is above 40000</b>: show <code>category</code>, <code>COUNT(*) AS n</code>, <code>MAX(price) AS most_expensive</code>. Use <code>HAVING MAX(price) &gt; 40000</code>, sorted by <code>most_expensive</code> descending.</span>
-<template class="st">SELECT category, COUNT(*) AS n, MAX(price) AS most_expensive
-FROM products
-GROUP BY category
-HAVING 
-ORDER BY </template>
-<template class="ref">SELECT category, COUNT(*) AS n, MAX(price) AS most_expensive FROM products GROUP BY category HAVING MAX(price) > 40000 ORDER BY most_expensive DESC</template></div>
+<template class="ref">SELECT name, category, CASE WHEN category = 'Điện tử' THEN 'tech' ELSE 'non-tech' END AS kind FROM products ORDER BY kind, name</template></div>

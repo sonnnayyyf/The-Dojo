@@ -1,110 +1,106 @@
-<h3>Lesson 3 — ORDER BY & LIMIT: sort and take the top</h3>
-<p>Query results so far came back in the table's "natural" order — nothing guarantees it means anything. But business questions almost always need an <b>order</b>: "the <b>most expensive</b> product?", "the <b>newest</b> customer?", "the 5 items with the <b>most stock</b>?".</p>
-<p><code>ORDER BY</code> sorts your results by one (or more) columns. Combine it with <code>LIMIT</code> to take just the first few rows and you have a tool for every "top N" question — which shows up in almost every real report.</p>
-<p><code>ORDER BY</code> always comes <b>after</b> <code>WHERE</code> (if present), and <code>LIMIT</code> comes <b>last</b>. Remember the order: <code>SELECT … FROM … WHERE … ORDER BY … LIMIT …</code>.</p>
+<h3>Lesson 3 — Calculations in SELECT & naming with AS</h3>
+<p>So far <code>SELECT</code> only <i>pulls out</i> values that already exist. But SQL can also <b>calculate</b>: multiply price by quantity for revenue, add VAT, take 10% off, glue text together into a readable label. No need to export to Excel — do it right in the query.</p>
+<p>When you write an expression in <code>SELECT</code>, the result is a <b>new column</b> computed for every row. By default that column gets an ugly name (the expression itself), so we use <code>AS</code> to give it a tidy <b>alias</b>.</p>
+<p>This lesson introduces four tools: arithmetic, string concatenation with <code>||</code>, rounding with <code>ROUND</code>, and the <code>AS</code> alias. Together they turn raw columns into meaningful information.</p>
 
-<h4>1. ORDER BY — ascending sort</h4>
-<p>By default <code>ORDER BY column</code> sorts <b>ascending</b> (small → large for numbers, A → Z for text):</p>
-<pre class="run">SELECT name, price
+<h4>1. Arithmetic</h4>
+<p>You have <code>+ - * /</code> right inside <code>SELECT</code>. SQL computes it per row:</p>
+<pre class="run">SELECT name, price * stock
+FROM products;</pre>
+<p>To give the result column a nice name, add <code>AS column_name</code>:</p>
+<pre class="run">SELECT name, price * stock AS inventory_value
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> For each product, show <code>name</code> and the stock value <code>price * stock</code>, naming the column <code>inventory_value</code>.</span>
+<template class="st">SELECT name, price * stock AS 
+FROM products</template>
+<template class="ref">SELECT name, price * stock AS inventory_value FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Show <code>name</code> and <b>double the price</b> (<code>price * 2</code>), naming the column <code>double_price</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, price * 2 AS double_price FROM products</template></div>
+
+<h4>2. AS — naming columns</h4>
+<p><code>AS</code> isn't only for expressions — you can rename an existing column to make a report easier to read.</p>
+<pre class="run">SELECT name AS product_name, price AS vnd
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Show <code>name</code> renamed to <code>product_name</code> and <code>price</code> renamed to <code>vnd</code>.</span>
+<template class="st">SELECT name AS product_name, 
+FROM products</template>
+<template class="ref">SELECT name AS product_name, price AS vnd FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Show <code>name</code> and the price after a <b>flat 3000₫ discount</b> (<code>price - 3000</code>), naming the column <code>discounted</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, price - 3000 AS discounted FROM products</template></div>
+
+<h4>3. Joining text with ||</h4>
+<p>The <code>||</code> operator concatenates strings. Insert static characters (in quotes) to build a readable label.</p>
+<pre class="run">SELECT name || ' (' || category || ')' AS label
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Build a <code>label</code> column in the form <code>name (category)</code> — e.g. <code>Cà phê đen đá (Đồ uống)</code>. Use exactly <code>name || ' (' || category || ')'</code>.</span>
+<template class="st">SELECT 
+FROM products</template>
+<template class="ref">SELECT name || ' (' || category || ')' AS label FROM products</template></div>
+
+<h4>4. Rounding with ROUND</h4>
+<p>Multiplying by a decimal (discounts, tax) produces fractional numbers. <code>ROUND(expression)</code> rounds to the nearest whole number.</p>
+<pre class="run">SELECT name, ROUND(price * 0.9) AS sale_price
+FROM products;</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Show <code>name</code> and the price after a <b>10% discount</b>: <code>ROUND(price * 0.9)</code>, naming the column <code>sale_price</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, ROUND(price * 0.9) AS sale_price FROM products</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Show <code>name</code> and the price with <b>10% VAT added</b>: <code>ROUND(price * 1.1)</code>, naming the column <code>price_with_vat</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, ROUND(price * 1.1) AS price_with_vat FROM products</template></div>
+
+<h4>5. Calculations combined with WHERE</h4>
+<p>You can filter and calculate at once. (Note: <code>WHERE</code> cannot use an <code>AS</code> alias — you must repeat the full expression in <code>WHERE</code>.)</p>
+<pre class="run">SELECT name, ROUND(price * 0.8) AS sale_price
 FROM products
-ORDER BY price;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Get <code>name</code>, <code>price</code> of every product, sorted by <code>price</code> <b>ascending</b>.</span>
-<template class="st">SELECT name, price FROM products
-ORDER BY </template>
-<template class="ref">SELECT name, price FROM products ORDER BY price</template></div>
-
-<h4>2. Descending with DESC</h4>
-<p>Add <code>DESC</code> to reverse it — large → small. (The default direction is <code>ASC</code>, which you usually don't write.)</p>
-<pre class="run">SELECT name, price
+WHERE category = 'Đồ uống';</pre>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> For the <code>'Đồ uống'</code> category only: show <code>name</code> and the price at a <b>20% discount</b> (<code>ROUND(price * 0.8)</code>), naming the column <code>sale_price</code>.</span>
+<template class="st">SELECT name, ROUND(price * 0.8) AS sale_price
 FROM products
-ORDER BY price DESC;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Get <code>name</code>, <code>price</code> of every product, sorted by <code>price</code> <b>descending</b>.</span>
-<template class="st">SELECT name, price FROM products
-ORDER BY </template>
-<template class="ref">SELECT name, price FROM products ORDER BY price DESC</template></div>
-
-<h4>3. Sorting text and dates</h4>
-<p><code>ORDER BY</code> also works on text (alphabetical order) and on dates stored as <code>YYYY-MM-DD</code> strings (thanks to that format, comparing the strings is the same as comparing the dates).</p>
-<pre class="run">SELECT name FROM products
-ORDER BY name;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Get the <code>name</code> of every product, sorted <b>alphabetically</b> (by the <code>name</code> column).</span>
-<template class="st">SELECT name FROM products
-ORDER BY </template>
-<template class="ref">SELECT name FROM products ORDER BY name</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 4.</b> Get <code>name</code>, <code>joined_at</code> of every customer, sorted by <code>joined_at</code> <b>ascending</b> (earliest joiner first).</span>
-<template class="st">SELECT name, joined_at FROM customers
-ORDER BY </template>
-<template class="ref">SELECT name, joined_at FROM customers ORDER BY joined_at</template></div>
-
-<h4>4. Sorting by multiple columns</h4>
-<p>List several columns separated by commas. SQL sorts by the first; only when values <b>tie</b> does it look at the next column. Each column can have its own direction.</p>
-<pre class="run">SELECT name, category, price
+WHERE </template>
+<template class="ref">SELECT name, ROUND(price * 0.8) AS sale_price FROM products WHERE category = 'Đồ uống'</template></div>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Only products with a <b>stock value of 1,000,000 or more</b>: show <code>name</code> and <code>price * stock AS inventory_value</code>. Use the expression <code>price * stock</code> in <code>WHERE</code>.</span>
+<template class="st">SELECT name, price * stock AS inventory_value
 FROM products
-ORDER BY category, price;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 5.</b> Get <code>name</code>, <code>category</code>, <code>price</code>, sorted by <code>category</code> then by <code>price</code> (both ascending).</span>
-<template class="st">SELECT name, category, price FROM products
-ORDER BY </template>
-<template class="ref">SELECT name, category, price FROM products ORDER BY category, price</template></div>
+WHERE </template>
+<template class="ref">SELECT name, price * stock AS inventory_value FROM products WHERE price * stock >= 1000000</template></div>
 
-<h4>5. LIMIT — take only the first few rows</h4>
-<p><code>LIMIT n</code> trims the result to at most <code>n</code> rows. Great for a quick peek, or combined with <code>ORDER BY</code> to grab the "top".</p>
-<pre class="run">SELECT name FROM products
-ORDER BY id
-LIMIT 3;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 6.</b> Get the <code>name</code> of the <b>first 3 products by <code>id</code></b> (sort by <code>id</code>, limit to 3 rows).</span>
-<template class="st">SELECT name FROM products
-ORDER BY id
-</template>
-<template class="ref">SELECT name FROM products ORDER BY id LIMIT 3</template></div>
-
-<h4>6. The "top N" formula</h4>
-<p>Pairing <code>ORDER BY … DESC</code> with <code>LIMIT n</code> is the classic way to get "the n largest". Flip it to <code>ASC</code> for "the n smallest".</p>
-<pre class="run">SELECT name, price
+<h4>6. Sorting by a calculated value</h4>
+<p><code>ORDER BY</code> also works on a computed expression — perfect for finding the "top" by a metric you invent.</p>
+<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Get the <b>3 products with the highest stock value</b>: show <code>name</code> and <code>price * stock AS inventory_value</code>, sorted by that value <b>descending</b>; break ties by <code>name</code>. Hint: <code>ORDER BY price * stock DESC, name LIMIT 3</code>.</span>
+<template class="st">SELECT name, price * stock AS inventory_value
 FROM products
-ORDER BY price DESC
-LIMIT 3;</pre>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 7.</b> Get <code>name</code>, <code>price</code> of the <b>3 most expensive products</b>.</span>
-<template class="st">SELECT name, price FROM products
-</template>
-<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 3</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 8.</b> Get <code>name</code>, <code>price</code> of the <b>3 cheapest products</b>.</span>
-<template class="st">SELECT name, price FROM products
-</template>
-<template class="ref">SELECT name, price FROM products ORDER BY price ASC LIMIT 3</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 9.</b> Get <code>name</code>, <code>price</code> of the <b>single most expensive product</b>.</span>
-<template class="st">SELECT name, price FROM products
-</template>
-<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 1</template></div>
-<div class="ex" data-kind="sql"><span class="exq"><b>Exercise 10.</b> Get <code>name</code>, <code>stock</code> of the <b>5 products with the most stock</b>.</span>
-<template class="st">SELECT name, stock FROM products
-</template>
-<template class="ref">SELECT name, stock FROM products ORDER BY stock DESC LIMIT 5</template></div>
-
-<h4>7. Skipping rows: OFFSET</h4>
-<p><code>LIMIT n OFFSET k</code> skips the first <code>k</code> rows then takes the next <code>n</code> — useful for paging, or for "2nd and 3rd place".</p>
-<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> Get <code>name</code>, <code>price</code> of the <b>2nd and 3rd most expensive products</b> (skip the most expensive one). Hint: <code>ORDER BY price DESC LIMIT 2 OFFSET 1</code>.</span>
-<template class="st">SELECT name, price FROM products
-ORDER BY price DESC
-</template>
-<template class="ref">SELECT name, price FROM products ORDER BY price DESC LIMIT 2 OFFSET 1</template></div>
+ORDER BY </template>
+<template class="ref">SELECT name, price * stock AS inventory_value FROM products ORDER BY price * stock DESC, name LIMIT 3</template></div>
+<div class="ex stretch" data-kind="sql"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> For the <code>'Điện tử'</code> category only: show <code>name</code>, <code>price</code>, and the price at a <b>15% discount</b> <code>ROUND(price * 0.85) AS sale_price</code>, sorted by <code>price</code> descending.</span>
+<template class="st">SELECT name, price, ROUND(price * 0.85) AS sale_price
+FROM products
+WHERE 
+ORDER BY </template>
+<template class="ref">SELECT name, price, ROUND(price * 0.85) AS sale_price FROM products WHERE category = 'Điện tử' ORDER BY price DESC</template></div>
 
 <h4>🏠 Homework</h4>
 <p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Get <code>name</code>, <code>stock</code> of every product, sorted by <code>stock</code> <b>ascending</b>.</span>
-<template class="st">SELECT name, stock FROM products
-ORDER BY </template>
-<template class="ref">SELECT name, stock FROM products ORDER BY stock</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> Get <code>name</code>, <code>price</code> of products in the <code>'Đồ uống'</code> category, sorted by <code>price</code> <b>descending</b>.</span>
-<template class="st">SELECT name, price FROM products
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 1.</b> Show <code>name</code> and the <b>price in thousands</b> <code>price / 1000</code>, naming the column <code>price_k</code>. (Since both are integers, this is integer division.)</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, price / 1000 AS price_k FROM products</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 2.</b> From <code>customers</code>, build a <code>who</code> column in the form <code>name, city</code> — e.g. <code>Nguyễn Văn A, Hà Nội</code>. Use <code>name || ', ' || city</code>.</span>
+<template class="st">SELECT 
+FROM customers</template>
+<template class="ref">SELECT name || ', ' || city AS who FROM customers</template></div>
+<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Show <code>name</code> and the price with <b>8% VAT</b> added: <code>ROUND(price * 1.08)</code>, naming the column <code>price_vat8</code>.</span>
+<template class="st">SELECT name, 
+FROM products</template>
+<template class="ref">SELECT name, ROUND(price * 1.08) AS price_vat8 FROM products</template></div>
+<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> For the <code>'Văn phòng phẩm'</code> category only: show <code>name</code> and <code>price * stock AS inventory_value</code>, sorted by that value <b>descending</b>; break ties by <code>name</code>.</span>
+<template class="st">SELECT name, price * stock AS inventory_value
+FROM products
 WHERE 
 ORDER BY </template>
-<template class="ref">SELECT name, price FROM products WHERE category = 'Đồ uống' ORDER BY price DESC</template></div>
-<div class="ex homework" data-kind="sql"><span class="exq"><b>Exercise 3.</b> Get <code>name</code>, <code>price</code> of the <b>3 cheapest products NOT in the <code>'Điện tử'</code> category</b>.</span>
-<template class="st">SELECT name, price FROM products
-WHERE 
-ORDER BY </template>
-<template class="ref">SELECT name, price FROM products WHERE category <> 'Điện tử' ORDER BY price ASC LIMIT 3</template></div>
-<div class="ex homework stretch" data-kind="sql"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> Get <code>name</code>, <code>city</code> of every customer, sorted by <code>city</code> then by <code>name</code> (both ascending).</span>
-<template class="st">SELECT name, city FROM customers
-ORDER BY </template>
-<template class="ref">SELECT name, city FROM customers ORDER BY city, name</template></div>
+<template class="ref">SELECT name, price * stock AS inventory_value FROM products WHERE category = 'Văn phòng phẩm' ORDER BY price * stock DESC, name</template></div>
