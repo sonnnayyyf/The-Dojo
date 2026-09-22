@@ -15,14 +15,19 @@
   **Supabase** provides accounts + cloud progress + entitlements. No custom backend server.
 
 ## 2. Repo layout
-- `index.html`, `about.html`, `pricing.html` — marketing pages. i18n pattern: elements have
-  `data-t` / `data-t-html`, a page-local `const PAGE_I18N={vi:{...},en:{...}}`, and `window.onLang`
+- `index.html`, `about.html`, `pricing.html`, `courses.html` (browse/list), `course-detail.html`
+  (single course detail, `?c=<id>`), `checkout.html` (VietQR payment), `profile.html` (student info +
+  owned courses), `admin.html` (tutor-only dashboard) — marketing/app pages. i18n pattern: elements
+  have `data-t` / `data-t-html`, a page-local `const PAGE_I18N={vi:{...},en:{...}}`, and `window.onLang`
   renders dynamic bits. `app.js` fills them.
-- `python.html` / `qa.html` / `sql.html` — course pages. Each embeds `const COURSE={...}` (the lessons
-  array with bilingual titles + html) and a legacy `const KEYRING=[...]`. `app.js` renders everything.
+- `python.html` / `qa.html` / `sql.html` / `web.html` — course pages. Each embeds `const COURSE={...}`
+  (the lessons array with bilingual titles + html) and a legacy `const KEYRING=[...]`. `app.js` renders it.
 - `app.js` — the whole engine, one IIFE. Nav/footer/i18n injection, course rendering, CodeMirror +
   live Python syntax lint, Pyodide/sql.js runners, the grading harness (`PY_HARNESS`), progress + belts,
-  "Ask sensei", and the Supabase accounts module (`Cloud`).
+  "Ask sensei", and the Supabase accounts module (`Cloud`). Exposes `window.DOJO_CLOUD` (getUser,
+  getProfile, isAdmin, saveProfile, signOut, openAuth, onAuthResolved) for `profile.html`/`admin.html`,
+  and `window.DOJO_PROFILE` for prefill. Nav account button → `profile.html` when signed in; an `Admin`
+  nav link appears for admins (via `is_admin()` rpc). Fresh sign-ups are routed to `profile.html`.
 - `styles.css` — all styles.
 - `private-tools/` — LOCAL-ONLY tooling (never deploy). Contains:
   - `content/python/NN.vi.html` + `NN.en.html` — **lesson source files** (the source of truth).
@@ -70,9 +75,20 @@
 - Project URL `https://hlxadajedsymnhzgjyzv.supabase.co`; publishable key is in `app.js` `SUPABASE` const
   (safe to be public). Service key lives only in `private-tools/.env`.
 - Schema (`private-tools/supabase-schema.sql`) is applied: tables `progress`, `entitlements`, `codes`,
-  plus the `redeem_code()` SECURITY DEFINER function and RLS. Validated working.
+  plus the `redeem_code()` SECURITY DEFINER function and RLS. Validated working. **NEW (not yet applied —
+  re-run the schema file in the Supabase SQL editor):** `profiles` table (student info), `admins` table
+  + `is_admin()` rpc, admin-read RLS on `profiles`/`entitlements`/`progress`, and an `on_auth_user_created`
+  trigger that auto-creates a profile row on sign-up. To become admin: sign up, then in SQL editor
+  `insert into public.admins(user_id) values ('<your-uuid>')`.
 - `app.js` `Cloud` module: Google + email/password auth (nav "Log in" → modal), progress upsert/merge,
-  `redeem_code` rpc. When logged in, entering a code grants account ownership of the course.
+  `redeem_code` rpc. When logged in, entering a code grants account ownership of the course. Also loads
+  the student `profile`, checks `is_admin()`, and exposes `window.DOJO_CLOUD` for `profile.html`/`admin.html`.
+- **Payment flow (manual reconciliation):** `checkout.html` builds a **VietQR** via `img.vietqr.io`
+  (bank VIB `970441`, acc `021704060240035`, TRAN HOANG SON) with the **amount pre-filled** and a
+  **memo** like `DOJO PYTHON <name>`. Student scans → pays → messages the tutor a screenshot on Zalo →
+  tutor confirms in their bank app → issues an unlock code (`new-code.mjs`). Auto-notification (Casso/
+  SePay webhook → Supabase Edge Function → auto-grant) is a **future** add-on. `admin.html` tracks
+  signups / owned courses / progress.
 - **Google sign-in only works on a deployed http(s) site, not `file://`.** Email/password works locally.
 - **Content is still plaintext** (not encrypted) during authoring, so "locked" lessons are previewable.
   The real content-lock (encrypt lessons + deliver key only to entitled accounts) is a **launch task**.

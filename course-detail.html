@@ -50,7 +50,7 @@ vi:{
   s_for_h:'Phù hợp nếu bạn…', s_expect_h:'Điều bạn nên biết trước',
   s_syl_e:'Nội dung khóa học', s_syl_h:'Lộ trình từng bước', s_syl_p:'Mỗi buổi ~2 giờ, đi từ vấn đề thật rồi tới code — kèm bài tập chấm ngay và bài về nhà.',
   s_faq_e:'Câu hỏi thường gặp', s_faq_h:'Những điều học viên hay hỏi',
-  b_try:'Học thử bài 1 miễn phí', b_buy:'Đăng ký khóa học', b_ask:'Hỏi về khóa này', b_pricing:'Xem học phí →',
+  b_try:'Học thử bài 1 miễn phí', b_buy:'Mua khóa học', b_ask:'Hỏi về khóa này', b_pricing:'Mua khóa học →',
   free_note:'Bài 1 mở sẵn · chạy ngay · không cần đăng ký',
   cta_h:'Sẵn sàng viết dòng code đầu tiên?', cta_p:'Mở bài 1, viết thứ gì đó thật và thấy nó chạy — miễn phí, ngay trong trình duyệt.',
   lv_label:'Trình độ', dur_label:'Thời lượng', les_label:'Số bài', price_label:'Học phí',
@@ -62,7 +62,7 @@ en:{
   s_for_h:'A great fit if you…', s_expect_h:'What to know before you start',
   s_syl_e:'Course content', s_syl_h:'A step-by-step path', s_syl_p:'Each lesson is ~2 hours, problem-first then code — with exercises graded on the spot and homework.',
   s_faq_e:'FAQ', s_faq_h:'What learners usually ask',
-  b_try:'Try lesson 1 free', b_buy:'Enrol in this course', b_ask:'Ask about this course', b_pricing:'See pricing →',
+  b_try:'Try lesson 1 free', b_buy:'Buy this course', b_ask:'Ask about this course', b_pricing:'Buy this course →',
   free_note:'Lesson 1 unlocked · runs instantly · no signup',
   cta_h:'Ready to write your first line of code?', cta_p:'Open lesson 1, write something real and watch it run — free, right in your browser.',
   lv_label:'Level', dur_label:'Length', les_label:'Lessons', price_label:'Price',
@@ -258,7 +258,7 @@ window.onLang = function(){
      <p class="cheroLead">${d.lead}</p>
      <div class="cbtns">
        <a class="btn" href="${info.href}">${u.b_try}</a>
-       <a class="btn ghost" href="pricing.html">${u.b_buy}</a>
+       <a class="btn ghost" href="checkout.html?c=${CID}">${u.b_buy}</a>
        <button type="button" class="btn ghost" onclick="__dojoAskAbout()">${u.b_ask}</button>
      </div>
      <div class="freeNote">${u.free_note}</div>`;
@@ -276,7 +276,7 @@ window.onLang = function(){
     `<h2>${u.cta_h}</h2><p>${u.cta_p}</p>
      <div class="cbtns" style="justify-content:center">
        <a class="btn" href="${info.href}">${u.b_try}</a>
-       <a class="btn ghost" href="pricing.html">${u.b_pricing}</a>
+       <a class="btn ghost" href="checkout.html?c=${CID}">${u.b_pricing}</a>
      </div>`;
 };
 </script>

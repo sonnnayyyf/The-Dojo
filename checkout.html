@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thanh toán — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="co_eyebrow"></div>
+    <h2 data-t="co_h2"></h2>
+    <p data-t="co_p"></p>
+  </div>
+
+  <div class="checkout">
+    <!-- left: order form -->
+    <div class="coCard">
+      <label class="coLabel" data-t="co_pick"></label>
+      <select id="coCourse" class="coSelect"></select>
+
+      <label class="coLabel" data-t="co_name"></label>
+      <input type="text" id="coName" class="coInput" data-t-ph="co_name_ph">
+
+      <div class="coTotalRow">
+        <span data-t="co_total"></span>
+        <span id="coTotal" class="coTotal"></span>
+      </div>
+
+      <button class="btn" id="coPay" style="width:100%" data-t="co_pay"></button>
+      <p class="fact" data-t="co_secure" style="margin-top:10px"></p>
+    </div>
+
+    <!-- right: QR + instructions (revealed after clicking pay) -->
+    <div class="coCard coQr" id="coQrCard" hidden>
+      <h3 data-t="co_scan_h"></h3>
+      <img id="coQrImg" class="coQrImg" alt="VietQR">
+      <div class="coBank" id="coBank"></div>
+      <ol class="coSteps">
+        <li data-t="co_step1"></li>
+        <li data-t="co_step2"></li>
+        <li data-t="co_step3"></li>
+      </ol>
+      <button class="btn ghost" id="coSent" style="width:100%" data-t="co_sent"></button>
+    </div>
+  </div>
+
+  <p class="fact" data-t="co_help" style="margin-top:24px;text-align:center"></p>
+</div></section>
+
+<script src="app.js"></script>
+<script>
+// ==== PAYMENT CONFIG — edit these to change the receiving account ====
+const PAYMENT = {
+  bankBin: '970441',                 // VIB
+  bankName: 'VIB',
+  accountNo: '021704060240035',
+  accountName: 'TRAN HOANG SON',
+  template: 'compact2',              // VietQR layout (shows amount + memo)
+};
+// Amount + short code per course (code goes into the transfer memo)
+const CATALOG = {
+  python: { code:'PYTHON', amount:2999000, vi:'Python căn bản',            en:'Python fundamentals' },
+  web:    { code:'WEB',    amount:2999000, vi:'Lập trình Web căn bản',      en:'Web Programming Fundamentals' },
+  sql:    { code:'SQL',    amount:2499000, vi:'SQL cho công việc dữ liệu',  en:'SQL for data work' },
+  qa:     { code:'QA',     amount:3499000, vi:'Kiểm thử phần mềm (QA)',     en:'QA / Software testing' },
+};
+
+const CID0 = (new URLSearchParams(location.search).get('c') || 'python').toLowerCase();
+
+const PAGE_I18N = {
+vi:{
+  co_eyebrow:'Thanh toán', co_h2:'Mua khóa học',
+  co_p:'Chọn khóa học, quét mã VietQR để chuyển khoản (số tiền và nội dung đã điền sẵn). Sau khi chuyển, nhắn cho giáo viên kèm ảnh xác nhận — bạn sẽ nhận mã mở khóa cá nhân, thường trong vài giờ.',
+  co_pick:'Chọn khóa học', co_name:'Tên của bạn (để đối chiếu giao dịch)', co_name_ph:'VD: Nguyễn Văn A',
+  co_total:'Tổng thanh toán', co_pay:'Tạo mã QR thanh toán',
+  co_secure:'Chuyển khoản trực tiếp tới tài khoản ngân hàng của giáo viên. The Dojo không lưu thông tin thẻ.',
+  co_scan_h:'Quét để thanh toán',
+  co_step1:'Mở app ngân hàng của bạn và quét mã QR ở trên (số tiền và nội dung đã điền sẵn — vui lòng giữ nguyên nội dung).',
+  co_step2:'Hoàn tất chuyển khoản.',
+  co_step3:'Nhấn nút bên dưới để gửi ảnh xác nhận cho giáo viên qua Zalo và nhận mã mở khóa.',
+  co_sent:'Tôi đã chuyển — nhắn giáo viên qua Zalo',
+  co_help:'Cần giúp đỡ? Nhắn cho giáo viên qua Zalo và mình sẽ hỗ trợ ngay.',
+  co_bank_label:'Ngân hàng', co_acc_label:'Số tài khoản', co_name_label:'Chủ tài khoản',
+  co_amt_label:'Số tiền', co_memo_label:'Nội dung chuyển khoản',
+  co_copied:'Đã copy tin nhắn. Sang Zalo, dán (Ctrl+V) và gửi kèm ảnh chụp màn hình nhé!',
+},
+en:{
+  co_eyebrow:'Checkout', co_h2:'Buy a course',
+  co_p:'Pick a course, then scan the VietQR to transfer (amount and note are pre-filled). After paying, message the teacher with a screenshot — you will get your personal unlock code, usually within a few hours.',
+  co_pick:'Choose a course', co_name:'Your name (to match your payment)', co_name_ph:'e.g. Jane Doe',
+  co_total:'Total', co_pay:'Generate payment QR',
+  co_secure:'A direct bank transfer to the teacher\u2019s account. The Dojo never stores card details.',
+  co_scan_h:'Scan to pay',
+  co_step1:'Open your banking app and scan the QR above (amount and note are pre-filled — please keep the note as-is).',
+  co_step2:'Complete the transfer.',
+  co_step3:'Tap the button below to send the teacher a screenshot on Zalo and receive your unlock code.',
+  co_sent:'I\u2019ve paid — message the teacher on Zalo',
+  co_help:'Need help? Message the teacher on Zalo and I\u2019ll sort it out right away.',
+  co_bank_label:'Bank', co_acc_label:'Account no.', co_name_label:'Account holder',
+  co_amt_label:'Amount', co_memo_label:'Transfer note',
+  co_copied:'Message copied. Open Zalo, paste (Ctrl+V) and send it with your screenshot!',
+}};
+
+function fmtVnd(n){ return n.toLocaleString('vi-VN') + '₫'; }
+
+function memoFor(cid, name){
+  const code = CATALOG[cid].code;
+  const clean = (name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'').trim().toUpperCase();
+  return ('DOJO ' + code + (clean ? ' ' + clean : '')).slice(0, 40);
+}
+
+function qrUrl(cid, name){
+  const c = CATALOG[cid];
+  const base = `https://img.vietqr.io/image/${PAYMENT.bankBin}-${PAYMENT.accountNo}-${PAYMENT.template}.png`;
+  const q = new URLSearchParams({
+    amount: String(c.amount),
+    addInfo: memoFor(cid, name),
+    accountName: PAYMENT.accountName,
+  });
+  return base + '?' + q.toString();
+}
+
+function buildOptions(){
+  const sel = document.getElementById('coCourse');
+  sel.innerHTML = Object.keys(CATALOG).map(id=>{
+    const c = CATALOG[id];
+    return `<option value="${id}">${c[LANG]} — ${fmtVnd(c.amount)}</option>`;
+  }).join('');
+  sel.value = CATALOG[CID0] ? CID0 : 'python';
+}
+
+function refreshTotal(){
+  const cid = document.getElementById('coCourse').value;
+  document.getElementById('coTotal').textContent = fmtVnd(CATALOG[cid].amount);
+}
+
+function showQr(){
+  const cid = document.getElementById('coCourse').value;
+  const name = document.getElementById('coName').value;
+  const u = PAGE_I18N[LANG];
+  document.getElementById('coQrImg').src = qrUrl(cid, name);
+  document.getElementById('coBank').innerHTML =
+    `<div><span>${u.co_bank_label}</span><b>${PAYMENT.bankName}</b></div>
+     <div><span>${u.co_acc_label}</span><b>${PAYMENT.accountNo}</b></div>
+     <div><span>${u.co_name_label}</span><b>${PAYMENT.accountName}</b></div>
+     <div><span>${u.co_amt_label}</span><b>${fmtVnd(CATALOG[cid].amount)}</b></div>
+     <div><span>${u.co_memo_label}</span><b>${memoFor(cid, name)}</b></div>`;
+  document.getElementById('coQrCard').hidden = false;
+  document.getElementById('coQrCard').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function messageTeacher(){
+  const cid = document.getElementById('coCourse').value;
+  const name = document.getElementById('coName').value.trim();
+  const c = CATALOG[cid];
+  const num = (window.DOJO_SENSEI && window.DOJO_SENSEI.zalo) || '0986061705';
+  const msg = (LANG==='vi'
+    ? `Xin chào, mình vừa chuyển khoản mua khóa "${c.vi}" trên The Dojo${name?(' (tên: '+name+')'):''}. Mình gửi kèm ảnh xác nhận, nhờ bạn gửi lại mã mở khóa nhé!`
+    : `Hi, I just paid for the "${c.en}" course on The Dojo${name?(' (name: '+name+')'):''}. Here is my payment screenshot — please send me the unlock code!`);
+  try { navigator.clipboard.writeText(msg); alert(PAGE_I18N[LANG].co_copied); } catch(e){}
+  window.open('https://zalo.me/'+num, '_blank');
+}
+
+window.onLang = function(){
+  buildOptions();
+  refreshTotal();
+  // if the QR is already open, re-render it in the new language
+  if (!document.getElementById('coQrCard').hidden) showQr();
+  // prefill name from signed-in profile if available
+  const nm = document.getElementById('coName');
+  if (!nm.value && window.DOJO_PROFILE && window.DOJO_PROFILE.full_name) nm.value = window.DOJO_PROFILE.full_name;
+  // placeholder i18n
+  document.querySelectorAll('[data-t-ph]').forEach(el=>{
+    const k = el.dataset.tPh, dict = PAGE_I18N[LANG]||PAGE_I18N.vi;
+    if (dict[k]!=null) el.placeholder = dict[k];
+  });
+};
+
+document.addEventListener('change', (e)=>{ if (e.target.id==='coCourse') refreshTotal(); });
+document.addEventListener('click', (e)=>{
+  if (e.target.id==='coPay') showQr();
+  if (e.target.id==='coSent') messageTeacher();
+});
+</script>
+</body>
+</html>

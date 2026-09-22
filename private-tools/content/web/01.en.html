@@ -1,7 +1,7 @@
 <h3>Lesson 1 — How the web works</h3>
 <p>Every time you open a website — a news page, a shop, a video app — a lot happens in the half-second before it appears. Your device sends a <b>request</b> across the internet to another computer, that computer sends files back, and your <b>browser</b> turns those files into the page you see and touch. Before you write a single line of code, it pays to understand this journey. It's the mental model everything else in this course hangs on.</p>
 <p>Here's the key idea we'll build on for sixteen lessons: a web page is made of <b>three separate languages</b>, each with one job. <b>HTML</b> is the <i>structure</i> — the headings, paragraphs, images and buttons (the "what"). <b>CSS</b> is the <i>style</i> — colours, spacing, fonts and layout (the "how it looks"). <b>JavaScript</b> is the <i>behaviour</i> — what happens when you click, type or scroll (the "what it does"). Same three languages power <i>every</i> website on earth, from a personal blog to a bank.</p>
-<p>This first lesson is about <i>seeing</i> that picture clearly, so you're never confused about which language does what. There's no syntax to memorise yet — instead you'll answer quick quizzes and <b>run real mini-pages</b> right here in the browser to watch each layer in action. Getting a quiz wrong is fine: the correct answer lights up so you learn instantly.</p>
+<p>This first lesson is about <i>seeing</i> that picture clearly, so you're never confused about which language does what. There's no syntax to memorise yet — instead you'll answer quick quizzes, <b>run real mini-pages</b> in the browser, and even <b>edit real HTML and CSS yourself and get graded on the spot</b>. Getting something wrong is fine: you just try again until it passes.</p>
 
 <h4>1. The request–response journey</h4>
 <p>When you type an address (a <b>URL</b>) and press Enter, your browser (the <b>client</b>) sends a <b>request</b> to a <b>server</b> — a computer somewhere whose job is to hold and hand out web files. The server sends back a <b>response</b>: the page's files. This back-and-forth is the heartbeat of the web.</p>
@@ -79,10 +79,17 @@
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Here is a heading. Change the text between <code>&lt;h1&gt;</code> and <code>&lt;/h1&gt;</code> so it reads exactly <code>Dojo Daily</code>, then press Run to get graded.</span>
+<template class="st">&lt;h1&gt;Change this text&lt;/h1&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1'), 'keep the h1 heading');
+assert(document.querySelector('h1').textContent.trim() === 'Dojo Daily', 'the heading should read exactly "Dojo Daily"');
+</template>
+</div>
 
 <h4>4. Add CSS and watch it change</h4>
 <p>Same structure — but now we've added a <b>CSS</b> block inside <code>&lt;style&gt;</code>. Nothing about the <i>content</i> changed; only the <i>look</i> did. Run it and compare with the previous page: colours, spacing and fonts appear, but it's the exact same headings and button underneath. This is the power of separating structure from style.</p>
-<div class="ex" data-kind="web"><span class="exq"><b>Exercise 7.</b> Run this page and see how CSS restyles the very same HTML. Try changing <code>tomato</code> to <code>teal</code>.</span>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 8.</b> Run this page and see how CSS restyles the very same HTML. Try changing <code>tomato</code> to <code>teal</code>.</span>
 <template class="st">&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;head&gt;
@@ -99,17 +106,17 @@
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
-<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 8.</b> Between the two pages above, the headings and button were identical. What actually changed the appearance?</span>
-<ol class="opts">
-<li>The HTML structure was rewritten.</li>
-<li>A CSS <code>&lt;style&gt;</code> block was added.</li>
-<li>The server sent a different page.</li>
-<li>JavaScript moved the elements.</li>
-</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> This title is styled black. In the <b>CSS</b> box, change <code>black</code> to <code>gold</code> so the title turns gold, then press Run.</span>
+<template class="html">&lt;h1 id="title"&gt;Sunset Blog&lt;/h1&gt;</template>
+<template class="css">#title { color: black; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('#title')).color === 'rgb(255, 215, 0)', 'set the title colour to gold (change black to gold in the CSS)');
+</template>
+</div>
 
 <h4>5. Add JavaScript for behaviour</h4>
 <p>Structure and style are <b>static</b> — they just sit there. <b>JavaScript</b> makes a page <i>react</i>. The page below has a button wired with a tiny script: click it and the text changes. You don't need to understand the code yet (that's the second half of the course) — just run it, click the button, and notice that <i>something happens</i>. That "something happens on interaction" is exactly what JavaScript adds.</p>
-<div class="ex" data-kind="web"><span class="exq"><b>Exercise 9.</b> Run the page, then click the <b>Cheer!</b> button in the preview and watch the message change.</span>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 10.</b> Run the page, then click the <b>Cheer!</b> button in the preview and watch the message change.</span>
 <template class="st">&lt;!doctype html&gt;
 &lt;html&gt;
   &lt;head&gt;&lt;style&gt;body{font-family:sans-serif;padding:20px}&lt;/style&gt;&lt;/head&gt;
@@ -119,7 +126,7 @@
   &lt;/body&gt;
 &lt;/html&gt;</template>
 </div>
-<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 10.</b> Before you clicked, the heading said "Hello". After the click it changed. Which language made that <b>change happen on click</b>?</span>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 11.</b> Before you clicked, the heading said "Hello". After the click it changed. Which language made that <b>change happen on click</b>?</span>
 <ol class="opts">
 <li>HTML</li>
 <li>CSS</li>
@@ -129,13 +136,14 @@
 
 <h4>6. Putting the picture together</h4>
 <p>You now have the full mental model: a browser <b>requests</b> a page, a server <b>responds</b> with files, and the browser paints them using three languages — HTML for structure, CSS for style, JavaScript for behaviour. Everything else in this course is detail on top of this.</p>
-<div class="ex stretch" data-kind="quiz" data-a="3"><span class="exq"><b>Exercise 11. 🔥 Stretch.</b> A shopping page shows products in a neat grid (layout), and clicking "Add to cart" updates a counter. Match the work: <b>grid layout</b> and <b>the counter updating on click</b> are handled by…</span>
-<ol class="opts">
-<li>CSS for both.</li>
-<li>JavaScript for both.</li>
-<li>HTML for the grid, the server for the counter.</li>
-<li>CSS for the grid layout, JavaScript for the counter update.</li>
-</ol></div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Fill in the blanks so the page has a heading that says <code>My First Page</code> and a paragraph that says <code>I am learning web.</code> — then press Run.</span>
+<template class="st">&lt;h1&gt;___&lt;/h1&gt;
+&lt;p&gt;___&lt;/p&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'My First Page', 'the heading (h1) should say "My First Page"');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'I am learning web.', 'the paragraph (p) should say "I am learning web."');
+</template>
+</div>
 
 <h4>🏠 Homework</h4>
 <p>Four take-home exercises, auto-graded right on the page. The last one is a stretch.</p>
@@ -153,23 +161,12 @@
 <li>JavaScript, CSS, HTML</li>
 <li>HTML, JavaScript, CSS</li>
 </ol></div>
-<div class="ex homework" data-kind="web"><span class="exq"><b>Exercise 3.</b> Run this page. It uses all three languages at once — read the comments to spot which line is HTML, which is CSS, and which is JavaScript.</span>
-<template class="st">&lt;!doctype html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;style&gt;
-      /* CSS: the style */
-      body { font-family: sans-serif; padding: 20px; }
-      h1 { color: teal; }
-    &lt;/style&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;!-- HTML: the structure --&gt;
-    &lt;h1 id="title"&gt;Three in one&lt;/h1&gt;
-    &lt;button onclick="document.getElementById('title').textContent = 'Behaviour!'"&gt;Click me&lt;/button&gt;
-    &lt;!-- JavaScript: the behaviour is in the onclick above --&gt;
-  &lt;/body&gt;
-&lt;/html&gt;</template>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Change the button's label so it reads exactly <code>Sign up</code>, then press Run.</span>
+<template class="st">&lt;button&gt;Click here&lt;/button&gt;</template>
+<template class="ts">
+assert(document.querySelector('button'), 'keep the button');
+assert(document.querySelector('button').textContent.trim() === 'Sign up', 'the button should read exactly "Sign up"');
+</template>
 </div>
 <div class="ex homework stretch" data-kind="quiz" data-a="3"><span class="exq"><b>Exercise 4. 🔥 Stretch.</b> A page loads instantly but a broken photo icon shows where a picture should be, and clicking a button does nothing. Which single-sentence diagnosis fits best?</span>
 <ol class="opts">

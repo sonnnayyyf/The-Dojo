@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản trị — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="ad_eyebrow"></div>
+    <h2 data-t="ad_h2"></h2>
+    <p data-t="ad_p"></p>
+  </div>
+
+  <div class="coCard" id="adGate" hidden style="max-width:560px">
+    <p id="adGateMsg"></p>
+    <button class="btn" id="adLogin" style="width:100%" hidden></button>
+  </div>
+
+  <div id="adMain" hidden>
+    <div class="adStats" id="adStats"></div>
+    <input type="text" id="adSearch" class="coInput" style="max-width:340px;margin:8px 0 16px">
+    <div class="adTableWrap">
+      <table class="res adTable" id="adTable"></table>
+    </div>
+  </div>
+</div></section>
+
+<script src="app.js"></script>
+<script>
+const COURSE_NAMES = {
+  python:{vi:'Python',en:'Python'}, web:{vi:'Web',en:'Web'},
+  sql:{vi:'SQL',en:'SQL'}, qa:{vi:'QA',en:'QA'},
+};
+const PAGE_I18N = {
+vi:{
+  ad_eyebrow:'Quản trị', ad_h2:'Bảng điều khiển học viên',
+  ad_p:'Danh sách học viên, khóa đã mua và tiến độ. Chỉ tài khoản quản trị mới xem được trang này.',
+  ad_denied:'Trang này chỉ dành cho quản trị viên.',
+  ad_guest:'Bạn cần đăng nhập bằng tài khoản quản trị.',
+  ad_login:'Đăng nhập', ad_search:'Tìm theo tên / email / SĐT…',
+  ad_students:'Học viên', ad_paid:'Khóa đã sở hữu', ad_active:'Đang học',
+  h_name:'Họ tên', h_contact:'Liên hệ', h_year:'Năm sinh', h_exp:'Kinh nghiệm',
+  h_goal:'Mục tiêu', h_courses:'Khóa sở hữu', h_progress:'Tiến độ', h_joined:'Ngày tạo',
+  none:'—', empty:'Chưa có học viên nào.',
+},
+en:{
+  ad_eyebrow:'Admin', ad_h2:'Student dashboard',
+  ad_p:'Every student, the courses they own and their progress. Only admin accounts can see this page.',
+  ad_denied:'This page is for administrators only.',
+  ad_guest:'You need to log in with an admin account.',
+  ad_login:'Log in', ad_search:'Search by name / email / phone…',
+  ad_students:'Students', ad_paid:'Courses owned', ad_active:'Learning',
+  h_name:'Name', h_contact:'Contact', h_year:'Birth year', h_exp:'Experience',
+  h_goal:'Goal', h_courses:'Courses owned', h_progress:'Progress', h_joined:'Joined',
+  none:'—', empty:'No students yet.',
+}};
+
+let ROWS = [];
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function loadData(){
+  const sb = await window.DOJO_CLOUD.getClient();
+  if (!sb) return [];
+  const [pf, ent, pr] = await Promise.all([
+    sb.from('profiles').select('*'),
+    sb.from('entitlements').select('user_id, course, granted_at'),
+    sb.from('progress').select('user_id, course, data, updated_at'),
+  ]);
+  const byUser = {};
+  (pf.data||[]).forEach(p=>{ byUser[p.user_id] = { p, courses:[], progress:{} }; });
+  (ent.data||[]).forEach(e=>{
+    const u = byUser[e.user_id] || (byUser[e.user_id]={p:{user_id:e.user_id},courses:[],progress:{}});
+    u.courses.push(e.course);
+  });
+  (pr.data||[]).forEach(r=>{
+    const u = byUser[r.user_id] || (byUser[r.user_id]={p:{user_id:r.user_id},courses:[],progress:{}});
+    const n = r.data && typeof r.data==='object' ? Object.keys(r.data).length : 0;
+    u.progress[r.course] = n;
+  });
+  return Object.values(byUser).sort((a,b)=> String(b.p.created_at||'').localeCompare(String(a.p.created_at||'')));
+}
+
+function progressText(u){
+  const parts = Object.keys(u.progress);
+  if (!parts.length) return PAGE_I18N[LANG].none;
+  return parts.map(c=>{
+    const nm=(COURSE_NAMES[c]&&COURSE_NAMES[c][LANG])||c;
+    return `${nm}: ${u.progress[c]}`;
+  }).join(' · ');
+}
+
+function coursesText(u){
+  if (!u.courses.length) return PAGE_I18N[LANG].none;
+  return u.courses.map(c=>(COURSE_NAMES[c]&&COURSE_NAMES[c][LANG])||c).join(', ');
+}
+
+function expLabel(k){
+  const map={vi:{exp0:'Chưa có',exp1:'Một chút',exp2:'Đã học',exp3:'Đi làm'},en:{exp0:'None',exp1:'A little',exp2:'Studied',exp3:'Working'}};
+  return (map[LANG]&&map[LANG][k])||'';
+}
+
+function renderTable(){
+  const d = PAGE_I18N[LANG];
+  const q = (document.getElementById('adSearch').value||'').toLowerCase().trim();
+  const rows = ROWS.filter(u=>{
+    if (!q) return true;
+    const p=u.p;
+    return [p.full_name,p.email,p.phone].some(v=>String(v||'').toLowerCase().includes(q));
+  });
+  const head = `<tr>
+    <th>${d.h_name}</th><th>${d.h_contact}</th><th>${d.h_year}</th><th>${d.h_exp}</th>
+    <th>${d.h_goal}</th><th>${d.h_courses}</th><th>${d.h_progress}</th><th>${d.h_joined}</th></tr>`;
+  const body = rows.length ? rows.map(u=>{
+    const p=u.p;
+    const joined = p.created_at ? new Date(p.created_at).toLocaleDateString() : d.none;
+    return `<tr>
+      <td>${esc(p.full_name)||d.none}</td>
+      <td>${esc(p.email)||''}<br><span class="fact">${esc(p.phone)||''}</span></td>
+      <td>${esc(p.birth_year)||d.none}</td>
+      <td>${expLabel(p.experience)||d.none}</td>
+      <td class="adGoal">${esc(p.goal)||d.none}</td>
+      <td>${esc(coursesText(u))}</td>
+      <td>${esc(progressText(u))}</td>
+      <td>${joined}</td></tr>`;
+  }).join('') : `<tr><td colspan="8" style="text-align:center;color:var(--muted)">${d.empty}</td></tr>`;
+  document.getElementById('adTable').innerHTML = head + body;
+
+  const paid = ROWS.filter(u=>u.courses.length).length;
+  const active = ROWS.filter(u=>Object.keys(u.progress).length).length;
+  document.getElementById('adStats').innerHTML =
+    `<div class="adStat"><b>${ROWS.length}</b><span>${d.ad_students}</span></div>
+     <div class="adStat"><b>${paid}</b><span>${d.ad_paid}</span></div>
+     <div class="adStat"><b>${active}</b><span>${d.ad_active}</span></div>`;
+}
+
+async function render(){
+  const d = PAGE_I18N[LANG];
+  document.getElementById('adSearch').placeholder = d.ad_search;
+  const user = window.DOJO_CLOUD.getUser();
+  const gate = document.getElementById('adGate');
+  const main = document.getElementById('adMain');
+  const loginBtn = document.getElementById('adLogin');
+  if (!user){
+    gate.hidden=false; main.hidden=true;
+    document.getElementById('adGateMsg').textContent = d.ad_guest;
+    loginBtn.hidden=false; loginBtn.textContent=d.ad_login;
+    return;
+  }
+  if (!window.DOJO_CLOUD.isAdmin()){
+    gate.hidden=false; main.hidden=true;
+    document.getElementById('adGateMsg').textContent = d.ad_denied;
+    loginBtn.hidden=true;
+    return;
+  }
+  gate.hidden=true; main.hidden=false;
+  ROWS = await loadData();
+  renderTable();
+}
+
+window.onLang = render;
+document.getElementById('adLogin').addEventListener('click', ()=> window.DOJO_CLOUD.openAuth());
+document.getElementById('adSearch').addEventListener('input', renderTable);
+window.DOJO_CLOUD.onAuthResolved(render);
+</script>
+</body>
+</html>

@@ -21,7 +21,7 @@
   <div class="shead"><div class="eyebrow" data-t="b_eyebrow"></div><h2 data-t="b_h2"></h2></div>
   <div class="about2">
     <div>
-      <p><b style="color:var(--text)" data-t="b_buy_h"></b> <span data-t="b_buy_p"></span></p>
+      <p><b style="color:var(--text)" data-t="b_buy_h"></b> <span data-t-html="b_buy_p"></span></p>
       <p class="fact" data-t-html="b_bank"></p>
       <p class="fact" data-t-html="b_msg"></p>
     </div>
@@ -40,9 +40,9 @@ vi:{
  p_p:'Học thử Bài 1 của mọi khóa miễn phí. Nếu thấy phù hợp, thanh toán một lần cho khóa bạn chọn và nhận <b>mã mở khóa cá nhân</b> — mở toàn bộ bài học ngay trên trang.',
  p_all:'Xem tất cả khóa học →',
  b_eyebrow:'Liên hệ', b_h2:'Thanh toán & đặt lịch',
- b_buy_h:'Mua trọn khóa:', b_buy_p:'chuyển khoản ngân hàng / MoMo, nhắn tin kèm ảnh xác nhận, tôi sẽ gửi lại mã mở khóa cá nhân (thường trong vài giờ).',
- b_bank:'Ngân hàng: <span class="editme">EDIT — tên NH / số TK / ảnh VietQR</span>',
- b_msg:'Nhắn tin: <span class="editme">EDIT — Zalo / Discord / email</span>',
+ b_buy_h:'Mua trọn khóa:', b_buy_p:'vào trang <a href="checkout.html">Thanh toán</a>, quét mã VietQR (đã điền sẵn số tiền & nội dung), rồi nhắn tôi ảnh xác nhận — tôi gửi lại mã mở khóa cá nhân (thường trong vài giờ).',
+ b_bank:'Ngân hàng: <b>VIB</b> · STK <b>021704060240035</b> · TRAN HOANG SON',
+ b_msg:'Nhắn tin: <b>Zalo 0986061705</b>',
  b_live_h:'Học kèm 1-1:', b_live_p:'nhắn cho tôi mục tiêu học và khung giờ thuận tiện — tôi sẽ báo giá trực tiếp tùy nhu cầu. 20 phút đầu miễn phí để xem có hợp không.',
  b_email:'Email:',
 },
@@ -51,9 +51,9 @@ en:{
  p_p:'Lesson 1 of every course is free. If it clicks, pay once for the course you want and get your <b>personal unlock code</b> — it opens every lesson right on the page.',
  p_all:'View all courses →',
  b_eyebrow:'Contact', b_h2:'Pay & book',
- b_buy_h:'To buy a full course:', b_buy_p:'transfer via bank/MoMo, message me proof, and I reply with your personal unlock code (usually within a few hours).',
- b_bank:'Bank: <span class="editme">EDIT — bank name / account / VietQR image</span>',
- b_msg:'Message me: <span class="editme">EDIT — Zalo / Discord / email</span>',
+ b_buy_h:'To buy a full course:', b_buy_p:'go to <a href="checkout.html">Checkout</a>, scan the VietQR (amount & note pre-filled), then message me your payment screenshot and I reply with your personal unlock code (usually within a few hours).',
+ b_bank:'Bank: <b>VIB</b> · Acc <b>021704060240035</b> · TRAN HOANG SON',
+ b_msg:'Message me: <b>Zalo 0986061705</b>',
  b_live_h:'Live 1-on-1:', b_live_p:'message me your goal and available times — I will quote directly based on what you need. First 20 minutes free to see if we fit.',
  b_email:'Email:',
 }};
@@ -79,13 +79,19 @@ en:[
   li:['Design test cases that find real bugs','Judge severity & priority like a pro','Get started with test automation','Best for: career-switchers into QA']},
 ]};
 window.onLang=function(){
-  document.getElementById('courseCards').innerHTML=COURSES[LANG].map(p=>`
+  const buyTxt = LANG==='vi' ? 'Mua khóa học' : 'Buy course';
+  document.getElementById('courseCards').innerHTML=COURSES[LANG].map(p=>{
+    const id=(p.cta[1].split('c=')[1]||'').trim();
+    return `
    <div class="plan">
      <h3>${p.h}</h3>
      <div class="pr">${p.pr}<small> ${p.prs}</small></div>
      <ul>${p.li.map(x=>'<li>'+x+'</li>').join('')}</ul>
-     <a class="btn" href="${p.cta[1]}">${p.cta[0]}</a>
-   </div>`).join('');
+     <div class="planBtns">
+       <a class="btn ghost" href="course-detail.html?c=${id}">${p.cta[0]}</a>
+       <a class="btn" href="checkout.html?c=${id}">${buyTxt}</a>
+     </div>
+   </div>`;}).join('');
 };
 </script>
 </body>

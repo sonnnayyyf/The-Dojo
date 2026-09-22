@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hồ sơ — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" data-t="pf_eyebrow"></div>
+    <h2 data-t="pf_h2"></h2>
+    <p data-t="pf_p"></p>
+  </div>
+
+  <!-- shown when logged out -->
+  <div class="coCard" id="pfGuest" hidden style="max-width:520px">
+    <p data-t="pf_guest"></p>
+    <button class="btn" id="pfLogin" style="width:100%"></button>
+  </div>
+
+  <!-- the profile form -->
+  <div class="checkout" id="pfMain" hidden>
+    <div class="coCard">
+      <label class="coLabel" data-t="pf_email"></label>
+      <input type="email" id="pfEmail" class="coInput" disabled>
+
+      <label class="coLabel" data-t="pf_name"></label>
+      <input type="text" id="pfName" class="coInput" data-t-ph="pf_name_ph">
+
+      <label class="coLabel" data-t="pf_phone"></label>
+      <input type="tel" id="pfPhone" class="coInput" data-t-ph="pf_phone_ph">
+
+      <label class="coLabel" data-t="pf_year"></label>
+      <input type="text" id="pfYear" class="coInput" inputmode="numeric" data-t-ph="pf_year_ph">
+
+      <label class="coLabel" data-t="pf_exp"></label>
+      <select id="pfExp" class="coSelect"></select>
+
+      <label class="coLabel" data-t="pf_goal"></label>
+      <textarea id="pfGoal" class="coInput" rows="3" data-t-ph="pf_goal_ph"></textarea>
+
+      <button class="btn" id="pfSave" style="width:100%;margin-top:6px"></button>
+      <div class="authErr" id="pfMsg"></div>
+    </div>
+
+    <div class="coCard">
+      <h3 data-t="pf_courses_h"></h3>
+      <div id="pfCourses" class="pfCourses"></div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+      <button class="btn ghost" id="pfLogout" style="width:100%"></button>
+    </div>
+  </div>
+</div></section>
+
+<script src="app.js"></script>
+<script>
+const COURSE_NAMES = {
+  python:{vi:'Python căn bản',en:'Python fundamentals'},
+  web:{vi:'Lập trình Web căn bản',en:'Web Programming Fundamentals'},
+  sql:{vi:'SQL cho công việc dữ liệu',en:'SQL for data work'},
+  qa:{vi:'Kiểm thử phần mềm (QA)',en:'QA / Software testing'},
+};
+const PAGE_I18N = {
+vi:{
+  pf_eyebrow:'Tài khoản', pf_h2:'Hồ sơ của bạn',
+  pf_p:'Thông tin này giúp giáo viên biết bạn là ai và hỗ trợ bạn tốt hơn. Bạn có thể cập nhật bất cứ lúc nào.',
+  pf_guest:'Bạn cần đăng nhập để xem và chỉnh sửa hồ sơ.',
+  pf_login:'Đăng nhập', pf_email:'Email', pf_name:'Họ và tên', pf_name_ph:'VD: Nguyễn Văn A',
+  pf_phone:'Số điện thoại / Zalo', pf_phone_ph:'VD: 0901 234 567',
+  pf_year:'Năm sinh', pf_year_ph:'VD: 2005',
+  pf_exp:'Kinh nghiệm lập trình', pf_goal:'Mục tiêu học tập', pf_goal_ph:'Bạn muốn đạt được điều gì sau khóa học?',
+  pf_save:'Lưu hồ sơ', pf_saved:'Đã lưu hồ sơ ✓', pf_courses_h:'Khóa học của bạn',
+  pf_none:'Bạn chưa sở hữu khóa học nào. Nhập mã mở khóa trong trang khóa học, hoặc mua một khóa.',
+  pf_open:'Vào học →', pf_logout:'Đăng xuất',
+  exp0:'Chưa có kinh nghiệm', exp1:'Biết một chút', exp2:'Đã học ở trường/khóa khác', exp3:'Đang đi làm liên quan',
+},
+en:{
+  pf_eyebrow:'Account', pf_h2:'Your profile',
+  pf_p:'This helps the teacher know who you are and support you better. You can update it anytime.',
+  pf_guest:'You need to log in to view and edit your profile.',
+  pf_login:'Log in', pf_email:'Email', pf_name:'Full name', pf_name_ph:'e.g. Jane Doe',
+  pf_phone:'Phone / Zalo', pf_phone_ph:'e.g. 0901 234 567',
+  pf_year:'Birth year', pf_year_ph:'e.g. 2005',
+  pf_exp:'Programming experience', pf_goal:'Learning goal', pf_goal_ph:'What do you want to achieve with this course?',
+  pf_save:'Save profile', pf_saved:'Profile saved ✓', pf_courses_h:'Your courses',
+  pf_none:'You don\u2019t own any course yet. Enter an unlock code on a course page, or buy one.',
+  pf_open:'Open →', pf_logout:'Log out',
+  exp0:'No experience', exp1:'A little', exp2:'Studied it before', exp3:'Work in a related field',
+}};
+
+function expOptions(){
+  const d = PAGE_I18N[LANG];
+  const sel = document.getElementById('pfExp');
+  const cur = sel.value;
+  sel.innerHTML = ['exp0','exp1','exp2','exp3'].map(k=>`<option value="${k}">${d[k]}</option>`).join('');
+  if (cur) sel.value = cur;
+}
+
+async function renderCourses(){
+  const box = document.getElementById('pfCourses');
+  const d = PAGE_I18N[LANG];
+  const sb = await window.DOJO_CLOUD.getClient();
+  if (!sb){ box.innerHTML=''; return; }
+  const { data } = await sb.from('entitlements').select('course');
+  const owned = (data||[]).map(r=>r.course);
+  if (!owned.length){ box.innerHTML = `<p class="fact">${d.pf_none}</p>`; return; }
+  box.innerHTML = owned.map(c=>{
+    const nm = (COURSE_NAMES[c] && COURSE_NAMES[c][LANG]) || c;
+    return `<div class="pfCourse"><b>${nm}</b><a class="btn ghost" href="${c}.html">${d.pf_open}</a></div>`;
+  }).join('');
+}
+
+function fillForm(){
+  const p = window.DOJO_CLOUD.getProfile() || {};
+  const u = window.DOJO_CLOUD.getUser() || {};
+  document.getElementById('pfEmail').value = (p.email || u.email || '');
+  document.getElementById('pfName').value = p.full_name || '';
+  document.getElementById('pfPhone').value = p.phone || '';
+  document.getElementById('pfYear').value = p.birth_year || '';
+  document.getElementById('pfGoal').value = p.goal || '';
+  if (p.experience) document.getElementById('pfExp').value = p.experience;
+}
+
+function render(){
+  const loggedIn = !!window.DOJO_CLOUD.getUser();
+  document.getElementById('pfGuest').hidden = loggedIn;
+  document.getElementById('pfMain').hidden = !loggedIn;
+  const d = PAGE_I18N[LANG];
+  document.getElementById('pfLogin').textContent = d.pf_login;
+  document.getElementById('pfSave').textContent = d.pf_save;
+  document.getElementById('pfLogout').textContent = d.pf_logout;
+  document.getElementById('pfCourses').closest('.coCard').querySelector('h3').textContent = d.pf_courses_h;
+  expOptions();
+  document.querySelectorAll('[data-t-ph]').forEach(el=>{
+    const k=el.dataset.tPh; if (d[k]!=null) el.placeholder = d[k];
+  });
+  if (loggedIn){ fillForm(); renderCourses(); }
+}
+
+window.onLang = render;
+
+document.getElementById('pfLogin').addEventListener('click', ()=> window.DOJO_CLOUD.openAuth());
+document.getElementById('pfLogout').addEventListener('click', async ()=>{
+  await window.DOJO_CLOUD.signOut();
+  location.href='index.html';
+});
+document.getElementById('pfSave').addEventListener('click', async ()=>{
+  const d = PAGE_I18N[LANG];
+  const msg = document.getElementById('pfMsg');
+  msg.textContent='';
+  try{
+    await window.DOJO_CLOUD.saveProfile({
+      full_name: document.getElementById('pfName').value.trim(),
+      phone: document.getElementById('pfPhone').value.trim(),
+      birth_year: document.getElementById('pfYear').value.trim(),
+      experience: document.getElementById('pfExp').value,
+      goal: document.getElementById('pfGoal').value.trim(),
+    });
+    msg.style.color='var(--jade,#7FD1C0)';
+    msg.textContent = d.pf_saved;
+  }catch(e){ msg.style.color=''; msg.textContent = e.message || 'Error'; }
+});
+
+window.DOJO_CLOUD.onAuthResolved(render);
+</script>
+</body>
+</html>

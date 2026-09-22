@@ -21,20 +21,32 @@
 
   const NAV_I18N = {
     vi: { home: 'Trang chủ', about: 'Giới thiệu', pricing: 'Học phí', courses: 'Khóa học', langBtn: 'EN',
-      login: 'Đăng nhập', logout: 'Đăng xuất', account: 'Tài khoản' },
+      login: 'Đăng nhập', logout: 'Đăng xuất', account: 'Tài khoản', profile: 'Hồ sơ', admin: 'Quản trị' },
     en: { home: 'Home', about: 'About', pricing: 'Pricing', courses: 'Courses', langBtn: 'VI',
-      login: 'Log in', logout: 'Log out', account: 'Account' },
+      login: 'Log in', logout: 'Log out', account: 'Account', profile: 'Profile', admin: 'Admin' },
   };
   const FOOTER_I18N = {
-    vi: 'The Dojo — học thật, làm thật, ngay trong trình duyệt.',
-    en: 'The Dojo — real practice, right in your browser.',
+    vi: {
+      tag: 'Học thật, làm thật, ngay trong trình duyệt.',
+      explore: 'Khám phá', courses: 'Khóa học', pricing: 'Học phí', about: 'Giới thiệu',
+      account: 'Tài khoản', login: 'Đăng nhập / Hồ sơ', buy: 'Mua khóa học',
+      contact: 'Liên hệ', zalo: 'Nhắn Zalo', teach: 'Học kèm 1-1',
+      rights: 'Bảo lưu mọi quyền.',
+    },
+    en: {
+      tag: 'Real practice, right in your browser.',
+      explore: 'Explore', courses: 'Courses', pricing: 'Pricing', about: 'About',
+      account: 'Account', login: 'Log in / Profile', buy: 'Buy a course',
+      contact: 'Contact', zalo: 'Message on Zalo', teach: '1-on-1 tutoring',
+      rights: 'All rights reserved.',
+    },
   };
 
   const PAGE_FILE = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
   function renderNav() {
     const t = NAV_I18N[LANG];
-    const coursePages = ['courses.html', 'python.html', 'qa.html', 'sql.html'];
+    const coursePages = ['courses.html', 'course-detail.html', 'python.html', 'qa.html', 'sql.html', 'web.html'];
     const links = [
       ['index.html', t.home], ['courses.html', t.courses], ['pricing.html', t.pricing], ['about.html', t.about],
     ];
@@ -59,11 +71,37 @@
     });
     document.getElementById('acctBtn').addEventListener('click', onAccountClick);
     updateAccountUI();
+    updateAdminUI();
   }
 
   function renderFooter() {
+    const f = FOOTER_I18N[LANG];
+    const zalo = (SENSEI && SENSEI.zalo) || '';
+    const year = new Date().getFullYear();
     document.body.insertAdjacentHTML('beforeend',
-      `<footer><div class="wrap">${FOOTER_I18N[LANG]}</div></footer>`);
+      `<footer><div class="wrap footGrid">
+        <div class="footBrand">
+          <a class="logo" href="index.html">The <span>Dojo</span></a>
+          <p>${f.tag}</p>
+        </div>
+        <div class="footCol">
+          <h4>${f.explore}</h4>
+          <a href="courses.html">${f.courses}</a>
+          <a href="pricing.html">${f.pricing}</a>
+          <a href="about.html">${f.about}</a>
+        </div>
+        <div class="footCol">
+          <h4>${f.account}</h4>
+          <a href="profile.html">${f.login}</a>
+          <a href="checkout.html">${f.buy}</a>
+        </div>
+        <div class="footCol">
+          <h4>${f.contact}</h4>
+          <a href="https://zalo.me/${zalo}" target="_blank" rel="noopener">${f.zalo}</a>
+          <a href="pricing.html">${f.teach}</a>
+        </div>
+      </div>
+      <div class="wrap footBottom">© ${year} The Dojo. ${f.rights}</div></footer>`);
   }
 
   function applyI18n() {
@@ -82,7 +120,9 @@
   }
 
   // ---------- accounts + cloud progress (Supabase) ----------
-  const Cloud = { client: null, user: null, ready: false };
+  const Cloud = { client: null, user: null, profile: null, isAdmin: false, ready: false };
+  const authResolvedCbs = [];
+  function fireAuthResolved() { authResolvedCbs.forEach((cb) => { try { cb(); } catch (e) {} }); }
 
   async function getSupabase() {
     if (Cloud.client) return Cloud.client;
@@ -96,16 +136,69 @@
     } catch { return null; }
   }
 
+  async function loadProfile() {
+    const sb = await getSupabase();
+    if (!sb || !Cloud.user) { Cloud.profile = null; window.DOJO_PROFILE = null; return null; }
+    try {
+      const { data } = await sb.from('profiles').select('*').eq('user_id', Cloud.user.id).maybeSingle();
+      Cloud.profile = data || null;
+    } catch { Cloud.profile = null; }
+    window.DOJO_PROFILE = Cloud.profile;
+    return Cloud.profile;
+  }
+
+  async function checkAdmin() {
+    const sb = await getSupabase();
+    if (!sb || !Cloud.user) return false;
+    try { const { data } = await sb.rpc('is_admin'); return !!data; } catch { return false; }
+  }
+
+  async function saveProfile(fields) {
+    const sb = await getSupabase();
+    if (!sb || !Cloud.user) throw new Error('not_logged_in');
+    const row = Object.assign(
+      { user_id: Cloud.user.id, email: Cloud.user.email, updated_at: new Date().toISOString() },
+      fields,
+    );
+    const { error } = await sb.from('profiles').upsert(row);
+    if (error) throw error;
+    await loadProfile();
+    return Cloud.profile;
+  }
+
+  async function refreshAccountState() {
+    if (Cloud.user) {
+      await loadProfile();
+      Cloud.isAdmin = await checkAdmin();
+    } else {
+      Cloud.profile = null; Cloud.isAdmin = false; window.DOJO_PROFILE = null;
+    }
+    updateAccountUI();
+    updateAdminUI();
+    maybePromptProfile();
+  }
+
+  function maybePromptProfile() {
+    if (!Cloud.user) return;
+    const incomplete = !Cloud.profile || !Cloud.profile.full_name;
+    if (incomplete && PAGE_FILE !== 'profile.html' && sessionStorage.getItem('dojoJustSignedUp') === '1') {
+      sessionStorage.removeItem('dojoJustSignedUp');
+      location.href = 'profile.html';
+    }
+  }
+
   async function initAuth() {
     const sb = await getSupabase();
-    if (!sb) return;
+    if (!sb) { Cloud.ready = true; fireAuthResolved(); return; }
     const { data } = await sb.auth.getSession();
     Cloud.user = data?.session?.user || null;
+    await refreshAccountState();
     Cloud.ready = true;
-    updateAccountUI();
-    sb.auth.onAuthStateChange((_evt, session) => {
+    fireAuthResolved();
+    sb.auth.onAuthStateChange(async (_evt, session) => {
       Cloud.user = session?.user || null;
-      updateAccountUI();
+      await refreshAccountState();
+      fireAuthResolved();
       if (typeof window.__dojoOnAuth === 'function') window.__dojoOnAuth();
     });
     if (typeof window.__dojoOnAuth === 'function') window.__dojoOnAuth();
@@ -116,8 +209,8 @@
     if (!btn) return;
     const t = NAV_I18N[LANG];
     if (Cloud.user) {
-      const email = Cloud.user.email || t.account;
-      btn.textContent = email.length > 18 ? email.slice(0, 16) + '…' : email;
+      const name = (Cloud.profile && Cloud.profile.full_name) || Cloud.user.email || t.account;
+      btn.textContent = name.length > 18 ? name.slice(0, 16) + '…' : name;
       btn.classList.add('signedin');
     } else {
       btn.textContent = t.login;
@@ -125,12 +218,27 @@
     }
   }
 
+  function updateAdminUI() {
+    const links = document.querySelector('nav .links');
+    if (!links) return;
+    let link = document.getElementById('adminLink');
+    if (Cloud.isAdmin) {
+      if (!link) {
+        link = document.createElement('a');
+        link.id = 'adminLink';
+        link.href = 'admin.html';
+        links.insertBefore(link, document.getElementById('langToggle'));
+      }
+      link.textContent = NAV_I18N[LANG].admin;
+      link.className = PAGE_FILE === 'admin.html' ? 'here' : '';
+    } else if (link) {
+      link.remove();
+    }
+  }
+
   function onAccountClick() {
     if (Cloud.user) {
-      const t = NAV_I18N[LANG];
-      if (confirm(`${Cloud.user.email}\n\n${t.logout}?`)) {
-        getSupabase().then((sb) => sb && sb.auth.signOut());
-      }
+      location.href = 'profile.html';
     } else {
       openAuthModal();
     }
@@ -165,6 +273,7 @@
     wrap.querySelector('#googleBtn').addEventListener('click', async () => {
       const sb = await getSupabase();
       if (!sb) { setErr('Cannot reach server.'); return; }
+      sessionStorage.setItem('dojoJustSignedUp', '1');
       await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href } });
     });
     wrap.querySelector('#authToggle').addEventListener('click', () => {
@@ -193,6 +302,7 @@
         setErr(vi ? 'Đã gửi email xác nhận — kiểm tra hộp thư.' : 'Confirmation email sent — check your inbox.');
         return;
       }
+      if (mode === 'signup') sessionStorage.setItem('dojoJustSignedUp', '1');
       close();
     });
   }
@@ -224,6 +334,20 @@
     if (!sb || !Cloud.user) return;
     await sb.from('progress').upsert({ user_id: Cloud.user.id, course, data: dataObj, updated_at: new Date().toISOString() });
   }
+
+  // ---------- API for standalone pages (profile.html, admin.html) ----------
+  window.DOJO_CLOUD = {
+    getUser: () => Cloud.user,
+    getProfile: () => Cloud.profile,
+    isAdmin: () => !!Cloud.isAdmin,
+    isReady: () => Cloud.ready,
+    getClient: getSupabase,
+    loadProfile,
+    saveProfile,
+    signOut: async () => { const sb = await getSupabase(); if (sb) await sb.auth.signOut(); },
+    openAuth: () => openAuthModal(),
+    onAuthResolved: (cb) => { authResolvedCbs.push(cb); if (Cloud.ready) cb(); },
+  };
 
   // ---------- base64 / crypto helpers ----------
   function b64ToBytes(b64) {

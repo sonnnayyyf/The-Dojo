@@ -14,7 +14,7 @@
   <h1 data-t-html="hero_h1"></h1>
   <p data-t="hero_p"></p>
   <div class="cta">
-    <a class="btn" href="course.html?c=python" data-t="hero_cta1"></a>
+    <a class="btn" href="courses.html" data-t="hero_cta1"></a>
     <a class="btn ghost" href="pricing.html" data-t="hero_cta2"></a>
   </div>
   <div class="proof">
@@ -83,7 +83,7 @@
   <h2 data-t="cta_h2" style="font-family:var(--disp);font-size:27px"></h2>
   <p data-t="cta_p" style="color:var(--muted);max-width:580px;margin:12px auto 24px"></p>
   <div class="cta" style="justify-content:center">
-    <a class="btn" href="course.html?c=python" data-t="cta_btn1"></a>
+    <a class="btn" href="courses.html" data-t="cta_btn1"></a>
     <a class="btn ghost" href="pricing.html" data-t="cta_btn2"></a>
   </div>
 </div></section>
@@ -216,7 +216,7 @@ window.onLang=function(){
      <p>${d['c_'+c.id+'_d']}</p>
      <ul class="outcome">${outcomes}</ul>
      <div class="meta">${d.c_free}</div>
-     <a class="btn ghost" href="course.html?c=${c.id}">${d.c_go}</a>
+     <a class="btn ghost" href="course-detail.html?c=${c.id}">${d.c_go}</a>
    </div>`;
   }).join('');
 };

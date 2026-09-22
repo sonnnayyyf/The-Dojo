@@ -87,5 +87,77 @@ grant execute on function public.redeem_code(text) to authenticated;
 -- select id from auth.users where email = 'student@example.com';
 -- insert into public.entitlements(user_id, course) values ('<that-uuid>', 'python') on conflict do nothing;
 
+-- ── PROFILES: student info collected after sign-up (proof of sale + who the student is) ───
+create table if not exists public.profiles (
+  user_id    uuid        primary key references auth.users(id) on delete cascade,
+  email      text,
+  full_name  text,
+  phone      text,
+  birth_year text,
+  goal       text,
+  experience text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.profiles enable row level security;
+
+-- ── ADMINS: user_ids that may read every student's data (edit only here in the SQL editor) ─
+create table if not exists public.admins (
+  user_id uuid primary key references auth.users(id) on delete cascade
+);
+-- RLS on: no client can read/write this table; only the SQL editor (owner) can.
+alter table public.admins enable row level security;
+
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (select 1 from public.admins where user_id = auth.uid());
+$$;
+grant execute on function public.is_admin() to authenticated;
+
+-- profiles: a user reads/writes their own row; an admin may read all
+drop policy if exists "profiles_select_own" on public.profiles;
+drop policy if exists "profiles_upsert_own" on public.profiles;
+drop policy if exists "profiles_update_own" on public.profiles;
+create policy "profiles_select_own" on public.profiles for select
+  using (auth.uid() = user_id or public.is_admin());
+create policy "profiles_upsert_own" on public.profiles for insert
+  with check (auth.uid() = user_id);
+create policy "profiles_update_own" on public.profiles for update
+  using (auth.uid() = user_id);
+
+-- let admins also read everyone's entitlements and progress (for the admin dashboard)
+drop policy if exists "entitlements_select_admin" on public.entitlements;
+create policy "entitlements_select_admin" on public.entitlements for select using (public.is_admin());
+drop policy if exists "progress_select_admin" on public.progress;
+create policy "progress_select_admin" on public.progress for select using (public.is_admin());
+
+-- auto-create an empty profile row on sign-up (so admins see every signup immediately)
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles(user_id, email)
+    values (new.id, new.email)
+    on conflict (user_id) do nothing;
+  return new;
+end;
+$$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+-- ── MAKE YOURSELF AN ADMIN (run once, after you have signed up with your own account) ─────
+-- select id, email from auth.users where email = 'YOUR-LOGIN-EMAIL';
+-- insert into public.admins(user_id) values ('<your-uuid-from-above>') on conflict do nothing;
+
 -- ── ADD A CODE (you run this to create a code for a student who paid) ─────────────────────
 -- insert into public.codes(code, course, label) values ('K7XQ-9F3M-4WYT', 'python', 'Nguyen Van A');
