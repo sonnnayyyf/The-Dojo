@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiến độ — The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<section><div class="wrap">
+  <div class="shead">
+    <div class="eyebrow" id="prEyebrow"></div>
+    <h2 id="prTitle"></h2>
+  </div>
+  <div id="prWrap"></div>
+</div></section>
+
+<script>window.DOJO_REQUIRE_AUTH = true;</script>
+<script src="app.js"></script>
+<script>
+const COURSE_NAMES = {
+  python:{vi:'Python căn bản',en:'Python fundamentals'},
+  web:{vi:'Lập trình Web căn bản',en:'Web Programming Fundamentals'},
+  sql:{vi:'SQL cho công việc dữ liệu',en:'SQL for data work'},
+  qa:{vi:'Kiểm thử phần mềm (QA)',en:'QA / Software testing'},
+};
+const T = {
+vi:{ eyebrow:'Tiến độ học tập', title:'Tiến độ', mine:'Tiến độ của tôi',
+  denied:'Trang này chỉ dành cho quản trị viên.',
+  none:'Chưa có tiến độ nào được ghi nhận.',
+  ofAttempted:'trên các bài đã mở', exercises:'bài tập', lesson:'Bài', done:'Hoàn thành',
+  exercise:'Câu', answers:'Bài làm đã lưu', view_answers:'Xem bài làm',
+  updated:'Cập nhật', back:'← Về bảng quản trị', note:'Ghi chú: hệ thống lưu bài làm và số bài tập đã đạt cho mỗi bài.' },
+en:{ eyebrow:'Learning progress', title:'Progress', mine:'My progress',
+  denied:'This page is for administrators only.',
+  none:'No progress recorded yet.',
+  ofAttempted:'of attempted lessons', exercises:'exercises', lesson:'Lesson', done:'Done',
+  exercise:'Exercise', answers:'Saved work', view_answers:'View saved work',
+  updated:'Updated', back:'← Back to admin', note:'Note: the system saves the student’s typed work and how many exercises passed per lesson.' }
+};
+const PARAM_U = new URLSearchParams(location.search).get('u');
+function L(){ return T[LANG]; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+let DATA = null; // { name, rows:[{course,data,updated_at}], denied }
+
+async function load(){
+  const cloud = window.DOJO_CLOUD;
+  if (!cloud.getUser()) { DATA = null; return; }
+  const self = cloud.getUser().id;
+  const target = PARAM_U || self;
+  const isAdmin = cloud.isAdmin();
+  if (target !== self && !isAdmin) { DATA = { denied:true }; return; }
+  const sb = await cloud.getClient();
+  let name = '';
+  if (target === self) name = (cloud.getProfile() && cloud.getProfile().full_name) || cloud.getUser().email || '';
+  else { const { data } = await sb.from('profiles').select('full_name,email').eq('user_id', target).maybeSingle(); name = (data && (data.full_name||data.email)) || target; }
+  const { data: rows } = await sb.from('progress').select('course, data, updated_at').eq('user_id', target);
+  DATA = { name, rows: rows||[], target, isSelf: target===self };
+}
+
+function courseCard(row){
+  const d = L();
+  const nm = (COURSE_NAMES[row.course] && COURSE_NAMES[row.course][LANG]) || row.course;
+  const data = row.data || {};
+  const lessons = Object.keys(data).map(Number).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+  let passedEx = 0, totalEx = 0;
+  const lis = lessons.map(n=>{
+    const e = data[n] || {}; const p = Array.isArray(e.passed)?e.passed.length:0; const t = e.total||0;
+    passedEx += p; totalEx += t;
+    const isDone = t>0 && p>=t;
+    return `<tr class="${isDone?'prDone':''}">
+      <td>${d.lesson} ${n}</td>
+      <td>${p} / ${t||'?'}</td>
+      <td>${isDone?('✓ '+d.done):''}</td></tr>`;
+  }).join('');
+  const pct = totalEx>0 ? Math.round(passedEx/totalEx*100) : 0;
+  const upd = row.updated_at ? new Date(row.updated_at).toLocaleString() : '';
+  const answers = answersHtml(data, lessons);
+  return `<div class="pfCardBig prCard">
+    <div class="prHead"><h3>${esc(nm)}</h3><span class="fact">${d.updated}: ${esc(upd)}</span></div>
+    <div class="prBar"><span style="width:${pct}%"></span></div>
+    <div class="prSummary"><b>${passedEx} / ${totalEx}</b> ${d.exercises} · <b>${pct}%</b> <span class="fact">${d.ofAttempted}</span></div>
+    <table class="res prTable"><tr><th>${d.lesson}</th><th>${d.exercises}</th><th></th></tr>${lis}</table>
+    ${answers}
+  </div>`;
+}
+
+function answersHtml(data, lessons){
+  const d = L();
+  const blocks = lessons.map(n=>{
+    const e = data[n] || {}; const ans = e.answers || {};
+    const keys = Object.keys(ans).sort((a,b)=>Number(a)-Number(b));
+    if (!keys.length) return '';
+    return keys.map(k=>{
+      let val = ans[k];
+      try { const o = JSON.parse(val); if (o && typeof o==='object' && (o.html!=null||o.css!=null||o.js!=null)) {
+        val = Object.entries(o).map(([kk,vv])=>`/* ${kk} */\n${vv}`).join('\n\n');
+      } } catch(_){}
+      return `<div class="prAns"><div class="prAnsLbl">${d.lesson} ${n} · ${d.exercise} ${Number(k)+1}</div><pre><code>${esc(val)}</code></pre></div>`;
+    }).join('');
+  }).join('');
+  if (!blocks) return '';
+  return `<details class="prAnswers"><summary>${d.view_answers}</summary>${blocks}</details>`;
+}
+
+function render(){
+  const d = L();
+  document.getElementById('prEyebrow').textContent = d.eyebrow;
+  const wrap = document.getElementById('prWrap');
+  if (!window.DOJO_CLOUD.getUser()) { document.getElementById('prTitle').textContent=d.title; wrap.innerHTML=''; return; }
+  if (!DATA) { document.getElementById('prTitle').textContent=d.title; wrap.innerHTML=''; return; }
+  if (DATA.denied) { document.getElementById('prTitle').textContent=d.title; wrap.innerHTML=`<div class="coCard" style="max-width:520px"><p>${d.denied}</p></div>`; return; }
+  document.getElementById('prTitle').textContent = DATA.isSelf ? d.mine : DATA.name;
+  const body = DATA.rows.length
+    ? DATA.rows.map(courseCard).join('')
+    : `<div class="coCard" style="max-width:520px"><p class="fact">${d.none}</p></div>`;
+  const back = window.DOJO_CLOUD.isAdmin() ? `<p style="margin-top:18px"><a class="cardlink" href="admin.html">${d.back}</a></p>` : '';
+  wrap.innerHTML = body + `<p class="fact" style="margin-top:18px">${d.note}</p>` + back;
+}
+
+window.onLang = render;
+window.DOJO_CLOUD.onAuthResolved(async ()=>{ await load(); render(); });
+</script>
+</body>
+</html>

@@ -21,9 +21,11 @@
 
   const NAV_I18N = {
     vi: { home: 'Trang chủ', about: 'Giới thiệu', pricing: 'Học phí', courses: 'Khóa học', langBtn: 'EN',
-      login: 'Đăng nhập', logout: 'Đăng xuất', account: 'Tài khoản', profile: 'Hồ sơ', admin: 'Quản trị' },
+      login: 'Đăng nhập', logout: 'Đăng xuất', account: 'Tài khoản', profile: 'Hồ sơ', admin: 'Quản trị',
+      viewProfile: 'Hồ sơ của tôi' },
     en: { home: 'Home', about: 'About', pricing: 'Pricing', courses: 'Courses', langBtn: 'VI',
-      login: 'Log in', logout: 'Log out', account: 'Account', profile: 'Profile', admin: 'Admin' },
+      login: 'Log in', logout: 'Log out', account: 'Account', profile: 'Profile', admin: 'Admin',
+      viewProfile: 'My profile' },
   };
   const FOOTER_I18N = {
     vi: {
@@ -154,17 +156,24 @@
     try { const { data } = await sb.rpc('is_admin'); return !!data; } catch { return false; }
   }
 
-  async function saveProfile(fields) {
+  async function saveProfile(fields, userId) {
     const sb = await getSupabase();
     if (!sb || !Cloud.user) throw new Error('not_logged_in');
-    const row = Object.assign(
-      { user_id: Cloud.user.id, email: Cloud.user.email, updated_at: new Date().toISOString() },
-      fields,
-    );
-    const { error } = await sb.from('profiles').upsert(row);
+    const target = userId || Cloud.user.id;
+    const isSelf = target === Cloud.user.id;
+    const row = Object.assign({ updated_at: new Date().toISOString() }, fields);
+    let error;
+    if (isSelf) {
+      row.user_id = target;
+      row.email = Cloud.user.email;
+      ({ error } = await sb.from('profiles').upsert(row));
+    } else {
+      // admin editing another student's row (already exists from the signup trigger)
+      ({ error } = await sb.from('profiles').update(row).eq('user_id', target));
+    }
     if (error) throw error;
-    await loadProfile();
-    return Cloud.profile;
+    if (isSelf) await loadProfile();
+    return isSelf ? Cloud.profile : null;
   }
 
   async function refreshAccountState() {
@@ -177,6 +186,7 @@
     updateAccountUI();
     updateAdminUI();
     maybePromptProfile();
+    enforceAuthGate();
   }
 
   function profileComplete() {
@@ -208,44 +218,93 @@
     if (typeof window.__dojoOnAuth === 'function') window.__dojoOnAuth();
   }
 
+  function acctInitials() {
+    const p = Cloud.profile, u = Cloud.user;
+    const name = (p && p.full_name) || (u && u.email) || '';
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    const ini = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : (name[0] || '?');
+    return ini.toUpperCase();
+  }
+
   function updateAccountUI() {
     const btn = document.getElementById('acctBtn');
     if (!btn) return;
     const t = NAV_I18N[LANG];
+    closeAcctMenu();
     if (Cloud.user) {
-      const name = (Cloud.profile && Cloud.profile.full_name) || Cloud.user.email || t.account;
-      btn.textContent = name.length > 18 ? name.slice(0, 16) + '…' : name;
-      btn.classList.add('signedin');
+      btn.classList.add('signedin', 'avatarBtn');
+      const url = Cloud.profile && Cloud.profile.avatar_url;
+      if (url) { btn.style.backgroundImage = `url("${url}")`; btn.textContent = ''; btn.classList.add('hasImg'); }
+      else { btn.style.backgroundImage = ''; btn.textContent = acctInitials(); btn.classList.remove('hasImg'); }
+      btn.title = (Cloud.profile && Cloud.profile.full_name) || Cloud.user.email || '';
     } else {
+      btn.classList.remove('signedin', 'avatarBtn', 'hasImg');
+      btn.style.backgroundImage = '';
       btn.textContent = t.login;
-      btn.classList.remove('signedin');
+      btn.title = '';
     }
   }
 
+  // keep legacy call sites happy: the admin link now lives in the account dropdown
   function updateAdminUI() {
+    const link = document.getElementById('adminLink');
+    if (link) link.remove();
+  }
+
+  function closeAcctMenu() {
+    const m = document.getElementById('acctMenu');
+    if (m) m.remove();
+    document.removeEventListener('click', onDocClickAcct, true);
+  }
+  function onDocClickAcct(e) {
+    const m = document.getElementById('acctMenu');
+    const btn = document.getElementById('acctBtn');
+    if (m && !m.contains(e.target) && e.target !== btn) closeAcctMenu();
+  }
+  function toggleAcctMenu() {
+    if (document.getElementById('acctMenu')) { closeAcctMenu(); return; }
     const links = document.querySelector('nav .links');
     if (!links) return;
-    let link = document.getElementById('adminLink');
-    if (Cloud.isAdmin) {
-      if (!link) {
-        link = document.createElement('a');
-        link.id = 'adminLink';
-        link.href = 'admin.html';
-        links.insertBefore(link, document.getElementById('langToggle'));
-      }
-      link.textContent = NAV_I18N[LANG].admin;
-      link.className = PAGE_FILE === 'admin.html' ? 'here' : '';
-    } else if (link) {
-      link.remove();
-    }
+    const t = NAV_I18N[LANG];
+    const items = [['profile.html', t.viewProfile]];
+    if (Cloud.isAdmin) items.push(['admin.html', t.admin]);
+    const menu = document.createElement('div');
+    menu.id = 'acctMenu';
+    menu.className = 'acctMenu';
+    menu.innerHTML = items.map(([h, l]) => `<a href="${h}">${l}</a>`).join('') +
+      `<button type="button" id="acctLogout">${t.logout}</button>`;
+    links.appendChild(menu);
+    menu.querySelector('#acctLogout').addEventListener('click', async () => {
+      closeAcctMenu();
+      const sb = await getSupabase();
+      if (sb) await sb.auth.signOut();
+      location.href = 'index.html';
+    });
+    setTimeout(() => document.addEventListener('click', onDocClickAcct, true), 0);
   }
 
   function onAccountClick() {
-    if (Cloud.user) {
-      location.href = 'profile.html';
-    } else {
-      openAuthModal();
-    }
+    if (Cloud.user) toggleAcctMenu();
+    else openAuthModal();
+  }
+
+  // ---- auth gate for protected pages (page sets window.DOJO_REQUIRE_AUTH = true) ----
+  function enforceAuthGate() {
+    if (!window.DOJO_REQUIRE_AUTH) return;
+    if (Cloud.user) { const g = document.getElementById('authGate'); if (g) g.remove(); return; }
+    if (document.getElementById('authGate')) return;
+    const vi = LANG === 'vi';
+    const g = document.createElement('div');
+    g.id = 'authGate';
+    g.className = 'authGate';
+    g.innerHTML = `<div class="authGateCard">
+      <h3>${vi ? 'Cần đăng nhập' : 'Login required'}</h3>
+      <p>${vi ? 'Vui lòng đăng nhập để tiếp tục.' : 'Please log in to continue.'}</p>
+      <button class="btn" id="authGateBtn">${vi ? 'Đăng nhập' : 'Log in'}</button>
+      <a class="authGateHome" href="index.html">${vi ? 'Về trang chủ' : 'Back to home'}</a>
+    </div>`;
+    document.body.appendChild(g);
+    g.querySelector('#authGateBtn').addEventListener('click', () => openAuthModal());
   }
 
   function openAuthModal() {
@@ -460,6 +519,18 @@
     total(c, lesson) { const e = this.load(c)[lesson]; return e ? e.total : 0; },
     lessonDone(c, lesson) { const e = this.load(c)[lesson]; return !!(e && e.total > 0 && e.passed.length >= e.total); },
     completedLessons(c, n) { let done = 0; for (let i = 1; i <= n; i++) if (this.lessonDone(c, i)) done++; return done; },
+    // saved code the student typed, per exercise (like an autosaving doc)
+    saveAnswer(c, lesson, ex, val) {
+      const d = this.load(c); const e = this.entry(d, lesson);
+      (e.answers || (e.answers = {}))[ex] = val; this.save(c, d);
+    },
+    getAnswer(c, lesson, ex) { const e = this.load(c)[lesson]; return e && e.answers ? e.answers[ex] : undefined; },
+    // saved code in ungraded "try it" example blocks, per lesson
+    saveExample(c, lesson, i, val) {
+      const d = this.load(c); const e = this.entry(d, lesson);
+      (e.examples || (e.examples = {}))[i] = val; this.save(c, d);
+    },
+    getExample(c, lesson, i) { const e = this.load(c)[lesson]; return e && e.examples ? e.examples[i] : undefined; },
     // Union incoming (cloud) progress into local so nothing already passed is lost.
     merge(c, incoming) {
       if (!incoming || typeof incoming !== 'object') return;
@@ -468,11 +539,22 @@
         const cur = this.entry(d, lesson);
         cur.total = Math.max(cur.total || 0, e.total || 0);
         for (const ex of (e.passed || [])) if (!cur.passed.includes(ex)) cur.passed.push(ex);
+        if (e.answers) cur.answers = Object.assign({}, e.answers, cur.answers || {});
+        if (e.examples) cur.examples = Object.assign({}, e.examples, cur.examples || {});
       }
       this.save(c, d);
     },
   };
   let progressChangedHook = null;
+
+  // debounced cloud sync so autosaving code while typing doesn't spam the network
+  function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+  const cloudSaveTimers = {};
+  function queueCloudSave(courseId) {
+    if (!Cloud.user) return;
+    clearTimeout(cloudSaveTimers[courseId]);
+    cloudSaveTimers[courseId] = setTimeout(() => cloudSaveProgress(courseId, Progress.load(courseId)), 1200);
+  }
 
   function initCoursePage() {
     const course = COURSE;
@@ -673,7 +755,7 @@
 
   // ---------- exercises ----------
   function wireExercises(root, ctx) {
-    makeExamplesRunnable(root);
+    makeExamplesRunnable(root, ctx);
     const exs = [...root.querySelectorAll('.ex')];
     Progress.setTotal(ctx.courseId, ctx.lessonNum, exs.length);
     exs.forEach((ex, idx) => {
@@ -737,10 +819,11 @@
     return cmPromise;
   }
   // Returns a stable {get,set} API; upgrades the textarea to CodeMirror once it loads.
-  function attachEditor(textarea, mode) {
+  function attachEditor(textarea, mode, onChange) {
     const api = { get: () => textarea.value, set: (v) => { textarea.value = v; } };
     const isPy = mode === 'python';
     if (isPy) getPyodide(); // warm up so the live syntax linter can run
+    if (onChange) textarea.addEventListener('input', onChange);
     getCM().then((CM) => {
       const opts = {
         mode, theme: 'material-darker', lineNumbers: true, indentUnit: 4, tabSize: 4,
@@ -753,14 +836,15 @@
       const ed = CM.fromTextArea(textarea, opts);
       api.get = () => ed.getValue();
       api.set = (v) => ed.setValue(v);
+      if (onChange) ed.on('change', () => onChange());
       if (isPy) pyEditors.push(ed);
     }).catch(() => { /* keep textarea fallback */ });
     return api;
   }
 
   // Turns <pre class="run"> demo blocks into editable, runnable (ungraded) examples.
-  function makeExamplesRunnable(root) {
-    root.querySelectorAll('pre.run').forEach((pre) => {
+  function makeExamplesRunnable(root, ctx) {
+    [...root.querySelectorAll('pre.run')].forEach((pre, exampleIdx) => {
       const u = UI[LANG];
       const codeText = pre.textContent.replace(/\n$/, '');
       const wrap = document.createElement('div');
@@ -768,9 +852,11 @@
       wrap.innerHTML = `<textarea class="code"></textarea>
         <div class="exrun"><button type="button" class="btn ghost run">▶ ${u.tryExample}</button></div>
         <div class="out"></div>`;
-      wrap.querySelector('textarea').value = codeText;
+      const saved = ctx && Progress.getExample(ctx.courseId, ctx.lessonNum, exampleIdx);
+      wrap.querySelector('textarea').value = saved != null ? saved : codeText;
       pre.replaceWith(wrap);
-      const code = attachEditor(wrap.querySelector('textarea'), 'python');
+      const onChange = ctx ? debounce(() => { Progress.saveExample(ctx.courseId, ctx.lessonNum, exampleIdx, code.get()); queueCloudSave(ctx.courseId); }, 500) : undefined;
+      const code = attachEditor(wrap.querySelector('textarea'), 'python', onChange);
       const out = wrap.querySelector('.out');
       wrap.querySelector('.run').addEventListener('click', async (e) => {
         const btn = e.currentTarget;
@@ -1010,7 +1096,10 @@ def _dojo_lint(src):
     ex.appendChild(wrap);
 
     const textarea = wrap.querySelector('textarea');
-    const code = attachEditor(textarea, 'python');
+    const savedAns = Progress.getAnswer(ctx.courseId, ctx.lessonNum, exIndex);
+    if (savedAns != null) textarea.value = savedAns;
+    const onChange = debounce(() => { Progress.saveAnswer(ctx.courseId, ctx.lessonNum, exIndex, code.get()); queueCloudSave(ctx.courseId); }, 500);
+    const code = attachEditor(textarea, 'python', onChange);
     const out = wrap.querySelector('.out');
     const runBtn = wrap.querySelector('.run');
     const resetBtn = wrap.querySelector('.reset');
@@ -1177,7 +1266,10 @@ def _dojo_lint(src):
     ex.appendChild(wrap);
 
     const textarea = wrap.querySelector('textarea');
-    const code = attachEditor(textarea, 'text/x-sql');
+    const savedAns = Progress.getAnswer(ctx.courseId, ctx.lessonNum, exIndex);
+    if (savedAns != null) textarea.value = savedAns;
+    const onChange = debounce(() => { Progress.saveAnswer(ctx.courseId, ctx.lessonNum, exIndex, code.get()); queueCloudSave(ctx.courseId); }, 500);
+    const code = attachEditor(textarea, 'text/x-sql', onChange);
     const out = wrap.querySelector('.out');
     addSenseiButton(wrap.querySelector('.exrun'), ctx, exLabelOf(ex, exIndex), code);
 
@@ -1333,15 +1425,34 @@ ${testCode}
     const out = wrap.querySelector('.out');
     const textareas = [...wrap.querySelectorAll('textarea.code')];
 
+    // restore any autosaved code the student typed before
+    const savedRaw = Progress.getAnswer(ctx.courseId, ctx.lessonNum, exIndex);
+    let savedParts = null, savedSingle = null;
+    if (multi) { try { savedParts = savedRaw != null ? JSON.parse(savedRaw) : null; } catch { savedParts = null; } }
+    else { savedSingle = savedRaw != null ? savedRaw : null; }
+    let saveAll;
+    const onChange = debounce(() => { if (saveAll) saveAll(); }, 500);
+
     let editors; // [{ key, get/set, initial }] for multi, or single { get/set, initial }
     if (multi) {
       editors = fileDefs.map((f, i) => {
-        const initial = textareas[i].value;
-        return { key: f.key, api: attachEditor(textareas[i], f.mode), initial };
+        const initial = textareas[i].value; // template default (used by Reset)
+        if (savedParts && savedParts[f.key] != null) textareas[i].value = savedParts[f.key];
+        return { key: f.key, api: attachEditor(textareas[i], f.mode, onChange), initial };
       });
+      saveAll = () => {
+        const parts = Object.fromEntries(editors.map((e) => [e.key, e.api.get()]));
+        Progress.saveAnswer(ctx.courseId, ctx.lessonNum, exIndex, JSON.stringify(parts));
+        queueCloudSave(ctx.courseId);
+      };
     } else {
       const initial = textareas[0].value;
-      editors = { api: attachEditor(textareas[0], 'htmlmixed'), initial };
+      if (savedSingle != null) textareas[0].value = savedSingle;
+      editors = { api: attachEditor(textareas[0], 'htmlmixed', onChange), initial };
+      saveAll = () => {
+        Progress.saveAnswer(ctx.courseId, ctx.lessonNum, exIndex, editors.api.get());
+        queueCloudSave(ctx.courseId);
+      };
     }
 
     // Combined source (for Ask sensei and single-file preview).

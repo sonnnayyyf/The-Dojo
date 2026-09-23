@@ -159,5 +159,40 @@ create trigger on_auth_user_created
 -- select id, email from auth.users where email = 'YOUR-LOGIN-EMAIL';
 -- insert into public.admins(user_id) values ('<your-uuid-from-above>') on conflict do nothing;
 
+-- ── PROFILE AVATARS + PUBLIC PROFILE VIEW (added later — re-run this section) ──────────────
+alter table public.profiles add column if not exists avatar_url text;
+
+-- admins may also UPDATE any profile (edit a student's info from the dashboard)
+drop policy if exists "profiles_update_admin" on public.profiles;
+create policy "profiles_update_admin" on public.profiles for update using (public.is_admin());
+
+-- read ONLY the non-sensitive fields of any profile (public profile pages; no email/phone)
+create or replace function public.get_profile_public(p_user uuid)
+returns table (user_id uuid, full_name text, avatar_url text, birth_year text, experience text, goal text)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select user_id, full_name, avatar_url, birth_year, experience, goal
+  from public.profiles where user_id = p_user;
+$$;
+grant execute on function public.get_profile_public(uuid) to authenticated;
+
+-- avatars storage bucket (public read); each user manages only their own folder (<uid>/…)
+insert into storage.buckets (id, name, public) values ('avatars', 'avatars', true)
+  on conflict (id) do nothing;
+drop policy if exists "avatars_read"       on storage.objects;
+drop policy if exists "avatars_write_own"  on storage.objects;
+drop policy if exists "avatars_update_own" on storage.objects;
+drop policy if exists "avatars_delete_own" on storage.objects;
+create policy "avatars_read" on storage.objects for select using (bucket_id = 'avatars');
+create policy "avatars_write_own" on storage.objects for insert
+  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "avatars_update_own" on storage.objects for update
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "avatars_delete_own" on storage.objects for delete
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
 -- ── ADD A CODE (you run this to create a code for a student who paid) ─────────────────────
 -- insert into public.codes(code, course, label) values ('K7XQ-9F3M-4WYT', 'python', 'Nguyen Van A');

@@ -11,54 +11,10 @@
 <body>
 
 <section><div class="wrap">
-  <div class="shead">
-    <div class="eyebrow" data-t="pf_eyebrow"></div>
-    <h2 data-t="pf_h2"></h2>
-    <p data-t="pf_p"></p>
-  </div>
-
-  <div class="pfNotice" id="pfNotice" hidden></div>
-
-  <!-- shown when logged out -->
-  <div class="coCard" id="pfGuest" hidden style="max-width:520px">
-    <p data-t="pf_guest"></p>
-    <button class="btn" id="pfLogin" style="width:100%"></button>
-  </div>
-
-  <!-- the profile form -->
-  <div class="checkout" id="pfMain" hidden>
-    <div class="coCard">
-      <label class="coLabel" data-t="pf_email"></label>
-      <input type="email" id="pfEmail" class="coInput" disabled>
-
-      <label class="coLabel" data-t="pf_name"></label>
-      <input type="text" id="pfName" class="coInput" data-t-ph="pf_name_ph" required>
-
-      <label class="coLabel" data-t="pf_phone"></label>
-      <input type="tel" id="pfPhone" class="coInput" data-t-ph="pf_phone_ph" required>
-
-      <label class="coLabel" data-t="pf_year"></label>
-      <input type="text" id="pfYear" class="coInput" inputmode="numeric" data-t-ph="pf_year_ph">
-
-      <label class="coLabel" data-t="pf_exp"></label>
-      <select id="pfExp" class="coSelect"></select>
-
-      <label class="coLabel" data-t="pf_goal"></label>
-      <textarea id="pfGoal" class="coInput" rows="3" data-t-ph="pf_goal_ph"></textarea>
-
-      <button class="btn" id="pfSave" style="width:100%;margin-top:6px"></button>
-      <div class="authErr" id="pfMsg"></div>
-    </div>
-
-    <div class="coCard">
-      <h3 data-t="pf_courses_h"></h3>
-      <div id="pfCourses" class="pfCourses"></div>
-      <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
-      <button class="btn ghost" id="pfLogout" style="width:100%"></button>
-    </div>
-  </div>
+  <div id="pfWrap"></div>
 </div></section>
 
+<script>window.DOJO_REQUIRE_AUTH = true;</script>
 <script src="app.js"></script>
 <script>
 const COURSE_NAMES = {
@@ -67,120 +23,220 @@ const COURSE_NAMES = {
   sql:{vi:'SQL cho công việc dữ liệu',en:'SQL for data work'},
   qa:{vi:'Kiểm thử phần mềm (QA)',en:'QA / Software testing'},
 };
-const PAGE_I18N = {
+const T = {
 vi:{
-  pf_eyebrow:'Tài khoản', pf_h2:'Hồ sơ của bạn',
-  pf_p:'Thông tin này giúp giáo viên biết bạn là ai và hỗ trợ bạn tốt hơn. Bạn có thể cập nhật bất cứ lúc nào.',
-  pf_guest:'Bạn cần đăng nhập để xem và chỉnh sửa hồ sơ.',
-  pf_login:'Đăng nhập', pf_email:'Email', pf_name:'Họ và tên *', pf_name_ph:'VD: Nguyễn Văn A',
-  pf_phone:'Số điện thoại / Zalo *', pf_phone_ph:'VD: 0901 234 567',
-  pf_year:'Năm sinh', pf_year_ph:'VD: 2005',
-  pf_exp:'Kinh nghiệm lập trình', pf_goal:'Mục tiêu học tập', pf_goal_ph:'Bạn muốn đạt được điều gì sau khóa học?',
-  pf_save:'Lưu hồ sơ', pf_saved:'Đã lưu hồ sơ ✓', pf_courses_h:'Khóa học của bạn',
-  pf_notice:'Vui lòng điền <b>Họ tên</b> và <b>Số điện thoại</b> để tiếp tục sử dụng The Dojo.',
-  pf_need:'Vui lòng điền họ tên và số điện thoại.',
-  pf_none:'Bạn chưa sở hữu khóa học nào. Nhập mã mở khóa trong trang khóa học, hoặc mua một khóa.',
-  pf_open:'Vào học →', pf_logout:'Đăng xuất',
+  title:'Hồ sơ', mine:'Hồ sơ của tôi',
+  edit:'Chỉnh sửa', save:'Lưu', cancel:'Hủy', saved:'Đã lưu ✓', logout:'Đăng xuất',
+  email:'Email', name:'Họ và tên', phone:'Số điện thoại / Zalo', year:'Năm sinh',
+  exp:'Kinh nghiệm lập trình', goal:'Mục tiêu học tập', courses:'Khóa học',
+  name_ph:'VD: Nguyễn Văn A', phone_ph:'VD: 0901 234 567', year_ph:'VD: 2005',
+  goal_ph:'Bạn muốn đạt được điều gì sau khóa học?',
+  none:'Chưa cập nhật', none_courses:'Chưa sở hữu khóa học nào.', open:'Vào học →',
+  need:'Vui lòng điền họ tên và số điện thoại.',
+  notice:'Vui lòng điền <b>Họ tên</b> và <b>Số điện thoại</b> để tiếp tục sử dụng The Dojo.',
+  avatar:'Ảnh đại diện', change_photo:'Đổi ảnh', private_note:'Chỉ bạn và quản trị viên thấy thông tin liên hệ.',
+  admin_edit:'Bạn đang chỉnh sửa hồ sơ học viên (quyền quản trị).',
   exp0:'Chưa có kinh nghiệm', exp1:'Biết một chút', exp2:'Đã học ở trường/khóa khác', exp3:'Đang đi làm liên quan',
+  uploading:'Đang tải ảnh…', upload_err:'Tải ảnh thất bại. Hãy chắc bucket "avatars" đã tạo.',
 },
 en:{
-  pf_eyebrow:'Account', pf_h2:'Your profile',
-  pf_p:'This helps the teacher know who you are and support you better. You can update it anytime.',
-  pf_guest:'You need to log in to view and edit your profile.',
-  pf_login:'Log in', pf_email:'Email', pf_name:'Full name *', pf_name_ph:'e.g. Jane Doe',
-  pf_phone:'Phone / Zalo *', pf_phone_ph:'e.g. 0901 234 567',
-  pf_year:'Birth year', pf_year_ph:'e.g. 2005',
-  pf_exp:'Programming experience', pf_goal:'Learning goal', pf_goal_ph:'What do you want to achieve with this course?',
-  pf_save:'Save profile', pf_saved:'Profile saved ✓', pf_courses_h:'Your courses',
-  pf_notice:'Please fill in your <b>Full name</b> and <b>Phone</b> to continue using The Dojo.',
-  pf_need:'Please fill in your full name and phone.',
-  pf_none:'You don\u2019t own any course yet. Enter an unlock code on a course page, or buy one.',
-  pf_open:'Open →', pf_logout:'Log out',
+  title:'Profile', mine:'My profile',
+  edit:'Edit', save:'Save', cancel:'Cancel', saved:'Saved ✓', logout:'Log out',
+  email:'Email', name:'Full name', phone:'Phone / Zalo', year:'Birth year',
+  exp:'Programming experience', goal:'Learning goal', courses:'Courses',
+  name_ph:'e.g. Jane Doe', phone_ph:'e.g. 0901 234 567', year_ph:'e.g. 2005',
+  goal_ph:'What do you want to achieve with this course?',
+  none:'Not set', none_courses:'No courses yet.', open:'Open →',
+  need:'Please fill in your full name and phone.',
+  notice:'Please fill in your <b>Full name</b> and <b>Phone</b> to continue using The Dojo.',
+  avatar:'Avatar', change_photo:'Change photo', private_note:'Only you and admins can see contact details.',
+  admin_edit:'You are editing a student\u2019s profile (admin).',
   exp0:'No experience', exp1:'A little', exp2:'Studied it before', exp3:'Work in a related field',
+  uploading:'Uploading…', upload_err:'Upload failed. Make sure the "avatars" bucket exists.',
 }};
 
-function expOptions(){
-  const d = PAGE_I18N[LANG];
-  const sel = document.getElementById('pfExp');
-  const cur = sel.value;
-  sel.innerHTML = ['exp0','exp1','exp2','exp3'].map(k=>`<option value="${k}">${d[k]}</option>`).join('');
-  if (cur) sel.value = cur;
+const PARAM_U = new URLSearchParams(location.search).get('u');
+let STATE = { editing:false, target:null, isSelf:false, canEdit:false, canPrivate:false, prof:null, courses:[] };
+
+function L(){ return T[LANG]; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function expLabel(k){ return k ? (L()[k]||'') : ''; }
+function initials(name){
+  const parts=String(name||'').trim().split(/\s+/).filter(Boolean);
+  const i = parts.length>=2 ? parts[0][0]+parts[parts.length-1][0] : (parts[0]?parts[0][0]:'?');
+  return i.toUpperCase();
+}
+function avatarNode(prof, big){
+  const url = prof && prof.avatar_url;
+  const cls = 'pfAvatar' + (big?' big':'');
+  if (url) return `<div class="${cls}" style="background-image:url('${esc(url)}')"></div>`;
+  return `<div class="${cls}">${esc(initials(prof && prof.full_name))}</div>`;
 }
 
-async function renderCourses(){
-  const box = document.getElementById('pfCourses');
-  const d = PAGE_I18N[LANG];
-  const sb = await window.DOJO_CLOUD.getClient();
-  if (!sb){ box.innerHTML=''; return; }
-  const { data } = await sb.from('entitlements').select('course');
-  const owned = (data||[]).map(r=>r.course);
-  if (!owned.length){ box.innerHTML = `<p class="fact">${d.pf_none}</p>`; return; }
-  box.innerHTML = owned.map(c=>{
-    const nm = (COURSE_NAMES[c] && COURSE_NAMES[c][LANG]) || c;
-    return `<div class="pfCourse"><b>${nm}</b><a class="btn ghost" href="${c}.html">${d.pf_open}</a></div>`;
-  }).join('');
+async function loadTarget(){
+  const cloud = window.DOJO_CLOUD;
+  const self = cloud.getUser().id;
+  const target = PARAM_U || self;
+  const isSelf = target === self;
+  const isAdmin = cloud.isAdmin();
+  const canEdit = isSelf || isAdmin;
+  const canPrivate = isSelf || isAdmin;
+  const sb = await cloud.getClient();
+  let prof = null;
+  if (isSelf) {
+    prof = cloud.getProfile() || { user_id:self, email:(cloud.getUser().email||'') };
+  } else if (isAdmin) {
+    const { data } = await sb.from('profiles').select('*').eq('user_id', target).maybeSingle();
+    prof = data || { user_id:target };
+  } else {
+    const { data } = await sb.rpc('get_profile_public', { p_user: target });
+    prof = (data && data[0]) || { user_id:target };
+  }
+  let courses = [];
+  if (canPrivate) {
+    const q = sb.from('entitlements').select('course');
+    const { data } = isSelf ? await q : await q.eq('user_id', target);
+    courses = (data||[]).map(r=>r.course);
+  }
+  Object.assign(STATE, { target, isSelf, canEdit, canPrivate, prof, courses });
 }
 
-function fillForm(){
-  const p = window.DOJO_CLOUD.getProfile() || {};
-  const u = window.DOJO_CLOUD.getUser() || {};
-  document.getElementById('pfEmail').value = (p.email || u.email || '');
-  document.getElementById('pfName').value = p.full_name || '';
-  document.getElementById('pfPhone').value = p.phone || '';
-  document.getElementById('pfYear').value = p.birth_year || '';
-  document.getElementById('pfGoal').value = p.goal || '';
-  if (p.experience) document.getElementById('pfExp').value = p.experience;
+function viewHtml(){
+  const d = L(); const p = STATE.prof;
+  const meta = [expLabel(p.experience), p.birth_year].filter(Boolean).join(' · ');
+  const priv = STATE.canPrivate ? `
+    <div class="pfField"><span>${d.email}</span><b>${esc(p.email)||d.none}</b></div>
+    <div class="pfField"><span>${d.phone}</span><b>${esc(p.phone)||d.none}</b></div>` : '';
+  const coursesHtml = STATE.canPrivate ? `
+    <h3>${d.courses}</h3>
+    ${STATE.courses.length ? `<div class="pfCourses">${STATE.courses.map(c=>{
+      const nm=(COURSE_NAMES[c]&&COURSE_NAMES[c][LANG])||c;
+      return `<div class="pfCourse"><b>${nm}</b><a class="btn ghost" href="${c}.html">${d.open}</a></div>`;
+    }).join('')}</div>` : `<p class="fact">${d.none_courses}</p>`}` : '';
+  const incomplete = STATE.isSelf && !window.DOJO_CLOUD.isProfileComplete();
+  return `
+    ${incomplete ? `<div class="pfNotice">${d.notice}</div>` : ''}
+    <div class="pfCardBig">
+      <div class="pfHead">
+        ${avatarNode(p, true)}
+        <div class="pfHeadInfo">
+          <h2>${esc(p.full_name)||d.none}</h2>
+          <div class="pfMetaLine">${esc(meta)}</div>
+        </div>
+        ${STATE.canEdit ? `<button class="btn" id="pfEditBtn">${d.edit}</button>` : ''}
+      </div>
+      <div class="pfGrid">
+        ${priv}
+        <div class="pfField wide"><span>${d.goal}</span><b>${esc(p.goal)||d.none}</b></div>
+      </div>
+      ${coursesHtml}
+      ${STATE.isSelf ? `<hr class="pfHr"><button class="btn ghost" id="pfLogout">${d.logout}</button>` : ''}
+    </div>`;
+}
+
+function editHtml(){
+  const d = L(); const p = STATE.prof;
+  const opt = (k)=>`<option value="${k}"${p.experience===k?' selected':''}>${d[k]}</option>`;
+  return `
+    ${STATE.isSelf ? '' : `<div class="pfNotice">${d.admin_edit}</div>`}
+    <div class="pfCardBig">
+      <div class="pfHead">
+        ${avatarNode(p, true)}
+        <div class="pfHeadInfo">
+          <h2>${STATE.isSelf ? d.mine : (esc(p.full_name)||d.name)}</h2>
+          ${STATE.isSelf ? `<label class="pfPhoto">${d.change_photo}
+            <input type="file" id="pfPhoto" accept="image/*" hidden></label>
+            <span class="pfPhotoMsg" id="pfPhotoMsg"></span>` : ''}
+        </div>
+      </div>
+      <div class="pfForm">
+        <label class="coLabel">${d.email}</label>
+        <input class="coInput" id="pfEmail" value="${esc(p.email)}" disabled>
+        <label class="coLabel">${d.name} *</label>
+        <input class="coInput" id="pfName" placeholder="${d.name_ph}" value="${esc(p.full_name)}">
+        <label class="coLabel">${d.phone} *</label>
+        <input class="coInput" id="pfPhone" placeholder="${d.phone_ph}" value="${esc(p.phone)}">
+        <label class="coLabel">${d.year}</label>
+        <input class="coInput" id="pfYear" inputmode="numeric" placeholder="${d.year_ph}" value="${esc(p.birth_year)}">
+        <label class="coLabel">${d.exp}</label>
+        <select class="coSelect" id="pfExp">${['exp0','exp1','exp2','exp3'].map(opt).join('')}</select>
+        <label class="coLabel">${d.goal}</label>
+        <textarea class="coInput" id="pfGoal" rows="3" placeholder="${d.goal_ph}">${esc(p.goal)}</textarea>
+        <div class="pfFormBtns">
+          <button class="btn" id="pfSave">${d.save}</button>
+          <button class="btn ghost" id="pfCancel">${d.cancel}</button>
+        </div>
+        <div class="authErr" id="pfMsg"></div>
+      </div>
+    </div>`;
 }
 
 function render(){
-  const loggedIn = !!window.DOJO_CLOUD.getUser();
-  document.getElementById('pfGuest').hidden = loggedIn;
-  document.getElementById('pfMain').hidden = !loggedIn;
-  const d = PAGE_I18N[LANG];
-  document.getElementById('pfLogin').textContent = d.pf_login;
-  document.getElementById('pfSave').textContent = d.pf_save;
-  document.getElementById('pfLogout').textContent = d.pf_logout;
-  document.getElementById('pfCourses').closest('.coCard').querySelector('h3').textContent = d.pf_courses_h;
-  expOptions();
-  document.querySelectorAll('[data-t-ph]').forEach(el=>{
-    const k=el.dataset.tPh; if (d[k]!=null) el.placeholder = d[k];
-  });
-  const notice = document.getElementById('pfNotice');
-  const incomplete = loggedIn && !window.DOJO_CLOUD.isProfileComplete();
-  notice.hidden = !incomplete;
-  if (incomplete) notice.innerHTML = d.pf_notice;
-  if (loggedIn){ fillForm(); renderCourses(); }
+  const wrap = document.getElementById('pfWrap');
+  if (!window.DOJO_CLOUD.getUser()) { wrap.innerHTML=''; return; } // app.js shows the login gate
+  wrap.innerHTML = STATE.editing ? editHtml() : viewHtml();
+  bind();
 }
 
-window.onLang = render;
+function bind(){
+  const $ = (id)=>document.getElementById(id);
+  if ($('pfEditBtn')) $('pfEditBtn').onclick = ()=>{ STATE.editing = true; render(); };
+  if ($('pfCancel')) $('pfCancel').onclick = ()=>{ STATE.editing = false; render(); };
+  if ($('pfLogout')) $('pfLogout').onclick = async ()=>{ await window.DOJO_CLOUD.signOut(); location.href='index.html'; };
+  if ($('pfPhoto')) $('pfPhoto').onchange = onPhoto;
+  if ($('pfSave')) $('pfSave').onclick = onSave;
+}
 
-document.getElementById('pfLogin').addEventListener('click', ()=> window.DOJO_CLOUD.openAuth());
-document.getElementById('pfLogout').addEventListener('click', async ()=>{
-  await window.DOJO_CLOUD.signOut();
-  location.href='index.html';
-});
-document.getElementById('pfSave').addEventListener('click', async ()=>{
-  const d = PAGE_I18N[LANG];
-  const msg = document.getElementById('pfMsg');
+async function onPhoto(e){
+  const d = L(); const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const msg = document.getElementById('pfPhotoMsg');
+  msg.textContent = d.uploading;
+  try{
+    const sb = await window.DOJO_CLOUD.getClient();
+    const uid = window.DOJO_CLOUD.getUser().id;
+    const ext = (file.name.split('.').pop()||'png').toLowerCase();
+    const path = `${uid}/avatar.${ext}`;
+    const { error } = await sb.storage.from('avatars').upload(path, file, { upsert:true, cacheControl:'3600' });
+    if (error) throw error;
+    const { data } = sb.storage.from('avatars').getPublicUrl(path);
+    const url = data.publicUrl + '?t=' + Date.now();
+    await window.DOJO_CLOUD.saveProfile({ avatar_url: url });
+    STATE.prof.avatar_url = url;
+    msg.textContent = '';
+    render();
+  }catch(err){ msg.textContent = d.upload_err; }
+}
+
+async function onSave(){
+  const d = L(); const msg = document.getElementById('pfMsg');
   msg.textContent='';
   const name = document.getElementById('pfName').value.trim();
   const phone = document.getElementById('pfPhone').value.trim();
-  if (!name || !phone){ msg.style.color=''; msg.textContent = d.pf_need; return; }
+  if (!name || !phone){ msg.style.color=''; msg.textContent = d.need; return; }
+  const fields = {
+    full_name:name, phone:phone,
+    birth_year: document.getElementById('pfYear').value.trim(),
+    experience: document.getElementById('pfExp').value,
+    goal: document.getElementById('pfGoal').value.trim(),
+  };
   try{
-    await window.DOJO_CLOUD.saveProfile({
-      full_name: name,
-      phone: phone,
-      birth_year: document.getElementById('pfYear').value.trim(),
-      experience: document.getElementById('pfExp').value,
-      goal: document.getElementById('pfGoal').value.trim(),
-    });
-    msg.style.color='var(--jade,#7FD1C0)';
-    msg.textContent = d.pf_saved;
-    document.getElementById('pfNotice').hidden = true;
+    await window.DOJO_CLOUD.saveProfile(fields, STATE.isSelf ? undefined : STATE.target);
+    Object.assign(STATE.prof, fields);
+    STATE.editing = false;
+    await loadTarget();       // refresh (courses, latest values)
+    render();
   }catch(e){ msg.style.color=''; msg.textContent = e.message || 'Error'; }
-});
+}
 
-window.DOJO_CLOUD.onAuthResolved(render);
+async function boot(){
+  if (!window.DOJO_CLOUD.getUser()) { render(); return; }
+  await loadTarget();
+  render();
+}
+
+window.onLang = ()=>{ render(); };
+window.DOJO_CLOUD.onAuthResolved(boot);
 </script>
 </body>
 </html>
