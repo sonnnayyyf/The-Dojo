@@ -4,6 +4,22 @@
 > what's done, and what's next. The chat history does not sync across machines — this file does
 > (the folder lives in OneDrive). Also see `CONTEXT.md` for business context.
 
+## 0. Working rules — MULTI-SESSION / BRANCHES (read before editing anything)
+- **Multiple Copilot sessions may be open on this SAME folder at once.** They edit the same files on
+  disk with **no merge** — whoever saves last silently overwrites the other. This has already caused a
+  clobber (a content session overwrote `app.js` platform edits). Avoid it:
+- **Do all new work on its OWN git branch**, not directly on `main`. Create one per task/session:
+  `git checkout -b <topic>` (e.g. `web-course`, `content-lock`). Only merge to `main` when done.
+  `main` is the shared integration branch — don't do live parallel editing on it from two sessions.
+- **Stay in your lane / don't touch files another session owns.** If a session is only authoring
+  lessons, it must edit ONLY its `private-tools/content/<course>/*.html` + that course's built page
+  (e.g. `web.html`) — **never** `app.js`, `styles.css`, or other shared pages. If you think you need a
+  shared-file change, STOP and coordinate with the user instead of editing it.
+- **Commit + push often** (each commit is a recovery point). If a file gets clobbered, restore it with
+  `git checkout -- <file>`.
+- **Stage only your own files** when committing (`git add <specific files>`); never `git add -A` /
+  `git add .` from a scoped session — it sweeps up another session's edits.
+
 ## 1. What this is
 - **The Dojo** — a bilingual (Vietnamese/English) interactive coding-course platform. Solo tutor,
   optionally co-marketed with a tutoring company. Sells self-paced 20-lesson courses; also 1-on-1 tutoring.
