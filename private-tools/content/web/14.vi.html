@@ -1,0 +1,206 @@
+<h3>Bài 14 — Sự kiện &amp; tương tác</h3>
+<p>Mọi thứ đến giờ chạy <b>một lần</b>, ngay khi trang tải. Nhưng ứng dụng thật <i>chờ</i> người dùng và phản ứng: một nút chờ được nhấp, một ô chờ bạn gõ, một menu chờ được mở. Sự chờ-và-phản-ứng đó được vận hành bởi <b>sự kiện (event)</b> — các tín hiệu trình duyệt phát ra khi có gì đó xảy ra ("cái này vừa được nhấp", "một phím vừa được nhấn"). Xử lý sự kiện và trang của bạn trở thành một <b>ứng dụng</b>.</p>
+<p>Công cụ là <code>element.addEventListener("click", handler)</code>: bạn bảo một phần tử lắng nghe sự kiện nào và trao cho nó một <b>hàm</b> để chạy mỗi lần sự kiện đó xảy ra. Bên trong handler bạn làm việc — đổi chữ, cập nhật một con đếm, đọc những gì người dùng gõ. Đọc input chỉ là <code>input.value</code>.</p>
+<p>Các bài tập này được chấm bằng cách <i>mô phỏng</i> người dùng — bộ chấm nhấp nút của bạn hoặc gõ vào ô của bạn, rồi kiểm tra trang đã phản ứng đúng chưa. Nên bạn được dựng những widget thật sự tương tác: bộ đếm, lời chào, công tắc, một to-do nhỏ. Làm cho trang biết phản hồi nào.</p>
+
+<h4>1. Phản ứng với một cú nhấp</h4>
+<p><code>addEventListener("click", fn)</code> chạy <code>fn</code> mỗi lần phần tử được nhấp. Hàm giữ bất cứ gì cần xảy ra.</p>
+<pre class="snippet">let btn = document.querySelector("#btn");
+btn.addEventListener("click", function () {
+  document.querySelector("#out").textContent = "Clicked!";
+});</pre>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy, rồi nhấp nút trong ô xem trước — thông báo cập nhật. Đó là một event handler đang hoạt động.</span>
+<template class="st">&lt;button id="btn"&gt;Press me&lt;/button&gt;
+&lt;p id="out"&gt;Not clicked yet&lt;/p&gt;
+&lt;script&gt;
+  document.querySelector("#btn").addEventListener("click", function () {
+    document.querySelector("#out").textContent = "You clicked it! 🎉";
+  });
+&lt;/script&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 2.</b> Phương thức nào làm một phần tử lắng nghe một sự kiện?</span>
+<ol class="opts">
+<li><code>querySelector</code></li>
+<li><code>addEventListener</code></li>
+<li><code>textContent</code></li>
+<li><code>console.log</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Gắn dây cho nút. Thêm một listener <code>click</code> cho <code>#btn</code> gán <code>textContent</code> của <code>#out</code> thành <code>Done</code>. (Bộ chấm sẽ nhấp giúp bạn.)</span>
+<template class="st">&lt;button id="btn"&gt;Go&lt;/button&gt;
+&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#btn').click();
+assert(document.querySelector('#out').textContent.trim() === 'Done', 'khi nhấp, gán chữ #out thành "Done"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Đổi màu khi nhấp. Thêm một listener <code>click</code> cho <code>#btn</code> gán <code>.style.backgroundColor</code> của <code>#box</code> thành <code>gold</code>.</span>
+<template class="st">&lt;div id="box"&gt;Box&lt;/div&gt;
+&lt;button id="btn"&gt;Paint&lt;/button&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#btn').click();
+assert(document.querySelector('#box').style.backgroundColor === 'gold', "khi nhấp, gán nền #box thành 'gold'");
+</template>
+</div>
+
+<h4>2. Nhớ giữa các lần nhấp — một bộ đếm</h4>
+<p>Giữ một biến bên ngoài handler; mỗi lần nhấp cập nhật nó. Đây là cốt lõi của một bộ đếm, một nút thích, một điểm số.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 5.</b> Chạy và nhấp nút vài lần — con đếm tăng mỗi lần nhấp.</span>
+<template class="st">&lt;button id="btn"&gt;+1&lt;/button&gt; &lt;span id="count"&gt;0&lt;/span&gt;
+&lt;script&gt;
+  let count = 0;
+  document.querySelector("#btn").addEventListener("click", function () {
+    count = count + 1;
+    document.querySelector("#count").textContent = count;
+  });
+&lt;/script&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Dựng một bộ đếm. Mỗi lần nhấp <code>#btn</code> phải cộng 1 vào con đếm và hiện nó trong <code>#count</code>. (Bộ chấm nhấp hai lần — phải đọc <code>2</code>.)</span>
+<template class="st">&lt;button id="btn"&gt;+1&lt;/button&gt; &lt;span id="count"&gt;0&lt;/span&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var b = document.querySelector('#btn');
+b.click(); b.click();
+assert(document.querySelector('#count').textContent.trim() === '2', 'sau hai lần nhấp #count phải đọc 2');
+</template>
+</div>
+
+<h4>3. Đọc những gì người dùng gõ</h4>
+<p>Chữ hiện tại của một input là <code>input.value</code>. Đọc nó bên trong một click handler để phản ứng với bất cứ gì người dùng nhập.</p>
+<pre class="snippet">let name = document.querySelector("#name").value;
+document.querySelector("#out").textContent = "Hi " + name;</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Chào người dùng. Khi nhấp <code>#btn</code>, đọc <code>value</code> của <code>#name</code> và gán <code>#out</code> thành <code>Hi </code> + giá trị đó. (Bộ chấm gõ <code>Mai</code>, nên phải đọc <code>Hi Mai</code>.)</span>
+<template class="st">&lt;input id="name"&gt;
+&lt;button id="btn"&gt;Greet&lt;/button&gt;
+&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#name').value = 'Mai';
+document.querySelector('#btn').click();
+assert(document.querySelector('#out').textContent.trim() === 'Hi Mai', 'đọc #name.value khi nhấp và hiện "Hi Mai"');
+</template>
+</div>
+
+<h4>4. Bật/tắt với classList</h4>
+<p><code>classList.toggle("name")</code> thêm một class nếu nó thiếu và bỏ nó nếu nó có — hoàn hảo cho các nút bật/tắt như "chế độ tối" hay "đã thích".</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Khi nhấp <code>#btn</code>, <code>toggle</code> class <code>active</code> trên <code>#box</code>. (Một cú nhấp sẽ thêm nó.)</span>
+<template class="st">&lt;div id="box"&gt;Box&lt;/div&gt;
+&lt;button id="btn"&gt;Toggle&lt;/button&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#btn').click();
+assert(document.querySelector('#box').classList.contains('active'), 'khi nhấp, toggle class "active" lên #box');
+</template>
+</div>
+
+<h4>5. Sự kiện input — phản ứng khi gõ</h4>
+<p>Một sự kiện <code>input</code> phát ra ở mỗi lần gõ phím. Lắng nghe nó để cập nhật trang <i>trực tiếp</i> khi người dùng gõ.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 9.</b> Chạy, rồi gõ vào ô — chữ bên dưới phản chiếu bạn ngay tức thì.</span>
+<template class="st">&lt;input id="field" placeholder="Type here"&gt;
+&lt;p id="echo"&gt;&lt;/p&gt;
+&lt;script&gt;
+  document.querySelector("#field").addEventListener("input", function (e) {
+    document.querySelector("#echo").textContent = e.target.value;
+  });
+&lt;/script&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Gương trực tiếp. Thêm một listener <code>input</code> cho <code>#field</code> chép <code>value</code> của nó vào <code>#echo</code>. (Bộ chấm gõ <code>Hello</code>.)</span>
+<template class="st">&lt;input id="field"&gt;
+&lt;p id="echo"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var f = document.querySelector('#field');
+f.value = 'Hello';
+f.dispatchEvent(new Event('input'));
+assert(document.querySelector('#echo').textContent.trim() === 'Hello', 'phản chiếu giá trị đã gõ vào #echo khi có input');
+</template>
+</div>
+
+<h4>6. Ghép lại</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Thêm vào danh sách. Khi nhấp <code>#add</code>, đọc value của <code>#item</code> và nối một <code>&lt;li&gt;</code> mới với chữ đó vào <code>#list</code>. (Bộ chấm gõ <code>Milk</code> và nhấp một lần.)</span>
+<template class="st">&lt;input id="item"&gt;
+&lt;button id="add"&gt;Add&lt;/button&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#item').value = 'Milk';
+document.querySelector('#add').click();
+var items = document.querySelectorAll('#list li');
+assert(items.length === 1 && items[0].textContent.trim() === 'Milk', 'nhấp Add phải nối một <li> ghi "Milk"');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Một to-do nhỏ. Mỗi lần nhấp <code>#add</code>, nối value của <code>#task</code> thành một <code>&lt;li&gt;</code> mới trong <code>#todo</code>. (Bộ chấm thêm hai việc khác nhau — danh sách phải kết thúc với hai mục theo thứ tự.)</span>
+<template class="st">&lt;input id="task"&gt;
+&lt;button id="add"&gt;Add task&lt;/button&gt;
+&lt;ul id="todo"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var t = document.querySelector('#task'), add = document.querySelector('#add');
+t.value = 'Buy milk'; add.click();
+t.value = 'Call Nam'; add.click();
+var items = document.querySelectorAll('#todo li');
+assert(items.length === 2, 'danh sách to-do phải có hai mục');
+assert(items[0].textContent.trim() === 'Buy milk' && items[1].textContent.trim() === 'Call Nam', 'các mục phải là "Buy milk" rồi "Call Nam"');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — tất cả đều thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 1.</b> Bạn đọc chữ hiện tại người dùng đã gõ vào một <code>&lt;input&gt;</code> ở đâu?</span>
+<ol class="opts">
+<li><code>input.textContent</code></li>
+<li><code>input.innerHTML</code></li>
+<li><code>input.value</code></li>
+<li><code>input.class</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Khi nhấp <code>#btn</code>, gán <code>textContent</code> của <code>#msg</code> thành <code>Saved!</code>.</span>
+<template class="st">&lt;button id="btn"&gt;Save&lt;/button&gt;
+&lt;p id="msg"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#btn').click();
+assert(document.querySelector('#msg').textContent.trim() === 'Saved!', 'khi nhấp, gán #msg thành "Saved!"');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Dựng một bộ đếm trên <code>#btn</code> hiện con đếm trong <code>#n</code>. (Bộ chấm nhấp ba lần — phải đọc <code>3</code>.)</span>
+<template class="st">&lt;button id="btn"&gt;+1&lt;/button&gt; &lt;span id="n"&gt;0&lt;/span&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var b = document.querySelector('#btn');
+b.click(); b.click(); b.click();
+assert(document.querySelector('#n').textContent.trim() === '3', 'sau ba lần nhấp #n phải đọc 3');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Khi nhấp <code>#btn</code>, <code>toggle</code> class <code>on</code> trên <code>#lamp</code>. (Bộ chấm nhấp hai lần, nên phải kết thúc <b>tắt</b> — class bị bỏ.)</span>
+<template class="st">&lt;div id="lamp"&gt;💡&lt;/div&gt;
+&lt;button id="btn"&gt;Switch&lt;/button&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var b = document.querySelector('#btn');
+b.click(); b.click();
+assert(!document.querySelector('#lamp').classList.contains('on'), 'sau hai lần toggle class "on" phải bị bỏ');
+</template>
+</div>

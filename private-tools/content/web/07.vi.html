@@ -1,0 +1,176 @@
+<h3>Bài 7 — CSS Grid &amp; responsive</h3>
+<p>Flexbox tuyệt vời cho việc bố cục theo <b>một chiều</b> — một hàng hoặc một cột. Nhưng nhiều thiết kế là <b>lưới</b> thật sự: một thư viện ảnh, một bảng điều khiển, danh sách sản phẩm của cửa hàng — tất cả vừa hàng <i>vừa</i> cột cùng lúc. Cho việc đó, CSS có một công cụ chuyên dụng: <b>CSS Grid</b>. Bạn định nghĩa các cột, thả các mục vào, và trình duyệt xếp chúng thành một ma trận gọn gàng.</p>
+<p>Grid hoạt động giống flexbox: bạn đặt <code>display: grid</code> trên một <b>container</b>, rồi mô tả các cột bằng <code>grid-template-columns</code>. Thành phần thần kỳ là <b>đơn vị phân số</b> <code>fr</code>, chia không gian còn lại thành các phần bằng nhau — <code>1fr 1fr 1fr</code> cho ba cột bằng nhau co giãn vừa mọi màn hình. Thêm <code>gap</code> để có khoảng cách, y hệt flexbox.</p>
+<p>Nửa còn lại của bài là <b>responsive</b> — làm cho một trang trông đẹp trên cả điện thoại <i>lẫn</i> laptop. Công cụ là <b>media query</b>: một khối CSS chỉ áp dụng dưới (hoặc trên) một bề rộng màn hình được chọn, cho phép bạn gộp lưới ba cột thành một cột trên màn hình hẹp. Bạn sẽ dựng lưới trực tiếp và xem nó phản hồi.</p>
+
+<h4>1. display: grid</h4>
+<p>Biến một container thành lưới và cho nó các cột. <code>grid-template-columns: 1fr 1fr 1fr</code> nghĩa là "ba cột bằng nhau". Các con tự động chảy vào các ô, xuống hàng mới khi cần.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy — sáu hộp rơi vào lưới 3 cột. Đổi <code>1fr 1fr 1fr</code> thành <code>1fr 1fr</code> rồi Chạy để có hai cột.</span>
+<template class="html">&lt;div class="grid"&gt;
+  &lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;div class="box"&gt;3&lt;/div&gt;
+  &lt;div class="box"&gt;4&lt;/div&gt;&lt;div class="box"&gt;5&lt;/div&gt;&lt;div class="box"&gt;6&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.box { background: #7FD1C0; color: #0E1626; padding: 18px; text-align: center; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️ Đến lượt bạn.</b> Biến container thành lưới. Đặt <code>display</code> của <code>.grid</code> thành <code>grid</code>.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { }
+.box { background: gold; padding: 12px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.grid')).display === 'grid', 'đặt display của .grid thành grid');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Làm ba cột bằng nhau. Trên <code>.grid</code> (đã là grid), đặt <code>grid-template-columns</code> thành <code>1fr 1fr 1fr</code>.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;div class="box"&gt;3&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; gap: 8px; }
+.box { background: teal; color: white; padding: 12px; }</template>
+<template class="ts">
+var cols = getComputedStyle(document.querySelector('.grid')).gridTemplateColumns.split(/\s+/).filter(Boolean);
+assert(cols.length === 3, 'grid-template-columns phải định nghĩa đúng ba cột (1fr 1fr 1fr)');
+</template>
+</div>
+
+<h4>2. Khoảng cách và đơn vị phân số</h4>
+<p>Đơn vị <code>fr</code> chia sẻ không gian. <code>2fr 1fr</code> làm cột đầu rộng gấp đôi cột sau. <code>gap</code> thêm khoảng cách đều giữa mọi ô — không cần margin.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 4.</b> Chạy — cột đầu rộng gấp đôi. Đổi thành <code>1fr 3fr</code> rồi Chạy.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;wide&lt;/div&gt;&lt;div class="box"&gt;narrow&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+.box { background: #F5B942; color: #0E1626; padding: 16px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Thêm khoảng cách. Trên <code>.grid</code>, thêm <code>gap</code> là <code>16px</code>.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; grid-template-columns: 1fr 1fr; }
+.box { background: navy; color: white; padding: 12px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.grid')).rowGap === '16px', 'thêm gap: 16px vào lưới');
+</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 6.</b> Trong lưới, <code>grid-template-columns: 1fr 1fr 1fr</code> tạo ra gì?</span>
+<ol class="opts">
+<li>Ba hàng</li>
+<li>Một cột, ba hàng</li>
+<li>Ba cột rộng bằng nhau</li>
+<li>Một khoảng cách 3 pixel</li>
+</ol></div>
+
+<h4>3. Một lưới thẻ thật</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Bố cục một lưới sản phẩm: cho <code>.cards</code> là lưới với <b>ba</b> cột bằng nhau (<code>1fr 1fr 1fr</code>) và <code>gap</code> là <code>12px</code>.</span>
+<template class="html">&lt;div class="cards"&gt;
+  &lt;div class="card"&gt;Book A&lt;/div&gt;&lt;div class="card"&gt;Book B&lt;/div&gt;&lt;div class="card"&gt;Book C&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.cards { }
+.card { background: #121C30; color: #E8E4D8; padding: 20px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.cards'));
+assert(s.display === 'grid', 'đặt display thành grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 3, 'dùng ba cột (1fr 1fr 1fr)');
+assert(s.rowGap === '12px', 'đặt gap thành 12px');
+</template>
+</div>
+
+<h4>4. Responsive &amp; media query</h4>
+<p>Màn hình điện thoại thì hẹp; laptop thì rộng. Thiết kế <b>responsive</b> điều chỉnh bố cục cho vừa. Công cụ cốt lõi là <b>media query</b>: <code>@media (max-width: 600px) { … }</code> — các luật bên trong chỉ áp dụng khi màn hình rộng 600px trở xuống. Một mẫu kinh điển: ba cột bình thường, một cột trên điện thoại.</p>
+<figure class="diagram">
+<svg viewBox="0 0 420 150" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="12">
+  <text x="20" y="20" fill="#8FA0BC">Màn hình rộng → 3 cột</text>
+  <rect x="20" y="28" width="70" height="40" fill="#7FD1C0"/><rect x="98" y="28" width="70" height="40" fill="#7FD1C0"/><rect x="176" y="28" width="70" height="40" fill="#7FD1C0"/>
+  <text x="20" y="98" fill="#8FA0BC">Điện thoại → 1 cột</text>
+  <rect x="20" y="106" width="70" height="12" fill="#F5B942"/><rect x="20" y="120" width="70" height="12" fill="#F5B942"/><rect x="20" y="134" width="70" height="12" fill="#F5B942"/>
+</svg>
+<figcaption>Một media query gộp lưới thành một cột trên màn hình hẹp.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 8.</b> Chạy cái này. Nó hiện 3 cột; media query sẽ chuyển thành 1 cột trên điện thoại hẹp. (Thử thu nhỏ cửa sổ trình duyệt trên một trang đã triển khai thật.)</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;div class="box"&gt;3&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.box { background: #7FD1C0; color: #0E1626; padding: 16px; text-align: center; }
+@media (max-width: 500px) {
+  .grid { grid-template-columns: 1fr; }
+}</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 9.</b> Khi nào các luật bên trong <code>@media (max-width: 600px) { … }</code> áp dụng?</span>
+<ol class="opts">
+<li>Luôn luôn</li>
+<li>Chỉ khi màn hình rộng 600px trở xuống</li>
+<li>Chỉ khi màn hình rộng hơn 600px</li>
+<li>Chỉ trên máy in</li>
+</ol></div>
+
+<h4>5. Đơn vị: px, %, và rem</h4>
+<p>Bạn đã dùng <code>px</code> (pixel cố định). Hai đơn vị nữa quan trọng: <code>%</code> đo theo phần trăm của cha (một hộp <code>width: 50%</code> rộng bằng nửa container — tự nhiên responsive), và <code>rem</code> co giãn theo cỡ chữ gốc (tuyệt cho chữ và khoảng cách biết thích ứng).</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Làm thanh rộng nửa. Đặt <code>width</code> của <code>.bar</code> thành <code>50%</code>.</span>
+<template class="html">&lt;div class="bar"&gt;Half&lt;/div&gt;</template>
+<template class="css">.bar { background: gold; padding: 10px; }</template>
+<template class="ts">
+var bar = document.querySelector('.bar');
+var ratio = bar.offsetWidth / bar.parentElement.offsetWidth;
+assert(ratio > 0.4 && ratio < 0.6, 'đặt width thành 50% (khoảng nửa container)');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Dựng một thư viện ảnh responsive: cho <code>.gallery</code> là lưới với <b>hai</b> cột bằng nhau và <code>gap</code> là <code>10px</code>.</span>
+<template class="html">&lt;div class="gallery"&gt;&lt;div class="pic"&gt;1&lt;/div&gt;&lt;div class="pic"&gt;2&lt;/div&gt;&lt;div class="pic"&gt;3&lt;/div&gt;&lt;div class="pic"&gt;4&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.gallery { }
+.pic { background: #E2604C; color: white; padding: 24px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.gallery'));
+assert(s.display === 'grid', 'đặt display thành grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 2, 'dùng hai cột (1fr 1fr)');
+assert(s.rowGap === '10px', 'đặt gap thành 10px');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Làm một lưới bảng điều khiển: <code>.dash</code> là lưới với cột <code>1fr 2fr</code> (thanh bên hẹp + phần chính rộng), <code>gap</code> là <code>16px</code>, và <code>padding</code> là <code>12px</code>.</span>
+<template class="html">&lt;div class="dash"&gt;&lt;div class="side"&gt;Menu&lt;/div&gt;&lt;div class="main"&gt;Content&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.dash { }
+.side { background: #121C30; color: #E8E4D8; padding: 16px; }
+.main { background: #1a2740; color: #E8E4D8; padding: 16px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.dash'));
+assert(s.display === 'grid', 'đặt display thành grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 2, 'dùng hai cột (1fr 2fr)');
+assert(s.rowGap === '16px', 'đặt gap thành 16px');
+assert(s.paddingTop === '12px', 'đặt padding thành 12px');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — phần lớn là thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> Công cụ bố cục nào tốt nhất cho một thư viện hai chiều gồm hàng <b>và</b> cột?</span>
+<ol class="opts">
+<li>float</li>
+<li>CSS grid</li>
+<li>một bảng chữ</li>
+<li>position: absolute</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Cho <code>.grid</code> là lưới với hai cột bằng nhau (<code>1fr 1fr</code>).</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { }
+.box { background: teal; color: white; padding: 12px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.grid'));
+assert(s.display === 'grid', 'đặt display thành grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 2, 'dùng hai cột');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Cho <code>.grid</code> là lưới với bốn cột (<code>1fr 1fr 1fr 1fr</code>) và <code>gap</code> là <code>6px</code>.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="b"&gt;1&lt;/div&gt;&lt;div class="b"&gt;2&lt;/div&gt;&lt;div class="b"&gt;3&lt;/div&gt;&lt;div class="b"&gt;4&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { }
+.b { background: gold; padding: 10px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.grid'));
+assert(s.display === 'grid', 'đặt display thành grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 4, 'dùng bốn cột');
+assert(s.rowGap === '6px', 'đặt gap thành 6px');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Dựng một lưới ảnh: <code>.photos</code> là lưới, ba cột (<code>1fr 1fr 1fr</code>), <code>gap</code> <code>8px</code>, <code>padding</code> <code>10px</code>.</span>
+<template class="html">&lt;div class="photos"&gt;&lt;div class="p"&gt;1&lt;/div&gt;&lt;div class="p"&gt;2&lt;/div&gt;&lt;div class="p"&gt;3&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.photos { }
+.p { background: #E2604C; color: white; padding: 20px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.photos'));
+assert(s.display === 'grid', 'đặt display thành grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 3, 'dùng ba cột');
+assert(s.rowGap === '8px', 'đặt gap thành 8px');
+assert(s.paddingTop === '10px', 'đặt padding thành 10px');
+</template>
+</div>

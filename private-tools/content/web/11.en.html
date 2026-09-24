@@ -1,0 +1,187 @@
+<h3>Lesson 11 — Control flow &amp; data</h3>
+<p>So far your code has run straight down, top to bottom. Real programs need to make <b>decisions</b> ("if the cart is empty, hide the checkout button") and <b>repeat</b> work ("for each product, draw a card"). Those two abilities — branching and looping — are called <b>control flow</b>, and they're what let a handful of lines handle a thousand items.</p>
+<p>To do anything useful you also need to hold <b>collections</b> of data, not just single values. JavaScript gives you two everyday containers: the <b>array</b> — an ordered list like <code>["Mai", "Nam", "Lan"]</code> — and the <b>object</b> — a labelled record like <code>{ name: "Mai", age: 20 }</code>. Almost every app is arrays of objects: a list of products, a list of users, a list of messages.</p>
+<p>This lesson combines the two ideas: store data in arrays and objects, then use <code>if</code> and loops to work through it. As before, <code>console.log</code> shows your results in the Output box. Let's teach your code to decide and repeat.</p>
+
+<h4>1. if / else — making decisions</h4>
+<p>An <code>if</code> runs a block only when its condition is <code>true</code>. Add <code>else</code> for the alternative. Conditions use comparisons: <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, and <code>===</code> (equal).</p>
+<pre class="snippet">let score = 75;
+if (score &gt;= 50) {
+  console.log("Pass");
+} else {
+  console.log("Fail");
+}</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 1. ✍️ Your turn.</b> The variable <code>score</code> is 75. Write an <code>if / else</code> that <code>console.log</code>s <code>Pass</code> when <code>score &gt;= 50</code>, otherwise <code>Fail</code>.</span>
+<template class="st">&lt;script&gt;
+let score = 75;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Pass', 'with score = 75 the code should log "Pass"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️ Your turn.</b> Print a comparison. <code>console.log</code> the result of <code>10 &gt; 5</code> (it should print <code>true</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'true', 'console.log(10 > 5) should print true');
+</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 3.</b> Which operator checks whether two values are <b>equal</b>?</span>
+<ol class="opts">
+<li><code>=</code></li>
+<li><code>&gt;</code></li>
+<li><code>===</code></li>
+<li><code>=!</code></li>
+</ol></div>
+
+<h4>2. Arrays — ordered lists</h4>
+<p>An <b>array</b> holds many values in order, written in square brackets. Reach an item by its <b>index</b> (counting from 0): <code>fruits[0]</code> is the first. <code>fruits.length</code> is how many there are, and <code>fruits.push(x)</code> adds one to the end.</p>
+<pre class="snippet">let fruits = ["apple", "banana", "cherry"];
+console.log(fruits[0]);        // apple
+console.log(fruits.length);    // 3
+fruits.push("date");           // now 4 items</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Create an array <code>nums</code> holding <code>10, 20, 30</code>, then <code>console.log(nums.length)</code> (should print <code>3</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(Array.isArray(nums) && nums.length === 3, 'create nums = [10, 20, 30]');
+assert(_OUT_.trim() === '3', 'console.log(nums.length) should print 3');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Print the first item. Given the array, <code>console.log</code> the element at index <code>0</code> (should print <code>red</code>).</span>
+<template class="st">&lt;script&gt;
+let colors = ["red", "green", "blue"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'red', 'console.log(colors[0]) should print red');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Add an item. <code>push</code> the string <code>blue</code> onto the array, then <code>console.log(colors.length)</code> (should print <code>3</code>).</span>
+<template class="st">&lt;script&gt;
+let colors = ["red", "green"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(colors.length === 3 && colors[2] === 'blue', 'push "blue" onto colors');
+assert(_OUT_.trim() === '3', 'console.log(colors.length) should print 3');
+</template>
+</div>
+
+<h4>3. Loops — repeat without repeating yourself</h4>
+<p>A <code>for</code> loop repeats a block. The classic form counts: <code>for (let i = 1; i &lt;= 5; i++)</code>. To walk through an array's items, the cleaner <code>for … of</code> loop hands you each element in turn.</p>
+<pre class="snippet">let sum = 0;
+for (let i = 1; i &lt;= 5; i++) {
+  sum = sum + i;
+}
+console.log(sum);   // 15
+
+for (let name of ["Mai", "Nam"]) {
+  console.log(name);
+}</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Add up 1 to 5. Use a <code>for</code> loop to build <code>sum</code>, then <code>console.log(sum)</code> (should print <code>15</code>).</span>
+<template class="st">&lt;script&gt;
+let sum = 0;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '15', 'loop 1..5 adding to sum, then log it — should print 15');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Print each name. Use a <code>for … of</code> loop to <code>console.log</code> every name in the array (each on its own line).</span>
+<template class="st">&lt;script&gt;
+let names = ["Mai", "Nam", "Lan"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Mai\nNam\nLan', 'log each name in order, one per line');
+</template>
+</div>
+
+<h4>4. Objects — labelled records</h4>
+<p>An <b>object</b> stores values under names (<b>keys</b>), in curly braces. Read a value with a dot: <code>user.name</code>. Objects are how you model a "thing" with several properties.</p>
+<pre class="snippet">let user = { name: "Mai", age: 20 };
+console.log(user.name);   // Mai
+console.log(user.age);    // 20</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> Create an object <code>book</code> with a key <code>title</code> set to <code>Dune</code>, then <code>console.log(book.title)</code> (should print <code>Dune</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(book && book.title === 'Dune', 'create book = { title: "Dune" }');
+assert(_OUT_.trim() === 'Dune', 'console.log(book.title) should print Dune');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Two properties. Create <code>let car = { make: "Toyota", year: 2020 };</code> and print exactly <code>Toyota 2020</code> using a template literal.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(car && car.make === 'Toyota' && car.year === 2020, 'create car = { make: "Toyota", year: 2020 }');
+assert(_OUT_.trim() === 'Toyota 2020', 'print "Toyota 2020" using `${car.make} ${car.year}`');
+</template>
+</div>
+
+<h4>5. Put it together</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Total a cart. Loop over the <code>prices</code> array, add them into <code>total</code>, then set <code>document.body.textContent</code> to <code>Total: 90</code> (use a template literal).</span>
+<template class="st">&lt;script&gt;
+let prices = [20, 30, 40];
+let total = 0;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Total: 90', 'sum the prices (90) and show "Total: 90" on the page');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Count the cheap books. You have an array of book objects. Loop over them and count how many have <code>price &lt; 100</code>; <code>console.log</code> that count (it should print <code>2</code>).</span>
+<template class="st">&lt;script&gt;
+let books = [
+  { title: "Dune", price: 120 },
+  { title: "Emma", price: 80 },
+  { title: "1984", price: 95 }
+];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '2', 'count books with price < 100 (there are 2) and log the count');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — all hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Exercise 1.</b> In the array <code>["a", "b", "c"]</code>, what is the index of <code>"a"</code>?</span>
+<ol class="opts">
+<li><code>0</code></li>
+<li><code>1</code></li>
+<li><code>3</code></li>
+<li><code>"a"</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Create an array <code>days</code> with <code>"Mon", "Tue", "Wed"</code>, then <code>console.log</code> the last one using <code>days[2]</code> (should print <code>Wed</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(Array.isArray(days) && days.length === 3, 'create days = ["Mon", "Tue", "Wed"]');
+assert(_OUT_.trim() === 'Wed', 'console.log(days[2]) should print Wed');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Loop from 1 to 3 and <code>console.log</code> each number (each on its own line: <code>1</code>, <code>2</code>, <code>3</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '1\n2\n3', 'log 1, 2, 3 each on its own line');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> The array <code>temps</code> holds daily temperatures. Loop over it, add them up, and set <code>document.body.textContent</code> to <code>Total: 90</code> (the sum).</span>
+<template class="st">&lt;script&gt;
+let temps = [30, 28, 32];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Total: 90', 'sum temps (90) and show "Total: 90" on the page');
+</template>
+</div>

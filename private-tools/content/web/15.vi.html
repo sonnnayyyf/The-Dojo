@@ -1,0 +1,216 @@
+<h3>Bài 15 — Form, kiểm tra dữ liệu &amp; fetch</h3>
+<p>Form là cách web thu thập thông tin thật — đăng nhập, đăng ký, tìm kiếm, thanh toán. Bạn đã biết dựng HTML của một form; giờ bạn sẽ làm nó <i>hoạt động</i> bằng JavaScript: bắt sự kiện submit, đọc những gì được gõ, và <b>kiểm tra (validate)</b> nó (email đã điền chưa? mật khẩu đủ dài chưa?) trước khi làm gì. Kiểm tra dữ liệu tốt là thứ tách một món đồ chơi khỏi một sản phẩm thật.</p>
+<p>Bạn cũng sẽ gặp hai thứ cho phép một trang nói chuyện với thế giới bên ngoài. <b>JSON</b> là định dạng văn bản phổ quát cho dữ liệu — mọi API trên đời đều nói nó — và JavaScript có thể biến văn bản JSON thành object (<code>JSON.parse</code>) và ngược lại (<code>JSON.stringify</code>). Và <b>fetch</b> là hàm yêu cầu dữ liệu từ một máy chủ mà không tải lại trang, kỹ thuật đứng sau tìm kiếm trực tiếp, bảng tin và các nút "tải thêm".</p>
+<p>Bạn sẽ gắn dây các handler submit, chặn form rỗng bằng thông báo lỗi rõ ràng, và biến JSON thành một danh sách được hiển thị — đúng những gì một ứng dụng thật làm với dữ liệu nó fetch về. Xử lý dữ liệu thật nào.</p>
+
+<h4>1. Xử lý submit form</h4>
+<p>Khi một form được submit, mặc định nó cố <b>tải lại trang</b>. Trong một ứng dụng JavaScript, bạn chặn điều đó bằng <code>event.preventDefault()</code>, rồi tự xử lý mọi thứ trong một listener <code>submit</code>.</p>
+<pre class="snippet">let form = document.querySelector("form");
+form.addEventListener("submit", function (e) {
+  e.preventDefault();               // chặn tải lại
+  document.querySelector("#out").textContent = "Submitted!";
+});</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 1. ✍️ Đến lượt bạn.</b> Bắt submit. Thêm một listener <code>submit</code> cho form gọi <code>e.preventDefault()</code> và gán <code>#out</code> thành <code>Sent</code>. (Bộ chấm submit form.)</span>
+<template class="st">&lt;form&gt;&lt;input&gt;&lt;button&gt;Send&lt;/button&gt;&lt;/form&gt;
+&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('form').dispatchEvent(new Event('submit'));
+assert(document.querySelector('#out').textContent.trim() === 'Sent', 'khi submit, gán #out thành "Sent"');
+</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 2.</b> Lệnh nào chặn một form tải lại trang khi submit?</span>
+<ol class="opts">
+<li><code>e.stop()</code></li>
+<li><code>e.preventDefault()</code></li>
+<li><code>form.reload()</code></li>
+<li><code>return true</code></li>
+</ol></div>
+
+<h4>2. Đọc các ô &amp; kiểm tra</h4>
+<p>Bên trong handler submit, đọc <code>.value</code> của từng ô và kiểm tra nó. Nếu có gì sai, hiện một thông báo và dừng; nếu không thì tiếp tục. Đây là <b>validation</b>.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Bắt buộc có tên. Khi submit, nếu value của <code>#name</code> rỗng, gán <code>#err</code> thành <code>Required</code>; ngược lại gán <code>OK</code>. (Bộ chấm thử cả ô rỗng và ô đã điền.)</span>
+<template class="st">&lt;form&gt;&lt;input id="name"&gt;&lt;button&gt;Go&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), name = document.querySelector('#name'), err = document.querySelector('#err');
+name.value = ''; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Required', 'tên rỗng phải hiện "Required"');
+name.value = 'Mai'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'OK', 'tên đã điền phải hiện "OK"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Kiểm tra độ dài. Khi submit, nếu value của <code>#pw</code> có ít hơn 6 ký tự (<code>.length &lt; 6</code>), gán <code>#err</code> thành <code>Too short</code>; ngược lại <code>Good</code>.</span>
+<template class="st">&lt;form&gt;&lt;input id="pw"&gt;&lt;button&gt;Set&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), pw = document.querySelector('#pw'), err = document.querySelector('#err');
+pw.value = '123'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Too short', 'mật khẩu 3 ký tự phải hiện "Too short"');
+pw.value = 'longenough'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Good', 'mật khẩu dài phải hiện "Good"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Kiểm tra email trông hợp lệ. Khi submit, nếu value của <code>#email</code> <b>không</b> chứa <code>@</code> (dùng <code>.includes("@")</code>), gán <code>#err</code> thành <code>Invalid</code>; ngược lại <code>Valid</code>.</span>
+<template class="st">&lt;form&gt;&lt;input id="email"&gt;&lt;button&gt;Check&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), email = document.querySelector('#email'), err = document.querySelector('#err');
+email.value = 'nope'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Invalid', 'địa chỉ không có @ phải hiện "Invalid"');
+email.value = 'me@dojo.dev'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Valid', 'địa chỉ đúng phải hiện "Valid"');
+</template>
+</div>
+
+<h4>3. JSON — ngôn ngữ của dữ liệu</h4>
+<p><b>JSON</b> là văn bản trông như object và mảng JavaScript. <code>JSON.parse(text)</code> biến một chuỗi JSON thành một object thật để bạn đọc; <code>JSON.stringify(obj)</code> làm ngược lại. Đây là cách dữ liệu di chuyển giữa các ứng dụng và máy chủ.</p>
+<pre class="snippet">let text = '{"name":"Mai","age":20}';
+let user = JSON.parse(text);
+console.log(user.name);            // Mai
+console.log(JSON.stringify(user)); // trở lại thành text</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Parse JSON. Biến <code>text</code> là một chuỗi JSON. <code>JSON.parse</code> nó thành <code>user</code>, rồi <code>console.log(user.city)</code> (phải in <code>Hanoi</code>).</span>
+<template class="st">&lt;script&gt;
+let text = '{"city":"Hanoi","population":8000000}';
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Hanoi', 'parse text và console.log(user.city) → "Hanoi"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Tạo JSON. Tạo <code>let book = { title: "Dune" };</code>, rồi <code>console.log(JSON.stringify(book))</code> (phải in <code>{"title":"Dune"}</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '{"title":"Dune"}', 'console.log(JSON.stringify(book)) phải in {"title":"Dune"}');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Hiển thị dữ liệu kiểu-fetch. <code>text</code> là một mảng JSON các object sách. Parse nó, rồi lặp để đổ đầy <code>#list</code> với một <code>&lt;li&gt;</code> mỗi tựa. (Ba mục sẽ hiện ra.)</span>
+<template class="st">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+let text = '[{"title":"Dune"},{"title":"Emma"},{"title":"1984"}]';
+
+&lt;/script&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('#list li');
+assert(items.length === 3, 'parse JSON và render ba mục <li>');
+assert(items[0].textContent.trim() === 'Dune' && items[2].textContent.trim() === '1984', 'các mục phải là các tựa sách theo thứ tự');
+</template>
+</div>
+
+<h4>4. fetch — dữ liệu từ máy chủ</h4>
+<p>Để tải dữ liệu từ một API mà không tải lại, bạn dùng <code>fetch(url)</code>. Nó trả về một <b>promise</b>, nên bạn nối <code>.then()</code> để xử lý phản hồi khi nó về — trước tiên biến nó thành JSON, rồi dùng nó:</p>
+<pre class="snippet">fetch("https://api.example.com/books")
+  .then(response =&gt; response.json())   // parse phần thân JSON
+  .then(data =&gt; {
+    console.log(data);                 // giờ dùng dữ liệu
+  });</pre>
+<p>Dữ liệu bạn nhận về là JSON — đúng thứ bạn vừa luyện parse ở trên. (Ô này không thể ra mạng, nên request thật là chuyện của trang đã triển khai, nhưng hình dạng luôn là như vậy.)</p>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 9.</b> Sau <code>fetch(url)</code>, bạn gọi gì để biến phần thân phản hồi thành một object dùng được?</span>
+<ol class="opts">
+<li>chỉ <code>response.text</code></li>
+<li><code>response.json()</code></li>
+<li><code>JSON.fetch()</code></li>
+<li><code>response.reload()</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Xử lý một phản hồi API. Giả sử <code>data</code> là thứ một fetch trả về. Đọc <code>data.title</code> và đặt nó vào <code>#out</code> (phải đọc <code>Dune</code>).</span>
+<template class="st">&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+let data = { title: "Dune", author: "Herbert" };
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#out').textContent.trim() === 'Dune', 'đặt data.title vào #out');
+</template>
+</div>
+
+<h4>5. Ghép lại</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Một form thêm-mục hoạt động. Khi submit, nếu <code>#item</code> rỗng hiện <code>#err</code> = <code>Required</code>; ngược lại nối value thành một <code>&lt;li&gt;</code> trong <code>#list</code> và xóa <code>#err</code>. Nhớ <code>e.preventDefault()</code>.</span>
+<template class="st">&lt;form&gt;&lt;input id="item"&gt;&lt;button&gt;Add&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), item = document.querySelector('#item'), err = document.querySelector('#err');
+item.value = ''; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Required', 'ô rỗng phải hiện "Required" và không thêm gì');
+assert(document.querySelectorAll('#list li').length === 0, 'không thêm gì khi rỗng');
+item.value = 'Milk'; form.dispatchEvent(new Event('submit'));
+var items = document.querySelectorAll('#list li');
+assert(items.length === 1 && items[0].textContent.trim() === 'Milk', 'ô đã điền phải thêm một <li> "Milk"');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Một bộ kiểm tra đăng ký. Khi submit: nếu <code>#user</code> rỗng → <code>#err</code> = <code>Name required</code>; nếu không mà độ dài <code>#pw</code> &lt; 6 → <code>#err</code> = <code>Password too short</code>; nếu không → <code>#err</code> = <code>Welcome</code>. (Bộ chấm thử cả ba trường hợp.)</span>
+<template class="st">&lt;form&gt;&lt;input id="user"&gt;&lt;input id="pw"&gt;&lt;button&gt;Sign up&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), user = document.querySelector('#user'), pw = document.querySelector('#pw'), err = document.querySelector('#err');
+user.value = ''; pw.value = 'abcdef'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Name required', 'tên rỗng → "Name required"');
+user.value = 'Mai'; pw.value = '123'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Password too short', 'mật khẩu ngắn → "Password too short"');
+user.value = 'Mai'; pw.value = 'secret123'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Welcome', 'form hợp lệ → "Welcome"');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — tất cả đều thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> <code>JSON.parse(text)</code> làm gì?</span>
+<ol class="opts">
+<li>Biến một object thành text</li>
+<li>Biến một chuỗi JSON thành một object</li>
+<li>Gửi một request tới máy chủ</li>
+<li>Tải lại trang</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Khi submit, gọi <code>e.preventDefault()</code> và gán <code>#out</code> thành <code>Thanks!</code>.</span>
+<template class="st">&lt;form&gt;&lt;input&gt;&lt;button&gt;Send&lt;/button&gt;&lt;/form&gt;
+&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('form').dispatchEvent(new Event('submit'));
+assert(document.querySelector('#out').textContent.trim() === 'Thanks!', 'khi submit, gán #out thành "Thanks!"');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Chuỗi <code>text</code> là JSON. Parse nó và <code>console.log</code> trường <code>name</code> (phải in <code>Nam</code>).</span>
+<template class="st">&lt;script&gt;
+let text = '{"name":"Nam","age":25}';
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Nam', 'parse text và console.log name của nó → "Nam"');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Khi submit, nếu value của <code>#age</code> dưới dạng số nhỏ hơn 18 (dùng <code>Number(...)</code>), gán <code>#err</code> thành <code>Too young</code>; ngược lại <code>Allowed</code>.</span>
+<template class="st">&lt;form&gt;&lt;input id="age"&gt;&lt;button&gt;Enter&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), age = document.querySelector('#age'), err = document.querySelector('#err');
+age.value = '15'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Too young', 'tuổi 15 → "Too young"');
+age.value = '20'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Allowed', 'tuổi 20 → "Allowed"');
+</template>
+</div>

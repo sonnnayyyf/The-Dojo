@@ -1,0 +1,160 @@
+<h3>Bài 5 — Bố cục với Flexbox</h3>
+<p>Mọi thứ bạn tạo kiểu đến giờ đều xếp <b>từ trên xuống</b>, khối này dưới khối kia. Nhưng giao diện thật đặt mọi thứ <i>cạnh nhau</i>: logo bên trái và menu bên phải, một hàng thẻ sản phẩm, các nút trong thanh công cụ. Suốt nhiều thập kỷ đây là phần khó nhất của CSS. Rồi <b>flexbox</b> xuất hiện và biến nó thành dễ — đây là công cụ bố cục bạn sẽ dùng mỗi ngày.</p>
+<p>Ý tưởng rất đơn giản: chọn một <b>hộp chứa (container)</b> và đặt <code>display: flex</code>. Ngay lập tức các con trực tiếp của nó xếp thành một <b>hàng</b>, và bạn có một bộ điều khiển để phân bố và căn chỉnh chúng. Hai thuộc tính làm phần lớn công việc: <code>justify-content</code> phân bố các mục dọc theo <b>trục chính</b> (mặc định là trái↔phải), và <code>align-items</code> căn chúng theo <b>trục phụ</b> (trên↔dưới). Thêm <code>gap</code> để có khoảng cách đều giữa chúng.</p>
+<p>Vì flexbox là trực quan, bạn học nó bằng cách <i>nhìn</i> nó chuyển động. Mỗi bài tập ở đây là một bản xem trước trực tiếp: đổi một thuộc tính, nhấn Chạy, và xem các hộp trượt vào chỗ. Bố cục nào.</p>
+
+<h4>1. display: flex — từ chồng thành hàng</h4>
+<p>Mặc định, phần tử khối xếp dọc. Biến <b>cha</b> của chúng thành một hộp flex và các con bật thành một hàng ngang.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy một lần (đang xếp chồng). Rồi đổi <code>display: block</code> thành <code>display: flex</code> và Chạy lại — các hộp xếp thành hàng.</span>
+<template class="html">&lt;div class="row"&gt;
+  &lt;div class="box"&gt;A&lt;/div&gt;
+  &lt;div class="box"&gt;B&lt;/div&gt;
+  &lt;div class="box"&gt;C&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.row { display: block; gap: 10px; }
+.box { background: #7FD1C0; color: #0E1626; padding: 16px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️ Đến lượt bạn.</b> Biến container thành hàng. Đặt <code>display</code> của <code>.row</code> thành <code>flex</code>.</span>
+<template class="html">&lt;div class="row"&gt;
+  &lt;div class="box"&gt;1&lt;/div&gt;
+  &lt;div class="box"&gt;2&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.row { }
+.box { background: gold; padding: 12px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).display === 'flex', 'đặt display của .row thành flex');
+</template>
+</div>
+
+<h4>2. justify-content — phân bố dọc theo hàng</h4>
+<p>Trên một hộp flex, <code>justify-content</code> điều khiển cách các mục nằm dọc theo trục chính (ngang): <code>flex-start</code> (mặc định, trái), <code>center</code>, <code>flex-end</code> (phải), <code>space-between</code> (đẩy ra hai mép, có khoảng trống ở giữa), và <code>space-around</code>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 3.</b> Chạy, rồi thử từng giá trị của <code>justify-content</code> và xem ba hộp dịch chuyển.</span>
+<template class="html">&lt;div class="row"&gt;
+  &lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;div class="box"&gt;C&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.row { display: flex; justify-content: center; background: #121C30; }
+.box { background: #F5B942; color: #0E1626; padding: 14px; margin: 4px; }</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 4.</b> Thuộc tính nào đẩy các mục ra sát hai mép với khoảng trống ở giữa?</span>
+<ol class="opts">
+<li><code>align-items: center</code></li>
+<li><code>justify-content: space-between</code></li>
+<li><code>display: block</code></li>
+<li><code>gap: 10px</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Căn giữa các mục. Trên <code>.row</code> (đã là flex), đặt <code>justify-content</code> thành <code>center</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;X&lt;/div&gt;&lt;div class="box"&gt;Y&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; }
+.box { background: teal; color: white; padding: 12px; margin: 3px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).justifyContent === 'center', 'đặt justify-content thành center');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Đẩy logo và menu ra xa. Trên <code>.bar</code> (flex), đặt <code>justify-content</code> thành <code>space-between</code>.</span>
+<template class="html">&lt;div class="bar"&gt;&lt;span&gt;Logo&lt;/span&gt;&lt;span&gt;Menu&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.bar { display: flex; background: #121C30; color: #E8E4D8; padding: 10px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.bar')).justifyContent === 'space-between', 'đặt justify-content thành space-between');
+</template>
+</div>
+
+<h4>3. align-items — trục phụ</h4>
+<p>Trong khi <code>justify-content</code> làm việc dọc theo hàng, <code>align-items</code> căn các mục <i>ngang qua</i> nó (theo chiều dọc, khi hàng nằm ngang): <code>flex-start</code> (trên), <code>center</code>, <code>flex-end</code> (dưới), <code>stretch</code>. Đặt <b>cả hai</b> thành <code>center</code> là cách kinh điển để căn giữa hoàn hảo một thứ.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 7.</b> Chạy — các hộp nằm giữa một hàng cao. Đổi <code>align-items</code> thành <code>flex-start</code> và Chạy để thấy chúng nhảy lên đỉnh.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; align-items: center; height: 120px; background: #121C30; }
+.box { background: #E2604C; color: white; padding: 12px; margin: 4px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Căn giữa các mục theo chiều dọc. Trên <code>.row</code>, đặt <code>align-items</code> thành <code>center</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;Hi&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; height: 100px; background: navy; }
+.box { background: gold; padding: 10px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).alignItems === 'center', 'đặt align-items thành center');
+</template>
+</div>
+
+<h4>4. gap và flex-direction</h4>
+<p><code>gap</code> thêm khoảng cách đều <i>giữa</i> các mục flex — gọn hơn dùng margin. Và <code>flex-direction: column</code> lật trục chính thành dọc, nên các mục xếp chồng (nhưng vẫn có mọi điều khiển flex).</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Cách đều các mục. Trên <code>.row</code>, thêm <code>gap</code> là <code>16px</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;div class="box"&gt;3&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; }
+.box { background: teal; color: white; padding: 12px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).gap === '16px', 'thêm gap: 16px vào .row');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Xếp các mục flex theo chiều dọc. Trên <code>.row</code>, đặt <code>flex-direction</code> thành <code>column</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;Top&lt;/div&gt;&lt;div class="box"&gt;Bottom&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; gap: 6px; }
+.box { background: #F5B942; color: #0E1626; padding: 10px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).flexDirection === 'column', 'đặt flex-direction thành column');
+</template>
+</div>
+
+<h4>5. Dựng bố cục thật</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Căn giữa hoàn hảo một huy hiệu: trên <code>.stage</code> (flex, cao), đặt <b>cả hai</b> <code>justify-content</code> và <code>align-items</code> thành <code>center</code>.</span>
+<template class="html">&lt;div class="stage"&gt;&lt;div class="badge"&gt;★&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.stage { display: flex; height: 140px; background: #121C30; }
+.badge { background: gold; padding: 16px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.stage'));
+assert(s.justifyContent === 'center', 'đặt justify-content thành center');
+assert(s.alignItems === 'center', 'đặt align-items thành center');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Dựng một navbar: cho <code>.nav</code> là một hàng flex với <code>justify-content: space-between</code>, <code>align-items: center</code>, và <code>gap</code> là <code>12px</code>.</span>
+<template class="html">&lt;div class="nav"&gt;&lt;span&gt;Dojo&lt;/span&gt;&lt;span&gt;Home&lt;/span&gt;&lt;span&gt;Login&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.nav {
+  background: #0E1626; color: #E8E4D8; padding: 12px;
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.nav'));
+assert(s.display === 'flex', 'đặt display thành flex');
+assert(s.justifyContent === 'space-between', 'đặt justify-content thành space-between');
+assert(s.alignItems === 'center', 'đặt align-items thành center');
+assert(s.gap === '12px', 'đặt gap thành 12px');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — tất cả đều thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 1.</b> Để các con của một phần tử xếp thành hàng flex, bạn đặt <code>display</code> của phần tử thành…</span>
+<ol class="opts">
+<li><code>block</code></li>
+<li><code>row</code></li>
+<li><code>flex</code></li>
+<li><code>grid</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Biến <code>.row</code> thành hộp flex và đặt <code>justify-content</code> thành <code>center</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { }
+.box { background: teal; color: white; padding: 10px; margin: 3px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.row'));
+assert(s.display === 'flex', 'đặt display thành flex');
+assert(s.justifyContent === 'center', 'đặt justify-content thành center');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Biến <code>.list</code> thành cột flex với <code>gap</code> là <code>8px</code>.</span>
+<template class="html">&lt;div class="list"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.list { display: flex; }
+.box { background: gold; padding: 8px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.list'));
+assert(s.flexDirection === 'column', 'đặt flex-direction thành column');
+assert(s.gap === '8px', 'đặt gap thành 8px');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Dựng một thanh công cụ: <code>.bar</code> là flex, <code>justify-content: space-between</code>, <code>align-items: center</code>, <code>gap: 10px</code>.</span>
+<template class="html">&lt;div class="bar"&gt;&lt;span&gt;File&lt;/span&gt;&lt;span&gt;Edit&lt;/span&gt;&lt;span&gt;Help&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.bar { background: #121C30; color: #E8E4D8; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.bar'));
+assert(s.display === 'flex', 'đặt display thành flex');
+assert(s.justifyContent === 'space-between', 'đặt justify-content thành space-between');
+assert(s.alignItems === 'center', 'đặt align-items thành center');
+assert(s.gap === '10px', 'đặt gap thành 10px');
+</template>
+</div>

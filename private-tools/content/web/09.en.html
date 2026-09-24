@@ -1,0 +1,293 @@
+<h3>Lesson 9 — Mini project: a static library site</h3>
+<p>Time to put it all together. Over the last eight lessons you learned to structure pages with HTML, style them with CSS, lay them out with flexbox and grid, and add motion. Now you'll build a real, multi-page website: the <b>City Library</b> — a home page plus subpages for <i>Books</i>, <i>About</i> and <i>Contact</i>, tied together with a navigation bar. This is exactly how small real sites are built.</p>
+<p>First you'll meet two things every real page needs but our snippets skipped: the full <b>HTML document skeleton</b> (the <code>&lt;!doctype&gt;</code>, <code>&lt;head&gt;</code> and <code>&lt;body&gt;</code> wrapper, with a <code>&lt;title&gt;</code> and a linked stylesheet), and <b>links between pages</b> — the relative URLs like <code>books.html</code> that turn separate files into one connected site. You'll also use <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code>, the generic containers you group and style with classes.</p>
+<p>Then you'll build the site piece by piece — a nav bar, a header, a book grid, subpages — each graded as you go, finishing with a full styled home page. Let's ship a website.</p>
+
+<h4>1. The full document skeleton</h4>
+<p>Every real HTML file starts with a fixed skeleton. <code>&lt;!doctype html&gt;</code> tells the browser this is modern HTML. Inside <code>&lt;html&gt;</code> there are two parts: the <code>&lt;head&gt;</code> holds information <i>about</i> the page — the character set, the <code>&lt;title&gt;</code> (shown in the browser tab), and links to CSS files — while the <code>&lt;body&gt;</code> holds everything you actually see.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run this complete document. The visible content comes from the <code>&lt;body&gt;</code>; the <code>&lt;title&gt;</code> in the <code>&lt;head&gt;</code> would show on the browser tab.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;City Library&lt;/title&gt;
+    &lt;style&gt; body { font-family: sans-serif; padding: 16px; } &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;City Library&lt;/h1&gt;
+    &lt;p&gt;Everything visible lives in the body.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 2.</b> Which part of the document holds the <code>&lt;title&gt;</code> and links to stylesheets?</span>
+<ol class="opts">
+<li><code>&lt;body&gt;</code></li>
+<li><code>&lt;head&gt;</code></li>
+<li><code>&lt;footer&gt;</code></li>
+<li><code>&lt;main&gt;</code></li>
+</ol></div>
+<p>On a real site each page (<code>index.html</code>, <code>books.html</code>…) is its own file linking to a shared <code>style.css</code> via <code>&lt;link rel="stylesheet" href="style.css"&gt;</code> in the head. In these exercises the CSS box <i>is</i> that shared stylesheet.</p>
+
+<h4>2. Linking pages together</h4>
+<p>A multi-page site is just several HTML files that link to each other. A link to another page in the same folder uses a <b>relative URL</b> — just the file name: <code>&lt;a href="books.html"&gt;Books&lt;/a&gt;</code>. Put these links in a <code>&lt;nav&gt;</code> and every page can reach every other. (In the sandbox the links won't navigate, but on a deployed site they jump between pages.)</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Build the site navigation. Inside the <code>&lt;nav&gt;</code>, add three links: <code>Home</code> → <code>index.html</code>, <code>Books</code> → <code>books.html</code>, <code>About</code> → <code>about.html</code>.</span>
+<template class="st">&lt;nav&gt;
+
+&lt;/nav&gt;</template>
+<template class="ts">
+var links = document.querySelectorAll('nav a');
+assert(links.length === 3, 'the nav should contain exactly three links');
+assert(document.querySelector('nav a[href="index.html"]'), 'add a Home link to index.html');
+assert(document.querySelector('nav a[href="books.html"]'), 'add a Books link to books.html');
+assert(document.querySelector('nav a[href="about.html"]'), 'add an About link to about.html');
+assert(links[0].textContent.trim() === 'Home' && links[1].textContent.trim() === 'Books' && links[2].textContent.trim() === 'About', 'the link texts should be Home, Books, About');
+</template>
+</div>
+
+<h4>3. Build the home page, part by part</h4>
+<p>A page is regions stacked in order: a <code>&lt;header&gt;</code>, a <code>&lt;nav&gt;</code>, a <code>&lt;main&gt;</code>, a <code>&lt;footer&gt;</code>. Let's build each.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Make the header. Add a <code>&lt;header&gt;</code> containing an <code>&lt;h1&gt;</code> that reads <code>City Library</code>.</span>
+<template class="st">
+</template>
+<template class="ts">
+var h1 = document.querySelector('header h1');
+assert(h1, 'add a header with an h1 inside');
+assert(h1.textContent.trim() === 'City Library', 'the h1 should read "City Library"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Add the welcome section. Add a <code>&lt;main&gt;</code> containing an <code>&lt;h2&gt;</code> reading <code>Welcome</code> and a <code>&lt;p&gt;</code> reading <code>Borrow books for free.</code></span>
+<template class="st">
+</template>
+<template class="ts">
+var h2 = document.querySelector('main h2');
+var p = document.querySelector('main p');
+assert(h2 && h2.textContent.trim() === 'Welcome', 'main should contain an h2 reading "Welcome"');
+assert(p && p.textContent.trim() === 'Borrow books for free.', 'main should contain a p reading "Borrow books for free."');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Add the footer. Add a <code>&lt;footer&gt;</code> reading <code>© 2026 City Library</code>.</span>
+<template class="st">
+</template>
+<template class="ts">
+var f = document.querySelector('footer');
+assert(f && f.textContent.trim() === '© 2026 City Library', 'add a footer reading "© 2026 City Library"');
+</template>
+</div>
+
+<h4>4. Style the navigation</h4>
+<p>Now make the nav look like a real menu: a horizontal bar with spaced-out links. Flexbox from Lesson 5 does it.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> In the <b>CSS</b>, turn <code>.menu</code> into a flex row with a <code>gap</code> of <code>16px</code>.</span>
+<template class="html">&lt;nav class="menu"&gt;
+  &lt;a href="index.html"&gt;Home&lt;/a&gt;
+  &lt;a href="books.html"&gt;Books&lt;/a&gt;
+  &lt;a href="about.html"&gt;About&lt;/a&gt;
+&lt;/nav&gt;</template>
+<template class="css">.menu { background: #121C30; padding: 12px; }
+.menu a { color: #7FD1C0; text-decoration: none; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.menu'));
+assert(s.display === 'flex', 'set .menu display to flex');
+assert(s.gap === '16px', 'set the gap to 16px');
+</template>
+</div>
+
+<h4>5. The Books subpage — a grid of books</h4>
+<p>The Books page shows the catalogue as a grid of cards. Each card is a <code>&lt;div class="book"&gt;</code> with a title and author.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Make one book card. Create a <code>&lt;div class="book"&gt;</code> containing an <code>&lt;h3&gt;</code> reading <code>Dune</code> and a <code>&lt;p&gt;</code> reading <code>Frank Herbert</code>.</span>
+<template class="st">
+</template>
+<template class="ts">
+var book = document.querySelector('.book');
+assert(book, 'add a <div class="book">');
+var h3 = book.querySelector('h3');
+var p = book.querySelector('p');
+assert(h3 && h3.textContent.trim() === 'Dune', 'the book should have an h3 reading "Dune"');
+assert(p && p.textContent.trim() === 'Frank Herbert', 'the book should have a p reading "Frank Herbert"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> Lay the catalogue out. In the <b>CSS</b>, make <code>.catalog</code> a grid with <b>three</b> columns (<code>1fr 1fr 1fr</code>) and a <code>gap</code> of <code>12px</code>.</span>
+<template class="html">&lt;div class="catalog"&gt;
+  &lt;div class="book"&gt;Dune&lt;/div&gt;&lt;div class="book"&gt;1984&lt;/div&gt;&lt;div class="book"&gt;Emma&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.catalog { }
+.book { background: #121C30; color: #E8E4D8; padding: 18px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.catalog'));
+assert(s.display === 'grid', 'set display to grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 3, 'use three columns');
+assert(s.rowGap === '12px', 'set the gap to 12px');
+</template>
+</div>
+
+<h4>6. The About subpage</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Build the About page content: a <code>&lt;header&gt;</code> with an <code>&lt;h1&gt;</code> reading <code>About us</code>, and a <code>&lt;main&gt;</code> with a <code>&lt;p&gt;</code> reading <code>We opened in 1998.</code></span>
+<template class="st">
+</template>
+<template class="ts">
+var h1 = document.querySelector('header h1');
+var p = document.querySelector('main p');
+assert(h1 && h1.textContent.trim() === 'About us', 'add a header with an h1 reading "About us"');
+assert(p && p.textContent.trim() === 'We opened in 1998.', 'add a main with a p reading "We opened in 1998."');
+</template>
+</div>
+
+<h4>7. The finished home page</h4>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 11.</b> Run this styled home page to see the goal — everything you've learned, working together.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;City Library&lt;/title&gt;
+&lt;style&gt;
+  body { font-family: sans-serif; margin: 0; color: #E8E4D8; background: #0E1626; }
+  header { background: #121C30; padding: 18px; }
+  header h1 { margin: 0; color: #F5B942; }
+  nav { display: flex; gap: 16px; background: #1a2740; padding: 12px 18px; }
+  nav a { color: #7FD1C0; text-decoration: none; }
+  main { padding: 18px; }
+  .catalog { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .book { background: #121C30; padding: 18px; border-radius: 8px; transition: all 0.25s; }
+  .book:hover { transform: translateY(-4px); }
+  footer { padding: 14px 18px; color: #8FA0BC; }
+&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;&lt;h1&gt;City Library&lt;/h1&gt;&lt;/header&gt;
+  &lt;nav&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;a href="books.html"&gt;Books&lt;/a&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/nav&gt;
+  &lt;main&gt;
+    &lt;h2&gt;Welcome&lt;/h2&gt;&lt;p&gt;Borrow books for free.&lt;/p&gt;
+    &lt;div class="catalog"&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Dune&lt;/h3&gt;&lt;p&gt;Frank Herbert&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;1984&lt;/h3&gt;&lt;p&gt;George Orwell&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Emma&lt;/h3&gt;&lt;p&gt;Jane Austen&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;© 2026 City Library&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<h4>8. The subpages, styled</h4>
+<p>The same shared stylesheet makes the other pages match. Here's the <b>Books</b> catalogue and the <b>About</b> page — run each to see the finished multi-page look.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 12.</b> Run the styled <b>Books</b> catalogue page.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;Books — City Library&lt;/title&gt;
+&lt;style&gt;
+  body { font-family: sans-serif; margin: 0; color: #E8E4D8; background: #0E1626; }
+  header { background: #121C30; padding: 18px; }
+  header h1 { margin: 0; color: #F5B942; }
+  nav { display: flex; gap: 16px; background: #1a2740; padding: 12px 18px; }
+  nav a { color: #7FD1C0; text-decoration: none; }
+  main { padding: 18px; }
+  .catalog { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .book { background: #121C30; padding: 16px; border-radius: 8px; border: 1px solid #22304C; }
+  .book h3 { margin: 0 0 6px; color: #7FD1C0; }
+  .book p { margin: 0; color: #8FA0BC; }
+  footer { padding: 14px 18px; color: #8FA0BC; }
+&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;&lt;h1&gt;City Library&lt;/h1&gt;&lt;/header&gt;
+  &lt;nav&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;a href="books.html"&gt;Books&lt;/a&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/nav&gt;
+  &lt;main&gt;
+    &lt;h2&gt;Our books&lt;/h2&gt;
+    &lt;div class="catalog"&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Dune&lt;/h3&gt;&lt;p&gt;Frank Herbert&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;1984&lt;/h3&gt;&lt;p&gt;George Orwell&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Emma&lt;/h3&gt;&lt;p&gt;Jane Austen&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Hamlet&lt;/h3&gt;&lt;p&gt;W. Shakespeare&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;The Hobbit&lt;/h3&gt;&lt;p&gt;J.R.R. Tolkien&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Meditations&lt;/h3&gt;&lt;p&gt;Marcus Aurelius&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;© 2026 City Library&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 13.</b> Run the styled <b>About</b> page.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;About — City Library&lt;/title&gt;
+&lt;style&gt;
+  body { font-family: sans-serif; margin: 0; color: #E8E4D8; background: #0E1626; }
+  header { background: #121C30; padding: 18px; }
+  header h1 { margin: 0; color: #F5B942; }
+  nav { display: flex; gap: 16px; background: #1a2740; padding: 12px 18px; }
+  nav a { color: #7FD1C0; text-decoration: none; }
+  main { padding: 18px; max-width: 520px; line-height: 1.6; }
+  main h2 { color: #7FD1C0; }
+  .hours { background: #121C30; border-left: 3px solid #F5B942; padding: 10px 14px; margin-top: 12px; }
+  footer { padding: 14px 18px; color: #8FA0BC; }
+&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;&lt;h1&gt;City Library&lt;/h1&gt;&lt;/header&gt;
+  &lt;nav&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;a href="books.html"&gt;Books&lt;/a&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/nav&gt;
+  &lt;main&gt;
+    &lt;h2&gt;About us&lt;/h2&gt;
+    &lt;p&gt;City Library opened in 1998. We lend over 40,000 books for free to everyone in the city.&lt;/p&gt;
+    &lt;div class="hours"&gt;&lt;strong&gt;Opening hours:&lt;/strong&gt; Mon–Sat, 9am–8pm.&lt;/div&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;© 2026 City Library&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+
+<h4>9. Build your own home page</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 14. 🔥 Stretch — ✍️ your turn.</b> Assemble your own home page. Build: a <code>&lt;header&gt;</code> with an <code>&lt;h1&gt;</code> reading <code>City Library</code>; a <code>&lt;nav&gt;</code> with links to <code>index.html</code> and <code>books.html</code>; a <code>&lt;main&gt;</code> with an <code>&lt;h2&gt;</code> reading <code>Welcome</code>; and a <code>&lt;footer&gt;</code>. Then in the <b>CSS</b> make the <code>nav</code> a flex row with <code>gap</code> <code>16px</code>.</span>
+<template class="html">
+</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(document.querySelector('header h1') && document.querySelector('header h1').textContent.trim() === 'City Library', 'add a header with an h1 "City Library"');
+assert(document.querySelector('nav a[href="index.html"]') && document.querySelector('nav a[href="books.html"]'), 'add a nav with links to index.html and books.html');
+assert(document.querySelector('main h2') && document.querySelector('main h2').textContent.trim() === 'Welcome', 'add a main with an h2 "Welcome"');
+assert(document.querySelector('footer'), 'add a footer');
+var s = getComputedStyle(document.querySelector('nav'));
+assert(s.display === 'flex', 'make the nav a flex row');
+assert(s.gap === '16px', 'give the nav a gap of 16px');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — building out the rest of the site. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> On a deployed site, clicking <code>&lt;a href="books.html"&gt;Books&lt;/a&gt;</code> takes the user to…</span>
+<ol class="opts">
+<li>an external website called books</li>
+<li>the books.html page in the same folder</li>
+<li>nowhere — links need JavaScript</li>
+<li>the head of the current page</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Build the Contact page's form: a <code>&lt;form&gt;</code> containing an <code>&lt;input&gt;</code> of <code>type</code> <code>email</code> and a <code>&lt;button&gt;</code> reading <code>Send</code>.</span>
+<template class="st">&lt;h1&gt;Contact&lt;/h1&gt;
+&lt;form&gt;
+
+&lt;/form&gt;</template>
+<template class="ts">
+var inp = document.querySelector('form input');
+var btn = document.querySelector('form button');
+assert(inp && inp.getAttribute('type') === 'email', 'add an email input to the form');
+assert(btn && btn.textContent.trim() === 'Send', 'add a button reading "Send"');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Add a Contact link to the nav. Inside <code>&lt;nav&gt;</code>, add four links: Home (<code>index.html</code>), Books (<code>books.html</code>), About (<code>about.html</code>), Contact (<code>contact.html</code>).</span>
+<template class="st">&lt;nav&gt;
+
+&lt;/nav&gt;</template>
+<template class="ts">
+assert(document.querySelectorAll('nav a').length === 4, 'the nav should have four links');
+assert(document.querySelector('nav a[href="contact.html"]'), 'add a Contact link to contact.html');
+assert(document.querySelector('nav a[href="index.html"]') && document.querySelector('nav a[href="books.html"]') && document.querySelector('nav a[href="about.html"]'), 'keep the Home, Books and About links');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Make a polished book card. Build a <code>&lt;div class="book"&gt;</code> with an <code>&lt;h3&gt;</code> reading <code>Dune</code>. In the <b>CSS</b> give <code>.book</code> a <code>padding</code> of <code>16px</code>, a <code>border</code> of <code>1px solid teal</code>, and a <code>transition</code> of <code>all 0.3s</code>.</span>
+<template class="html">
+</template>
+<template class="css">
+</template>
+<template class="ts">
+var book = document.querySelector('.book');
+assert(book, 'add a <div class="book">');
+assert(book.querySelector('h3') && book.querySelector('h3').textContent.trim() === 'Dune', 'the card needs an h3 reading "Dune"');
+var s = getComputedStyle(book);
+assert(s.paddingTop === '16px', 'set padding to 16px');
+assert(s.borderTopWidth === '1px' && s.borderTopStyle === 'solid', 'add a 1px solid border');
+assert(s.transitionDuration === '0.3s', 'set transition to all 0.3s');
+</template>
+</div>

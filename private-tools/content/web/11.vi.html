@@ -1,0 +1,187 @@
+<h3>Bài 11 — Luồng điều khiển &amp; dữ liệu</h3>
+<p>Đến giờ code của bạn chạy thẳng một mạch, từ trên xuống. Chương trình thật cần <b>ra quyết định</b> ("nếu giỏ hàng rỗng thì ẩn nút thanh toán") và <b>lặp lại</b> công việc ("với mỗi sản phẩm, vẽ một thẻ"). Hai khả năng đó — rẽ nhánh và lặp — gọi là <b>luồng điều khiển (control flow)</b>, và chúng cho phép vài dòng code xử lý cả nghìn mục.</p>
+<p>Để làm được việc gì có ích, bạn cũng cần giữ các <b>tập hợp</b> dữ liệu, chứ không chỉ giá trị lẻ. JavaScript cho bạn hai hộp chứa thường ngày: <b>mảng (array)</b> — một danh sách có thứ tự như <code>["Mai", "Nam", "Lan"]</code> — và <b>đối tượng (object)</b> — một bản ghi có nhãn như <code>{ name: "Mai", age: 20 }</code>. Gần như mọi ứng dụng đều là mảng của các object: một danh sách sản phẩm, một danh sách người dùng, một danh sách tin nhắn.</p>
+<p>Bài này kết hợp cả hai: lưu dữ liệu trong mảng và object, rồi dùng <code>if</code> và vòng lặp để xử lý nó. Như trước, <code>console.log</code> hiện kết quả trong ô Kết quả in ra. Dạy code của bạn biết quyết định và lặp nào.</p>
+
+<h4>1. if / else — ra quyết định</h4>
+<p>Một <code>if</code> chạy một khối chỉ khi điều kiện của nó là <code>true</code>. Thêm <code>else</code> cho trường hợp còn lại. Điều kiện dùng các phép so sánh: <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, và <code>===</code> (bằng).</p>
+<pre class="snippet">let score = 75;
+if (score &gt;= 50) {
+  console.log("Pass");
+} else {
+  console.log("Fail");
+}</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 1. ✍️ Đến lượt bạn.</b> Biến <code>score</code> là 75. Viết một <code>if / else</code> <code>console.log</code> ra <code>Pass</code> khi <code>score &gt;= 50</code>, ngược lại <code>Fail</code>.</span>
+<template class="st">&lt;script&gt;
+let score = 75;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Pass', 'với score = 75 code phải in "Pass"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️ Đến lượt bạn.</b> In một phép so sánh. <code>console.log</code> kết quả của <code>10 &gt; 5</code> (phải in <code>true</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'true', 'console.log(10 > 5) phải in true');
+</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 3.</b> Toán tử nào kiểm tra hai giá trị có <b>bằng nhau</b> không?</span>
+<ol class="opts">
+<li><code>=</code></li>
+<li><code>&gt;</code></li>
+<li><code>===</code></li>
+<li><code>=!</code></li>
+</ol></div>
+
+<h4>2. Mảng — danh sách có thứ tự</h4>
+<p>Một <b>mảng</b> giữ nhiều giá trị theo thứ tự, viết trong ngoặc vuông. Lấy một mục bằng <b>chỉ số (index)</b> (đếm từ 0): <code>fruits[0]</code> là cái đầu. <code>fruits.length</code> là số lượng, và <code>fruits.push(x)</code> thêm một cái vào cuối.</p>
+<pre class="snippet">let fruits = ["apple", "banana", "cherry"];
+console.log(fruits[0]);        // apple
+console.log(fruits.length);    // 3
+fruits.push("date");           // giờ có 4 mục</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Tạo một mảng <code>nums</code> giữ <code>10, 20, 30</code>, rồi <code>console.log(nums.length)</code> (phải in <code>3</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(Array.isArray(nums) && nums.length === 3, 'tạo nums = [10, 20, 30]');
+assert(_OUT_.trim() === '3', 'console.log(nums.length) phải in 3');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> In mục đầu tiên. Với mảng có sẵn, <code>console.log</code> phần tử ở chỉ số <code>0</code> (phải in <code>red</code>).</span>
+<template class="st">&lt;script&gt;
+let colors = ["red", "green", "blue"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'red', 'console.log(colors[0]) phải in red');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Thêm một mục. <code>push</code> chuỗi <code>blue</code> vào mảng, rồi <code>console.log(colors.length)</code> (phải in <code>3</code>).</span>
+<template class="st">&lt;script&gt;
+let colors = ["red", "green"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(colors.length === 3 && colors[2] === 'blue', 'push "blue" vào colors');
+assert(_OUT_.trim() === '3', 'console.log(colors.length) phải in 3');
+</template>
+</div>
+
+<h4>3. Vòng lặp — lặp mà không lặp lại chính mình</h4>
+<p>Một vòng <code>for</code> lặp lại một khối. Dạng kinh điển đếm số: <code>for (let i = 1; i &lt;= 5; i++)</code>. Để duyệt các mục của mảng, vòng <code>for … of</code> gọn hơn trao cho bạn từng phần tử lần lượt.</p>
+<pre class="snippet">let sum = 0;
+for (let i = 1; i &lt;= 5; i++) {
+  sum = sum + i;
+}
+console.log(sum);   // 15
+
+for (let name of ["Mai", "Nam"]) {
+  console.log(name);
+}</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Cộng từ 1 đến 5. Dùng một vòng <code>for</code> để dựng <code>sum</code>, rồi <code>console.log(sum)</code> (phải in <code>15</code>).</span>
+<template class="st">&lt;script&gt;
+let sum = 0;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '15', 'lặp 1..5 cộng vào sum, rồi in — phải in 15');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> In từng tên. Dùng một vòng <code>for … of</code> để <code>console.log</code> mỗi tên trong mảng (mỗi tên một dòng).</span>
+<template class="st">&lt;script&gt;
+let names = ["Mai", "Nam", "Lan"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Mai\nNam\nLan', 'in mỗi tên theo thứ tự, mỗi dòng một tên');
+</template>
+</div>
+
+<h4>4. Object — bản ghi có nhãn</h4>
+<p>Một <b>object</b> lưu các giá trị dưới các tên (<b>key</b>), trong ngoặc nhọn. Đọc một giá trị bằng dấu chấm: <code>user.name</code>. Object là cách bạn mô hình một "thứ" có nhiều thuộc tính.</p>
+<pre class="snippet">let user = { name: "Mai", age: 20 };
+console.log(user.name);   // Mai
+console.log(user.age);    // 20</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Tạo một object <code>book</code> với key <code>title</code> đặt là <code>Dune</code>, rồi <code>console.log(book.title)</code> (phải in <code>Dune</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(book && book.title === 'Dune', 'tạo book = { title: "Dune" }');
+assert(_OUT_.trim() === 'Dune', 'console.log(book.title) phải in Dune');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Hai thuộc tính. Tạo <code>let car = { make: "Toyota", year: 2020 };</code> và in đúng <code>Toyota 2020</code> bằng template literal.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(car && car.make === 'Toyota' && car.year === 2020, 'tạo car = { make: "Toyota", year: 2020 }');
+assert(_OUT_.trim() === 'Toyota 2020', 'in "Toyota 2020" bằng `${car.make} ${car.year}`');
+</template>
+</div>
+
+<h4>5. Ghép lại</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Tính tổng giỏ hàng. Lặp qua mảng <code>prices</code>, cộng vào <code>total</code>, rồi gán <code>document.body.textContent</code> thành <code>Total: 90</code> (dùng template literal).</span>
+<template class="st">&lt;script&gt;
+let prices = [20, 30, 40];
+let total = 0;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Total: 90', 'cộng các prices (90) và hiện "Total: 90" lên trang');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Đếm sách rẻ. Bạn có một mảng các object sách. Lặp qua chúng và đếm bao nhiêu cuốn có <code>price &lt; 100</code>; <code>console.log</code> con số đó (phải in <code>2</code>).</span>
+<template class="st">&lt;script&gt;
+let books = [
+  { title: "Dune", price: 120 },
+  { title: "Emma", price: 80 },
+  { title: "1984", price: 95 }
+];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '2', 'đếm sách có price < 100 (có 2) và in con số');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — tất cả đều thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Bài tập 1.</b> Trong mảng <code>["a", "b", "c"]</code>, chỉ số của <code>"a"</code> là bao nhiêu?</span>
+<ol class="opts">
+<li><code>0</code></li>
+<li><code>1</code></li>
+<li><code>3</code></li>
+<li><code>"a"</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Tạo một mảng <code>days</code> với <code>"Mon", "Tue", "Wed"</code>, rồi <code>console.log</code> cái cuối bằng <code>days[2]</code> (phải in <code>Wed</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(Array.isArray(days) && days.length === 3, 'tạo days = ["Mon", "Tue", "Wed"]');
+assert(_OUT_.trim() === 'Wed', 'console.log(days[2]) phải in Wed');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Lặp từ 1 đến 3 và <code>console.log</code> mỗi số (mỗi số một dòng: <code>1</code>, <code>2</code>, <code>3</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '1\n2\n3', 'in 1, 2, 3 mỗi số một dòng');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Mảng <code>temps</code> giữ nhiệt độ mỗi ngày. Lặp qua nó, cộng dồn, và gán <code>document.body.textContent</code> thành <code>Total: 90</code> (tổng).</span>
+<template class="st">&lt;script&gt;
+let temps = [30, 28, 32];
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Total: 90', 'cộng temps (90) và hiện "Total: 90" lên trang');
+</template>
+</div>

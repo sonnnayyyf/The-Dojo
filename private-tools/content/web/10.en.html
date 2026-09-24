@@ -1,0 +1,172 @@
+<h3>Lesson 10 — JavaScript basics</h3>
+<p>You can now build and style pages — but they just sit there. <b>JavaScript</b> is the language that makes a page <i>think and react</i>: remember values, do calculations, respond to clicks, update the screen. It's the third and final layer of the web, and the one that turns a poster into an app. Welcome to the second half of the course.</p>
+<p>Every program, in any language, is built from the same tiny bricks: <b>values</b> (a piece of text, a number), <b>variables</b> (named boxes that store those values), and <b>operators</b> (math and comparisons). Master those and everything else — loops, functions, whole apps — is just combinations of them. JavaScript is a friendly place to learn them because it runs everywhere and shows results instantly.</p>
+<p>Your new best friend is <code>console.log()</code> — it prints a value so you can <i>see</i> what your code is doing. In these exercises, whatever you <code>console.log</code> shows up in the <b>Output</b> box when you press Run. Type code, run it, read the output, get graded. Let's write some JavaScript.</p>
+
+<h4>1. console.log — see your code think</h4>
+<p><code>console.log(x)</code> prints <code>x</code> so you can inspect it. It's how every developer checks their work. Text (a <b>string</b>) goes in quotes; numbers don't.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 1. ✍️ Your turn.</b> Print a greeting. Use <code>console.log</code> to print exactly <code>Hello, Dojo!</code> (in quotes).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Hello, Dojo!', 'console.log("Hello, Dojo!") should print exactly Hello, Dojo!');
+</template>
+</div>
+
+<h4>2. Variables — named boxes</h4>
+<p>A <b>variable</b> stores a value under a name so you can reuse it. Declare one with <code>let</code> (a value that can change) or <code>const</code> (one that won't). Then use the name anywhere.</p>
+<pre class="snippet">let city = "Hanoi";
+console.log(city);</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️ Your turn.</b> Create a variable <code>city</code> holding the string <code>Hanoi</code>, then <code>console.log(city)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof city !== 'undefined', 'declare a variable called city');
+assert(city === 'Hanoi', 'city should hold the string "Hanoi"');
+assert(_OUT_.trim() === 'Hanoi', 'console.log(city) should print Hanoi');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Store a number. Create <code>const age = 20;</code> then print it with <code>console.log(age)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof age === 'number', 'age should be a number (no quotes)');
+assert(age === 20, 'age should be 20');
+assert(_OUT_.trim() === '20', 'console.log(age) should print 20');
+</template>
+</div>
+
+<h4>3. Data types — text, numbers, true/false</h4>
+<p>Three basic types cover most of what you store: a <b>string</b> (text in quotes, <code>"hi"</code>), a <b>number</b> (<code>42</code>, no quotes), and a <b>boolean</b> (<code>true</code> or <code>false</code>). The <code>typeof</code> operator tells you which one a value is.</p>
+<pre class="snippet">console.log(typeof "hi");    // string
+console.log(typeof 42);      // number
+console.log(typeof true);    // boolean</pre>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 4.</b> Which of these is a <b>number</b> value (not a string)?</span>
+<ol class="opts">
+<li><code>"7"</code></li>
+<li><code>"seven"</code></li>
+<li><code>7</code></li>
+<li><code>true</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Make a boolean. Create <code>let isOpen = true;</code> and print it with <code>console.log(isOpen)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof isOpen === 'boolean', 'isOpen should be a boolean (true or false, no quotes)');
+assert(isOpen === true, 'isOpen should be true');
+assert(_OUT_.trim() === 'true', 'console.log(isOpen) should print true');
+</template>
+</div>
+
+<h4>4. Operators — doing maths</h4>
+<p>The usual arithmetic works: <code>+</code> add, <code>-</code> subtract, <code>*</code> multiply, <code>/</code> divide. You can compute right inside <code>console.log</code>, or store the result in a variable.</p>
+<pre class="snippet">console.log(5 + 3);      // 8
+console.log(10 * 2);     // 20
+let total = 4 + 6;
+console.log(total);      // 10</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Print the result of <code>7 * 6</code> using <code>console.log</code> (the answer should print as <code>42</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '42', 'console.log(7 * 6) should print 42');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Store a sum. Create <code>let price = 25000;</code> and <code>let qty = 3;</code>, then <code>console.log(price * qty)</code> (should print <code>75000</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof price === 'number' && price === 25000, 'create price = 25000');
+assert(typeof qty === 'number' && qty === 3, 'create qty = 3');
+assert(_OUT_.trim() === '75000', 'console.log(price * qty) should print 75000');
+</template>
+</div>
+
+<h4>5. Template literals — put values into text</h4>
+<p>To build a sentence with variables inside, use a <b>template literal</b>: backticks <code>`…`</code> with <code>${…}</code> holes. <code>`Hi ${name}`</code> drops the value of <code>name</code> into the string.</p>
+<pre class="snippet">let name = "Mai";
+console.log(`Hello, ${name}!`);   // Hello, Mai!</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Create <code>let name = "Mai";</code> then use a template literal to print exactly <code>Hello, Mai!</code></span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Hello, Mai!', 'print "Hello, Mai!" using a template literal `Hello, ${name}!`');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> Combine data. Create <code>let item = "Coffee";</code> and <code>let cost = 25000;</code>, then print exactly <code>Coffee costs 25000</code> using a template literal.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Coffee costs 25000', 'print "Coffee costs 25000" using `${item} costs ${cost}`');
+</template>
+</div>
+
+<h4>6. Show a result on the page</h4>
+<p>Console output is for you, the developer. To show something to the <i>user</i>, put it on the page — the simplest way is <code>document.body.textContent = …</code>. (Next lessons go much deeper into this.)</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Put text on the page. Set <code>document.body.textContent</code> to <code>Welcome!</code> — you'll see it appear in the preview.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Welcome!', 'set document.body.textContent to "Welcome!"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Compute then show. Create <code>let a = 8;</code> and <code>let b = 5;</code>, then set <code>document.body.textContent</code> to the string <code>Sum: 13</code> using a template literal with <code>${a + b}</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Sum: 13', 'show "Sum: 13" on the page using `Sum: ${a + b}`');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Build a tiny receipt. Create <code>let item = "Tea";</code>, <code>let price = 30000;</code>, <code>let qty = 2;</code>. <code>console.log</code> exactly <code>Tea x2</code>, and set <code>document.body.textContent</code> to <code>Total: 60000</code> (use <code>price * qty</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Tea x2', 'console.log should print "Tea x2" (use `${item} x${qty}`)');
+assert(document.body.textContent.trim() === 'Total: 60000', 'the page should show "Total: 60000" (use price * qty)');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — all hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> Which keyword declares a variable whose value will <b>not</b> change?</span>
+<ol class="opts">
+<li><code>let</code></li>
+<li><code>const</code></li>
+<li><code>log</code></li>
+<li><code>var</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Create <code>let country = "Vietnam";</code> and print it with <code>console.log</code> (should print <code>Vietnam</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(country === 'Vietnam', 'create country = "Vietnam"');
+assert(_OUT_.trim() === 'Vietnam', 'console.log(country) should print Vietnam');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Create <code>let x = 12;</code> and <code>let y = 8;</code>, then <code>console.log(x + y)</code> (should print <code>20</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '20', 'console.log(x + y) should print 20');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Create <code>let user = "Nam";</code> and <code>let points = 90;</code>. Set <code>document.body.textContent</code> to exactly <code>Nam has 90 points</code> using a template literal.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Nam has 90 points', 'show "Nam has 90 points" using `${user} has ${points} points`');
+</template>
+</div>

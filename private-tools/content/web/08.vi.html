@@ -1,0 +1,154 @@
+<h3>Bài 8 — Chuyển động &amp; animation</h3>
+<p>Trang tĩnh cũng ổn, nhưng web thấy <i>sống động</i> vì mọi thứ chuyển động: một nút phình nhẹ khi bạn rê chuột, một thẻ nhấc lên khi chạm, một vòng xoay đang tải, một thông báo trượt vào. Những chi tiết nhỏ đó làm giao diện thấy chỉn chu và biết phản hồi người dùng. Điều tuyệt nhất — chúng thuần CSS. Không cần JavaScript.</p>
+<p>Ba công cụ cho bạn tất cả. <b>transform</b> di chuyển, xoay hoặc phóng to một phần tử mà không làm xáo trộn bố cục xung quanh. <b>transition</b> làm một thay đổi diễn ra <i>mượt</i> theo thời gian thay vì bật ngay — thuộc tính "làm cho thấy đã" hữu ích nhất. Và <b>@keyframes</b> + <b>animation</b> cho bạn viết một chuyển động lặp lại, nhiều bước như một vòng xoay hay một nhịp đập.</p>
+<p>Chuyển động thì không thể cảm được trên giấy, nên mọi ví dụ ở đây đều trực tiếp. Chạy chúng, rê chuột lên ô xem trước, và chỉnh các con số để cảm nhận thời lượng và tỉ lệ đổi tâm trạng thế nào. Cho mọi thứ chuyển động nào.</p>
+
+<h4>1. transform — di chuyển, xoay, phóng to</h4>
+<p><code>transform</code> thay đổi phần tử về mặt hình ảnh: <code>rotate(20deg)</code> nghiêng nó, <code>scale(1.5)</code> làm nó to gấp 1.5 lần, <code>translate(10px, 0)</code> dịch nó. Quan trọng là nó không đẩy các phần tử khác — đây là hiệu ứng thuần hình ảnh, hoàn hảo cho hover và animation.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy và xem ba phép biến đổi. Đổi góc và tỉ lệ rồi Chạy lại.</span>
+<template class="html">&lt;span class="box r"&gt;rotate&lt;/span&gt;&lt;span class="box s"&gt;scale&lt;/span&gt;&lt;span class="box t"&gt;move&lt;/span&gt;</template>
+<template class="css">.box { display: inline-block; background: #7FD1C0; color: #0E1626; padding: 14px; margin: 16px; }
+.r { transform: rotate(15deg); }
+.s { transform: scale(1.4); }
+.t { transform: translate(0, 12px); }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️ Đến lượt bạn.</b> Nghiêng hộp. Cho <code>.box</code> một <code>transform</code> là <code>rotate(20deg)</code>.</span>
+<template class="html">&lt;div class="box"&gt;Tilt me&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: gold; padding: 14px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.box')).transform !== 'none', 'áp dụng transform: rotate(20deg) cho .box');
+</template>
+</div>
+
+<h4>2. transition — mượt, không đột ngột</h4>
+<p>Mặc định một thay đổi kiểu là tức thì. <code>transition</code> trải nó ra theo thời gian. <code>transition: all 0.3s</code> nghĩa là "làm mượt mọi thay đổi của phần tử này trong 0.3 giây". Kết hợp với một luật <code>:hover</code> — trạng thái hover định nghĩa vẻ ngoài <i>cuối</i>, còn transition làm việc đến đó thật mượt.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 3.</b> Chạy, rồi <b>rê chuột lên hộp</b> trong ô xem trước — nó phình mượt nhờ transition.</span>
+<template class="html">&lt;div class="box"&gt;Hover me&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: #F5B942; color: #0E1626; padding: 16px; transition: all 0.3s; }
+.box:hover { transform: scale(1.3); background: #E2604C; }</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 4.</b> Thuộc tính nào làm một thay đổi diễn ra <b>mượt theo thời gian</b> thay vì tức thì?</span>
+<ol class="opts">
+<li><code>transform</code></li>
+<li><code>transition</code></li>
+<li><code>display</code></li>
+<li><code>position</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Làm nó mượt. Cho <code>.box</code> một <code>transition</code> là <code>all 0.3s</code>.</span>
+<template class="html">&lt;div class="box"&gt;Smooth&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: teal; color: white; padding: 14px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.box')).transitionDuration === '0.3s', 'đặt transition thành all 0.3s');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Phóng to hộp. Cho <code>.box</code> một <code>transform</code> là <code>scale(1.2)</code>.</span>
+<template class="html">&lt;div class="box"&gt;Bigger&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: navy; color: white; padding: 14px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.box')).transform !== 'none', 'áp dụng transform: scale(1.2)');
+</template>
+</div>
+
+<h4>3. Hiệu ứng hover</h4>
+<p>Lớp giả <code>:hover</code> nhắm một phần tử chỉ khi chuột đang ở trên nó. Kết hợp <code>transition</code> (ở luật gốc) với một thay đổi (ở luật <code>:hover</code>) cho một nút tương tác kinh điển.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 7.</b> Chạy, rồi rê chuột lên nút — nó đổi màu mượt. Thử đổi màu hover.</span>
+<template class="html">&lt;button class="btn"&gt;Buy now&lt;/button&gt;</template>
+<template class="css">.btn { background: #7FD1C0; color: #0E1626; border: none; padding: 10px 18px; border-radius: 6px; transition: all 0.25s; }
+.btn:hover { background: #F5B942; transform: translateY(-3px); }</template>
+</div>
+
+<h4>4. @keyframes &amp; animation</h4>
+<p>Cho chuyển động tự chạy (vòng xoay, nhịp đập), định nghĩa các bước bằng <code>@keyframes name { from { … } to { … } }</code>, rồi gắn nó bằng <code>animation: name duration timing repeat</code>. Ví dụ <code>animation: spin 2s linear infinite</code> chạy keyframes <code>spin</code> mãi mãi, 2 giây mỗi vòng.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 8.</b> Chạy và xem hộp xoay mãi, do <code>@keyframes</code> điều khiển.</span>
+<template class="html">&lt;div class="spinner"&gt;↻&lt;/div&gt;</template>
+<template class="css">.spinner { display: inline-block; font-size: 30px; color: #7FD1C0; animation: spin 2s linear infinite; }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Gắn animation. <code>@keyframes spin</code> đã viết sẵn — trên <code>.loader</code>, thêm <code>animation: spin 2s linear infinite;</code></span>
+<template class="html">&lt;div class="loader"&gt;↻&lt;/div&gt;</template>
+<template class="css">.loader { display: inline-block; font-size: 28px; color: gold; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.loader')).animationName === 'spin', 'thêm animation: spin 2s linear infinite; vào .loader');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Làm nó chậm lại. Trên <code>.loader</code>, cho animation kéo dài <code>2s</code> (viết <code>animation: spin 2s linear infinite;</code>).</span>
+<template class="html">&lt;div class="loader"&gt;●&lt;/div&gt;</template>
+<template class="css">.loader { display: inline-block; font-size: 24px; color: #E2604C; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.loader'));
+assert(s.animationName === 'spin', 'gắn animation spin');
+assert(s.animationDuration === '2s', 'cho thời lượng là 2s');
+</template>
+</div>
+
+<h4>5. Ghép lại</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Làm nền cho một thẻ tương tác: cho <code>.card</code> một <code>transition</code> là <code>all 0.3s</code> và một <code>transform</code> là <code>scale(1.05)</code>.</span>
+<template class="html">&lt;div class="card"&gt;Featured&lt;/div&gt;</template>
+<template class="css">.card { background: #121C30; color: #E8E4D8; padding: 20px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.card'));
+assert(s.transitionDuration === '0.3s', 'đặt transition thành all 0.3s');
+assert(s.transform !== 'none', 'áp dụng transform: scale(1.05)');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Dựng một huy hiệu đập nhịp. <code>@keyframes pulse</code> đã có sẵn — trên <code>.badge</code>, thêm <code>animation: pulse 1s ease-in-out infinite;</code> để <code>animation-name</code> là <code>pulse</code> và <code>animation-duration</code> là <code>1s</code>.</span>
+<template class="html">&lt;div class="badge"&gt;LIVE&lt;/div&gt;</template>
+<template class="css">.badge { display: inline-block; background: #E2604C; color: white; padding: 8px 14px; border-radius: 20px; }
+@keyframes pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.badge'));
+assert(s.animationName === 'pulse', 'đặt animation thành pulse');
+assert(s.animationDuration === '1s', 'cho thời lượng là 1s');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — phần lớn là thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Bài tập 1.</b> Thuộc tính nào xoay hoặc phóng to một phần tử về mặt hình ảnh mà không đẩy hàng xóm?</span>
+<ol class="opts">
+<li><code>transform</code></li>
+<li><code>margin</code></li>
+<li><code>display</code></li>
+<li><code>gap</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Cho <code>.box</code> một <code>transition</code> là <code>all 0.5s</code> và một <code>transform</code> là <code>rotate(10deg)</code>.</span>
+<template class="html">&lt;div class="box"&gt;Tilt&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: gold; padding: 14px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.transitionDuration === '0.5s', 'đặt transition thành all 0.5s');
+assert(s.transform !== 'none', 'áp dụng transform: rotate(10deg)');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Gắn animation spin vào <code>.wheel</code>: <code>animation: spin 3s linear infinite;</code> (keyframes có sẵn).</span>
+<template class="html">&lt;div class="wheel"&gt;✦&lt;/div&gt;</template>
+<template class="css">.wheel { display: inline-block; font-size: 26px; color: teal; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.wheel'));
+assert(s.animationName === 'spin', 'gắn animation spin');
+assert(s.animationDuration === '3s', 'cho thời lượng là 3s');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Làm một chấm nảy. <code>@keyframes bounce</code> có sẵn — trên <code>.dot</code> thêm <code>animation: bounce 0.6s ease infinite;</code> (tên <code>bounce</code>, thời lượng <code>0.6s</code>).</span>
+<template class="html">&lt;div class="dot"&gt;●&lt;/div&gt;</template>
+<template class="css">.dot { display: inline-block; font-size: 24px; color: #F5B942; }
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.dot'));
+assert(s.animationName === 'bounce', 'đặt animation thành bounce');
+assert(s.animationDuration === '0.6s', 'cho thời lượng là 0.6s');
+</template>
+</div>

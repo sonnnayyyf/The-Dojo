@@ -1,0 +1,206 @@
+<h3>Lesson 14 — Events &amp; interactivity</h3>
+<p>Everything so far ran <b>once</b>, the moment the page loaded. But real apps <i>wait</i> for the user and react: a button waits to be clicked, a box waits for you to type, a menu waits to be opened. That waiting-and-reacting is powered by <b>events</b> — signals the browser fires when something happens ("this was clicked", "a key was pressed"). Handle events and your page becomes an <b>app</b>.</p>
+<p>The tool is <code>element.addEventListener("click", handler)</code>: you tell an element which event to listen for and give it a <b>function</b> to run each time that event happens. Inside the handler you do the work — change text, update a count, read what the user typed. Reading input is just <code>input.value</code>.</p>
+<p>These exercises are graded by <i>simulating</i> the user — the grader clicks your button or types into your box, then checks that your page reacted correctly. So you get to build genuinely interactive widgets: counters, greeters, toggles, a mini to-do. Let's make the page respond.</p>
+
+<h4>1. Reacting to a click</h4>
+<p><code>addEventListener("click", fn)</code> runs <code>fn</code> every time the element is clicked. The function holds whatever should happen.</p>
+<pre class="snippet">let btn = document.querySelector("#btn");
+btn.addEventListener("click", function () {
+  document.querySelector("#out").textContent = "Clicked!";
+});</pre>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run, then click the button in the preview — the message updates. That's an event handler at work.</span>
+<template class="st">&lt;button id="btn"&gt;Press me&lt;/button&gt;
+&lt;p id="out"&gt;Not clicked yet&lt;/p&gt;
+&lt;script&gt;
+  document.querySelector("#btn").addEventListener("click", function () {
+    document.querySelector("#out").textContent = "You clicked it! 🎉";
+  });
+&lt;/script&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 2.</b> Which method makes an element listen for an event?</span>
+<ol class="opts">
+<li><code>querySelector</code></li>
+<li><code>addEventListener</code></li>
+<li><code>textContent</code></li>
+<li><code>console.log</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Wire the button. Add a <code>click</code> listener to <code>#btn</code> that sets <code>#out</code>'s <code>textContent</code> to <code>Done</code>. (The grader will click it for you.)</span>
+<template class="st">&lt;button id="btn"&gt;Go&lt;/button&gt;
+&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#btn').click();
+assert(document.querySelector('#out').textContent.trim() === 'Done', 'on click, set #out text to "Done"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Change a colour on click. Add a <code>click</code> listener to <code>#btn</code> that sets <code>#box</code>'s <code>.style.backgroundColor</code> to <code>gold</code>.</span>
+<template class="st">&lt;div id="box"&gt;Box&lt;/div&gt;
+&lt;button id="btn"&gt;Paint&lt;/button&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#btn').click();
+assert(document.querySelector('#box').style.backgroundColor === 'gold', "on click, set #box background to 'gold'");
+</template>
+</div>
+
+<h4>2. Remembering between clicks — a counter</h4>
+<p>Keep a variable outside the handler; each click updates it. This is the heart of a counter, a like button, a score.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 5.</b> Run and click the button a few times — the count goes up each click.</span>
+<template class="st">&lt;button id="btn"&gt;+1&lt;/button&gt; &lt;span id="count"&gt;0&lt;/span&gt;
+&lt;script&gt;
+  let count = 0;
+  document.querySelector("#btn").addEventListener("click", function () {
+    count = count + 1;
+    document.querySelector("#count").textContent = count;
+  });
+&lt;/script&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Build a counter. Each click of <code>#btn</code> should add 1 to a count and show it in <code>#count</code>. (The grader clicks twice — it should read <code>2</code>.)</span>
+<template class="st">&lt;button id="btn"&gt;+1&lt;/button&gt; &lt;span id="count"&gt;0&lt;/span&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var b = document.querySelector('#btn');
+b.click(); b.click();
+assert(document.querySelector('#count').textContent.trim() === '2', 'after two clicks #count should read 2');
+</template>
+</div>
+
+<h4>3. Reading what the user typed</h4>
+<p>An input's current text is <code>input.value</code>. Read it inside a click handler to react to whatever the user entered.</p>
+<pre class="snippet">let name = document.querySelector("#name").value;
+document.querySelector("#out").textContent = "Hi " + name;</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Greet the user. On click of <code>#btn</code>, read <code>#name</code>'s <code>value</code> and set <code>#out</code> to <code>Hi </code> + that value. (The grader types <code>Mai</code>, so it should read <code>Hi Mai</code>.)</span>
+<template class="st">&lt;input id="name"&gt;
+&lt;button id="btn"&gt;Greet&lt;/button&gt;
+&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#name').value = 'Mai';
+document.querySelector('#btn').click();
+assert(document.querySelector('#out').textContent.trim() === 'Hi Mai', 'read #name.value on click and show "Hi Mai"');
+</template>
+</div>
+
+<h4>4. Toggling with classList</h4>
+<p><code>classList.toggle("name")</code> adds a class if it's missing and removes it if it's there — perfect for on/off buttons like "dark mode" or "liked".</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> On click of <code>#btn</code>, <code>toggle</code> the class <code>active</code> on <code>#box</code>. (One click should add it.)</span>
+<template class="st">&lt;div id="box"&gt;Box&lt;/div&gt;
+&lt;button id="btn"&gt;Toggle&lt;/button&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#btn').click();
+assert(document.querySelector('#box').classList.contains('active'), 'on click, toggle the "active" class onto #box');
+</template>
+</div>
+
+<h4>5. The input event — react as they type</h4>
+<p>An <code>input</code> event fires on every keystroke. Listen for it to update the page <i>live</i> as the user types.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 9.</b> Run, then type in the box — the text below mirrors you instantly.</span>
+<template class="st">&lt;input id="field" placeholder="Type here"&gt;
+&lt;p id="echo"&gt;&lt;/p&gt;
+&lt;script&gt;
+  document.querySelector("#field").addEventListener("input", function (e) {
+    document.querySelector("#echo").textContent = e.target.value;
+  });
+&lt;/script&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Live mirror. Add an <code>input</code> listener to <code>#field</code> that copies its <code>value</code> into <code>#echo</code>. (The grader types <code>Hello</code>.)</span>
+<template class="st">&lt;input id="field"&gt;
+&lt;p id="echo"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var f = document.querySelector('#field');
+f.value = 'Hello';
+f.dispatchEvent(new Event('input'));
+assert(document.querySelector('#echo').textContent.trim() === 'Hello', 'mirror the typed value into #echo on input');
+</template>
+</div>
+
+<h4>6. Put it together</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Add to a list. On click of <code>#add</code>, read <code>#item</code>'s value and append a new <code>&lt;li&gt;</code> with that text to <code>#list</code>. (The grader types <code>Milk</code> and clicks once.)</span>
+<template class="st">&lt;input id="item"&gt;
+&lt;button id="add"&gt;Add&lt;/button&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#item').value = 'Milk';
+document.querySelector('#add').click();
+var items = document.querySelectorAll('#list li');
+assert(items.length === 1 && items[0].textContent.trim() === 'Milk', 'clicking Add should append an <li> reading "Milk"');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> A mini to-do. On each click of <code>#add</code>, append the <code>#task</code> value as a new <code>&lt;li&gt;</code> in <code>#todo</code>. (The grader adds two different tasks — the list should end with two items in order.)</span>
+<template class="st">&lt;input id="task"&gt;
+&lt;button id="add"&gt;Add task&lt;/button&gt;
+&lt;ul id="todo"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var t = document.querySelector('#task'), add = document.querySelector('#add');
+t.value = 'Buy milk'; add.click();
+t.value = 'Call Nam'; add.click();
+var items = document.querySelectorAll('#todo li');
+assert(items.length === 2, 'the to-do list should have two items');
+assert(items[0].textContent.trim() === 'Buy milk' && items[1].textContent.trim() === 'Call Nam', 'the items should be "Buy milk" then "Call Nam"');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — all hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 1.</b> Where do you read the current text a user has typed into an <code>&lt;input&gt;</code>?</span>
+<ol class="opts">
+<li><code>input.textContent</code></li>
+<li><code>input.innerHTML</code></li>
+<li><code>input.value</code></li>
+<li><code>input.class</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> On click of <code>#btn</code>, set <code>#msg</code>'s <code>textContent</code> to <code>Saved!</code>.</span>
+<template class="st">&lt;button id="btn"&gt;Save&lt;/button&gt;
+&lt;p id="msg"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#btn').click();
+assert(document.querySelector('#msg').textContent.trim() === 'Saved!', 'on click, set #msg to "Saved!"');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Build a counter on <code>#btn</code> that shows the count in <code>#n</code>. (The grader clicks three times — it should read <code>3</code>.)</span>
+<template class="st">&lt;button id="btn"&gt;+1&lt;/button&gt; &lt;span id="n"&gt;0&lt;/span&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var b = document.querySelector('#btn');
+b.click(); b.click(); b.click();
+assert(document.querySelector('#n').textContent.trim() === '3', 'after three clicks #n should read 3');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> On click of <code>#btn</code>, <code>toggle</code> the class <code>on</code> on <code>#lamp</code>. (The grader clicks twice, so it should end <b>off</b> — the class removed.)</span>
+<template class="st">&lt;div id="lamp"&gt;💡&lt;/div&gt;
+&lt;button id="btn"&gt;Switch&lt;/button&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var b = document.querySelector('#btn');
+b.click(); b.click();
+assert(!document.querySelector('#lamp').classList.contains('on'), 'after two toggles the "on" class should be removed');
+</template>
+</div>

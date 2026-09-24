@@ -1,0 +1,181 @@
+<h3>Lesson 2 — HTML essentials</h3>
+<p>In Lesson 1 you saw that <b>HTML</b> is the structure of a page — the walls and rooms. Now we build those walls properly. HTML stands for <i>HyperText Markup Language</i>, and the word "markup" is the key: you take plain text and <b>mark it up</b> by wrapping pieces in <b>tags</b> that tell the browser what each piece <i>is</i> — "this is a heading", "this is a paragraph", "this is a link". The browser reads those tags and renders the page accordingly.</p>
+<p>Almost everything in HTML follows one simple shape: an <b>opening tag</b>, some <b>content</b>, and a matching <b>closing tag</b> — for example <code>&lt;p&gt;Hello&lt;/p&gt;</code>. That trio is called an <b>element</b>. Learn to read that shape and HTML stops looking like a wall of angle brackets and starts looking like a set of labelled boxes. In this lesson you'll meet the handful of elements every single web page uses: headings, paragraphs, emphasis, links and images.</p>
+<p>As always, you'll spend most of your time <b>building</b>. You'll add headings, write paragraphs, make words bold, create real clickable links and drop in images — pressing <b>Run</b> to watch each one appear and getting graded instantly. Type it, run it, see it. Let's mark some things up.</p>
+
+<h4>1. The anatomy of an element</h4>
+<p>Every element is a tag pair wrapped around content. The <b>opening tag</b> names the element; the <b>closing tag</b> is the same name with a <code>/</code>. Whatever sits between them is the element's content.</p>
+<figure class="diagram">
+<svg viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="15">
+  <text x="60" y="70" fill="#7FD1C0">&lt;p&gt;</text>
+  <text x="150" y="70" fill="#E8E4D8">Hello</text>
+  <text x="250" y="70" fill="#E2604C">&lt;/p&gt;</text>
+  <line x1="80" y1="82" x2="80" y2="110" stroke="#7FD1C0"/>
+  <text x="30" y="128" fill="#7FD1C0" font-size="12">opening tag</text>
+  <line x1="175" y1="82" x2="175" y2="100" stroke="#8FA0BC"/>
+  <text x="150" y="118" fill="#8FA0BC" font-size="12">content</text>
+  <line x1="275" y1="82" x2="275" y2="110" stroke="#E2604C"/>
+  <text x="250" y="128" fill="#E2604C" font-size="12">closing tag</text>
+  <text x="360" y="70" fill="#F5B942" font-size="12">= one element</text>
+</svg>
+<figcaption>&lt;p&gt;Hello&lt;/p&gt; — opening tag, content, closing tag.</figcaption>
+</figure>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 1.</b> In <code>&lt;h1&gt;Welcome&lt;/h1&gt;</code>, which part is the <b>closing tag</b>?</span>
+<ol class="opts">
+<li><code>&lt;h1&gt;</code></li>
+<li><code>Welcome</code></li>
+<li><code>&lt;/h1&gt;</code></li>
+<li><code>h1</code></li>
+</ol></div>
+
+<h4>2. Headings and paragraphs</h4>
+<p>The two workhorses of any page are <b>headings</b> and <b>paragraphs</b>. HTML gives you six heading levels, <code>&lt;h1&gt;</code> (biggest, most important) down to <code>&lt;h6&gt;</code> (smallest). Use one <code>&lt;h1&gt;</code> for the page's main title, then <code>&lt;h2&gt;</code> for section titles, and so on. Body text goes in <b>paragraphs</b>, <code>&lt;p&gt;…&lt;/p&gt;</code>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 2.</b> Run this and see the heading sizes shrink from h1 to h4. Change the text inside any tag and Run again.</span>
+<template class="st">&lt;h1&gt;Heading level 1&lt;/h1&gt;
+&lt;h2&gt;Heading level 2&lt;/h2&gt;
+&lt;h3&gt;Heading level 3&lt;/h3&gt;
+&lt;h4&gt;Heading level 4&lt;/h4&gt;
+&lt;p&gt;A paragraph of ordinary body text.&lt;/p&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Add a second-level heading. Below the h1, add an <code>&lt;h2&gt;</code> whose text is exactly <code>About us</code>.</span>
+<template class="st">&lt;h1&gt;My Company&lt;/h1&gt;
+</template>
+<template class="ts">
+assert(document.querySelector('h1'), 'keep the h1');
+assert(document.querySelector('h2'), 'add an h2 element');
+assert(document.querySelector('h2').textContent.trim() === 'About us', 'the h2 should read exactly "About us"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Add a paragraph under the heading. Add a <code>&lt;p&gt;</code> whose text is exactly <code>We sell handmade candles.</code></span>
+<template class="st">&lt;h1&gt;Bright Co.&lt;/h1&gt;
+</template>
+<template class="ts">
+assert(document.querySelector('p'), 'add a p element');
+assert(document.querySelector('p').textContent.trim() === 'We sell handmade candles.', 'the paragraph should read exactly "We sell handmade candles."');
+</template>
+</div>
+
+<h4>3. Emphasis: bold and italic</h4>
+<p>To stress words <i>inside</i> text, wrap them in <code>&lt;strong&gt;</code> (important — shows <b>bold</b>) or <code>&lt;em&gt;</code> (emphasis — shows <i>italic</i>). These sit <i>inside</i> a paragraph, around just the words you want to mark.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 5.</b> Run and see how strong and em change only the wrapped words.</span>
+<template class="st">&lt;p&gt;This deal is &lt;strong&gt;50% off&lt;/strong&gt; and ends &lt;em&gt;today&lt;/em&gt;.&lt;/p&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Make one word bold. Wrap the word <code>free</code> in a <code>&lt;strong&gt;</code> tag so it appears in bold.</span>
+<template class="st">&lt;p&gt;Shipping is free on all orders.&lt;/p&gt;</template>
+<template class="ts">
+var s = document.querySelector('strong');
+assert(s, 'add a <strong> element around a word');
+assert(s.textContent.trim() === 'free', 'the bold word should be exactly "free"');
+assert(document.querySelector('p').textContent.trim() === 'Shipping is free on all orders.', 'keep the full sentence the same');
+</template>
+</div>
+
+<h4>4. Links — the "hypertext" in HTML</h4>
+<p>A <b>link</b> is what makes the web a <i>web</i>. You create one with the anchor element <code>&lt;a&gt;</code>, and you tell it where to go with an <b>attribute</b> called <code>href</code>. An <b>attribute</b> is extra information written <i>inside</i> the opening tag, as <code>name="value"</code>. The clickable text goes between the tags.</p>
+<figure class="diagram">
+<svg viewBox="0 0 470 120" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="14">
+  <text x="20" y="55" fill="#7FD1C0">&lt;a</text>
+  <text x="55" y="55" fill="#F5B942">href</text>
+  <text x="92" y="55" fill="#E8E4D8">=</text>
+  <text x="102" y="55" fill="#7FD1C0">"https://dojo.dev"</text>
+  <text x="270" y="55" fill="#7FD1C0">&gt;</text>
+  <text x="282" y="55" fill="#E8E4D8">Visit us</text>
+  <text x="360" y="55" fill="#E2604C">&lt;/a&gt;</text>
+  <line x1="70" y1="64" x2="70" y2="86" stroke="#F5B942"/>
+  <text x="40" y="104" fill="#F5B942" font-size="11">attribute name</text>
+  <line x1="185" y1="64" x2="185" y2="86" stroke="#7FD1C0"/>
+  <text x="150" y="104" fill="#7FD1C0" font-size="11">attribute value (the URL)</text>
+</svg>
+<figcaption>An anchor: href holds the destination, the text between the tags is what you click.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 7.</b> Run this. The link renders — in a real browser, clicking it would open the site.</span>
+<template class="st">&lt;p&gt;Read more on the &lt;a href="https://developer.mozilla.org"&gt;MDN docs&lt;/a&gt;.&lt;/p&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Create a link. Make the text <code>Google</code> link to <code>https://google.com</code> using an <code>&lt;a&gt;</code> with an <code>href</code>.</span>
+<template class="st">&lt;p&gt;Search it on &lt;/p&gt;
+</template>
+<template class="ts">
+var a = document.querySelector('a');
+assert(a, 'add an <a> element');
+assert(a.getAttribute('href') === 'https://google.com', 'the href should be exactly "https://google.com"');
+assert(a.textContent.trim() === 'Google', 'the link text should be exactly "Google"');
+</template>
+</div>
+
+<h4>5. Images</h4>
+<p>Images use the <code>&lt;img&gt;</code> element. It's unusual in two ways: it has <b>no closing tag</b> (the content <i>is</i> the file), and it needs two attributes — <code>src</code> (the image file to show) and <code>alt</code> (a short text description, read aloud to blind users and shown if the image fails to load). Always write an <code>alt</code>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 9.</b> Run this to see an image render from a built-in data source.</span>
+<template class="st">&lt;img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='90'%3E%3Crect width='160' height='90' fill='%237FD1C0'/%3E%3Ctext x='80' y='52' font-size='18' text-anchor='middle' fill='%230E1626'%3EDojo%3C/text%3E%3C/svg%3E" alt="A teal banner that says Dojo"&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Add an image. Add an <code>&lt;img&gt;</code> whose <code>src</code> is <code>logo.png</code> and whose <code>alt</code> is exactly <code>Company logo</code>.</span>
+<template class="st">&lt;h1&gt;Welcome&lt;/h1&gt;
+</template>
+<template class="ts">
+var img = document.querySelector('img');
+assert(img, 'add an <img> element');
+assert(img.getAttribute('src') === 'logo.png', 'the src should be exactly "logo.png"');
+assert((img.getAttribute('alt') || '').trim() === 'Company logo', 'the alt text should be exactly "Company logo"');
+</template>
+</div>
+
+<h4>6. Putting a page together</h4>
+<p>Real pages are just these elements stacked in order. Here you'll assemble a few at once.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Build a mini profile: an <code>&lt;h1&gt;</code> reading <code>Mai Tran</code>, then a <code>&lt;p&gt;</code> reading <code>Front-end learner.</code></span>
+<template class="st">
+</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'Mai Tran', 'add an h1 reading "Mai Tran"');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'Front-end learner.', 'add a p reading "Front-end learner."');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Build a tiny article: an <code>&lt;h1&gt;</code> reading <code>Coffee Guide</code>, a <code>&lt;p&gt;</code> that contains the word <code>beans</code> wrapped in <code>&lt;strong&gt;</code>, and a link (<code>&lt;a&gt;</code>) with text <code>Learn more</code> pointing to <code>https://dojo.dev</code>.</span>
+<template class="st">&lt;h1&gt;___&lt;/h1&gt;
+&lt;p&gt;Great coffee starts with fresh ___.&lt;/p&gt;
+&lt;a href="___"&gt;___&lt;/a&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'Coffee Guide', 'the h1 should read "Coffee Guide"');
+var strong = document.querySelector('p strong');
+assert(strong && strong.textContent.trim() === 'beans', 'wrap the word "beans" in <strong> inside the paragraph');
+var a = document.querySelector('a');
+assert(a && a.getAttribute('href') === 'https://dojo.dev', 'the link href should be "https://dojo.dev"');
+assert(a && a.textContent.trim() === 'Learn more', 'the link text should be "Learn more"');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — mostly hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> Which attribute tells a link <b>where to go</b>?</span>
+<ol class="opts">
+<li><code>src</code></li>
+<li><code>href</code></li>
+<li><code>alt</code></li>
+<li><code>link</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Add an <code>&lt;h2&gt;</code> reading <code>Menu</code> and a <code>&lt;p&gt;</code> reading <code>Open daily.</code></span>
+<template class="st">&lt;h1&gt;Cafe Dojo&lt;/h1&gt;
+</template>
+<template class="ts">
+assert(document.querySelector('h2') && document.querySelector('h2').textContent.trim() === 'Menu', 'add an h2 reading "Menu"');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'Open daily.', 'add a p reading "Open daily."');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Make the text <code>our shop</code> a link to <code>https://shop.dojo.dev</code>.</span>
+<template class="st">&lt;p&gt;Buy it at our shop.&lt;/p&gt;</template>
+<template class="ts">
+var a = document.querySelector('a');
+assert(a, 'add an <a> element');
+assert(a.getAttribute('href') === 'https://shop.dojo.dev', 'the href should be "https://shop.dojo.dev"');
+assert(a.textContent.trim() === 'our shop', 'the link text should be exactly "our shop"');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Add an <code>&lt;img&gt;</code> with <code>src</code> of <code>photo.jpg</code> and <code>alt</code> of <code>A sunny beach</code>, then below it a <code>&lt;p&gt;</code> with the word <code>holiday</code> wrapped in <code>&lt;em&gt;</code>.</span>
+<template class="st">&lt;h1&gt;My trip&lt;/h1&gt;
+</template>
+<template class="ts">
+var img = document.querySelector('img');
+assert(img && img.getAttribute('src') === 'photo.jpg', 'the img src should be "photo.jpg"');
+assert(img && (img.getAttribute('alt') || '').trim() === 'A sunny beach', 'the img alt should be "A sunny beach"');
+var em = document.querySelector('p em');
+assert(em && em.textContent.trim() === 'holiday', 'wrap the word "holiday" in <em> inside a paragraph');
+</template>
+</div>

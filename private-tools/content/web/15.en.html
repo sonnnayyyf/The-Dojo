@@ -1,0 +1,216 @@
+<h3>Lesson 15 — Forms, validation &amp; fetch</h3>
+<p>Forms are how the web collects real information — a login, a sign-up, a search, a checkout. You already know how to build a form's HTML; now you'll make it <i>work</i> with JavaScript: catch the submit, read what was typed, and <b>validate</b> it (is the email filled in? is the password long enough?) before doing anything. Good validation is what separates a toy from a real product.</p>
+<p>You'll also meet the two things that let a page talk to the outside world. <b>JSON</b> is the universal text format for data — every API on earth speaks it — and JavaScript can turn JSON text into objects (<code>JSON.parse</code>) and back (<code>JSON.stringify</code>). And <b>fetch</b> is the function that requests data from a server without reloading the page, the technique behind live search, feeds and "load more" buttons.</p>
+<p>You'll wire up submit handlers, block empty forms with clear error messages, and turn JSON into a rendered list — exactly what a real app does with data it fetches. Let's handle some real input.</p>
+
+<h4>1. Handling form submit</h4>
+<p>When a form is submitted it tries to <b>reload the page</b> by default. In a JavaScript app you stop that with <code>event.preventDefault()</code>, then handle everything yourself in a <code>submit</code> listener.</p>
+<pre class="snippet">let form = document.querySelector("form");
+form.addEventListener("submit", function (e) {
+  e.preventDefault();               // stop the reload
+  document.querySelector("#out").textContent = "Submitted!";
+});</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 1. ✍️ Your turn.</b> Catch the submit. Add a <code>submit</code> listener to the form that calls <code>e.preventDefault()</code> and sets <code>#out</code> to <code>Sent</code>. (The grader submits the form.)</span>
+<template class="st">&lt;form&gt;&lt;input&gt;&lt;button&gt;Send&lt;/button&gt;&lt;/form&gt;
+&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('form').dispatchEvent(new Event('submit'));
+assert(document.querySelector('#out').textContent.trim() === 'Sent', 'on submit, set #out to "Sent"');
+</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 2.</b> Which call stops a form from reloading the page when submitted?</span>
+<ol class="opts">
+<li><code>e.stop()</code></li>
+<li><code>e.preventDefault()</code></li>
+<li><code>form.reload()</code></li>
+<li><code>return true</code></li>
+</ol></div>
+
+<h4>2. Reading fields &amp; validating</h4>
+<p>Inside the submit handler, read each field's <code>.value</code> and check it. If something's wrong, show a message and stop; otherwise proceed. This is <b>validation</b>.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Require a name. On submit, if <code>#name</code>'s value is empty, set <code>#err</code> to <code>Required</code>; otherwise set it to <code>OK</code>. (The grader tests both an empty and a filled field.)</span>
+<template class="st">&lt;form&gt;&lt;input id="name"&gt;&lt;button&gt;Go&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), name = document.querySelector('#name'), err = document.querySelector('#err');
+name.value = ''; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Required', 'an empty name should show "Required"');
+name.value = 'Mai'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'OK', 'a filled name should show "OK"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Check length. On submit, if <code>#pw</code>'s value has fewer than 6 characters (<code>.length &lt; 6</code>), set <code>#err</code> to <code>Too short</code>; otherwise <code>Good</code>.</span>
+<template class="st">&lt;form&gt;&lt;input id="pw"&gt;&lt;button&gt;Set&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), pw = document.querySelector('#pw'), err = document.querySelector('#err');
+pw.value = '123'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Too short', 'a 3-character password should show "Too short"');
+pw.value = 'longenough'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Good', 'a long password should show "Good"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Check an email looks valid. On submit, if <code>#email</code>'s value does <b>not</b> contain an <code>@</code> (use <code>.includes("@")</code>), set <code>#err</code> to <code>Invalid</code>; otherwise <code>Valid</code>.</span>
+<template class="st">&lt;form&gt;&lt;input id="email"&gt;&lt;button&gt;Check&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), email = document.querySelector('#email'), err = document.querySelector('#err');
+email.value = 'nope'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Invalid', 'an address with no @ should show "Invalid"');
+email.value = 'me@dojo.dev'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Valid', 'a proper address should show "Valid"');
+</template>
+</div>
+
+<h4>3. JSON — the language of data</h4>
+<p><b>JSON</b> is text that looks like JavaScript objects and arrays. <code>JSON.parse(text)</code> turns a JSON string into a real object you can read; <code>JSON.stringify(obj)</code> does the reverse. This is how data travels between apps and servers.</p>
+<pre class="snippet">let text = '{"name":"Mai","age":20}';
+let user = JSON.parse(text);
+console.log(user.name);            // Mai
+console.log(JSON.stringify(user)); // back to text</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Parse JSON. The variable <code>text</code> is a JSON string. <code>JSON.parse</code> it into <code>user</code>, then <code>console.log(user.city)</code> (should print <code>Hanoi</code>).</span>
+<template class="st">&lt;script&gt;
+let text = '{"city":"Hanoi","population":8000000}';
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Hanoi', 'parse text and console.log(user.city) → "Hanoi"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Make JSON. Create <code>let book = { title: "Dune" };</code>, then <code>console.log(JSON.stringify(book))</code> (should print <code>{"title":"Dune"}</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '{"title":"Dune"}', 'console.log(JSON.stringify(book)) should print {"title":"Dune"}');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Render fetched-style data. <code>text</code> is a JSON array of book objects. Parse it, then loop to fill <code>#list</code> with an <code>&lt;li&gt;</code> per title. (Three items should appear.)</span>
+<template class="st">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+let text = '[{"title":"Dune"},{"title":"Emma"},{"title":"1984"}]';
+
+&lt;/script&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('#list li');
+assert(items.length === 3, 'parse the JSON and render three <li> items');
+assert(items[0].textContent.trim() === 'Dune' && items[2].textContent.trim() === '1984', 'the items should be the book titles in order');
+</template>
+</div>
+
+<h4>4. fetch — data from a server</h4>
+<p>To load data from an API without reloading, you use <code>fetch(url)</code>. It returns a <b>promise</b>, so you chain <code>.then()</code> to handle the response when it arrives — first turning it into JSON, then using it:</p>
+<pre class="snippet">fetch("https://api.example.com/books")
+  .then(response =&gt; response.json())   // parse the JSON body
+  .then(data =&gt; {
+    console.log(data);                 // now use the data
+  });</pre>
+<p>The data you get back is JSON — exactly what you practised parsing above. (This box can't reach the network, so real requests are a deployed-site thing, but the shape is always this.)</p>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 9.</b> After <code>fetch(url)</code>, what do you call to turn the response body into a usable object?</span>
+<ol class="opts">
+<li><code>response.text</code> only</li>
+<li><code>response.json()</code></li>
+<li><code>JSON.fetch()</code></li>
+<li><code>response.reload()</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Handle an API response. Pretend <code>data</code> is what a fetch returned. Read <code>data.title</code> and put it into <code>#out</code> (should read <code>Dune</code>).</span>
+<template class="st">&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+let data = { title: "Dune", author: "Herbert" };
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#out').textContent.trim() === 'Dune', 'put data.title into #out');
+</template>
+</div>
+
+<h4>5. Put it together</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> A working add-item form. On submit, if <code>#item</code> is empty show <code>#err</code> = <code>Required</code>; otherwise append the value as an <code>&lt;li&gt;</code> in <code>#list</code> and clear <code>#err</code>. Remember <code>e.preventDefault()</code>.</span>
+<template class="st">&lt;form&gt;&lt;input id="item"&gt;&lt;button&gt;Add&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), item = document.querySelector('#item'), err = document.querySelector('#err');
+item.value = ''; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Required', 'empty input should show "Required" and add nothing');
+assert(document.querySelectorAll('#list li').length === 0, 'nothing should be added when empty');
+item.value = 'Milk'; form.dispatchEvent(new Event('submit'));
+var items = document.querySelectorAll('#list li');
+assert(items.length === 1 && items[0].textContent.trim() === 'Milk', 'a filled input should add an <li> "Milk"');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> A sign-up validator. On submit: if <code>#user</code> is empty → <code>#err</code> = <code>Name required</code>; else if <code>#pw</code>'s length &lt; 6 → <code>#err</code> = <code>Password too short</code>; else → <code>#err</code> = <code>Welcome</code>. (The grader tests all three cases.)</span>
+<template class="st">&lt;form&gt;&lt;input id="user"&gt;&lt;input id="pw"&gt;&lt;button&gt;Sign up&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), user = document.querySelector('#user'), pw = document.querySelector('#pw'), err = document.querySelector('#err');
+user.value = ''; pw.value = 'abcdef'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Name required', 'empty name → "Name required"');
+user.value = 'Mai'; pw.value = '123'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Password too short', 'short password → "Password too short"');
+user.value = 'Mai'; pw.value = 'secret123'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Welcome', 'valid form → "Welcome"');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — all hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> What does <code>JSON.parse(text)</code> do?</span>
+<ol class="opts">
+<li>Turns an object into text</li>
+<li>Turns a JSON string into an object</li>
+<li>Sends a request to a server</li>
+<li>Reloads the page</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> On submit, call <code>e.preventDefault()</code> and set <code>#out</code> to <code>Thanks!</code>.</span>
+<template class="st">&lt;form&gt;&lt;input&gt;&lt;button&gt;Send&lt;/button&gt;&lt;/form&gt;
+&lt;p id="out"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('form').dispatchEvent(new Event('submit'));
+assert(document.querySelector('#out').textContent.trim() === 'Thanks!', 'on submit, set #out to "Thanks!"');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> The string <code>text</code> is JSON. Parse it and <code>console.log</code> the <code>name</code> field (should print <code>Nam</code>).</span>
+<template class="st">&lt;script&gt;
+let text = '{"name":"Nam","age":25}';
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Nam', 'parse text and console.log its name → "Nam"');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> On submit, if <code>#age</code>'s value as a number is under 18 (use <code>Number(...)</code>), set <code>#err</code> to <code>Too young</code>; otherwise <code>Allowed</code>.</span>
+<template class="st">&lt;form&gt;&lt;input id="age"&gt;&lt;button&gt;Enter&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var form = document.querySelector('form'), age = document.querySelector('#age'), err = document.querySelector('#err');
+age.value = '15'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Too young', 'age 15 → "Too young"');
+age.value = '20'; form.dispatchEvent(new Event('submit'));
+assert(err.textContent.trim() === 'Allowed', 'age 20 → "Allowed"');
+</template>
+</div>

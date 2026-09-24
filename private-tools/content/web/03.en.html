@@ -1,0 +1,217 @@
+<h3>Lesson 3 — HTML structure: lists, tables, forms &amp; semantic layout</h3>
+<p>So far your pages have been a flat stack of headings and paragraphs. Real websites are more organised: menus are <b>lists</b>, data sits in <b>tables</b>, sign-up boxes are <b>forms</b>, and the whole page is divided into meaningful regions like a header, a main area and a footer. HTML has dedicated elements for every one of these, and using the right element makes your page easier to style, easier to read for screen-readers, and easier for search engines to understand.</p>
+<p>The thread running through this lesson is <b>nesting</b> — putting elements <i>inside</i> other elements. A list is a container (<code>&lt;ul&gt;</code>) holding items (<code>&lt;li&gt;</code>); a table is rows (<code>&lt;tr&gt;</code>) holding cells (<code>&lt;td&gt;</code>); a form is a box (<code>&lt;form&gt;</code>) holding inputs. Once you see HTML as boxes-inside-boxes, structuring a whole page becomes natural.</p>
+<p>You'll build every one of these live: a navigation list, a price table, a working sign-up form, and finally a full page laid out with semantic regions. Edit, Run, watch it take shape, and get graded as you go.</p>
+
+<h4>1. Lists</h4>
+<p>Use an <b>unordered list</b> <code>&lt;ul&gt;</code> for items where order doesn't matter (bullets), and an <b>ordered list</b> <code>&lt;ol&gt;</code> when it does (numbered steps). Both hold <b>list items</b>, <code>&lt;li&gt;</code> — one per entry.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run and compare a bulleted list with a numbered one.</span>
+<template class="st">&lt;ul&gt;
+  &lt;li&gt;Coffee&lt;/li&gt;
+  &lt;li&gt;Tea&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+  &lt;li&gt;Boil water&lt;/li&gt;
+  &lt;li&gt;Add leaves&lt;/li&gt;
+&lt;/ol&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️ Your turn.</b> Build a bulleted menu: a <code>&lt;ul&gt;</code> containing exactly three <code>&lt;li&gt;</code> items reading <code>Home</code>, <code>Menu</code> and <code>Contact</code>.</span>
+<template class="st">&lt;ul&gt;
+
+&lt;/ul&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('ul li');
+assert(items.length === 3, 'the ul should contain exactly three li items');
+assert(items[0].textContent.trim() === 'Home', 'the first item should be "Home"');
+assert(items[1].textContent.trim() === 'Menu', 'the second item should be "Menu"');
+assert(items[2].textContent.trim() === 'Contact', 'the third item should be "Contact"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Make a numbered recipe: an <code>&lt;ol&gt;</code> with two <code>&lt;li&gt;</code> items reading <code>Mix</code> and <code>Bake</code>.</span>
+<template class="st">&lt;ol&gt;
+
+&lt;/ol&gt;</template>
+<template class="ts">
+var ol = document.querySelector('ol');
+assert(ol, 'use an <ol> (ordered list)');
+var items = ol.querySelectorAll('li');
+assert(items.length === 2, 'the ol should contain exactly two li items');
+assert(items[0].textContent.trim() === 'Mix' && items[1].textContent.trim() === 'Bake', 'the items should be "Mix" then "Bake"');
+</template>
+</div>
+
+<h4>2. Tables</h4>
+<p>Tables show data in rows and columns. A <code>&lt;table&gt;</code> holds <b>rows</b> <code>&lt;tr&gt;</code>; each row holds <b>cells</b>. Use <code>&lt;th&gt;</code> for header cells (bold) and <code>&lt;td&gt;</code> for data cells.</p>
+<figure class="diagram">
+<svg viewBox="0 0 440 150" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <rect x="40" y="20" width="360" height="40" fill="#121C30" stroke="#F5B942"/>
+  <text x="70" y="45" fill="#F5B942">th: Item</text>
+  <text x="250" y="45" fill="#F5B942">th: Price</text>
+  <line x1="220" y1="20" x2="220" y2="140" stroke="#22304C"/>
+  <rect x="40" y="60" width="360" height="40" fill="#0E1626" stroke="#22304C"/>
+  <text x="70" y="85" fill="#E8E4D8">td: Coffee</text>
+  <text x="250" y="85" fill="#E8E4D8">td: 25000</text>
+  <rect x="40" y="100" width="360" height="40" fill="#0E1626" stroke="#22304C"/>
+  <text x="70" y="125" fill="#E8E4D8">td: Tea</text>
+  <text x="250" y="125" fill="#E8E4D8">td: 30000</text>
+  <text x="10" y="45" fill="#7FD1C0" font-size="11" transform="rotate(-90 10,45)">tr</text>
+</svg>
+<figcaption>A table is rows (tr) of cells: th for headers, td for data.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 4.</b> Run and see a two-column table render.</span>
+<template class="st">&lt;table border="1" cellpadding="6"&gt;
+  &lt;tr&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Coffee&lt;/td&gt;&lt;td&gt;25000&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Add a data row. Inside the table, add one more <code>&lt;tr&gt;</code> with two <code>&lt;td&gt;</code> cells reading <code>Tea</code> and <code>30000</code>.</span>
+<template class="st">&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Coffee&lt;/td&gt;&lt;td&gt;25000&lt;/td&gt;&lt;/tr&gt;
+
+&lt;/table&gt;</template>
+<template class="ts">
+var rows = document.querySelectorAll('table tr');
+assert(rows.length === 3, 'the table should have three rows (1 header + 2 data)');
+var last = rows[2].querySelectorAll('td');
+assert(last.length === 2, 'the new row needs two td cells');
+assert(last[0].textContent.trim() === 'Tea' && last[1].textContent.trim() === '30000', 'the new cells should read "Tea" and "30000"');
+</template>
+</div>
+
+<h4>3. Forms</h4>
+<p>Forms collect input from the user. A <code>&lt;form&gt;</code> wraps controls like <code>&lt;input&gt;</code> (a text box) and <code>&lt;button&gt;</code>. An input's <code>type</code> attribute picks the kind (<code>text</code>, <code>email</code>, <code>password</code>…), and <code>placeholder</code> shows grey hint text. A <code>&lt;label&gt;</code> names a field so it's clear and accessible.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 6.</b> Run and try typing into the field.</span>
+<template class="st">&lt;form&gt;
+  &lt;label&gt;Your name&lt;/label&gt;
+  &lt;input type="text" placeholder="Type here"&gt;
+  &lt;button&gt;Send&lt;/button&gt;
+&lt;/form&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Add an email field. Inside the form, add an <code>&lt;input&gt;</code> whose <code>type</code> is <code>email</code> and whose <code>placeholder</code> is exactly <code>you@example.com</code>.</span>
+<template class="st">&lt;form&gt;
+
+  &lt;button&gt;Sign up&lt;/button&gt;
+&lt;/form&gt;</template>
+<template class="ts">
+var inp = document.querySelector('form input');
+assert(inp, 'add an <input> inside the form');
+assert(inp.getAttribute('type') === 'email', 'the input type should be "email"');
+assert(inp.getAttribute('placeholder') === 'you@example.com', 'the placeholder should be exactly "you@example.com"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Add a submit button. Inside the form add a <code>&lt;button&gt;</code> whose text is exactly <code>Subscribe</code>.</span>
+<template class="st">&lt;form&gt;
+  &lt;input type="text" placeholder="Name"&gt;
+
+&lt;/form&gt;</template>
+<template class="ts">
+var btn = document.querySelector('form button');
+assert(btn, 'add a <button> inside the form');
+assert(btn.textContent.trim() === 'Subscribe', 'the button text should be exactly "Subscribe"');
+</template>
+</div>
+
+<h4>4. Semantic layout</h4>
+<p>You <i>could</i> build a whole page out of plain boxes, but HTML gives <b>semantic</b> elements that name a page's regions: <code>&lt;header&gt;</code> (top bar / title), <code>&lt;nav&gt;</code> (navigation links), <code>&lt;main&gt;</code> (the primary content), <code>&lt;section&gt;</code> (a grouped chunk) and <code>&lt;footer&gt;</code> (bottom bar). They render the same as a plain box but tell browsers, screen-readers and search engines <i>what each region means</i>.</p>
+<figure class="diagram">
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="13">
+  <rect x="20" y="15" width="360" height="34" fill="#121C30" stroke="#F5B942"/><text x="200" y="37" text-anchor="middle" fill="#F5B942">header</text>
+  <rect x="20" y="53" width="360" height="26" fill="#0E1626" stroke="#7FD1C0"/><text x="200" y="71" text-anchor="middle" fill="#7FD1C0">nav</text>
+  <rect x="20" y="83" width="360" height="80" fill="#0E1626" stroke="#22304C"/><text x="200" y="110" text-anchor="middle" fill="#E8E4D8">main</text>
+  <rect x="35" y="120" width="330" height="34" fill="#121C30" stroke="#22304C"/><text x="200" y="142" text-anchor="middle" fill="#8FA0BC">section</text>
+  <rect x="20" y="167" width="360" height="28" fill="#121C30" stroke="#E2604C"/><text x="200" y="186" text-anchor="middle" fill="#E2604C">footer</text>
+</svg>
+<figcaption>The usual skeleton: header, nav, main (with sections inside), footer.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 9.</b> Run this semantic skeleton — it looks plain, but the regions are meaningful.</span>
+<template class="st">&lt;header&gt;&lt;h1&gt;My Site&lt;/h1&gt;&lt;/header&gt;
+&lt;nav&gt;Home · About&lt;/nav&gt;
+&lt;main&gt;
+  &lt;section&gt;&lt;p&gt;Welcome to the site.&lt;/p&gt;&lt;/section&gt;
+&lt;/main&gt;
+&lt;footer&gt;© 2026&lt;/footer&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 10.</b> Which element is meant for the page's <b>primary content</b>?</span>
+<ol class="opts">
+<li><code>&lt;header&gt;</code></li>
+<li><code>&lt;nav&gt;</code></li>
+<li><code>&lt;main&gt;</code></li>
+<li><code>&lt;footer&gt;</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Add a footer. Below the main, add a <code>&lt;footer&gt;</code> whose text is exactly <code>© 2026 Dojo</code>.</span>
+<template class="st">&lt;header&gt;&lt;h1&gt;Dojo&lt;/h1&gt;&lt;/header&gt;
+&lt;main&gt;&lt;p&gt;Hello&lt;/p&gt;&lt;/main&gt;
+</template>
+<template class="ts">
+var f = document.querySelector('footer');
+assert(f, 'add a <footer> element');
+assert(f.textContent.trim() === '© 2026 Dojo', 'the footer should read exactly "© 2026 Dojo"');
+</template>
+</div>
+
+<h4>5. Structure a whole page</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Lay out a page skeleton: a <code>&lt;header&gt;</code> containing an <code>&lt;h1&gt;</code> reading <code>Dojo Cafe</code>, a <code>&lt;nav&gt;</code> containing a <code>&lt;ul&gt;</code> with two <code>&lt;li&gt;</code> items (<code>Home</code>, <code>Menu</code>), and a <code>&lt;main&gt;</code> containing a <code>&lt;p&gt;</code> reading <code>Freshly brewed.</code></span>
+<template class="st">&lt;header&gt;
+
+&lt;/header&gt;
+&lt;nav&gt;
+
+&lt;/nav&gt;
+&lt;main&gt;
+
+&lt;/main&gt;</template>
+<template class="ts">
+var h1 = document.querySelector('header h1');
+assert(h1 && h1.textContent.trim() === 'Dojo Cafe', 'the header should contain an h1 reading "Dojo Cafe"');
+var navItems = document.querySelectorAll('nav ul li');
+assert(navItems.length === 2, 'the nav should contain a ul with two li items');
+assert(navItems[0].textContent.trim() === 'Home' && navItems[1].textContent.trim() === 'Menu', 'the nav items should be "Home" and "Menu"');
+var p = document.querySelector('main p');
+assert(p && p.textContent.trim() === 'Freshly brewed.', 'main should contain a p reading "Freshly brewed."');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — mostly hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> Which pair correctly nests: a list holding its items?</span>
+<ol class="opts">
+<li><code>&lt;li&gt;</code> holding <code>&lt;ul&gt;</code></li>
+<li><code>&lt;ul&gt;</code> holding <code>&lt;li&gt;</code></li>
+<li><code>&lt;tr&gt;</code> holding <code>&lt;ul&gt;</code></li>
+<li><code>&lt;ol&gt;</code> holding <code>&lt;td&gt;</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Build a <code>&lt;ul&gt;</code> with three <code>&lt;li&gt;</code> items: <code>Red</code>, <code>Green</code>, <code>Blue</code>.</span>
+<template class="st">&lt;ul&gt;
+
+&lt;/ul&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('ul li');
+assert(items.length === 3, 'the ul needs exactly three li items');
+assert(items[0].textContent.trim() === 'Red' && items[1].textContent.trim() === 'Green' && items[2].textContent.trim() === 'Blue', 'the items should be Red, Green, Blue');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Add a text input with a <code>placeholder</code> of exactly <code>Search…</code> inside the form.</span>
+<template class="st">&lt;form&gt;
+
+  &lt;button&gt;Go&lt;/button&gt;
+&lt;/form&gt;</template>
+<template class="ts">
+var inp = document.querySelector('form input');
+assert(inp, 'add an <input> inside the form');
+assert(inp.getAttribute('placeholder') === 'Search…', 'the placeholder should be exactly "Search…"');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Make a 2-row table: a header row with <code>&lt;th&gt;</code> cells <code>Name</code> and <code>Age</code>, then a data row with <code>&lt;td&gt;</code> cells <code>Mai</code> and <code>20</code>.</span>
+<template class="st">&lt;table&gt;
+
+&lt;/table&gt;</template>
+<template class="ts">
+var rows = document.querySelectorAll('table tr');
+assert(rows.length === 2, 'the table should have two rows');
+var th = rows[0].querySelectorAll('th');
+assert(th.length === 2 && th[0].textContent.trim() === 'Name' && th[1].textContent.trim() === 'Age', 'the header row needs th cells "Name" and "Age"');
+var td = rows[1].querySelectorAll('td');
+assert(td.length === 2 && td[0].textContent.trim() === 'Mai' && td[1].textContent.trim() === '20', 'the data row needs td cells "Mai" and "20"');
+</template>
+</div>

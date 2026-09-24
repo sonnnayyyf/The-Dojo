@@ -1,0 +1,160 @@
+<h3>Lesson 5 — CSS layout with flexbox</h3>
+<p>Everything you've styled so far has stacked <b>top to bottom</b>, one block under the last. But real interfaces put things <i>side by side</i>: a logo on the left and a menu on the right, a row of product cards, buttons in a toolbar. For decades this was the hardest part of CSS. Then <b>flexbox</b> arrived and made it easy — it is the layout tool you'll reach for every single day.</p>
+<p>The idea is simple: pick a <b>container</b> and set <code>display: flex</code>. Instantly its direct children line up in a <b>row</b>, and you gain a set of controls to distribute and align them. Two properties do most of the work: <code>justify-content</code> spaces the items along the <b>main axis</b> (by default, left↔right), and <code>align-items</code> aligns them across the <b>cross axis</b> (top↔bottom). Add <code>gap</code> for even spacing between them.</p>
+<p>Because flexbox is visual, you learn it by <i>seeing</i> it move. Every exercise here is a live preview: change one property, press Run, and watch the boxes slide into place. Let's lay things out.</p>
+
+<h4>1. display: flex — from stack to row</h4>
+<p>By default, block elements stack vertically. Turn their <b>parent</b> into a flex container and the children snap into a horizontal row.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run it once (stacked). Then change <code>display: block</code> to <code>display: flex</code> and Run again — the boxes line up in a row.</span>
+<template class="html">&lt;div class="row"&gt;
+  &lt;div class="box"&gt;A&lt;/div&gt;
+  &lt;div class="box"&gt;B&lt;/div&gt;
+  &lt;div class="box"&gt;C&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.row { display: block; gap: 10px; }
+.box { background: #7FD1C0; color: #0E1626; padding: 16px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️ Your turn.</b> Turn the container into a row. Set <code>.row</code>'s <code>display</code> to <code>flex</code>.</span>
+<template class="html">&lt;div class="row"&gt;
+  &lt;div class="box"&gt;1&lt;/div&gt;
+  &lt;div class="box"&gt;2&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.row { }
+.box { background: gold; padding: 12px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).display === 'flex', 'set .row display to flex');
+</template>
+</div>
+
+<h4>2. justify-content — spacing along the row</h4>
+<p>On a flex container, <code>justify-content</code> controls how items sit along the main (horizontal) axis: <code>flex-start</code> (default, left), <code>center</code>, <code>flex-end</code> (right), <code>space-between</code> (push to the edges, gaps between), and <code>space-around</code>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 3.</b> Run, then try each value of <code>justify-content</code> and watch the three boxes shift.</span>
+<template class="html">&lt;div class="row"&gt;
+  &lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;div class="box"&gt;C&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.row { display: flex; justify-content: center; background: #121C30; }
+.box { background: #F5B942; color: #0E1626; padding: 14px; margin: 4px; }</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 4.</b> Which property spreads items to the far edges with space between them?</span>
+<ol class="opts">
+<li><code>align-items: center</code></li>
+<li><code>justify-content: space-between</code></li>
+<li><code>display: block</code></li>
+<li><code>gap: 10px</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Centre the items. On <code>.row</code> (already flex), set <code>justify-content</code> to <code>center</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;X&lt;/div&gt;&lt;div class="box"&gt;Y&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; }
+.box { background: teal; color: white; padding: 12px; margin: 3px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).justifyContent === 'center', 'set justify-content to center');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Push a logo and a menu apart. On <code>.bar</code> (flex), set <code>justify-content</code> to <code>space-between</code>.</span>
+<template class="html">&lt;div class="bar"&gt;&lt;span&gt;Logo&lt;/span&gt;&lt;span&gt;Menu&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.bar { display: flex; background: #121C30; color: #E8E4D8; padding: 10px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.bar')).justifyContent === 'space-between', 'set justify-content to space-between');
+</template>
+</div>
+
+<h4>3. align-items — the cross axis</h4>
+<p>While <code>justify-content</code> works along the row, <code>align-items</code> aligns items <i>across</i> it (vertically, when the row is horizontal): <code>flex-start</code> (top), <code>center</code>, <code>flex-end</code> (bottom), <code>stretch</code>. Setting <b>both</b> to <code>center</code> is the classic way to perfectly centre something.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 7.</b> Run — the boxes sit centred in a tall row. Change <code>align-items</code> to <code>flex-start</code> and Run to see them jump to the top.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; align-items: center; height: 120px; background: #121C30; }
+.box { background: #E2604C; color: white; padding: 12px; margin: 4px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Vertically centre the items. On <code>.row</code>, set <code>align-items</code> to <code>center</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;Hi&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; height: 100px; background: navy; }
+.box { background: gold; padding: 10px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).alignItems === 'center', 'set align-items to center');
+</template>
+</div>
+
+<h4>4. gap and flex-direction</h4>
+<p><code>gap</code> adds even spacing <i>between</i> flex items — cleaner than margins. And <code>flex-direction: column</code> flips the main axis to vertical, so items stack (but with all the flex controls still available).</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> Space the items evenly. On <code>.row</code>, add a <code>gap</code> of <code>16px</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;div class="box"&gt;3&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; }
+.box { background: teal; color: white; padding: 12px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).gap === '16px', 'add gap: 16px to .row');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Stack the flex items vertically. On <code>.row</code>, set <code>flex-direction</code> to <code>column</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;Top&lt;/div&gt;&lt;div class="box"&gt;Bottom&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { display: flex; gap: 6px; }
+.box { background: #F5B942; color: #0E1626; padding: 10px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.row')).flexDirection === 'column', 'set flex-direction to column');
+</template>
+</div>
+
+<h4>5. Build real layouts</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Perfectly centre a badge: on <code>.stage</code> (flex, tall), set <b>both</b> <code>justify-content</code> and <code>align-items</code> to <code>center</code>.</span>
+<template class="html">&lt;div class="stage"&gt;&lt;div class="badge"&gt;★&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.stage { display: flex; height: 140px; background: #121C30; }
+.badge { background: gold; padding: 16px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.stage'));
+assert(s.justifyContent === 'center', 'set justify-content to center');
+assert(s.alignItems === 'center', 'set align-items to center');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Build a navbar: make <code>.nav</code> a flex row with <code>justify-content: space-between</code>, <code>align-items: center</code>, and a <code>gap</code> of <code>12px</code>.</span>
+<template class="html">&lt;div class="nav"&gt;&lt;span&gt;Dojo&lt;/span&gt;&lt;span&gt;Home&lt;/span&gt;&lt;span&gt;Login&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.nav {
+  background: #0E1626; color: #E8E4D8; padding: 12px;
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.nav'));
+assert(s.display === 'flex', 'set display to flex');
+assert(s.justifyContent === 'space-between', 'set justify-content to space-between');
+assert(s.alignItems === 'center', 'set align-items to center');
+assert(s.gap === '12px', 'set gap to 12px');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — all hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 1.</b> To make an element's children lay out in a flex row, you set the element's <code>display</code> to…</span>
+<ol class="opts">
+<li><code>block</code></li>
+<li><code>row</code></li>
+<li><code>flex</code></li>
+<li><code>grid</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Make <code>.row</code> a flex container and set <code>justify-content</code> to <code>center</code>.</span>
+<template class="html">&lt;div class="row"&gt;&lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.row { }
+.box { background: teal; color: white; padding: 10px; margin: 3px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.row'));
+assert(s.display === 'flex', 'set display to flex');
+assert(s.justifyContent === 'center', 'set justify-content to center');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Make <code>.list</code> a flex column with a <code>gap</code> of <code>8px</code>.</span>
+<template class="html">&lt;div class="list"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.list { display: flex; }
+.box { background: gold; padding: 8px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.list'));
+assert(s.flexDirection === 'column', 'set flex-direction to column');
+assert(s.gap === '8px', 'set gap to 8px');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Build a toolbar: <code>.bar</code> is flex, <code>justify-content: space-between</code>, <code>align-items: center</code>, <code>gap: 10px</code>.</span>
+<template class="html">&lt;div class="bar"&gt;&lt;span&gt;File&lt;/span&gt;&lt;span&gt;Edit&lt;/span&gt;&lt;span&gt;Help&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.bar { background: #121C30; color: #E8E4D8; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.bar'));
+assert(s.display === 'flex', 'set display to flex');
+assert(s.justifyContent === 'space-between', 'set justify-content to space-between');
+assert(s.alignItems === 'center', 'set align-items to center');
+assert(s.gap === '10px', 'set gap to 10px');
+</template>
+</div>

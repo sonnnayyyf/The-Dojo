@@ -1,0 +1,191 @@
+<h3>Lesson 12 — JavaScript functions</h3>
+<p>As programs grow, you find yourself writing the same few lines again and again — format a price, greet a user, total a cart. A <b>function</b> is a named, reusable block of code: you write the steps once, give them a name, and then <i>call</i> that name whenever you need the work done. Functions are how real code stays short, organised and DRY (Don't Repeat Yourself).</p>
+<p>A function has two superpowers. It can take <b>inputs</b> — called <b>parameters</b> — so the same function works on different data (<code>greet("Mai")</code> vs <code>greet("Nam")</code>). And it can hand back a result with <b>return</b>, so you can use the answer elsewhere (<code>let tax = calcTax(price)</code>). Inputs in, a value out — that's the whole idea.</p>
+<p>You'll define functions and immediately call them, watching results in the Output box or on the page. Once you're comfortable here, the DOM lessons ahead become easy — they're just functions reacting to the user. Let's build reusable code.</p>
+
+<h4>1. Defining and calling a function</h4>
+<p>Write <code>function name() { … }</code> to <b>define</b> it, then <code>name()</code> to <b>call</b> (run) it. Defining a function doesn't run it — calling does.</p>
+<pre class="snippet">function sayHi() {
+  console.log("Hi there!");
+}
+sayHi();   // runs it → prints Hi there!</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 1. ✍️ Your turn.</b> Define a function <code>greet</code> that <code>console.log</code>s <code>Hello!</code>, then <b>call</b> it.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof greet === 'function', 'define a function called greet');
+assert(_OUT_.trim() === 'Hello!', 'calling greet() should print "Hello!"');
+</template>
+</div>
+
+<h4>2. Parameters — inputs</h4>
+<p>Put names in the parentheses to accept <b>inputs</b>. Inside the function, those names hold whatever you pass when you call it.</p>
+<pre class="snippet">function greet(name) {
+  console.log("Hello, " + name);
+}
+greet("Mai");   // Hello, Mai
+greet("Nam");   // Hello, Nam</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️ Your turn.</b> Define <code>greet(name)</code> that <code>console.log</code>s <code>Hello, </code> followed by the name, then call <code>greet("Dojo")</code> (should print <code>Hello, Dojo</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof greet === 'function', 'define greet(name)');
+assert(_OUT_.trim() === 'Hello, Dojo', 'greet("Dojo") should print "Hello, Dojo"');
+</template>
+</div>
+
+<h4>3. return — handing back a value</h4>
+<p>Most functions <b>compute</b> something rather than print it. Use <code>return</code> to send a value back to whoever called the function, so you can store or reuse it.</p>
+<pre class="snippet">function double(n) {
+  return n * 2;
+}
+let result = double(5);
+console.log(result);   // 10</pre>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 3.</b> Which keyword sends a value <b>back</b> from a function to where it was called?</span>
+<ol class="opts">
+<li><code>log</code></li>
+<li><code>function</code></li>
+<li><code>return</code></li>
+<li><code>let</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Define <code>double(n)</code> that <b>returns</b> <code>n * 2</code>. (Don't log — just return.)</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof double === 'function', 'define double(n)');
+assert(double(5) === 10, 'double(5) should return 10');
+assert(double(0) === 0, 'double(0) should return 0');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Define <code>add(a, b)</code> that <b>returns</b> the sum <code>a + b</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof add === 'function', 'define add(a, b)');
+assert(add(2, 3) === 5, 'add(2, 3) should return 5');
+assert(add(10, 15) === 25, 'add(10, 15) should return 25');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Define <code>welcome(name)</code> that <b>returns</b> the string <code>Hello, </code> + name + <code>!</code> (e.g. <code>welcome("Mai")</code> returns <code>Hello, Mai!</code>). A template literal is easiest.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof welcome === 'function', 'define welcome(name)');
+assert(welcome('Mai') === 'Hello, Mai!', 'welcome("Mai") should return "Hello, Mai!"');
+assert(welcome('Nam') === 'Hello, Nam!', 'welcome("Nam") should return "Hello, Nam!"');
+</template>
+</div>
+
+<h4>4. Arrow functions — a shorter form</h4>
+<p>Modern JavaScript has a compact way to write small functions: the <b>arrow function</b>. <code>const square = (n) =&gt; n * n;</code> means the same as a <code>function</code> that returns <code>n * n</code>. You'll see this shorthand everywhere.</p>
+<pre class="snippet">const square = (n) =&gt; n * n;
+console.log(square(4));   // 16</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Write an <b>arrow function</b> <code>triple</code> that returns <code>n * 3</code> (use <code>const triple = (n) =&gt; …</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof triple === 'function', 'define an arrow function triple');
+assert(triple(3) === 9, 'triple(3) should return 9');
+assert(triple(10) === 30, 'triple(10) should return 30');
+</template>
+</div>
+
+<h4>5. Functions that decide</h4>
+<p>Combine a function with an <code>if</code> (or a comparison) to answer yes/no questions.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Define <code>isAdult(age)</code> that <b>returns</b> <code>true</code> when <code>age &gt;= 18</code>, otherwise <code>false</code>. (Tip: <code>return age &gt;= 18;</code> works directly.)</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof isAdult === 'function', 'define isAdult(age)');
+assert(isAdult(20) === true, 'isAdult(20) should be true');
+assert(isAdult(15) === false, 'isAdult(15) should be false');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> Define <code>total(prices)</code> that takes an array of numbers, loops over it, and <b>returns</b> their sum. (e.g. <code>total([10, 20, 30])</code> returns <code>60</code>.)</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof total === 'function', 'define total(prices)');
+assert(total([10, 20, 30]) === 60, 'total([10, 20, 30]) should return 60');
+assert(total([5]) === 5, 'total([5]) should return 5');
+</template>
+</div>
+
+<h4>6. Functions that update the page</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Define <code>show(msg)</code> that sets <code>document.body.textContent</code> to <code>msg</code>. Then call <code>show("Done!")</code> — you'll see it in the preview.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof show === 'function', 'define show(msg)');
+assert(document.body.textContent.trim() === 'Done!', 'calling show("Done!") should put "Done!" on the page');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Define <code>price(item, cost)</code> that <b>returns</b> a string like <code>Coffee: 25000</code>. Then call it and set <code>document.body.textContent</code> to <code>price("Coffee", 25000)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof price === 'function', 'define price(item, cost)');
+assert(price('Tea', 30000) === 'Tea: 30000', 'price("Tea", 30000) should return "Tea: 30000"');
+assert(document.body.textContent.trim() === 'Coffee: 25000', 'show price("Coffee", 25000) on the page');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Define <code>makeCard(title, author)</code> that <b>returns</b> an HTML string <code>&lt;h3&gt;title&lt;/h3&gt;&lt;p&gt;author&lt;/p&gt;</code> (with the values filled in). Then set <code>document.body.innerHTML</code> to <code>makeCard("Dune", "Herbert")</code> — a real card appears.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof makeCard === 'function', 'define makeCard(title, author)');
+assert(makeCard('Emma', 'Austen').replace(/\s+/g,'') === '<h3>Emma</h3><p>Austen</p>', 'makeCard should return "<h3>title</h3><p>author</p>"');
+assert(document.querySelector('h3') && document.querySelector('h3').textContent.trim() === 'Dune', 'render makeCard("Dune", "Herbert") — an h3 "Dune" should appear');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'Herbert', 'a p "Herbert" should appear');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — all hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> What does <b>calling</b> a function mean?</span>
+<ol class="opts">
+<li>Defining it for later</li>
+<li>Running it now</li>
+<li>Deleting it</li>
+<li>Naming a variable</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Define <code>square(n)</code> that <b>returns</b> <code>n * n</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof square === 'function', 'define square(n)');
+assert(square(6) === 36, 'square(6) should return 36');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Define <code>subtract(a, b)</code> that <b>returns</b> <code>a - b</code>, then <code>console.log(subtract(10, 4))</code> (should print <code>6</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof subtract === 'function' && subtract(10, 4) === 6, 'subtract(10, 4) should return 6');
+assert(_OUT_.trim() === '6', 'console.log(subtract(10, 4)) should print 6');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Define <code>grade(score)</code> that <b>returns</b> <code>Pass</code> when <code>score &gt;= 50</code> and <code>Fail</code> otherwise. Then set <code>document.body.textContent</code> to <code>grade(72)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof grade === 'function', 'define grade(score)');
+assert(grade(72) === 'Pass', 'grade(72) should return "Pass"');
+assert(grade(30) === 'Fail', 'grade(30) should return "Fail"');
+assert(document.body.textContent.trim() === 'Pass', 'show grade(72) → "Pass" on the page');
+</template>
+</div>

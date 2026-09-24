@@ -1,0 +1,184 @@
+<h3>Bài 4 — CSS căn bản &amp; box model</h3>
+<p>Giờ bạn đã dựng được cấu trúc trang — nhưng mọi thứ trông như một tài liệu năm 1994: chữ Times New Roman đen trên nền trắng. <b>CSS</b> (Cascading Style Sheets) là ngôn ngữ làm cho nó trông có thiết kế. Nếu HTML nói <i>cái gì</i> là gì, thì CSS nói <i>nó nên trông ra sao</i>: màu, cỡ, khoảng cách, viền, phông. Đó là đòn bẩy lớn nhất quyết định một trang trông chuyên nghiệp đến đâu.</p>
+<p>CSS hoạt động bằng cách <b>chọn (select)</b> các phần tử rồi cho chúng các <b>khai báo (declaration)</b>. Mọi luật đều cùng một hình dạng: một <b>selector</b> (chọn phần tử nào), rồi một khối các cặp <code>property: value;</code>. <code>h1 { color: teal; }</code> nghĩa là "tìm mọi <code>&lt;h1&gt;</code> và tô chữ nó màu teal". Bạn sẽ học ba selector thường dùng — theo phần tử, theo <b>class</b> và theo <b>id</b> — cùng các thuộc tính về màu và chữ.</p>
+<p>Rồi đến ý tưởng mở khóa toàn bộ bố cục: <b>box model</b> (mô hình hộp). Mỗi phần tử là một hộp chữ nhật với bốn lớp — nội dung, padding, viền và margin. Làm chủ bốn thứ đó là bạn kiểm soát được khoảng cách ở mọi nơi. Như thường lệ, bạn sẽ sửa CSS thật trong trình soạn thảo, nhấn Chạy để xem trang đổi kiểu ngay.</p>
+
+<h4>1. Hình dạng một luật CSS</h4>
+<figure class="diagram">
+<svg viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="15">
+  <text x="30" y="60" fill="#F5B942">h1</text>
+  <text x="60" y="60" fill="#E8E4D8">{</text>
+  <text x="85" y="60" fill="#7FD1C0">color</text>
+  <text x="140" y="60" fill="#E8E4D8">:</text>
+  <text x="155" y="60" fill="#E2604C">teal</text>
+  <text x="205" y="60" fill="#E8E4D8">; }</text>
+  <line x1="38" y1="70" x2="38" y2="95" stroke="#F5B942"/><text x="18" y="112" fill="#F5B942" font-size="11">selector</text>
+  <line x1="110" y1="70" x2="110" y2="88" stroke="#7FD1C0"/><text x="86" y="105" fill="#7FD1C0" font-size="11">thuộc tính</text>
+  <line x1="172" y1="70" x2="172" y2="95" stroke="#E2604C"/><text x="156" y="112" fill="#E2604C" font-size="11">giá trị</text>
+</svg>
+<figcaption>selector { property: value; } — hình dạng chung của mọi luật CSS.</figcaption>
+</figure>
+<p>Có ba selector bạn sẽ dùng liên tục: theo <b>tên phần tử</b> (<code>p</code> — mọi đoạn văn), theo <b>class</b> (<code>.note</code> — mọi phần tử có <code>class="note"</code>, dùng lại được), và theo <b>id</b> (<code>#hero</code> — một phần tử duy nhất có <code>id="hero"</code>). Dấu chấm là class; dấu thăng là id.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy và xem ba loại selector tô màu các phần tử khác nhau.</span>
+<template class="html">&lt;h1&gt;Element selector&lt;/h1&gt;
+&lt;p class="note"&gt;Class selector&lt;/p&gt;
+&lt;p id="hero"&gt;Id selector&lt;/p&gt;</template>
+<template class="css">h1 { color: teal; }
+.note { color: orange; }
+#hero { color: tomato; }</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 2.</b> Selector nào nhắm mọi phần tử có <code>class="tag"</code>?</span>
+<ol class="opts">
+<li><code>#tag</code></li>
+<li><code>.tag</code></li>
+<li><code>tag</code></li>
+<li><code>&lt;tag&gt;</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Dùng <b>element selector</b>, làm mọi đoạn văn màu xanh dương. Trong CSS, đặt <code>color</code> của <code>p</code> thành <code>blue</code>.</span>
+<template class="html">&lt;p&gt;First&lt;/p&gt;
+&lt;p&gt;Second&lt;/p&gt;</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelectorAll('p')[1]).color === 'rgb(0, 0, 255)', 'chọn p và đặt color thành blue');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Dùng <b>class selector</b>, cho tag một <code>background</code> màu gold. Viết luật cho <code>.tag</code> với <code>background: gold;</code></span>
+<template class="html">&lt;span class="tag"&gt;Sale&lt;/span&gt;</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.tag')).backgroundColor === 'rgb(255, 215, 0)', 'chọn .tag và đặt background thành gold');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Dùng <b>id selector</b>, làm hero màu đỏ. Viết luật cho <code>#hero</code> với <code>color: red;</code></span>
+<template class="html">&lt;h1 id="hero"&gt;Big News&lt;/h1&gt;</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('#hero')).color === 'rgb(255, 0, 0)', 'chọn #hero và đặt color thành red');
+</template>
+</div>
+
+<h4>2. Màu &amp; chữ</h4>
+<p>Các thuộc tính chữ thường ngày: <code>color</code> (màu chữ), <code>background</code> (nền phía sau), <code>font-size</code> (ví dụ <code>24px</code>), <code>font-weight</code> (<code>bold</code>), và <code>text-align</code> (<code>left</code>, <code>center</code>, <code>right</code>).</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 6.</b> Chạy, rồi chỉnh một giá trị và Chạy lại để cảm nhận từng thuộc tính.</span>
+<template class="html">&lt;h1&gt;Styled heading&lt;/h1&gt;
+&lt;p&gt;Some body text.&lt;/p&gt;</template>
+<template class="css">h1 { color: #7FD1C0; font-size: 34px; text-align: center; }
+p  { color: #E8E4D8; font-size: 16px; }
+body { background: #0E1626; padding: 16px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Làm tiêu đề to. Đặt <code>font-size</code> của <code>h1</code> đúng bằng <code>40px</code>.</span>
+<template class="html">&lt;h1&gt;Welcome&lt;/h1&gt;</template>
+<template class="css">h1 { color: black; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('h1')).fontSize === '40px', 'đặt font-size của h1 thành 40px');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Căn giữa đoạn văn. Đặt <code>text-align</code> của <code>p</code> thành <code>center</code>.</span>
+<template class="html">&lt;p&gt;Centre me&lt;/p&gt;</template>
+<template class="css">p { color: navy; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('p')).textAlign === 'center', 'đặt text-align của đoạn văn thành center');
+</template>
+</div>
+
+<h4>3. Box model</h4>
+<p>Mỗi phần tử là một hộp với bốn lớp đồng tâm, từ trong ra ngoài: <b>content</b> (chữ/hình), <b>padding</b> (khoảng trống <i>bên trong</i> hộp, giữa nội dung và viền), <b>border</b> (đường viền quanh nó), và <b>margin</b> (khoảng trống <i>bên ngoài</i>, đẩy các hộp khác ra). Làm đúng bốn thứ này là 90% của bố cục đẹp.</p>
+<figure class="diagram">
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="12">
+  <rect x="20" y="15" width="360" height="170" fill="#2a1f10" stroke="#F5B942" stroke-dasharray="4 3"/>
+  <text x="30" y="30" fill="#F5B942">margin</text>
+  <rect x="70" y="45" width="260" height="110" fill="#101a2e" stroke="#7FD1C0"/>
+  <text x="80" y="60" fill="#7FD1C0">border</text>
+  <rect x="110" y="72" width="180" height="60" fill="#12241f" stroke="#7FD1C0" stroke-dasharray="3 3"/>
+  <text x="120" y="87" fill="#7FD1C0" font-size="11">padding</text>
+  <rect x="150" y="90" width="100" height="26" fill="#E2604C"/>
+  <text x="200" y="107" text-anchor="middle" fill="#0E1626" font-size="11">content</text>
+</svg>
+<figcaption>Trong → ngoài: content, padding, border, margin.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 9.</b> Chạy cái này. Đổi <code>padding</code> thành <code>4px</code>, Chạy, và xem hộp co lại quanh chữ.</span>
+<template class="html">&lt;div class="card"&gt;A padded, bordered box&lt;/div&gt;</template>
+<template class="css">.card {
+  padding: 24px;
+  border: 3px solid #7FD1C0;
+  margin: 20px;
+  background: #121C30;
+  color: #E8E4D8;
+}</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Cho hộp có khoảng thở. Đặt <code>padding</code> của <code>.box</code> đúng bằng <code>20px</code>.</span>
+<template class="html">&lt;div class="box"&gt;Hello&lt;/div&gt;</template>
+<template class="css">.box { background: teal; color: white; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.box')).paddingTop === '20px', 'đặt padding của .box thành 20px');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Thêm viền. Cho <code>.box</code> một <code>border</code> là <code>2px solid navy</code> (viết gộp: <code>border: 2px solid navy;</code>).</span>
+<template class="html">&lt;div class="box"&gt;Framed&lt;/div&gt;</template>
+<template class="css">.box { padding: 12px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.borderTopWidth === '2px', 'độ dày viền phải là 2px');
+assert(s.borderTopStyle === 'solid', 'kiểu viền phải là solid');
+assert(s.borderTopColor === 'rgb(0, 0, 128)', 'màu viền phải là navy');
+</template>
+</div>
+
+<h4>4. Dựng một thẻ có kiểu</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Tạo kiểu cho <code>.card</code>: <code>background</code> <code>gold</code>, <code>color</code> chữ <code>navy</code>, <code>padding</code> <code>24px</code>, và <code>text-align</code> <code>center</code>.</span>
+<template class="html">&lt;div class="card"&gt;&lt;h2&gt;Special offer&lt;/h2&gt;&lt;p&gt;Today only.&lt;/p&gt;&lt;/div&gt;</template>
+<template class="css">.card {
+  
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.card'));
+assert(s.backgroundColor === 'rgb(255, 215, 0)', 'background phải là gold');
+assert(s.color === 'rgb(0, 0, 128)', 'màu chữ phải là navy');
+assert(s.paddingTop === '24px', 'padding phải là 24px');
+assert(s.textAlign === 'center', 'text-align phải là center');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — phần lớn là thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="3"><span class="exq"><b>Bài tập 1.</b> Trong box model, lớp nào là khoảng trống <b>bên ngoài</b> viền, đẩy các hộp khác ra?</span>
+<ol class="opts">
+<li>content</li>
+<li>padding</li>
+<li>border</li>
+<li>margin</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Cho <code>body</code> nền <code>navy</code> và <code>h1</code> màu <code>white</code>.</span>
+<template class="html">&lt;h1&gt;Night&lt;/h1&gt;</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 128)', 'đặt nền body thành navy');
+assert(getComputedStyle(document.querySelector('h1')).color === 'rgb(255, 255, 255)', 'đặt màu h1 thành white');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Đặt <code>font-size</code> của <code>h1</code> thành <code>28px</code> và <code>text-align</code> thành <code>center</code>.</span>
+<template class="html">&lt;h1&gt;Centred title&lt;/h1&gt;</template>
+<template class="css">h1 { }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('h1'));
+assert(s.fontSize === '28px', 'font-size phải là 28px');
+assert(s.textAlign === 'center', 'text-align phải là center');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Tạo kiểu <code>.btn</code> như một nút: <code>background</code> <code>green</code>, <code>color</code> <code>white</code>, <code>padding</code> <code>12px</code>, và một <code>border</code> là <code>2px solid green</code>.</span>
+<template class="html">&lt;span class="btn"&gt;Buy now&lt;/span&gt;</template>
+<template class="css">.btn {
+  
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.btn'));
+assert(s.backgroundColor === 'rgb(0, 128, 0)', 'background phải là green');
+assert(s.color === 'rgb(255, 255, 255)', 'màu chữ phải là white');
+assert(s.paddingTop === '12px', 'padding phải là 12px');
+assert(s.borderTopWidth === '2px' && s.borderTopStyle === 'solid' && s.borderTopColor === 'rgb(0, 128, 0)', 'viền phải là 2px solid green');
+</template>
+</div>

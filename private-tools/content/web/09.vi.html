@@ -1,0 +1,293 @@
+<h3>Bài 9 — Dự án nhỏ: trang thư viện tĩnh</h3>
+<p>Đến lúc ghép mọi thứ lại. Qua tám bài trước bạn đã học dựng cấu trúc trang bằng HTML, tạo kiểu bằng CSS, bố cục bằng flexbox và grid, và thêm chuyển động. Giờ bạn sẽ dựng một website thật, nhiều trang: <b>City Library</b> — một trang chủ cùng các trang con cho <i>Books</i>, <i>About</i> và <i>Contact</i>, nối với nhau bằng một thanh điều hướng. Đây đúng là cách các trang nhỏ thật được dựng.</p>
+<p>Trước tiên bạn sẽ gặp hai thứ mà mọi trang thật đều cần nhưng các đoạn nhỏ của ta đã bỏ qua: <b>bộ khung tài liệu HTML</b> đầy đủ (phần bọc <code>&lt;!doctype&gt;</code>, <code>&lt;head&gt;</code> và <code>&lt;body&gt;</code>, với một <code>&lt;title&gt;</code> và một stylesheet được liên kết), và <b>liên kết giữa các trang</b> — các URL tương đối như <code>books.html</code> biến các tệp riêng lẻ thành một website nối liền. Bạn cũng sẽ dùng <code>&lt;div&gt;</code> và <code>&lt;span&gt;</code>, những hộp chứa tổng quát mà bạn gom nhóm và tạo kiểu bằng class.</p>
+<p>Rồi bạn sẽ dựng site từng phần — một thanh nav, một header, một lưới sách, các trang con — mỗi phần được chấm dần, kết thúc bằng một trang chủ hoàn chỉnh có kiểu. Xuất bản một website nào.</p>
+
+<h4>1. Bộ khung tài liệu đầy đủ</h4>
+<p>Mọi tệp HTML thật bắt đầu bằng một bộ khung cố định. <code>&lt;!doctype html&gt;</code> nói cho trình duyệt đây là HTML hiện đại. Bên trong <code>&lt;html&gt;</code> có hai phần: <code>&lt;head&gt;</code> giữ thông tin <i>về</i> trang — bộ ký tự, <code>&lt;title&gt;</code> (hiện trên tab trình duyệt), và liên kết tới các tệp CSS — còn <code>&lt;body&gt;</code> giữ mọi thứ bạn thực sự thấy.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy tài liệu hoàn chỉnh này. Nội dung nhìn thấy đến từ <code>&lt;body&gt;</code>; <code>&lt;title&gt;</code> trong <code>&lt;head&gt;</code> sẽ hiện trên tab trình duyệt.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;City Library&lt;/title&gt;
+    &lt;style&gt; body { font-family: sans-serif; padding: 16px; } &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;City Library&lt;/h1&gt;
+    &lt;p&gt;Everything visible lives in the body.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 2.</b> Phần nào của tài liệu giữ <code>&lt;title&gt;</code> và liên kết tới stylesheet?</span>
+<ol class="opts">
+<li><code>&lt;body&gt;</code></li>
+<li><code>&lt;head&gt;</code></li>
+<li><code>&lt;footer&gt;</code></li>
+<li><code>&lt;main&gt;</code></li>
+</ol></div>
+<p>Trên một site thật, mỗi trang (<code>index.html</code>, <code>books.html</code>…) là một tệp riêng liên kết tới một <code>style.css</code> dùng chung qua <code>&lt;link rel="stylesheet" href="style.css"&gt;</code> trong head. Trong các bài tập này, ô CSS <i>chính là</i> stylesheet dùng chung đó.</p>
+
+<h4>2. Nối các trang với nhau</h4>
+<p>Một site nhiều trang chỉ là vài tệp HTML liên kết với nhau. Một liên kết tới trang khác trong cùng thư mục dùng một <b>URL tương đối</b> — chỉ là tên tệp: <code>&lt;a href="books.html"&gt;Books&lt;/a&gt;</code>. Đặt các liên kết này trong một <code>&lt;nav&gt;</code> và mọi trang đều đến được nhau. (Trong sandbox các liên kết sẽ không chuyển trang, nhưng trên một site đã triển khai chúng nhảy giữa các trang.)</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Dựng thanh điều hướng của site. Trong <code>&lt;nav&gt;</code>, thêm ba liên kết: <code>Home</code> → <code>index.html</code>, <code>Books</code> → <code>books.html</code>, <code>About</code> → <code>about.html</code>.</span>
+<template class="st">&lt;nav&gt;
+
+&lt;/nav&gt;</template>
+<template class="ts">
+var links = document.querySelectorAll('nav a');
+assert(links.length === 3, 'nav phải chứa đúng ba liên kết');
+assert(document.querySelector('nav a[href="index.html"]'), 'thêm liên kết Home tới index.html');
+assert(document.querySelector('nav a[href="books.html"]'), 'thêm liên kết Books tới books.html');
+assert(document.querySelector('nav a[href="about.html"]'), 'thêm liên kết About tới about.html');
+assert(links[0].textContent.trim() === 'Home' && links[1].textContent.trim() === 'Books' && links[2].textContent.trim() === 'About', 'chữ các liên kết phải là Home, Books, About');
+</template>
+</div>
+
+<h4>3. Dựng trang chủ, từng phần</h4>
+<p>Một trang là các vùng xếp theo thứ tự: một <code>&lt;header&gt;</code>, một <code>&lt;nav&gt;</code>, một <code>&lt;main&gt;</code>, một <code>&lt;footer&gt;</code>. Dựng từng cái nào.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Làm header. Thêm một <code>&lt;header&gt;</code> chứa một <code>&lt;h1&gt;</code> ghi <code>City Library</code>.</span>
+<template class="st">
+</template>
+<template class="ts">
+var h1 = document.querySelector('header h1');
+assert(h1, 'thêm một header có h1 bên trong');
+assert(h1.textContent.trim() === 'City Library', 'h1 phải ghi "City Library"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Thêm phần chào mừng. Thêm một <code>&lt;main&gt;</code> chứa một <code>&lt;h2&gt;</code> ghi <code>Welcome</code> và một <code>&lt;p&gt;</code> ghi <code>Borrow books for free.</code></span>
+<template class="st">
+</template>
+<template class="ts">
+var h2 = document.querySelector('main h2');
+var p = document.querySelector('main p');
+assert(h2 && h2.textContent.trim() === 'Welcome', 'main phải chứa một h2 ghi "Welcome"');
+assert(p && p.textContent.trim() === 'Borrow books for free.', 'main phải chứa một p ghi "Borrow books for free."');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Thêm footer. Thêm một <code>&lt;footer&gt;</code> ghi <code>© 2026 City Library</code>.</span>
+<template class="st">
+</template>
+<template class="ts">
+var f = document.querySelector('footer');
+assert(f && f.textContent.trim() === '© 2026 City Library', 'thêm một footer ghi "© 2026 City Library"');
+</template>
+</div>
+
+<h4>4. Tạo kiểu cho thanh điều hướng</h4>
+<p>Giờ làm cho nav trông như một menu thật: một thanh ngang với các liên kết cách nhau. Flexbox ở Bài 5 làm được.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Trong <b>CSS</b>, biến <code>.menu</code> thành một hàng flex với <code>gap</code> là <code>16px</code>.</span>
+<template class="html">&lt;nav class="menu"&gt;
+  &lt;a href="index.html"&gt;Home&lt;/a&gt;
+  &lt;a href="books.html"&gt;Books&lt;/a&gt;
+  &lt;a href="about.html"&gt;About&lt;/a&gt;
+&lt;/nav&gt;</template>
+<template class="css">.menu { background: #121C30; padding: 12px; }
+.menu a { color: #7FD1C0; text-decoration: none; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.menu'));
+assert(s.display === 'flex', 'đặt display của .menu thành flex');
+assert(s.gap === '16px', 'đặt gap thành 16px');
+</template>
+</div>
+
+<h4>5. Trang con Books — một lưới sách</h4>
+<p>Trang Books trưng danh mục dưới dạng một lưới thẻ. Mỗi thẻ là một <code>&lt;div class="book"&gt;</code> với tiêu đề và tác giả.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Làm một thẻ sách. Tạo một <code>&lt;div class="book"&gt;</code> chứa một <code>&lt;h3&gt;</code> ghi <code>Dune</code> và một <code>&lt;p&gt;</code> ghi <code>Frank Herbert</code>.</span>
+<template class="st">
+</template>
+<template class="ts">
+var book = document.querySelector('.book');
+assert(book, 'thêm một <div class="book">');
+var h3 = book.querySelector('h3');
+var p = book.querySelector('p');
+assert(h3 && h3.textContent.trim() === 'Dune', 'thẻ sách phải có h3 ghi "Dune"');
+assert(p && p.textContent.trim() === 'Frank Herbert', 'thẻ sách phải có p ghi "Frank Herbert"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Bố cục danh mục. Trong <b>CSS</b>, cho <code>.catalog</code> là lưới với <b>ba</b> cột (<code>1fr 1fr 1fr</code>) và <code>gap</code> là <code>12px</code>.</span>
+<template class="html">&lt;div class="catalog"&gt;
+  &lt;div class="book"&gt;Dune&lt;/div&gt;&lt;div class="book"&gt;1984&lt;/div&gt;&lt;div class="book"&gt;Emma&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.catalog { }
+.book { background: #121C30; color: #E8E4D8; padding: 18px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.catalog'));
+assert(s.display === 'grid', 'đặt display thành grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 3, 'dùng ba cột');
+assert(s.rowGap === '12px', 'đặt gap thành 12px');
+</template>
+</div>
+
+<h4>6. Trang con About</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Dựng nội dung trang About: một <code>&lt;header&gt;</code> với một <code>&lt;h1&gt;</code> ghi <code>About us</code>, và một <code>&lt;main&gt;</code> với một <code>&lt;p&gt;</code> ghi <code>We opened in 1998.</code></span>
+<template class="st">
+</template>
+<template class="ts">
+var h1 = document.querySelector('header h1');
+var p = document.querySelector('main p');
+assert(h1 && h1.textContent.trim() === 'About us', 'thêm một header với h1 ghi "About us"');
+assert(p && p.textContent.trim() === 'We opened in 1998.', 'thêm một main với p ghi "We opened in 1998."');
+</template>
+</div>
+
+<h4>7. Trang chủ hoàn chỉnh</h4>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 11.</b> Chạy trang chủ có kiểu này để thấy mục tiêu — mọi thứ bạn đã học, cùng hoạt động.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;City Library&lt;/title&gt;
+&lt;style&gt;
+  body { font-family: sans-serif; margin: 0; color: #E8E4D8; background: #0E1626; }
+  header { background: #121C30; padding: 18px; }
+  header h1 { margin: 0; color: #F5B942; }
+  nav { display: flex; gap: 16px; background: #1a2740; padding: 12px 18px; }
+  nav a { color: #7FD1C0; text-decoration: none; }
+  main { padding: 18px; }
+  .catalog { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .book { background: #121C30; padding: 18px; border-radius: 8px; transition: all 0.25s; }
+  .book:hover { transform: translateY(-4px); }
+  footer { padding: 14px 18px; color: #8FA0BC; }
+&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;&lt;h1&gt;City Library&lt;/h1&gt;&lt;/header&gt;
+  &lt;nav&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;a href="books.html"&gt;Books&lt;/a&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/nav&gt;
+  &lt;main&gt;
+    &lt;h2&gt;Welcome&lt;/h2&gt;&lt;p&gt;Borrow books for free.&lt;/p&gt;
+    &lt;div class="catalog"&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Dune&lt;/h3&gt;&lt;p&gt;Frank Herbert&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;1984&lt;/h3&gt;&lt;p&gt;George Orwell&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Emma&lt;/h3&gt;&lt;p&gt;Jane Austen&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;© 2026 City Library&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<h4>8. Các trang con, có kiểu</h4>
+<p>Cùng một stylesheet dùng chung làm các trang khác đồng bộ. Đây là trang danh mục <b>Books</b> và trang <b>About</b> — chạy từng cái để thấy diện mạo nhiều trang hoàn chỉnh.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 12.</b> Chạy trang danh mục <b>Books</b> có kiểu.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;Books — City Library&lt;/title&gt;
+&lt;style&gt;
+  body { font-family: sans-serif; margin: 0; color: #E8E4D8; background: #0E1626; }
+  header { background: #121C30; padding: 18px; }
+  header h1 { margin: 0; color: #F5B942; }
+  nav { display: flex; gap: 16px; background: #1a2740; padding: 12px 18px; }
+  nav a { color: #7FD1C0; text-decoration: none; }
+  main { padding: 18px; }
+  .catalog { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .book { background: #121C30; padding: 16px; border-radius: 8px; border: 1px solid #22304C; }
+  .book h3 { margin: 0 0 6px; color: #7FD1C0; }
+  .book p { margin: 0; color: #8FA0BC; }
+  footer { padding: 14px 18px; color: #8FA0BC; }
+&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;&lt;h1&gt;City Library&lt;/h1&gt;&lt;/header&gt;
+  &lt;nav&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;a href="books.html"&gt;Books&lt;/a&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/nav&gt;
+  &lt;main&gt;
+    &lt;h2&gt;Our books&lt;/h2&gt;
+    &lt;div class="catalog"&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Dune&lt;/h3&gt;&lt;p&gt;Frank Herbert&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;1984&lt;/h3&gt;&lt;p&gt;George Orwell&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Emma&lt;/h3&gt;&lt;p&gt;Jane Austen&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Hamlet&lt;/h3&gt;&lt;p&gt;W. Shakespeare&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;The Hobbit&lt;/h3&gt;&lt;p&gt;J.R.R. Tolkien&lt;/p&gt;&lt;/div&gt;
+      &lt;div class="book"&gt;&lt;h3&gt;Meditations&lt;/h3&gt;&lt;p&gt;Marcus Aurelius&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;© 2026 City Library&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 13.</b> Chạy trang <b>About</b> có kiểu.</span>
+<template class="st">&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;About — City Library&lt;/title&gt;
+&lt;style&gt;
+  body { font-family: sans-serif; margin: 0; color: #E8E4D8; background: #0E1626; }
+  header { background: #121C30; padding: 18px; }
+  header h1 { margin: 0; color: #F5B942; }
+  nav { display: flex; gap: 16px; background: #1a2740; padding: 12px 18px; }
+  nav a { color: #7FD1C0; text-decoration: none; }
+  main { padding: 18px; max-width: 520px; line-height: 1.6; }
+  main h2 { color: #7FD1C0; }
+  .hours { background: #121C30; border-left: 3px solid #F5B942; padding: 10px 14px; margin-top: 12px; }
+  footer { padding: 14px 18px; color: #8FA0BC; }
+&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;&lt;h1&gt;City Library&lt;/h1&gt;&lt;/header&gt;
+  &lt;nav&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;a href="books.html"&gt;Books&lt;/a&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/nav&gt;
+  &lt;main&gt;
+    &lt;h2&gt;About us&lt;/h2&gt;
+    &lt;p&gt;City Library opened in 1998. We lend over 40,000 books for free to everyone in the city.&lt;/p&gt;
+    &lt;div class="hours"&gt;&lt;strong&gt;Opening hours:&lt;/strong&gt; Mon–Sat, 9am–8pm.&lt;/div&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;© 2026 City Library&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</template>
+</div>
+
+<h4>9. Tự dựng trang chủ của bạn</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 14. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Tự ghép trang chủ của bạn. Dựng: một <code>&lt;header&gt;</code> với một <code>&lt;h1&gt;</code> ghi <code>City Library</code>; một <code>&lt;nav&gt;</code> với liên kết tới <code>index.html</code> và <code>books.html</code>; một <code>&lt;main&gt;</code> với một <code>&lt;h2&gt;</code> ghi <code>Welcome</code>; và một <code>&lt;footer&gt;</code>. Rồi trong <b>CSS</b> làm <code>nav</code> thành một hàng flex với <code>gap</code> <code>16px</code>.</span>
+<template class="html">
+</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(document.querySelector('header h1') && document.querySelector('header h1').textContent.trim() === 'City Library', 'thêm một header với h1 "City Library"');
+assert(document.querySelector('nav a[href="index.html"]') && document.querySelector('nav a[href="books.html"]'), 'thêm một nav với liên kết tới index.html và books.html');
+assert(document.querySelector('main h2') && document.querySelector('main h2').textContent.trim() === 'Welcome', 'thêm một main với h2 "Welcome"');
+assert(document.querySelector('footer'), 'thêm một footer');
+var s = getComputedStyle(document.querySelector('nav'));
+assert(s.display === 'flex', 'làm nav thành một hàng flex');
+assert(s.gap === '16px', 'cho nav một gap là 16px');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — dựng nốt phần còn lại của site. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> Trên một site đã triển khai, bấm <code>&lt;a href="books.html"&gt;Books&lt;/a&gt;</code> đưa người dùng tới…</span>
+<ol class="opts">
+<li>một website bên ngoài tên là books</li>
+<li>trang books.html trong cùng thư mục</li>
+<li>không đâu cả — liên kết cần JavaScript</li>
+<li>phần head của trang hiện tại</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Dựng form của trang Contact: một <code>&lt;form&gt;</code> chứa một <code>&lt;input&gt;</code> có <code>type</code> <code>email</code> và một <code>&lt;button&gt;</code> ghi <code>Send</code>.</span>
+<template class="st">&lt;h1&gt;Contact&lt;/h1&gt;
+&lt;form&gt;
+
+&lt;/form&gt;</template>
+<template class="ts">
+var inp = document.querySelector('form input');
+var btn = document.querySelector('form button');
+assert(inp && inp.getAttribute('type') === 'email', 'thêm một input email vào form');
+assert(btn && btn.textContent.trim() === 'Send', 'thêm một button ghi "Send"');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Thêm liên kết Contact vào nav. Trong <code>&lt;nav&gt;</code>, thêm bốn liên kết: Home (<code>index.html</code>), Books (<code>books.html</code>), About (<code>about.html</code>), Contact (<code>contact.html</code>).</span>
+<template class="st">&lt;nav&gt;
+
+&lt;/nav&gt;</template>
+<template class="ts">
+assert(document.querySelectorAll('nav a').length === 4, 'nav phải có bốn liên kết');
+assert(document.querySelector('nav a[href="contact.html"]'), 'thêm liên kết Contact tới contact.html');
+assert(document.querySelector('nav a[href="index.html"]') && document.querySelector('nav a[href="books.html"]') && document.querySelector('nav a[href="about.html"]'), 'giữ lại các liên kết Home, Books và About');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Làm một thẻ sách chỉn chu. Dựng một <code>&lt;div class="book"&gt;</code> với một <code>&lt;h3&gt;</code> ghi <code>Dune</code>. Trong <b>CSS</b> cho <code>.book</code> một <code>padding</code> là <code>16px</code>, một <code>border</code> là <code>1px solid teal</code>, và một <code>transition</code> là <code>all 0.3s</code>.</span>
+<template class="html">
+</template>
+<template class="css">
+</template>
+<template class="ts">
+var book = document.querySelector('.book');
+assert(book, 'thêm một <div class="book">');
+assert(book.querySelector('h3') && book.querySelector('h3').textContent.trim() === 'Dune', 'thẻ cần một h3 ghi "Dune"');
+var s = getComputedStyle(book);
+assert(s.paddingTop === '16px', 'đặt padding thành 16px');
+assert(s.borderTopWidth === '1px' && s.borderTopStyle === 'solid', 'thêm viền 1px solid');
+assert(s.transitionDuration === '0.3s', 'đặt transition thành all 0.3s');
+</template>
+</div>

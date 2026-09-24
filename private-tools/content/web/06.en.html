@@ -1,0 +1,166 @@
+<h3>Lesson 6 — CSS positioning &amp; moving things</h3>
+<p>Flexbox arranges boxes in tidy rows and columns — but sometimes you need to place something <i>exactly</i>: a "New!" badge pinned to the corner of a card, a header that stays glued to the top as you scroll, a notification dot floating over an icon. That's the job of the <code>position</code> property. It lets you lift an element out of the normal flow and move it precisely with <code>top</code>, <code>right</code>, <code>bottom</code> and <code>left</code>.</p>
+<p>By default every element is <code>position: static</code> — it just sits where the flow puts it, and the offset properties do nothing. The magic starts when you change that. <code>relative</code> nudges an element from its normal spot; <code>absolute</code> pins it to a chosen container; <code>fixed</code> locks it to the screen; and <code>sticky</code> lets it scroll until it reaches an edge, then holds. When boxes overlap, <code>z-index</code> decides which one sits on top.</p>
+<p>These effects are all about <i>movement</i>, so you'll watch every one happen live. Set a property, press Run, and see the box jump, pin or float into place. Let's move some things around.</p>
+
+<h4>1. relative — nudge from home</h4>
+<p><code>position: relative</code> keeps an element in the flow but lets you shift it with <code>top</code>/<code>left</code>/<code>right</code>/<code>bottom</code>. <code>top: 20px</code> pushes it <i>down</i> 20px from where it would normally sit; <code>left: 20px</code> pushes it right.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run. The middle box is nudged down and right. Change its <code>top</code> and <code>left</code> and Run again.</span>
+<template class="html">&lt;span class="box"&gt;A&lt;/span&gt;&lt;span class="box move"&gt;B&lt;/span&gt;&lt;span class="box"&gt;C&lt;/span&gt;</template>
+<template class="css">.box { display: inline-block; background: #7FD1C0; color: #0E1626; padding: 10px; margin: 4px; }
+.move { position: relative; top: 20px; left: 20px; background: #F5B942; }</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="0"><span class="exq"><b>Exercise 2.</b> What is the default <code>position</code> value of every element?</span>
+<ol class="opts">
+<li><code>static</code></li>
+<li><code>relative</code></li>
+<li><code>absolute</code></li>
+<li><code>fixed</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Nudge the box down. Set <code>.box</code>'s <code>position</code> to <code>relative</code> and its <code>top</code> to <code>20px</code>.</span>
+<template class="html">&lt;div class="box"&gt;Move me&lt;/div&gt;</template>
+<template class="css">.box { background: gold; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.position === 'relative', 'set position to relative');
+assert(s.top === '20px', 'set top to 20px');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Now slide it right. Keep <code>position: relative</code> and set <code>left</code> to <code>30px</code>.</span>
+<template class="html">&lt;div class="box"&gt;Slide me&lt;/div&gt;</template>
+<template class="css">.box { position: relative; background: teal; color: white; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.position === 'relative', 'keep position relative');
+assert(s.left === '30px', 'set left to 30px');
+</template>
+</div>
+
+<h4>2. absolute — pin to a container</h4>
+<p><code>position: absolute</code> takes an element <i>out of the flow</i> and pins it to its nearest ancestor that has a position set (usually a <code>relative</code> parent). This is how you drop a badge into a corner: make the card <code>relative</code>, make the badge <code>absolute</code>, then push it with <code>top: 0; right: 0</code>.</p>
+<figure class="diagram">
+<svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="12">
+  <rect x="40" y="30" width="300" height="110" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="55" y="90" fill="#E8E4D8">.card (position: relative)</text>
+  <rect x="280" y="20" width="60" height="26" fill="#E2604C"/>
+  <text x="310" y="37" text-anchor="middle" fill="#0E1626" font-size="11">badge</text>
+  <text x="230" y="15" fill="#F5B942" font-size="11">absolute; top:0; right:0</text>
+</svg>
+<figcaption>A relative card + an absolute badge pinned to its top-right corner.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 5.</b> Run and see the badge pinned to the corner. Change <code>right: 0</code> to <code>left: 0</code> and Run.</span>
+<template class="html">&lt;div class="card"&gt;Product&lt;span class="badge"&gt;New&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.card { position: relative; height: 80px; background: #121C30; color: #E8E4D8; padding: 12px; }
+.badge { position: absolute; top: 0; right: 0; background: #E2604C; color: white; padding: 4px 8px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Pin the dot to the top-right. Set <code>.dot</code>'s <code>position</code> to <code>absolute</code>, <code>top</code> to <code>0</code>, and <code>right</code> to <code>0</code>.</span>
+<template class="html">&lt;div class="wrap"&gt;Inbox&lt;span class="dot"&gt;3&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.wrap { position: relative; height: 60px; background: navy; color: white; padding: 10px; }
+.dot { background: gold; padding: 2px 7px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.dot'));
+assert(s.position === 'absolute', 'set position to absolute');
+assert(s.top === '0px', 'set top to 0');
+assert(s.right === '0px', 'set right to 0');
+</template>
+</div>
+
+<h4>3. z-index — who sits on top</h4>
+<p>When positioned boxes overlap, the one with the higher <code>z-index</code> wins and appears in front. It only works on elements that have a <code>position</code> other than <code>static</code>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 7.</b> Run — the gold box covers the teal one. Raise the teal box's <code>z-index</code> above <code>2</code> and Run to flip which is on top.</span>
+<template class="html">&lt;div class="a"&gt;teal&lt;/div&gt;&lt;div class="b"&gt;gold&lt;/div&gt;</template>
+<template class="css">.a, .b { position: absolute; width: 90px; height: 90px; padding: 8px; }
+.a { background: teal; color: white; top: 20px; left: 20px; z-index: 1; }
+.b { background: gold; top: 50px; left: 50px; z-index: 2; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Bring the front box forward. Set <code>.front</code>'s <code>z-index</code> to <code>10</code>.</span>
+<template class="html">&lt;div class="back"&gt;back&lt;/div&gt;&lt;div class="front"&gt;front&lt;/div&gt;</template>
+<template class="css">.back, .front { position: absolute; width: 80px; height: 80px; padding: 6px; }
+.back { background: #E2604C; top: 10px; left: 10px; z-index: 5; }
+.front { background: gold; top: 30px; left: 30px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.front')).zIndex === '10', 'set .front z-index to 10');
+</template>
+</div>
+
+<h4>4. fixed &amp; sticky — stay in view</h4>
+<p><code>position: fixed</code> pins an element to the <b>screen</b> — it stays put even as the page scrolls (think of a top navbar that's always there). <code>position: sticky</code> is a hybrid: the element scrolls normally until it reaches a given offset (like <code>top: 0</code>), then "sticks" there.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 9.</b> Run and see a fixed banner sit at the top of the preview.</span>
+<template class="html">&lt;div class="banner"&gt;Always here&lt;/div&gt;
+&lt;p style="margin-top:50px"&gt;Page content…&lt;/p&gt;</template>
+<template class="css">.banner { position: fixed; top: 0; left: 0; right: 0; background: #F5B942; color: #0E1626; padding: 10px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Lock the header to the screen. Set <code>.header</code>'s <code>position</code> to <code>fixed</code> and <code>top</code> to <code>0</code>.</span>
+<template class="html">&lt;div class="header"&gt;My Site&lt;/div&gt;</template>
+<template class="css">.header { background: #121C30; color: #E8E4D8; padding: 12px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.header'));
+assert(s.position === 'fixed', 'set position to fixed');
+assert(s.top === '0px', 'set top to 0');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Make a sticky bar. Set <code>.bar</code>'s <code>position</code> to <code>sticky</code> and <code>top</code> to <code>0</code>.</span>
+<template class="html">&lt;div class="bar"&gt;Sticky menu&lt;/div&gt;</template>
+<template class="css">.bar { background: teal; color: white; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.bar'));
+assert(s.position === 'sticky', 'set position to sticky');
+assert(s.top === '0px', 'set top to 0');
+</template>
+</div>
+
+<h4>5. Put it together</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Pin a "Sale" badge to a card corner and lift it above other content. Make <code>.card</code> <code>position: relative</code>. Make <code>.tag</code> <code>position: absolute</code> with <code>top: 8px</code>, <code>right: 8px</code>, and <code>z-index: 2</code>.</span>
+<template class="html">&lt;div class="card"&gt;&lt;h3&gt;Shoes&lt;/h3&gt;&lt;span class="tag"&gt;Sale&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.card { height: 90px; background: #121C30; color: #E8E4D8; padding: 12px; }
+.tag { background: gold; padding: 3px 8px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.card')).position === 'relative', 'set .card position to relative');
+var s = getComputedStyle(document.querySelector('.tag'));
+assert(s.position === 'absolute', 'set .tag position to absolute');
+assert(s.top === '8px', 'set .tag top to 8px');
+assert(s.right === '8px', 'set .tag right to 8px');
+assert(s.zIndex === '2', 'set .tag z-index to 2');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — all hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 1.</b> An <code>absolute</code> element is positioned relative to…</span>
+<ol class="opts">
+<li>the whole screen, always</li>
+<li>its own original spot</li>
+<li>its nearest positioned ancestor</li>
+<li>the first paragraph on the page</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Set <code>.box</code> to <code>position: relative</code> with <code>top: 15px</code> and <code>left: 15px</code>.</span>
+<template class="html">&lt;div class="box"&gt;Nudge&lt;/div&gt;</template>
+<template class="css">.box { background: gold; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.position === 'relative', 'set position to relative');
+assert(s.top === '15px', 'set top to 15px');
+assert(s.left === '15px', 'set left to 15px');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Pin <code>.badge</code> to the bottom-left of the card: <code>position: absolute</code>, <code>bottom: 0</code>, <code>left: 0</code>.</span>
+<template class="html">&lt;div class="card"&gt;Item&lt;span class="badge"&gt;Hot&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.card { position: relative; height: 70px; background: navy; color: white; padding: 10px; }
+.badge { background: #E2604C; color: white; padding: 3px 7px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.badge'));
+assert(s.position === 'absolute', 'set position to absolute');
+assert(s.bottom === '0px', 'set bottom to 0');
+assert(s.left === '0px', 'set left to 0');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Build a fixed footer that stays on top of content: <code>.footer</code> is <code>position: fixed</code>, <code>bottom: 0</code>, <code>left: 0</code>, <code>right: 0</code>, with <code>z-index: 5</code>.</span>
+<template class="html">&lt;div class="footer"&gt;© Dojo&lt;/div&gt;</template>
+<template class="css">.footer { background: #121C30; color: #E8E4D8; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.footer'));
+assert(s.position === 'fixed', 'set position to fixed');
+assert(s.bottom === '0px', 'set bottom to 0');
+assert(s.zIndex === '5', 'set z-index to 5');
+</template>
+</div>

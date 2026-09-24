@@ -1,0 +1,181 @@
+<h3>Bài 2 — HTML căn bản</h3>
+<p>Ở Bài 1 bạn đã thấy <b>HTML</b> là cấu trúc của trang — tường và các phòng. Giờ ta dựng những bức tường đó cho đàng hoàng. HTML là viết tắt của <i>HyperText Markup Language</i> (ngôn ngữ đánh dấu siêu văn bản), và chữ "markup" (đánh dấu) là mấu chốt: bạn lấy văn bản thuần và <b>đánh dấu</b> nó bằng cách bọc từng phần trong các <b>thẻ (tag)</b> để nói cho trình duyệt biết mỗi phần <i>là gì</i> — "đây là tiêu đề", "đây là đoạn văn", "đây là liên kết". Trình duyệt đọc các thẻ đó và hiển thị trang cho đúng.</p>
+<p>Gần như mọi thứ trong HTML theo một hình dạng đơn giản: một <b>thẻ mở</b>, một ít <b>nội dung</b>, và một <b>thẻ đóng</b> khớp với nó — ví dụ <code>&lt;p&gt;Hello&lt;/p&gt;</code>. Bộ ba đó gọi là một <b>phần tử (element)</b>. Học cách đọc hình dạng đó thì HTML thôi trông như một bức tường đầy dấu ngoặc nhọn, mà bắt đầu trông như một tập hợp các hộp có nhãn. Bài này bạn sẽ gặp vài phần tử mà mọi trang web đều dùng: tiêu đề, đoạn văn, nhấn mạnh, liên kết và hình ảnh.</p>
+<p>Như thường lệ, bạn sẽ dành phần lớn thời gian để <b>làm</b>. Bạn sẽ thêm tiêu đề, viết đoạn văn, in đậm chữ, tạo liên kết bấm được và chèn hình ảnh — nhấn <b>Chạy</b> để xem từng thứ hiện ra và được chấm ngay. Gõ nó, chạy nó, thấy nó. Bắt đầu đánh dấu nào.</p>
+
+<h4>1. Giải phẫu một phần tử</h4>
+<p>Mỗi phần tử là một cặp thẻ bọc quanh nội dung. <b>Thẻ mở</b> đặt tên phần tử; <b>thẻ đóng</b> là cùng tên đó có thêm dấu <code>/</code>. Bất cứ gì nằm giữa chúng là nội dung của phần tử.</p>
+<figure class="diagram">
+<svg viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="15">
+  <text x="60" y="70" fill="#7FD1C0">&lt;p&gt;</text>
+  <text x="150" y="70" fill="#E8E4D8">Hello</text>
+  <text x="250" y="70" fill="#E2604C">&lt;/p&gt;</text>
+  <line x1="80" y1="82" x2="80" y2="110" stroke="#7FD1C0"/>
+  <text x="35" y="128" fill="#7FD1C0" font-size="12">thẻ mở</text>
+  <line x1="175" y1="82" x2="175" y2="100" stroke="#8FA0BC"/>
+  <text x="150" y="118" fill="#8FA0BC" font-size="12">nội dung</text>
+  <line x1="275" y1="82" x2="275" y2="110" stroke="#E2604C"/>
+  <text x="252" y="128" fill="#E2604C" font-size="12">thẻ đóng</text>
+  <text x="355" y="70" fill="#F5B942" font-size="12">= một phần tử</text>
+</svg>
+<figcaption>&lt;p&gt;Hello&lt;/p&gt; — thẻ mở, nội dung, thẻ đóng.</figcaption>
+</figure>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 1.</b> Trong <code>&lt;h1&gt;Welcome&lt;/h1&gt;</code>, phần nào là <b>thẻ đóng</b>?</span>
+<ol class="opts">
+<li><code>&lt;h1&gt;</code></li>
+<li><code>Welcome</code></li>
+<li><code>&lt;/h1&gt;</code></li>
+<li><code>h1</code></li>
+</ol></div>
+
+<h4>2. Tiêu đề và đoạn văn</h4>
+<p>Hai "trụ cột" của mọi trang là <b>tiêu đề (heading)</b> và <b>đoạn văn (paragraph)</b>. HTML cho bạn sáu cấp tiêu đề, <code>&lt;h1&gt;</code> (to nhất, quan trọng nhất) xuống <code>&lt;h6&gt;</code> (nhỏ nhất). Dùng một <code>&lt;h1&gt;</code> cho tiêu đề chính của trang, rồi <code>&lt;h2&gt;</code> cho tiêu đề các mục, và cứ thế. Nội dung chữ đặt trong <b>đoạn văn</b>, <code>&lt;p&gt;…&lt;/p&gt;</code>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 2.</b> Chạy và xem cỡ tiêu đề nhỏ dần từ h1 tới h4. Đổi chữ trong thẻ bất kỳ rồi Chạy lại.</span>
+<template class="st">&lt;h1&gt;Heading level 1&lt;/h1&gt;
+&lt;h2&gt;Heading level 2&lt;/h2&gt;
+&lt;h3&gt;Heading level 3&lt;/h3&gt;
+&lt;h4&gt;Heading level 4&lt;/h4&gt;
+&lt;p&gt;A paragraph of ordinary body text.&lt;/p&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Thêm một tiêu đề cấp hai. Dưới thẻ h1, thêm một <code>&lt;h2&gt;</code> có chữ đúng là <code>About us</code>.</span>
+<template class="st">&lt;h1&gt;My Company&lt;/h1&gt;
+</template>
+<template class="ts">
+assert(document.querySelector('h1'), 'giữ lại thẻ h1');
+assert(document.querySelector('h2'), 'thêm một phần tử h2');
+assert(document.querySelector('h2').textContent.trim() === 'About us', 'thẻ h2 phải ghi đúng "About us"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Thêm một đoạn văn dưới tiêu đề. Thêm một <code>&lt;p&gt;</code> có chữ đúng là <code>We sell handmade candles.</code></span>
+<template class="st">&lt;h1&gt;Bright Co.&lt;/h1&gt;
+</template>
+<template class="ts">
+assert(document.querySelector('p'), 'thêm một phần tử p');
+assert(document.querySelector('p').textContent.trim() === 'We sell handmade candles.', 'đoạn văn phải ghi đúng "We sell handmade candles."');
+</template>
+</div>
+
+<h4>3. Nhấn mạnh: in đậm và in nghiêng</h4>
+<p>Để nhấn mạnh vài từ <i>bên trong</i> văn bản, bọc chúng trong <code>&lt;strong&gt;</code> (quan trọng — hiện <b>đậm</b>) hoặc <code>&lt;em&gt;</code> (nhấn mạnh — hiện <i>nghiêng</i>). Chúng nằm <i>bên trong</i> một đoạn văn, quanh đúng những từ bạn muốn đánh dấu.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 5.</b> Chạy và xem strong với em chỉ đổi những từ được bọc.</span>
+<template class="st">&lt;p&gt;This deal is &lt;strong&gt;50% off&lt;/strong&gt; and ends &lt;em&gt;today&lt;/em&gt;.&lt;/p&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> In đậm một từ. Bọc từ <code>free</code> trong thẻ <code>&lt;strong&gt;</code> để nó hiện đậm.</span>
+<template class="st">&lt;p&gt;Shipping is free on all orders.&lt;/p&gt;</template>
+<template class="ts">
+var s = document.querySelector('strong');
+assert(s, 'thêm một phần tử <strong> quanh một từ');
+assert(s.textContent.trim() === 'free', 'từ in đậm phải đúng là "free"');
+assert(document.querySelector('p').textContent.trim() === 'Shipping is free on all orders.', 'giữ nguyên cả câu');
+</template>
+</div>
+
+<h4>4. Liên kết — chữ "hypertext" trong HTML</h4>
+<p>Một <b>liên kết (link)</b> là thứ làm cho web thành một mạng <i>web</i>. Bạn tạo nó bằng phần tử neo <code>&lt;a&gt;</code>, và nói cho nó biết đi đâu bằng một <b>thuộc tính (attribute)</b> tên là <code>href</code>. Một <b>thuộc tính</b> là thông tin thêm viết <i>bên trong</i> thẻ mở, dạng <code>name="value"</code>. Chữ bấm được nằm giữa hai thẻ.</p>
+<figure class="diagram">
+<svg viewBox="0 0 470 120" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="14">
+  <text x="20" y="55" fill="#7FD1C0">&lt;a</text>
+  <text x="55" y="55" fill="#F5B942">href</text>
+  <text x="92" y="55" fill="#E8E4D8">=</text>
+  <text x="102" y="55" fill="#7FD1C0">"https://dojo.dev"</text>
+  <text x="270" y="55" fill="#7FD1C0">&gt;</text>
+  <text x="282" y="55" fill="#E8E4D8">Visit us</text>
+  <text x="360" y="55" fill="#E2604C">&lt;/a&gt;</text>
+  <line x1="70" y1="64" x2="70" y2="86" stroke="#F5B942"/>
+  <text x="42" y="104" fill="#F5B942" font-size="11">tên thuộc tính</text>
+  <line x1="185" y1="64" x2="185" y2="86" stroke="#7FD1C0"/>
+  <text x="150" y="104" fill="#7FD1C0" font-size="11">giá trị (địa chỉ URL)</text>
+</svg>
+<figcaption>Một thẻ neo: href chứa đích đến, chữ giữa hai thẻ là thứ bạn bấm vào.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 7.</b> Chạy cái này. Liên kết hiện ra — trong trình duyệt thật, bấm vào nó sẽ mở trang web.</span>
+<template class="st">&lt;p&gt;Read more on the &lt;a href="https://developer.mozilla.org"&gt;MDN docs&lt;/a&gt;.&lt;/p&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Tạo một liên kết. Cho chữ <code>Google</code> liên kết tới <code>https://google.com</code> bằng một thẻ <code>&lt;a&gt;</code> có <code>href</code>.</span>
+<template class="st">&lt;p&gt;Search it on &lt;/p&gt;
+</template>
+<template class="ts">
+var a = document.querySelector('a');
+assert(a, 'thêm một phần tử <a>');
+assert(a.getAttribute('href') === 'https://google.com', 'href phải đúng là "https://google.com"');
+assert(a.textContent.trim() === 'Google', 'chữ của liên kết phải đúng là "Google"');
+</template>
+</div>
+
+<h4>5. Hình ảnh</h4>
+<p>Hình ảnh dùng phần tử <code>&lt;img&gt;</code>. Nó lạ ở hai điểm: <b>không có thẻ đóng</b> (nội dung <i>chính là</i> tệp ảnh), và cần hai thuộc tính — <code>src</code> (tệp ảnh cần hiện) và <code>alt</code> (mô tả ngắn, đọc cho người khiếm thị và hiện ra nếu ảnh không tải được). Luôn viết <code>alt</code>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 9.</b> Chạy cái này để thấy một ảnh hiện ra từ nguồn dữ liệu có sẵn.</span>
+<template class="st">&lt;img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='90'%3E%3Crect width='160' height='90' fill='%237FD1C0'/%3E%3Ctext x='80' y='52' font-size='18' text-anchor='middle' fill='%230E1626'%3EDojo%3C/text%3E%3C/svg%3E" alt="A teal banner that says Dojo"&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Thêm một ảnh. Thêm một <code>&lt;img&gt;</code> có <code>src</code> là <code>logo.png</code> và <code>alt</code> đúng là <code>Company logo</code>.</span>
+<template class="st">&lt;h1&gt;Welcome&lt;/h1&gt;
+</template>
+<template class="ts">
+var img = document.querySelector('img');
+assert(img, 'thêm một phần tử <img>');
+assert(img.getAttribute('src') === 'logo.png', 'src phải đúng là "logo.png"');
+assert((img.getAttribute('alt') || '').trim() === 'Company logo', 'chữ alt phải đúng là "Company logo"');
+</template>
+</div>
+
+<h4>6. Ghép thành một trang</h4>
+<p>Trang thật chỉ là các phần tử này xếp theo thứ tự. Ở đây bạn sẽ ghép vài cái cùng lúc.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Dựng một hồ sơ nhỏ: một <code>&lt;h1&gt;</code> ghi <code>Mai Tran</code>, rồi một <code>&lt;p&gt;</code> ghi <code>Front-end learner.</code></span>
+<template class="st">
+</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'Mai Tran', 'thêm một h1 ghi "Mai Tran"');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'Front-end learner.', 'thêm một p ghi "Front-end learner."');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Dựng một bài viết nhỏ: một <code>&lt;h1&gt;</code> ghi <code>Coffee Guide</code>, một <code>&lt;p&gt;</code> chứa từ <code>beans</code> được bọc trong <code>&lt;strong&gt;</code>, và một liên kết (<code>&lt;a&gt;</code>) với chữ <code>Learn more</code> trỏ tới <code>https://dojo.dev</code>.</span>
+<template class="st">&lt;h1&gt;___&lt;/h1&gt;
+&lt;p&gt;Great coffee starts with fresh ___.&lt;/p&gt;
+&lt;a href="___"&gt;___&lt;/a&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1') && document.querySelector('h1').textContent.trim() === 'Coffee Guide', 'h1 phải ghi "Coffee Guide"');
+var strong = document.querySelector('p strong');
+assert(strong && strong.textContent.trim() === 'beans', 'bọc từ "beans" trong <strong> bên trong đoạn văn');
+var a = document.querySelector('a');
+assert(a && a.getAttribute('href') === 'https://dojo.dev', 'href của liên kết phải là "https://dojo.dev"');
+assert(a && a.textContent.trim() === 'Learn more', 'chữ của liên kết phải là "Learn more"');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — phần lớn là thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> Thuộc tính nào cho liên kết biết <b>đi đâu</b>?</span>
+<ol class="opts">
+<li><code>src</code></li>
+<li><code>href</code></li>
+<li><code>alt</code></li>
+<li><code>link</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Thêm một <code>&lt;h2&gt;</code> ghi <code>Menu</code> và một <code>&lt;p&gt;</code> ghi <code>Open daily.</code></span>
+<template class="st">&lt;h1&gt;Cafe Dojo&lt;/h1&gt;
+</template>
+<template class="ts">
+assert(document.querySelector('h2') && document.querySelector('h2').textContent.trim() === 'Menu', 'thêm một h2 ghi "Menu"');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'Open daily.', 'thêm một p ghi "Open daily."');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Cho chữ <code>our shop</code> thành liên kết tới <code>https://shop.dojo.dev</code>.</span>
+<template class="st">&lt;p&gt;Buy it at our shop.&lt;/p&gt;</template>
+<template class="ts">
+var a = document.querySelector('a');
+assert(a, 'thêm một phần tử <a>');
+assert(a.getAttribute('href') === 'https://shop.dojo.dev', 'href phải là "https://shop.dojo.dev"');
+assert(a.textContent.trim() === 'our shop', 'chữ của liên kết phải đúng là "our shop"');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Thêm một <code>&lt;img&gt;</code> có <code>src</code> là <code>photo.jpg</code> và <code>alt</code> là <code>A sunny beach</code>, rồi dưới đó một <code>&lt;p&gt;</code> có từ <code>holiday</code> bọc trong <code>&lt;em&gt;</code>.</span>
+<template class="st">&lt;h1&gt;My trip&lt;/h1&gt;
+</template>
+<template class="ts">
+var img = document.querySelector('img');
+assert(img && img.getAttribute('src') === 'photo.jpg', 'src của img phải là "photo.jpg"');
+assert(img && (img.getAttribute('alt') || '').trim() === 'A sunny beach', 'alt của img phải là "A sunny beach"');
+var em = document.querySelector('p em');
+assert(em && em.textContent.trim() === 'holiday', 'bọc từ "holiday" trong <em> bên trong một đoạn văn');
+</template>
+</div>

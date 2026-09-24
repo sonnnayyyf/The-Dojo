@@ -1,0 +1,176 @@
+<h3>Lesson 7 — CSS grid &amp; responsive design</h3>
+<p>Flexbox is perfect for laying things out in <b>one direction</b> — a row or a column. But many designs are true <b>grids</b>: a photo gallery, a dashboard, a shop's product listing, all rows <i>and</i> columns at once. For that, CSS has a purpose-built tool: <b>CSS Grid</b>. You define the columns, drop your items in, and the browser places them into a neat matrix.</p>
+<p>Grid works like flexbox: you set <code>display: grid</code> on a <b>container</b>, then describe the columns with <code>grid-template-columns</code>. The magic ingredient is the <b>fraction unit</b> <code>fr</code>, which splits leftover space into equal shares — <code>1fr 1fr 1fr</code> gives three equal columns that stretch to fit any screen. Add <code>gap</code> for spacing, exactly like flexbox.</p>
+<p>The other half of this lesson is <b>responsive design</b> — making one page look good on a phone <i>and</i> a laptop. The tool is the <b>media query</b>: a block of CSS that only applies below (or above) a chosen screen width, letting you collapse a three-column grid into a single column on narrow screens. You'll build grids live and watch them respond.</p>
+
+<h4>1. display: grid</h4>
+<p>Turn a container into a grid and give it columns. <code>grid-template-columns: 1fr 1fr 1fr</code> means "three equal columns". The children flow into the cells automatically, wrapping to new rows as needed.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run — six boxes fall into a 3-column grid. Change <code>1fr 1fr 1fr</code> to <code>1fr 1fr</code> and Run to get two columns.</span>
+<template class="html">&lt;div class="grid"&gt;
+  &lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;div class="box"&gt;3&lt;/div&gt;
+  &lt;div class="box"&gt;4&lt;/div&gt;&lt;div class="box"&gt;5&lt;/div&gt;&lt;div class="box"&gt;6&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.box { background: #7FD1C0; color: #0E1626; padding: 18px; text-align: center; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️ Your turn.</b> Turn the container into a grid. Set <code>.grid</code>'s <code>display</code> to <code>grid</code>.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { }
+.box { background: gold; padding: 12px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.grid')).display === 'grid', 'set .grid display to grid');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Make three equal columns. On <code>.grid</code> (already grid), set <code>grid-template-columns</code> to <code>1fr 1fr 1fr</code>.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;div class="box"&gt;3&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; gap: 8px; }
+.box { background: teal; color: white; padding: 12px; }</template>
+<template class="ts">
+var cols = getComputedStyle(document.querySelector('.grid')).gridTemplateColumns.split(/\s+/).filter(Boolean);
+assert(cols.length === 3, 'grid-template-columns should define exactly three columns (1fr 1fr 1fr)');
+</template>
+</div>
+
+<h4>2. Spacing and the fraction unit</h4>
+<p>The <code>fr</code> unit shares out space. <code>2fr 1fr</code> makes the first column twice as wide as the second. <code>gap</code> adds even spacing between all cells — no margins needed.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 4.</b> Run — the first column is twice as wide. Swap to <code>1fr 3fr</code> and Run.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;wide&lt;/div&gt;&lt;div class="box"&gt;narrow&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+.box { background: #F5B942; color: #0E1626; padding: 16px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Add spacing. On <code>.grid</code>, add a <code>gap</code> of <code>16px</code>.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; grid-template-columns: 1fr 1fr; }
+.box { background: navy; color: white; padding: 12px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.grid')).rowGap === '16px', 'add gap: 16px to the grid');
+</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 6.</b> In a grid, what does <code>grid-template-columns: 1fr 1fr 1fr</code> create?</span>
+<ol class="opts">
+<li>Three rows</li>
+<li>One column, three rows</li>
+<li>Three equal-width columns</li>
+<li>A 3-pixel gap</li>
+</ol></div>
+
+<h4>3. A real card grid</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Lay out a product grid: make <code>.cards</code> a grid with <b>three</b> equal columns (<code>1fr 1fr 1fr</code>) and a <code>gap</code> of <code>12px</code>.</span>
+<template class="html">&lt;div class="cards"&gt;
+  &lt;div class="card"&gt;Book A&lt;/div&gt;&lt;div class="card"&gt;Book B&lt;/div&gt;&lt;div class="card"&gt;Book C&lt;/div&gt;
+&lt;/div&gt;</template>
+<template class="css">.cards { }
+.card { background: #121C30; color: #E8E4D8; padding: 20px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.cards'));
+assert(s.display === 'grid', 'set display to grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 3, 'use three columns (1fr 1fr 1fr)');
+assert(s.rowGap === '12px', 'set gap to 12px');
+</template>
+</div>
+
+<h4>4. Responsive design &amp; media queries</h4>
+<p>A phone screen is narrow; a laptop is wide. <b>Responsive</b> design adapts the layout to fit. The core tool is the <b>media query</b>: <code>@media (max-width: 600px) { … }</code> — the rules inside only apply when the screen is 600px wide or less. A classic pattern: three columns normally, one column on phones.</p>
+<figure class="diagram">
+<svg viewBox="0 0 420 150" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="12">
+  <text x="20" y="20" fill="#8FA0BC">Wide screen → 3 columns</text>
+  <rect x="20" y="28" width="70" height="40" fill="#7FD1C0"/><rect x="98" y="28" width="70" height="40" fill="#7FD1C0"/><rect x="176" y="28" width="70" height="40" fill="#7FD1C0"/>
+  <text x="20" y="98" fill="#8FA0BC">Phone → 1 column</text>
+  <rect x="20" y="106" width="70" height="12" fill="#F5B942"/><rect x="20" y="120" width="70" height="12" fill="#F5B942"/><rect x="20" y="134" width="70" height="12" fill="#F5B942"/>
+</svg>
+<figcaption>A media query collapses the grid to one column on narrow screens.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 8.</b> Run this. It shows 3 columns; the media query would switch to 1 column on a narrow phone. (Try shrinking your browser window on a real deployed page.)</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;1&lt;/div&gt;&lt;div class="box"&gt;2&lt;/div&gt;&lt;div class="box"&gt;3&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.box { background: #7FD1C0; color: #0E1626; padding: 16px; text-align: center; }
+@media (max-width: 500px) {
+  .grid { grid-template-columns: 1fr; }
+}</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 9.</b> When do the rules inside <code>@media (max-width: 600px) { … }</code> apply?</span>
+<ol class="opts">
+<li>Always</li>
+<li>Only when the screen is 600px wide or narrower</li>
+<li>Only when the screen is wider than 600px</li>
+<li>Only on printers</li>
+</ol></div>
+
+<h4>5. Units: px, %, and rem</h4>
+<p>You've used <code>px</code> (fixed pixels). Two more matter: <code>%</code> sizes relative to the parent (a <code>width: 50%</code> box is half its container — naturally responsive), and <code>rem</code> scales with the base font size (great for text and spacing that adapt).</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Make the bar half-width. Set <code>.bar</code>'s <code>width</code> to <code>50%</code>.</span>
+<template class="html">&lt;div class="bar"&gt;Half&lt;/div&gt;</template>
+<template class="css">.bar { background: gold; padding: 10px; }</template>
+<template class="ts">
+var bar = document.querySelector('.bar');
+var ratio = bar.offsetWidth / bar.parentElement.offsetWidth;
+assert(ratio > 0.4 && ratio < 0.6, 'set the width to 50% (about half the container)');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Build a responsive gallery: make <code>.gallery</code> a grid with <b>two</b> equal columns and a <code>gap</code> of <code>10px</code>.</span>
+<template class="html">&lt;div class="gallery"&gt;&lt;div class="pic"&gt;1&lt;/div&gt;&lt;div class="pic"&gt;2&lt;/div&gt;&lt;div class="pic"&gt;3&lt;/div&gt;&lt;div class="pic"&gt;4&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.gallery { }
+.pic { background: #E2604C; color: white; padding: 24px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.gallery'));
+assert(s.display === 'grid', 'set display to grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 2, 'use two columns (1fr 1fr)');
+assert(s.rowGap === '10px', 'set gap to 10px');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Make a dashboard grid: <code>.dash</code> is a grid with columns <code>1fr 2fr</code> (a narrow sidebar + wide main), a <code>gap</code> of <code>16px</code>, and <code>padding</code> of <code>12px</code>.</span>
+<template class="html">&lt;div class="dash"&gt;&lt;div class="side"&gt;Menu&lt;/div&gt;&lt;div class="main"&gt;Content&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.dash { }
+.side { background: #121C30; color: #E8E4D8; padding: 16px; }
+.main { background: #1a2740; color: #E8E4D8; padding: 16px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.dash'));
+assert(s.display === 'grid', 'set display to grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 2, 'use two columns (1fr 2fr)');
+assert(s.rowGap === '16px', 'set gap to 16px');
+assert(s.paddingTop === '12px', 'set padding to 12px');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — mostly hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 1.</b> Which layout tool is best for a two-dimensional gallery of rows <b>and</b> columns?</span>
+<ol class="opts">
+<li>float</li>
+<li>CSS grid</li>
+<li>a table of text</li>
+<li>position: absolute</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Make <code>.grid</code> a grid with two equal columns (<code>1fr 1fr</code>).</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="box"&gt;A&lt;/div&gt;&lt;div class="box"&gt;B&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { }
+.box { background: teal; color: white; padding: 12px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.grid'));
+assert(s.display === 'grid', 'set display to grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 2, 'use two columns');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Make <code>.grid</code> a grid with four columns (<code>1fr 1fr 1fr 1fr</code>) and a <code>gap</code> of <code>6px</code>.</span>
+<template class="html">&lt;div class="grid"&gt;&lt;div class="b"&gt;1&lt;/div&gt;&lt;div class="b"&gt;2&lt;/div&gt;&lt;div class="b"&gt;3&lt;/div&gt;&lt;div class="b"&gt;4&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.grid { }
+.b { background: gold; padding: 10px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.grid'));
+assert(s.display === 'grid', 'set display to grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 4, 'use four columns');
+assert(s.rowGap === '6px', 'set gap to 6px');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Build a photo grid: <code>.photos</code> is a grid, three columns (<code>1fr 1fr 1fr</code>), <code>gap</code> <code>8px</code>, <code>padding</code> <code>10px</code>.</span>
+<template class="html">&lt;div class="photos"&gt;&lt;div class="p"&gt;1&lt;/div&gt;&lt;div class="p"&gt;2&lt;/div&gt;&lt;div class="p"&gt;3&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.photos { }
+.p { background: #E2604C; color: white; padding: 20px; text-align: center; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.photos'));
+assert(s.display === 'grid', 'set display to grid');
+assert(s.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 3, 'use three columns');
+assert(s.rowGap === '8px', 'set gap to 8px');
+assert(s.paddingTop === '10px', 'set padding to 10px');
+</template>
+</div>

@@ -1,0 +1,154 @@
+<h3>Lesson 8 — CSS transitions, transforms &amp; animations</h3>
+<p>Static pages are fine, but the web feels <i>alive</i> because things move: a button that gently grows when you hover, a card that lifts on tap, a loading spinner that turns, a notification that slides in. These little touches make an interface feel polished and responsive to the user. The best part — they're pure CSS. No JavaScript required.</p>
+<p>Three tools give you all of it. <b>transform</b> moves, rotates or scales an element without disturbing the layout around it. <b>transition</b> makes a change happen <i>smoothly</i> over time instead of snapping — the single most useful "make it feel nice" property. And <b>@keyframes</b> + <b>animation</b> let you script a repeating, multi-step motion like a spinner or a pulse.</p>
+<p>Motion is impossible to appreciate on paper, so every example here is live. Run them, hover over the previews, and tweak the numbers to feel how duration and scale change the mood. Let's make things move.</p>
+
+<h4>1. transform — move, rotate, scale</h4>
+<p><code>transform</code> visually changes an element: <code>rotate(20deg)</code> tilts it, <code>scale(1.5)</code> makes it 1.5× bigger, <code>translate(10px, 0)</code> shifts it. Crucially, it doesn't push other elements around — it's a purely visual effect, perfect for hover and animation.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run and see three transforms. Change the angles and scales and Run again.</span>
+<template class="html">&lt;span class="box r"&gt;rotate&lt;/span&gt;&lt;span class="box s"&gt;scale&lt;/span&gt;&lt;span class="box t"&gt;move&lt;/span&gt;</template>
+<template class="css">.box { display: inline-block; background: #7FD1C0; color: #0E1626; padding: 14px; margin: 16px; }
+.r { transform: rotate(15deg); }
+.s { transform: scale(1.4); }
+.t { transform: translate(0, 12px); }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️ Your turn.</b> Tilt the box. Give <code>.box</code> a <code>transform</code> of <code>rotate(20deg)</code>.</span>
+<template class="html">&lt;div class="box"&gt;Tilt me&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: gold; padding: 14px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.box')).transform !== 'none', 'apply a transform: rotate(20deg) to .box');
+</template>
+</div>
+
+<h4>2. transition — smooth, not sudden</h4>
+<p>By default a style change is instant. <code>transition</code> spreads it over time. <code>transition: all 0.3s</code> means "animate any change to this element over 0.3 seconds". Pair it with a <code>:hover</code> rule — the hover state defines the <i>end</i> look, and the transition makes getting there smooth.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 3.</b> Run, then <b>hover your mouse over the box</b> in the preview — it grows smoothly because of the transition.</span>
+<template class="html">&lt;div class="box"&gt;Hover me&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: #F5B942; color: #0E1626; padding: 16px; transition: all 0.3s; }
+.box:hover { transform: scale(1.3); background: #E2604C; }</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 4.</b> Which property makes a change happen <b>smoothly over time</b> instead of instantly?</span>
+<ol class="opts">
+<li><code>transform</code></li>
+<li><code>transition</code></li>
+<li><code>display</code></li>
+<li><code>position</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Make it smooth. Give <code>.box</code> a <code>transition</code> of <code>all 0.3s</code>.</span>
+<template class="html">&lt;div class="box"&gt;Smooth&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: teal; color: white; padding: 14px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.box')).transitionDuration === '0.3s', 'set transition to all 0.3s');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Grow the box. Give <code>.box</code> a <code>transform</code> of <code>scale(1.2)</code>.</span>
+<template class="html">&lt;div class="box"&gt;Bigger&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: navy; color: white; padding: 14px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.box')).transform !== 'none', 'apply transform: scale(1.2)');
+</template>
+</div>
+
+<h4>3. Hover effects</h4>
+<p>The <code>:hover</code> pseudo-class targets an element only while the mouse is over it. Combine <code>transition</code> (on the base rule) with a change (on the <code>:hover</code> rule) for a classic interactive button.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 7.</b> Run, then hover the button — it changes colour smoothly. Try changing the hover colour.</span>
+<template class="html">&lt;button class="btn"&gt;Buy now&lt;/button&gt;</template>
+<template class="css">.btn { background: #7FD1C0; color: #0E1626; border: none; padding: 10px 18px; border-radius: 6px; transition: all 0.25s; }
+.btn:hover { background: #F5B942; transform: translateY(-3px); }</template>
+</div>
+
+<h4>4. @keyframes &amp; animation</h4>
+<p>For motion that runs on its own (a spinner, a pulse), define the steps with <code>@keyframes name { from { … } to { … } }</code>, then attach it with <code>animation: name duration timing repeat</code>. For example <code>animation: spin 2s linear infinite</code> runs the <code>spin</code> keyframes forever, 2 seconds per loop.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 8.</b> Run and watch the box spin forever, driven by the <code>@keyframes</code>.</span>
+<template class="html">&lt;div class="spinner"&gt;↻&lt;/div&gt;</template>
+<template class="css">.spinner { display: inline-block; font-size: 30px; color: #7FD1C0; animation: spin 2s linear infinite; }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> Attach the animation. The <code>@keyframes spin</code> is already written — on <code>.loader</code>, add <code>animation: spin 2s linear infinite;</code></span>
+<template class="html">&lt;div class="loader"&gt;↻&lt;/div&gt;</template>
+<template class="css">.loader { display: inline-block; font-size: 28px; color: gold; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.loader')).animationName === 'spin', 'add animation: spin 2s linear infinite; to .loader');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Slow it down. On <code>.loader</code>, make the animation last <code>2s</code> (write <code>animation: spin 2s linear infinite;</code>).</span>
+<template class="html">&lt;div class="loader"&gt;●&lt;/div&gt;</template>
+<template class="css">.loader { display: inline-block; font-size: 24px; color: #E2604C; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.loader'));
+assert(s.animationName === 'spin', 'attach the spin animation');
+assert(s.animationDuration === '2s', 'make the duration 2s');
+</template>
+</div>
+
+<h4>5. Put it together</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Make an interactive card base: give <code>.card</code> a <code>transition</code> of <code>all 0.3s</code> and a <code>transform</code> of <code>scale(1.05)</code>.</span>
+<template class="html">&lt;div class="card"&gt;Featured&lt;/div&gt;</template>
+<template class="css">.card { background: #121C30; color: #E8E4D8; padding: 20px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.card'));
+assert(s.transitionDuration === '0.3s', 'set transition to all 0.3s');
+assert(s.transform !== 'none', 'apply transform: scale(1.05)');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Build a pulsing badge. The <code>@keyframes pulse</code> is provided — on <code>.badge</code>, add <code>animation: pulse 1s ease-in-out infinite;</code> so its <code>animation-name</code> is <code>pulse</code> and <code>animation-duration</code> is <code>1s</code>.</span>
+<template class="html">&lt;div class="badge"&gt;LIVE&lt;/div&gt;</template>
+<template class="css">.badge { display: inline-block; background: #E2604C; color: white; padding: 8px 14px; border-radius: 20px; }
+@keyframes pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.badge'));
+assert(s.animationName === 'pulse', 'set the animation to pulse');
+assert(s.animationDuration === '1s', 'make the duration 1s');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — mostly hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="0"><span class="exq"><b>Exercise 1.</b> Which property visually rotates or scales an element without moving its neighbours?</span>
+<ol class="opts">
+<li><code>transform</code></li>
+<li><code>margin</code></li>
+<li><code>display</code></li>
+<li><code>gap</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Give <code>.box</code> a <code>transition</code> of <code>all 0.5s</code> and a <code>transform</code> of <code>rotate(10deg)</code>.</span>
+<template class="html">&lt;div class="box"&gt;Tilt&lt;/div&gt;</template>
+<template class="css">.box { display: inline-block; background: gold; padding: 14px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.transitionDuration === '0.5s', 'set transition to all 0.5s');
+assert(s.transform !== 'none', 'apply transform: rotate(10deg)');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Attach the spin animation to <code>.wheel</code>: <code>animation: spin 3s linear infinite;</code> (keyframes provided).</span>
+<template class="html">&lt;div class="wheel"&gt;✦&lt;/div&gt;</template>
+<template class="css">.wheel { display: inline-block; font-size: 26px; color: teal; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.wheel'));
+assert(s.animationName === 'spin', 'attach the spin animation');
+assert(s.animationDuration === '3s', 'make the duration 3s');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Make a bouncing dot. The <code>@keyframes bounce</code> is provided — on <code>.dot</code> add <code>animation: bounce 0.6s ease infinite;</code> (name <code>bounce</code>, duration <code>0.6s</code>).</span>
+<template class="html">&lt;div class="dot"&gt;●&lt;/div&gt;</template>
+<template class="css">.dot { display: inline-block; font-size: 24px; color: #F5B942; }
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.dot'));
+assert(s.animationName === 'bounce', 'set the animation to bounce');
+assert(s.animationDuration === '0.6s', 'make the duration 0.6s');
+</template>
+</div>

@@ -1,0 +1,166 @@
+<h3>Bài 6 — Định vị &amp; di chuyển phần tử</h3>
+<p>Flexbox sắp xếp các hộp thành hàng và cột gọn gàng — nhưng đôi khi bạn cần đặt một thứ <i>chính xác</i>: một huy hiệu "New!" ghim vào góc thẻ, một phần đầu dính chặt trên đỉnh khi bạn cuộn, một chấm thông báo lơ lửng trên một biểu tượng. Đó là việc của thuộc tính <code>position</code>. Nó cho phép bạn nhấc một phần tử ra khỏi luồng bình thường và di chuyển nó chính xác bằng <code>top</code>, <code>right</code>, <code>bottom</code> và <code>left</code>.</p>
+<p>Mặc định mọi phần tử là <code>position: static</code> — nó nằm đúng chỗ luồng đặt nó, và các thuộc tính offset không có tác dụng gì. Phép màu bắt đầu khi bạn đổi điều đó. <code>relative</code> đẩy nhẹ một phần tử khỏi chỗ bình thường; <code>absolute</code> ghim nó vào một hộp chứa được chọn; <code>fixed</code> khóa nó vào màn hình; và <code>sticky</code> cho nó cuộn đến khi chạm một mép rồi giữ lại. Khi các hộp chồng lên nhau, <code>z-index</code> quyết định cái nào nằm trên.</p>
+<p>Các hiệu ứng này đều nói về <i>chuyển động</i>, nên bạn sẽ xem từng cái xảy ra trực tiếp. Đặt một thuộc tính, nhấn Chạy, và thấy hộp nhảy, ghim hoặc lơ lửng vào chỗ. Di chuyển vài thứ nào.</p>
+
+<h4>1. relative — đẩy nhẹ khỏi chỗ cũ</h4>
+<p><code>position: relative</code> giữ phần tử trong luồng nhưng cho phép bạn dịch nó bằng <code>top</code>/<code>left</code>/<code>right</code>/<code>bottom</code>. <code>top: 20px</code> đẩy nó <i>xuống</i> 20px so với chỗ nó thường nằm; <code>left: 20px</code> đẩy nó sang phải.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy. Hộp giữa bị đẩy xuống và sang phải. Đổi <code>top</code> và <code>left</code> của nó rồi Chạy lại.</span>
+<template class="html">&lt;span class="box"&gt;A&lt;/span&gt;&lt;span class="box move"&gt;B&lt;/span&gt;&lt;span class="box"&gt;C&lt;/span&gt;</template>
+<template class="css">.box { display: inline-block; background: #7FD1C0; color: #0E1626; padding: 10px; margin: 4px; }
+.move { position: relative; top: 20px; left: 20px; background: #F5B942; }</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="0"><span class="exq"><b>Bài tập 2.</b> Giá trị <code>position</code> mặc định của mọi phần tử là gì?</span>
+<ol class="opts">
+<li><code>static</code></li>
+<li><code>relative</code></li>
+<li><code>absolute</code></li>
+<li><code>fixed</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Đẩy hộp xuống. Đặt <code>position</code> của <code>.box</code> thành <code>relative</code> và <code>top</code> thành <code>20px</code>.</span>
+<template class="html">&lt;div class="box"&gt;Move me&lt;/div&gt;</template>
+<template class="css">.box { background: gold; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.position === 'relative', 'đặt position thành relative');
+assert(s.top === '20px', 'đặt top thành 20px');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Giờ trượt nó sang phải. Giữ <code>position: relative</code> và đặt <code>left</code> thành <code>30px</code>.</span>
+<template class="html">&lt;div class="box"&gt;Slide me&lt;/div&gt;</template>
+<template class="css">.box { position: relative; background: teal; color: white; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.position === 'relative', 'giữ position relative');
+assert(s.left === '30px', 'đặt left thành 30px');
+</template>
+</div>
+
+<h4>2. absolute — ghim vào một hộp chứa</h4>
+<p><code>position: absolute</code> đưa một phần tử <i>ra khỏi luồng</i> và ghim nó vào tổ tiên gần nhất có đặt position (thường là một cha <code>relative</code>). Đây là cách bạn thả một huy hiệu vào góc: cho thẻ <code>relative</code>, cho huy hiệu <code>absolute</code>, rồi đẩy nó bằng <code>top: 0; right: 0</code>.</p>
+<figure class="diagram">
+<svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="12">
+  <rect x="40" y="30" width="300" height="110" fill="#121C30" stroke="#7FD1C0"/>
+  <text x="55" y="90" fill="#E8E4D8">.card (position: relative)</text>
+  <rect x="280" y="20" width="60" height="26" fill="#E2604C"/>
+  <text x="310" y="37" text-anchor="middle" fill="#0E1626" font-size="11">badge</text>
+  <text x="228" y="15" fill="#F5B942" font-size="11">absolute; top:0; right:0</text>
+</svg>
+<figcaption>Một thẻ relative + một huy hiệu absolute ghim vào góc trên-phải.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 5.</b> Chạy và xem huy hiệu ghim vào góc. Đổi <code>right: 0</code> thành <code>left: 0</code> rồi Chạy.</span>
+<template class="html">&lt;div class="card"&gt;Product&lt;span class="badge"&gt;New&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.card { position: relative; height: 80px; background: #121C30; color: #E8E4D8; padding: 12px; }
+.badge { position: absolute; top: 0; right: 0; background: #E2604C; color: white; padding: 4px 8px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Ghim chấm vào góc trên-phải. Đặt <code>position</code> của <code>.dot</code> thành <code>absolute</code>, <code>top</code> thành <code>0</code>, và <code>right</code> thành <code>0</code>.</span>
+<template class="html">&lt;div class="wrap"&gt;Inbox&lt;span class="dot"&gt;3&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.wrap { position: relative; height: 60px; background: navy; color: white; padding: 10px; }
+.dot { background: gold; padding: 2px 7px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.dot'));
+assert(s.position === 'absolute', 'đặt position thành absolute');
+assert(s.top === '0px', 'đặt top thành 0');
+assert(s.right === '0px', 'đặt right thành 0');
+</template>
+</div>
+
+<h4>3. z-index — ai nằm trên</h4>
+<p>Khi các hộp đã định vị chồng lên nhau, cái có <code>z-index</code> cao hơn thắng và hiện ra phía trước. Nó chỉ có tác dụng trên phần tử có <code>position</code> khác <code>static</code>.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 7.</b> Chạy — hộp gold che hộp teal. Nâng <code>z-index</code> của hộp teal lên trên <code>2</code> rồi Chạy để đảo cái nào nằm trên.</span>
+<template class="html">&lt;div class="a"&gt;teal&lt;/div&gt;&lt;div class="b"&gt;gold&lt;/div&gt;</template>
+<template class="css">.a, .b { position: absolute; width: 90px; height: 90px; padding: 8px; }
+.a { background: teal; color: white; top: 20px; left: 20px; z-index: 1; }
+.b { background: gold; top: 50px; left: 50px; z-index: 2; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Đưa hộp trước ra phía trước. Đặt <code>z-index</code> của <code>.front</code> thành <code>10</code>.</span>
+<template class="html">&lt;div class="back"&gt;back&lt;/div&gt;&lt;div class="front"&gt;front&lt;/div&gt;</template>
+<template class="css">.back, .front { position: absolute; width: 80px; height: 80px; padding: 6px; }
+.back { background: #E2604C; top: 10px; left: 10px; z-index: 5; }
+.front { background: gold; top: 30px; left: 30px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.front')).zIndex === '10', 'đặt z-index của .front thành 10');
+</template>
+</div>
+
+<h4>4. fixed &amp; sticky — luôn trong tầm nhìn</h4>
+<p><code>position: fixed</code> ghim một phần tử vào <b>màn hình</b> — nó ở yên ngay cả khi trang cuộn (nghĩ đến thanh nav trên đỉnh luôn hiện). <code>position: sticky</code> là lai: phần tử cuộn bình thường đến khi chạm một offset cho trước (như <code>top: 0</code>), rồi "dính" tại đó.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 9.</b> Chạy và thấy một biểu ngữ fixed nằm trên đỉnh ô xem trước.</span>
+<template class="html">&lt;div class="banner"&gt;Always here&lt;/div&gt;
+&lt;p style="margin-top:50px"&gt;Page content…&lt;/p&gt;</template>
+<template class="css">.banner { position: fixed; top: 0; left: 0; right: 0; background: #F5B942; color: #0E1626; padding: 10px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Khóa phần đầu vào màn hình. Đặt <code>position</code> của <code>.header</code> thành <code>fixed</code> và <code>top</code> thành <code>0</code>.</span>
+<template class="html">&lt;div class="header"&gt;My Site&lt;/div&gt;</template>
+<template class="css">.header { background: #121C30; color: #E8E4D8; padding: 12px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.header'));
+assert(s.position === 'fixed', 'đặt position thành fixed');
+assert(s.top === '0px', 'đặt top thành 0');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Làm một thanh sticky. Đặt <code>position</code> của <code>.bar</code> thành <code>sticky</code> và <code>top</code> thành <code>0</code>.</span>
+<template class="html">&lt;div class="bar"&gt;Sticky menu&lt;/div&gt;</template>
+<template class="css">.bar { background: teal; color: white; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.bar'));
+assert(s.position === 'sticky', 'đặt position thành sticky');
+assert(s.top === '0px', 'đặt top thành 0');
+</template>
+</div>
+
+<h4>5. Ghép lại</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Ghim một huy hiệu "Sale" vào góc thẻ và nâng nó lên trên nội dung khác. Cho <code>.card</code> <code>position: relative</code>. Cho <code>.tag</code> <code>position: absolute</code> với <code>top: 8px</code>, <code>right: 8px</code>, và <code>z-index: 2</code>.</span>
+<template class="html">&lt;div class="card"&gt;&lt;h3&gt;Shoes&lt;/h3&gt;&lt;span class="tag"&gt;Sale&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.card { height: 90px; background: #121C30; color: #E8E4D8; padding: 12px; }
+.tag { background: gold; padding: 3px 8px; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.card')).position === 'relative', 'đặt position của .card thành relative');
+var s = getComputedStyle(document.querySelector('.tag'));
+assert(s.position === 'absolute', 'đặt position của .tag thành absolute');
+assert(s.top === '8px', 'đặt top của .tag thành 8px');
+assert(s.right === '8px', 'đặt right của .tag thành 8px');
+assert(s.zIndex === '2', 'đặt z-index của .tag thành 2');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — tất cả đều thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 1.</b> Một phần tử <code>absolute</code> được định vị so với…</span>
+<ol class="opts">
+<li>toàn màn hình, luôn luôn</li>
+<li>chỗ ban đầu của chính nó</li>
+<li>tổ tiên đã định vị gần nhất</li>
+<li>đoạn văn đầu tiên trên trang</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Đặt <code>.box</code> thành <code>position: relative</code> với <code>top: 15px</code> và <code>left: 15px</code>.</span>
+<template class="html">&lt;div class="box"&gt;Nudge&lt;/div&gt;</template>
+<template class="css">.box { background: gold; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.position === 'relative', 'đặt position thành relative');
+assert(s.top === '15px', 'đặt top thành 15px');
+assert(s.left === '15px', 'đặt left thành 15px');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Ghim <code>.badge</code> vào góc dưới-trái của thẻ: <code>position: absolute</code>, <code>bottom: 0</code>, <code>left: 0</code>.</span>
+<template class="html">&lt;div class="card"&gt;Item&lt;span class="badge"&gt;Hot&lt;/span&gt;&lt;/div&gt;</template>
+<template class="css">.card { position: relative; height: 70px; background: navy; color: white; padding: 10px; }
+.badge { background: #E2604C; color: white; padding: 3px 7px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.badge'));
+assert(s.position === 'absolute', 'đặt position thành absolute');
+assert(s.bottom === '0px', 'đặt bottom thành 0');
+assert(s.left === '0px', 'đặt left thành 0');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Dựng một footer fixed luôn nằm trên nội dung: <code>.footer</code> là <code>position: fixed</code>, <code>bottom: 0</code>, <code>left: 0</code>, <code>right: 0</code>, với <code>z-index: 5</code>.</span>
+<template class="html">&lt;div class="footer"&gt;© Dojo&lt;/div&gt;</template>
+<template class="css">.footer { background: #121C30; color: #E8E4D8; padding: 10px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.footer'));
+assert(s.position === 'fixed', 'đặt position thành fixed');
+assert(s.bottom === '0px', 'đặt bottom thành 0');
+assert(s.zIndex === '5', 'đặt z-index thành 5');
+</template>
+</div>

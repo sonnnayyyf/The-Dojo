@@ -1,0 +1,191 @@
+<h3>Bài 12 — Hàm trong JavaScript</h3>
+<p>Khi chương trình lớn dần, bạn thấy mình viết đi viết lại cùng vài dòng — định dạng một mức giá, chào một người dùng, tính tổng giỏ hàng. Một <b>hàm (function)</b> là một khối code có tên, dùng lại được: bạn viết các bước một lần, đặt cho nó một cái tên, rồi <i>gọi</i> tên đó bất cứ khi nào cần làm việc đó. Hàm là cách code thật giữ được ngắn gọn, có tổ chức và DRY (Đừng Lặp Lại Chính Mình).</p>
+<p>Một hàm có hai sức mạnh. Nó có thể nhận <b>đầu vào</b> — gọi là <b>tham số (parameter)</b> — để cùng một hàm làm việc trên dữ liệu khác nhau (<code>greet("Mai")</code> so với <code>greet("Nam")</code>). Và nó có thể trả lại một kết quả bằng <b>return</b>, để bạn dùng câu trả lời ở nơi khác (<code>let tax = calcTax(price)</code>). Đầu vào vào, một giá trị ra — đó là toàn bộ ý tưởng.</p>
+<p>Bạn sẽ định nghĩa hàm và gọi chúng ngay, xem kết quả trong ô Kết quả in ra hoặc trên trang. Khi đã quen ở đây, các bài DOM phía trước trở nên dễ — chúng chỉ là các hàm phản ứng với người dùng. Dựng code dùng lại được nào.</p>
+
+<h4>1. Định nghĩa và gọi một hàm</h4>
+<p>Viết <code>function name() { … }</code> để <b>định nghĩa</b> nó, rồi <code>name()</code> để <b>gọi</b> (chạy) nó. Định nghĩa một hàm không chạy nó — gọi mới chạy.</p>
+<pre class="snippet">function sayHi() {
+  console.log("Hi there!");
+}
+sayHi();   // chạy nó → in Hi there!</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 1. ✍️ Đến lượt bạn.</b> Định nghĩa một hàm <code>greet</code> <code>console.log</code> ra <code>Hello!</code>, rồi <b>gọi</b> nó.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof greet === 'function', 'định nghĩa một hàm tên greet');
+assert(_OUT_.trim() === 'Hello!', 'gọi greet() phải in "Hello!"');
+</template>
+</div>
+
+<h4>2. Tham số — đầu vào</h4>
+<p>Đặt các tên trong ngoặc đơn để nhận <b>đầu vào</b>. Bên trong hàm, các tên đó giữ bất cứ gì bạn truyền vào khi gọi.</p>
+<pre class="snippet">function greet(name) {
+  console.log("Hello, " + name);
+}
+greet("Mai");   // Hello, Mai
+greet("Nam");   // Hello, Nam</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️ Đến lượt bạn.</b> Định nghĩa <code>greet(name)</code> <code>console.log</code> ra <code>Hello, </code> theo sau là tên, rồi gọi <code>greet("Dojo")</code> (phải in <code>Hello, Dojo</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof greet === 'function', 'định nghĩa greet(name)');
+assert(_OUT_.trim() === 'Hello, Dojo', 'greet("Dojo") phải in "Hello, Dojo"');
+</template>
+</div>
+
+<h4>3. return — trả lại một giá trị</h4>
+<p>Phần lớn hàm <b>tính</b> ra thứ gì đó chứ không in nó. Dùng <code>return</code> để gửi một giá trị về cho nơi đã gọi hàm, để bạn lưu hoặc dùng lại.</p>
+<pre class="snippet">function double(n) {
+  return n * 2;
+}
+let result = double(5);
+console.log(result);   // 10</pre>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 3.</b> Từ khóa nào gửi một giá trị <b>về</b> từ một hàm đến nơi nó được gọi?</span>
+<ol class="opts">
+<li><code>log</code></li>
+<li><code>function</code></li>
+<li><code>return</code></li>
+<li><code>let</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Định nghĩa <code>double(n)</code> <b>trả về</b> <code>n * 2</code>. (Đừng log — chỉ return.)</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof double === 'function', 'định nghĩa double(n)');
+assert(double(5) === 10, 'double(5) phải trả về 10');
+assert(double(0) === 0, 'double(0) phải trả về 0');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Định nghĩa <code>add(a, b)</code> <b>trả về</b> tổng <code>a + b</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof add === 'function', 'định nghĩa add(a, b)');
+assert(add(2, 3) === 5, 'add(2, 3) phải trả về 5');
+assert(add(10, 15) === 25, 'add(10, 15) phải trả về 25');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Định nghĩa <code>welcome(name)</code> <b>trả về</b> chuỗi <code>Hello, </code> + name + <code>!</code> (ví dụ <code>welcome("Mai")</code> trả về <code>Hello, Mai!</code>). Template literal là dễ nhất.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof welcome === 'function', 'định nghĩa welcome(name)');
+assert(welcome('Mai') === 'Hello, Mai!', 'welcome("Mai") phải trả về "Hello, Mai!"');
+assert(welcome('Nam') === 'Hello, Nam!', 'welcome("Nam") phải trả về "Hello, Nam!"');
+</template>
+</div>
+
+<h4>4. Arrow function — dạng ngắn hơn</h4>
+<p>JavaScript hiện đại có cách viết gọn cho các hàm nhỏ: <b>arrow function</b>. <code>const square = (n) =&gt; n * n;</code> nghĩa giống một <code>function</code> trả về <code>n * n</code>. Bạn sẽ thấy cách viết tắt này ở khắp nơi.</p>
+<pre class="snippet">const square = (n) =&gt; n * n;
+console.log(square(4));   // 16</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Viết một <b>arrow function</b> <code>triple</code> trả về <code>n * 3</code> (dùng <code>const triple = (n) =&gt; …</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof triple === 'function', 'định nghĩa một arrow function triple');
+assert(triple(3) === 9, 'triple(3) phải trả về 9');
+assert(triple(10) === 30, 'triple(10) phải trả về 30');
+</template>
+</div>
+
+<h4>5. Hàm biết quyết định</h4>
+<p>Kết hợp một hàm với một <code>if</code> (hoặc một phép so sánh) để trả lời câu hỏi có/không.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Định nghĩa <code>isAdult(age)</code> <b>trả về</b> <code>true</code> khi <code>age &gt;= 18</code>, ngược lại <code>false</code>. (Mẹo: <code>return age &gt;= 18;</code> chạy trực tiếp.)</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof isAdult === 'function', 'định nghĩa isAdult(age)');
+assert(isAdult(20) === true, 'isAdult(20) phải là true');
+assert(isAdult(15) === false, 'isAdult(15) phải là false');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Định nghĩa <code>total(prices)</code> nhận một mảng số, lặp qua nó, và <b>trả về</b> tổng của chúng. (ví dụ <code>total([10, 20, 30])</code> trả về <code>60</code>.)</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof total === 'function', 'định nghĩa total(prices)');
+assert(total([10, 20, 30]) === 60, 'total([10, 20, 30]) phải trả về 60');
+assert(total([5]) === 5, 'total([5]) phải trả về 5');
+</template>
+</div>
+
+<h4>6. Hàm cập nhật trang</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Định nghĩa <code>show(msg)</code> gán <code>document.body.textContent</code> thành <code>msg</code>. Rồi gọi <code>show("Done!")</code> — bạn sẽ thấy nó trong ô xem trước.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof show === 'function', 'định nghĩa show(msg)');
+assert(document.body.textContent.trim() === 'Done!', 'gọi show("Done!") phải đặt "Done!" lên trang');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Định nghĩa <code>price(item, cost)</code> <b>trả về</b> một chuỗi như <code>Coffee: 25000</code>. Rồi gọi nó và gán <code>document.body.textContent</code> thành <code>price("Coffee", 25000)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof price === 'function', 'định nghĩa price(item, cost)');
+assert(price('Tea', 30000) === 'Tea: 30000', 'price("Tea", 30000) phải trả về "Tea: 30000"');
+assert(document.body.textContent.trim() === 'Coffee: 25000', 'hiện price("Coffee", 25000) lên trang');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Định nghĩa <code>makeCard(title, author)</code> <b>trả về</b> một chuỗi HTML <code>&lt;h3&gt;title&lt;/h3&gt;&lt;p&gt;author&lt;/p&gt;</code> (với các giá trị điền vào). Rồi gán <code>document.body.innerHTML</code> thành <code>makeCard("Dune", "Herbert")</code> — một thẻ thật hiện ra.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof makeCard === 'function', 'định nghĩa makeCard(title, author)');
+assert(makeCard('Emma', 'Austen').replace(/\s+/g,'') === '<h3>Emma</h3><p>Austen</p>', 'makeCard phải trả về "<h3>title</h3><p>author</p>"');
+assert(document.querySelector('h3') && document.querySelector('h3').textContent.trim() === 'Dune', 'render makeCard("Dune", "Herbert") — một h3 "Dune" phải hiện ra');
+assert(document.querySelector('p') && document.querySelector('p').textContent.trim() === 'Herbert', 'một p "Herbert" phải hiện ra');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — tất cả đều thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> <b>Gọi</b> một hàm nghĩa là gì?</span>
+<ol class="opts">
+<li>Định nghĩa nó để dùng sau</li>
+<li>Chạy nó ngay bây giờ</li>
+<li>Xóa nó</li>
+<li>Đặt tên một biến</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Định nghĩa <code>square(n)</code> <b>trả về</b> <code>n * n</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof square === 'function', 'định nghĩa square(n)');
+assert(square(6) === 36, 'square(6) phải trả về 36');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Định nghĩa <code>subtract(a, b)</code> <b>trả về</b> <code>a - b</code>, rồi <code>console.log(subtract(10, 4))</code> (phải in <code>6</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof subtract === 'function' && subtract(10, 4) === 6, 'subtract(10, 4) phải trả về 6');
+assert(_OUT_.trim() === '6', 'console.log(subtract(10, 4)) phải in 6');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Định nghĩa <code>grade(score)</code> <b>trả về</b> <code>Pass</code> khi <code>score &gt;= 50</code> và <code>Fail</code> nếu không. Rồi gán <code>document.body.textContent</code> thành <code>grade(72)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof grade === 'function', 'định nghĩa grade(score)');
+assert(grade(72) === 'Pass', 'grade(72) phải trả về "Pass"');
+assert(grade(30) === 'Fail', 'grade(30) phải trả về "Fail"');
+assert(document.body.textContent.trim() === 'Pass', 'hiện grade(72) → "Pass" lên trang');
+</template>
+</div>

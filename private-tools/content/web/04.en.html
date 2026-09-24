@@ -1,0 +1,184 @@
+<h3>Lesson 4 — CSS essentials &amp; the box model</h3>
+<p>You can now structure a page — but everything looks like a 1994 document: black Times New Roman on white. <b>CSS</b> (Cascading Style Sheets) is the language that makes it look designed. Where HTML says <i>what</i> something is, CSS says <i>how it should look</i>: colour, size, spacing, borders, fonts. It's the single biggest lever you have over how professional a page feels.</p>
+<p>CSS works by <b>selecting</b> elements and giving them <b>declarations</b>. Every rule has the same shape: a <b>selector</b> (which elements), then a block of <code>property: value;</code> pairs. <code>h1 { color: teal; }</code> means "find every <code>&lt;h1&gt;</code> and paint its text teal". You'll learn the three everyday selectors — by element, by <b>class</b> and by <b>id</b> — and the properties for colour and text.</p>
+<p>Then comes the idea that unlocks all of layout: the <b>box model</b>. Every element is a rectangular box with four layers — content, padding, border and margin. Master those four and you control spacing everywhere. As always you'll edit real CSS in a live editor, pressing Run to watch the page restyle instantly.</p>
+
+<h4>1. The shape of a CSS rule</h4>
+<figure class="diagram">
+<svg viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="15">
+  <text x="30" y="60" fill="#F5B942">h1</text>
+  <text x="60" y="60" fill="#E8E4D8">{</text>
+  <text x="85" y="60" fill="#7FD1C0">color</text>
+  <text x="140" y="60" fill="#E8E4D8">:</text>
+  <text x="155" y="60" fill="#E2604C">teal</text>
+  <text x="205" y="60" fill="#E8E4D8">; }</text>
+  <line x1="38" y1="70" x2="38" y2="95" stroke="#F5B942"/><text x="15" y="112" fill="#F5B942" font-size="11">selector</text>
+  <line x1="110" y1="70" x2="110" y2="88" stroke="#7FD1C0"/><text x="88" y="105" fill="#7FD1C0" font-size="11">property</text>
+  <line x1="172" y1="70" x2="172" y2="95" stroke="#E2604C"/><text x="158" y="112" fill="#E2604C" font-size="11">value</text>
+</svg>
+<figcaption>selector { property: value; } — the universal shape of every CSS rule.</figcaption>
+</figure>
+<p>There are three selectors you'll use constantly: by <b>element name</b> (<code>p</code> — every paragraph), by <b>class</b> (<code>.note</code> — every element with <code>class="note"</code>, reusable), and by <b>id</b> (<code>#hero</code> — the one element with <code>id="hero"</code>, unique). A dot means class; a hash means id.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run and see the same three selector types colour different elements.</span>
+<template class="html">&lt;h1&gt;Element selector&lt;/h1&gt;
+&lt;p class="note"&gt;Class selector&lt;/p&gt;
+&lt;p id="hero"&gt;Id selector&lt;/p&gt;</template>
+<template class="css">h1 { color: teal; }
+.note { color: orange; }
+#hero { color: tomato; }</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 2.</b> Which selector targets every element with <code>class="tag"</code>?</span>
+<ol class="opts">
+<li><code>#tag</code></li>
+<li><code>.tag</code></li>
+<li><code>tag</code></li>
+<li><code>&lt;tag&gt;</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Using an <b>element selector</b>, make every paragraph blue. In the CSS, set <code>p</code>'s <code>color</code> to <code>blue</code>.</span>
+<template class="html">&lt;p&gt;First&lt;/p&gt;
+&lt;p&gt;Second&lt;/p&gt;</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelectorAll('p')[1]).color === 'rgb(0, 0, 255)', 'select p and set color to blue');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Using a <b>class selector</b>, give the tag a gold <code>background</code>. Write a rule for <code>.tag</code> with <code>background: gold;</code></span>
+<template class="html">&lt;span class="tag"&gt;Sale&lt;/span&gt;</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.tag')).backgroundColor === 'rgb(255, 215, 0)', 'select .tag and set background to gold');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Using an <b>id selector</b>, make the hero red. Write a rule for <code>#hero</code> with <code>color: red;</code></span>
+<template class="html">&lt;h1 id="hero"&gt;Big News&lt;/h1&gt;</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('#hero')).color === 'rgb(255, 0, 0)', 'select #hero and set color to red');
+</template>
+</div>
+
+<h4>2. Colour &amp; text</h4>
+<p>The everyday text properties: <code>color</code> (text colour), <code>background</code> (fill behind it), <code>font-size</code> (e.g. <code>24px</code>), <code>font-weight</code> (<code>bold</code>), and <code>text-align</code> (<code>left</code>, <code>center</code>, <code>right</code>).</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 6.</b> Run, then tweak a value and Run again to feel each property.</span>
+<template class="html">&lt;h1&gt;Styled heading&lt;/h1&gt;
+&lt;p&gt;Some body text.&lt;/p&gt;</template>
+<template class="css">h1 { color: #7FD1C0; font-size: 34px; text-align: center; }
+p  { color: #E8E4D8; font-size: 16px; }
+body { background: #0E1626; padding: 16px; }</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Make the heading big. Set the <code>h1</code>'s <code>font-size</code> to exactly <code>40px</code>.</span>
+<template class="html">&lt;h1&gt;Welcome&lt;/h1&gt;</template>
+<template class="css">h1 { color: black; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('h1')).fontSize === '40px', 'set the h1 font-size to 40px');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Centre the paragraph. Set the <code>p</code>'s <code>text-align</code> to <code>center</code>.</span>
+<template class="html">&lt;p&gt;Centre me&lt;/p&gt;</template>
+<template class="css">p { color: navy; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('p')).textAlign === 'center', 'set the paragraph text-align to center');
+</template>
+</div>
+
+<h4>3. The box model</h4>
+<p>Every element is a box with four concentric layers, from the inside out: <b>content</b> (the text/image), <b>padding</b> (space <i>inside</i> the box, between content and border), <b>border</b> (the line around it), and <b>margin</b> (space <i>outside</i>, pushing other boxes away). Getting these right is 90% of good layout.</p>
+<figure class="diagram">
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="12">
+  <rect x="20" y="15" width="360" height="170" fill="#2a1f10" stroke="#F5B942" stroke-dasharray="4 3"/>
+  <text x="30" y="30" fill="#F5B942">margin</text>
+  <rect x="70" y="45" width="260" height="110" fill="#101a2e" stroke="#7FD1C0"/>
+  <text x="80" y="60" fill="#7FD1C0">border</text>
+  <rect x="110" y="72" width="180" height="60" fill="#12241f" stroke="#7FD1C0" stroke-dasharray="3 3"/>
+  <text x="120" y="87" fill="#7FD1C0" font-size="11">padding</text>
+  <rect x="150" y="90" width="100" height="26" fill="#E2604C"/>
+  <text x="200" y="107" text-anchor="middle" fill="#0E1626" font-size="11">content</text>
+</svg>
+<figcaption>Inside → out: content, padding, border, margin.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 9.</b> Run this. Change <code>padding</code> to <code>4px</code>, Run, and watch the box tighten around the text.</span>
+<template class="html">&lt;div class="card"&gt;A padded, bordered box&lt;/div&gt;</template>
+<template class="css">.card {
+  padding: 24px;
+  border: 3px solid #7FD1C0;
+  margin: 20px;
+  background: #121C30;
+  color: #E8E4D8;
+}</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Give the box breathing room. Set the <code>.box</code>'s <code>padding</code> to exactly <code>20px</code>.</span>
+<template class="html">&lt;div class="box"&gt;Hello&lt;/div&gt;</template>
+<template class="css">.box { background: teal; color: white; }</template>
+<template class="ts">
+assert(getComputedStyle(document.querySelector('.box')).paddingTop === '20px', 'set the .box padding to 20px');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Add a border. Give <code>.box</code> a <code>border</code> of <code>2px solid navy</code> (write it as one shorthand: <code>border: 2px solid navy;</code>).</span>
+<template class="html">&lt;div class="box"&gt;Framed&lt;/div&gt;</template>
+<template class="css">.box { padding: 12px; }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.box'));
+assert(s.borderTopWidth === '2px', 'the border width should be 2px');
+assert(s.borderTopStyle === 'solid', 'the border style should be solid');
+assert(s.borderTopColor === 'rgb(0, 0, 128)', 'the border colour should be navy');
+</template>
+</div>
+
+<h4>4. Build a styled card</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Style the <code>.card</code>: <code>background</code> <code>gold</code>, text <code>color</code> <code>navy</code>, <code>padding</code> <code>24px</code>, and <code>text-align</code> <code>center</code>.</span>
+<template class="html">&lt;div class="card"&gt;&lt;h2&gt;Special offer&lt;/h2&gt;&lt;p&gt;Today only.&lt;/p&gt;&lt;/div&gt;</template>
+<template class="css">.card {
+  
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.card'));
+assert(s.backgroundColor === 'rgb(255, 215, 0)', 'background should be gold');
+assert(s.color === 'rgb(0, 0, 128)', 'text colour should be navy');
+assert(s.paddingTop === '24px', 'padding should be 24px');
+assert(s.textAlign === 'center', 'text-align should be center');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — mostly hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="3"><span class="exq"><b>Exercise 1.</b> In the box model, which layer is the space <b>outside</b> the border, pushing other boxes away?</span>
+<ol class="opts">
+<li>content</li>
+<li>padding</li>
+<li>border</li>
+<li>margin</li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Give the <code>body</code> a <code>navy</code> background and the <code>h1</code> a <code>white</code> colour.</span>
+<template class="html">&lt;h1&gt;Night&lt;/h1&gt;</template>
+<template class="css">
+</template>
+<template class="ts">
+assert(getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 128)', 'set the body background to navy');
+assert(getComputedStyle(document.querySelector('h1')).color === 'rgb(255, 255, 255)', 'set the h1 colour to white');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Set the <code>h1</code>'s <code>font-size</code> to <code>28px</code> and <code>text-align</code> to <code>center</code>.</span>
+<template class="html">&lt;h1&gt;Centred title&lt;/h1&gt;</template>
+<template class="css">h1 { }</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('h1'));
+assert(s.fontSize === '28px', 'font-size should be 28px');
+assert(s.textAlign === 'center', 'text-align should be center');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Style <code>.btn</code> like a button: <code>background</code> <code>green</code>, <code>color</code> <code>white</code>, <code>padding</code> <code>12px</code>, and a <code>border</code> of <code>2px solid green</code>.</span>
+<template class="html">&lt;span class="btn"&gt;Buy now&lt;/span&gt;</template>
+<template class="css">.btn {
+  
+}</template>
+<template class="ts">
+var s = getComputedStyle(document.querySelector('.btn'));
+assert(s.backgroundColor === 'rgb(0, 128, 0)', 'background should be green');
+assert(s.color === 'rgb(255, 255, 255)', 'colour should be white');
+assert(s.paddingTop === '12px', 'padding should be 12px');
+assert(s.borderTopWidth === '2px' && s.borderTopStyle === 'solid' && s.borderTopColor === 'rgb(0, 128, 0)', 'border should be 2px solid green');
+</template>
+</div>

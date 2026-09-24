@@ -1,0 +1,172 @@
+<h3>Bài 10 — JavaScript căn bản</h3>
+<p>Giờ bạn đã dựng và tạo kiểu được trang — nhưng chúng chỉ nằm im. <b>JavaScript</b> là ngôn ngữ làm trang <i>biết nghĩ và phản ứng</i>: nhớ giá trị, làm phép tính, đáp lại cú nhấp, cập nhật màn hình. Đây là lớp thứ ba và cuối cùng của web, lớp biến một tấm áp phích thành một ứng dụng. Chào mừng đến nửa sau khóa học.</p>
+<p>Mọi chương trình, ở bất kỳ ngôn ngữ nào, đều được xây từ những viên gạch nhỏ như nhau: <b>giá trị (value)</b> (một đoạn chữ, một con số), <b>biến (variable)</b> (những hộp có tên lưu các giá trị đó), và <b>toán tử (operator)</b> (phép toán và so sánh). Làm chủ chúng thì mọi thứ còn lại — vòng lặp, hàm, cả một ứng dụng — chỉ là các tổ hợp của chúng. JavaScript là nơi thân thiện để học vì nó chạy khắp nơi và cho kết quả ngay.</p>
+<p>Người bạn thân mới của bạn là <code>console.log()</code> — nó in ra một giá trị để bạn <i>thấy</i> code đang làm gì. Trong các bài tập này, bất cứ gì bạn <code>console.log</code> đều hiện trong ô <b>Kết quả in ra</b> khi bạn nhấn Chạy. Gõ code, chạy, đọc kết quả, được chấm. Viết JavaScript nào.</p>
+
+<h4>1. console.log — thấy code suy nghĩ</h4>
+<p><code>console.log(x)</code> in <code>x</code> ra để bạn xem. Đó là cách mọi lập trình viên kiểm tra công việc. Chữ (một <b>string</b>) đặt trong dấu ngoặc kép; số thì không.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 1. ✍️ Đến lượt bạn.</b> In một lời chào. Dùng <code>console.log</code> để in đúng <code>Hello, Dojo!</code> (trong dấu ngoặc kép).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Hello, Dojo!', 'console.log("Hello, Dojo!") phải in đúng Hello, Dojo!');
+</template>
+</div>
+
+<h4>2. Biến — những hộp có tên</h4>
+<p>Một <b>biến</b> lưu một giá trị dưới một cái tên để bạn dùng lại. Khai báo bằng <code>let</code> (giá trị có thể đổi) hoặc <code>const</code> (giá trị không đổi). Rồi dùng cái tên đó ở đâu cũng được.</p>
+<pre class="snippet">let city = "Hanoi";
+console.log(city);</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️ Đến lượt bạn.</b> Tạo một biến <code>city</code> giữ chuỗi <code>Hanoi</code>, rồi <code>console.log(city)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof city !== 'undefined', 'khai báo một biến tên city');
+assert(city === 'Hanoi', 'city phải giữ chuỗi "Hanoi"');
+assert(_OUT_.trim() === 'Hanoi', 'console.log(city) phải in Hanoi');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Lưu một con số. Tạo <code>const age = 20;</code> rồi in nó bằng <code>console.log(age)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof age === 'number', 'age phải là số (không có dấu ngoặc)');
+assert(age === 20, 'age phải là 20');
+assert(_OUT_.trim() === '20', 'console.log(age) phải in 20');
+</template>
+</div>
+
+<h4>3. Kiểu dữ liệu — chữ, số, đúng/sai</h4>
+<p>Ba kiểu cơ bản bao phủ hầu hết những gì bạn lưu: một <b>string</b> (chữ trong ngoặc kép, <code>"hi"</code>), một <b>number</b> (<code>42</code>, không ngoặc), và một <b>boolean</b> (<code>true</code> hoặc <code>false</code>). Toán tử <code>typeof</code> cho bạn biết một giá trị thuộc kiểu nào.</p>
+<pre class="snippet">console.log(typeof "hi");    // string
+console.log(typeof 42);      // number
+console.log(typeof true);    // boolean</pre>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 4.</b> Giá trị nào dưới đây là một <b>number</b> (không phải chuỗi)?</span>
+<ol class="opts">
+<li><code>"7"</code></li>
+<li><code>"seven"</code></li>
+<li><code>7</code></li>
+<li><code>true</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Tạo một boolean. Tạo <code>let isOpen = true;</code> và in nó bằng <code>console.log(isOpen)</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof isOpen === 'boolean', 'isOpen phải là boolean (true hoặc false, không ngoặc)');
+assert(isOpen === true, 'isOpen phải là true');
+assert(_OUT_.trim() === 'true', 'console.log(isOpen) phải in true');
+</template>
+</div>
+
+<h4>4. Toán tử — làm phép tính</h4>
+<p>Các phép số học quen thuộc: <code>+</code> cộng, <code>-</code> trừ, <code>*</code> nhân, <code>/</code> chia. Bạn có thể tính ngay trong <code>console.log</code>, hoặc lưu kết quả vào một biến.</p>
+<pre class="snippet">console.log(5 + 3);      // 8
+console.log(10 * 2);     // 20
+let total = 4 + 6;
+console.log(total);      // 10</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> In kết quả của <code>7 * 6</code> bằng <code>console.log</code> (đáp án phải in ra là <code>42</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '42', 'console.log(7 * 6) phải in 42');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Lưu một tổng. Tạo <code>let price = 25000;</code> và <code>let qty = 3;</code>, rồi <code>console.log(price * qty)</code> (phải in <code>75000</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(typeof price === 'number' && price === 25000, 'tạo price = 25000');
+assert(typeof qty === 'number' && qty === 3, 'tạo qty = 3');
+assert(_OUT_.trim() === '75000', 'console.log(price * qty) phải in 75000');
+</template>
+</div>
+
+<h4>5. Template literal — nhét giá trị vào chữ</h4>
+<p>Để dựng một câu có biến bên trong, dùng <b>template literal</b>: dấu backtick <code>`…`</code> với các lỗ <code>${…}</code>. <code>`Hi ${name}`</code> thả giá trị của <code>name</code> vào chuỗi.</p>
+<pre class="snippet">let name = "Mai";
+console.log(`Hello, ${name}!`);   // Hello, Mai!</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Tạo <code>let name = "Mai";</code> rồi dùng template literal để in đúng <code>Hello, Mai!</code></span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Hello, Mai!', 'in "Hello, Mai!" bằng template literal `Hello, ${name}!`');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Kết hợp dữ liệu. Tạo <code>let item = "Coffee";</code> và <code>let cost = 25000;</code>, rồi in đúng <code>Coffee costs 25000</code> bằng template literal.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Coffee costs 25000', 'in "Coffee costs 25000" bằng `${item} costs ${cost}`');
+</template>
+</div>
+
+<h4>6. Hiện kết quả lên trang</h4>
+<p>Kết quả console là dành cho bạn, người lập trình. Để hiện gì đó cho <i>người dùng</i>, đặt nó lên trang — cách đơn giản nhất là <code>document.body.textContent = …</code>. (Các bài sau sẽ đi sâu hơn nhiều vào việc này.)</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Đặt chữ lên trang. Gán <code>document.body.textContent</code> thành <code>Welcome!</code> — bạn sẽ thấy nó hiện trong ô xem trước.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Welcome!', 'gán document.body.textContent thành "Welcome!"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Tính rồi hiện. Tạo <code>let a = 8;</code> và <code>let b = 5;</code>, rồi gán <code>document.body.textContent</code> thành chuỗi <code>Sum: 13</code> bằng template literal với <code>${a + b}</code>.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Sum: 13', 'hiện "Sum: 13" lên trang bằng `Sum: ${a + b}`');
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Dựng một hóa đơn nhỏ. Tạo <code>let item = "Tea";</code>, <code>let price = 30000;</code>, <code>let qty = 2;</code>. <code>console.log</code> đúng <code>Tea x2</code>, và gán <code>document.body.textContent</code> thành <code>Total: 60000</code> (dùng <code>price * qty</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === 'Tea x2', 'console.log phải in "Tea x2" (dùng `${item} x${qty}`)');
+assert(document.body.textContent.trim() === 'Total: 60000', 'trang phải hiện "Total: 60000" (dùng price * qty)');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — tất cả đều thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> Từ khóa nào khai báo một biến mà giá trị sẽ <b>không</b> đổi?</span>
+<ol class="opts">
+<li><code>let</code></li>
+<li><code>const</code></li>
+<li><code>log</code></li>
+<li><code>var</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Tạo <code>let country = "Vietnam";</code> và in nó bằng <code>console.log</code> (phải in <code>Vietnam</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(country === 'Vietnam', 'tạo country = "Vietnam"');
+assert(_OUT_.trim() === 'Vietnam', 'console.log(country) phải in Vietnam');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Tạo <code>let x = 12;</code> và <code>let y = 8;</code>, rồi <code>console.log(x + y)</code> (phải in <code>20</code>).</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(_OUT_.trim() === '20', 'console.log(x + y) phải in 20');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Tạo <code>let user = "Nam";</code> và <code>let points = 90;</code>. Gán <code>document.body.textContent</code> thành đúng <code>Nam has 90 points</code> bằng template literal.</span>
+<template class="st">&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.body.textContent.trim() === 'Nam has 90 points', 'hiện "Nam has 90 points" bằng `${user} has ${points} points`');
+</template>
+</div>

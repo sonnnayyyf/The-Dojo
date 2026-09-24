@@ -1,0 +1,217 @@
+<h3>Bài 3 — Cấu trúc HTML: danh sách, bảng, form &amp; bố cục ngữ nghĩa</h3>
+<p>Đến giờ các trang của bạn mới chỉ là một chồng tiêu đề và đoạn văn phẳng. Trang web thật có tổ chức hơn nhiều: menu là <b>danh sách</b>, dữ liệu nằm trong <b>bảng</b>, ô đăng ký là <b>form</b>, và cả trang được chia thành các vùng có ý nghĩa như phần đầu, vùng nội dung chính và phần chân. HTML có phần tử riêng cho từng thứ đó, và dùng đúng phần tử làm trang dễ tạo kiểu hơn, dễ đọc hơn cho trình đọc màn hình, và dễ hiểu hơn cho công cụ tìm kiếm.</p>
+<p>Sợi chỉ xuyên suốt bài này là <b>lồng nhau (nesting)</b> — đặt phần tử <i>bên trong</i> phần tử khác. Danh sách là một hộp chứa (<code>&lt;ul&gt;</code>) giữ các mục (<code>&lt;li&gt;</code>); bảng là các hàng (<code>&lt;tr&gt;</code>) giữ các ô (<code>&lt;td&gt;</code>); form là một hộp (<code>&lt;form&gt;</code>) giữ các ô nhập. Một khi bạn thấy HTML là những hộp-trong-hộp, việc dựng cả một trang trở nên tự nhiên.</p>
+<p>Bạn sẽ tự tay dựng từng thứ: một danh sách điều hướng, một bảng giá, một form đăng ký hoạt động được, và cuối cùng là một trang hoàn chỉnh bố cục bằng các vùng ngữ nghĩa. Sửa, Chạy, xem nó thành hình, và được chấm dần.</p>
+
+<h4>1. Danh sách</h4>
+<p>Dùng <b>danh sách không thứ tự</b> <code>&lt;ul&gt;</code> cho các mục mà thứ tự không quan trọng (dấu chấm đầu dòng), và <b>danh sách có thứ tự</b> <code>&lt;ol&gt;</code> khi thứ tự quan trọng (đánh số). Cả hai đều chứa <b>mục danh sách</b>, <code>&lt;li&gt;</code> — mỗi mục một cái.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy và so sánh danh sách chấm đầu dòng với danh sách đánh số.</span>
+<template class="st">&lt;ul&gt;
+  &lt;li&gt;Coffee&lt;/li&gt;
+  &lt;li&gt;Tea&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+  &lt;li&gt;Boil water&lt;/li&gt;
+  &lt;li&gt;Add leaves&lt;/li&gt;
+&lt;/ol&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️ Đến lượt bạn.</b> Dựng một menu chấm đầu dòng: một <code>&lt;ul&gt;</code> chứa đúng ba <code>&lt;li&gt;</code> ghi <code>Home</code>, <code>Menu</code> và <code>Contact</code>.</span>
+<template class="st">&lt;ul&gt;
+
+&lt;/ul&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('ul li');
+assert(items.length === 3, 'thẻ ul phải chứa đúng ba mục li');
+assert(items[0].textContent.trim() === 'Home', 'mục đầu phải là "Home"');
+assert(items[1].textContent.trim() === 'Menu', 'mục thứ hai phải là "Menu"');
+assert(items[2].textContent.trim() === 'Contact', 'mục thứ ba phải là "Contact"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Làm một công thức đánh số: một <code>&lt;ol&gt;</code> với hai <code>&lt;li&gt;</code> ghi <code>Mix</code> và <code>Bake</code>.</span>
+<template class="st">&lt;ol&gt;
+
+&lt;/ol&gt;</template>
+<template class="ts">
+var ol = document.querySelector('ol');
+assert(ol, 'dùng một <ol> (danh sách có thứ tự)');
+var items = ol.querySelectorAll('li');
+assert(items.length === 2, 'thẻ ol phải chứa đúng hai mục li');
+assert(items[0].textContent.trim() === 'Mix' && items[1].textContent.trim() === 'Bake', 'các mục phải là "Mix" rồi "Bake"');
+</template>
+</div>
+
+<h4>2. Bảng</h4>
+<p>Bảng trình bày dữ liệu theo hàng và cột. Một <code>&lt;table&gt;</code> giữ các <b>hàng</b> <code>&lt;tr&gt;</code>; mỗi hàng giữ các <b>ô</b>. Dùng <code>&lt;th&gt;</code> cho ô tiêu đề (đậm) và <code>&lt;td&gt;</code> cho ô dữ liệu.</p>
+<figure class="diagram">
+<svg viewBox="0 0 440 150" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <rect x="40" y="20" width="360" height="40" fill="#121C30" stroke="#F5B942"/>
+  <text x="70" y="45" fill="#F5B942">th: Item</text>
+  <text x="250" y="45" fill="#F5B942">th: Price</text>
+  <line x1="220" y1="20" x2="220" y2="140" stroke="#22304C"/>
+  <rect x="40" y="60" width="360" height="40" fill="#0E1626" stroke="#22304C"/>
+  <text x="70" y="85" fill="#E8E4D8">td: Coffee</text>
+  <text x="250" y="85" fill="#E8E4D8">td: 25000</text>
+  <rect x="40" y="100" width="360" height="40" fill="#0E1626" stroke="#22304C"/>
+  <text x="70" y="125" fill="#E8E4D8">td: Tea</text>
+  <text x="250" y="125" fill="#E8E4D8">td: 30000</text>
+  <text x="10" y="45" fill="#7FD1C0" font-size="11" transform="rotate(-90 10,45)">tr</text>
+</svg>
+<figcaption>Bảng là các hàng (tr) gồm các ô: th cho tiêu đề, td cho dữ liệu.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 4.</b> Chạy và xem một bảng hai cột hiện ra.</span>
+<template class="st">&lt;table border="1" cellpadding="6"&gt;
+  &lt;tr&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Coffee&lt;/td&gt;&lt;td&gt;25000&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Thêm một hàng dữ liệu. Trong bảng, thêm một <code>&lt;tr&gt;</code> nữa với hai ô <code>&lt;td&gt;</code> ghi <code>Tea</code> và <code>30000</code>.</span>
+<template class="st">&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Coffee&lt;/td&gt;&lt;td&gt;25000&lt;/td&gt;&lt;/tr&gt;
+
+&lt;/table&gt;</template>
+<template class="ts">
+var rows = document.querySelectorAll('table tr');
+assert(rows.length === 3, 'bảng phải có ba hàng (1 tiêu đề + 2 dữ liệu)');
+var last = rows[2].querySelectorAll('td');
+assert(last.length === 2, 'hàng mới cần hai ô td');
+assert(last[0].textContent.trim() === 'Tea' && last[1].textContent.trim() === '30000', 'các ô mới phải ghi "Tea" và "30000"');
+</template>
+</div>
+
+<h4>3. Form</h4>
+<p>Form thu thập dữ liệu từ người dùng. Một <code>&lt;form&gt;</code> bọc các điều khiển như <code>&lt;input&gt;</code> (ô nhập chữ) và <code>&lt;button&gt;</code>. Thuộc tính <code>type</code> của input chọn loại (<code>text</code>, <code>email</code>, <code>password</code>…), và <code>placeholder</code> hiện chữ gợi ý màu xám. Một <code>&lt;label&gt;</code> đặt tên cho ô để rõ ràng và dễ tiếp cận.</p>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 6.</b> Chạy và thử gõ vào ô.</span>
+<template class="st">&lt;form&gt;
+  &lt;label&gt;Your name&lt;/label&gt;
+  &lt;input type="text" placeholder="Type here"&gt;
+  &lt;button&gt;Send&lt;/button&gt;
+&lt;/form&gt;</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Thêm một ô email. Trong form, thêm một <code>&lt;input&gt;</code> có <code>type</code> là <code>email</code> và <code>placeholder</code> đúng là <code>you@example.com</code>.</span>
+<template class="st">&lt;form&gt;
+
+  &lt;button&gt;Sign up&lt;/button&gt;
+&lt;/form&gt;</template>
+<template class="ts">
+var inp = document.querySelector('form input');
+assert(inp, 'thêm một <input> trong form');
+assert(inp.getAttribute('type') === 'email', 'type của input phải là "email"');
+assert(inp.getAttribute('placeholder') === 'you@example.com', 'placeholder phải đúng là "you@example.com"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Thêm một nút gửi. Trong form thêm một <code>&lt;button&gt;</code> có chữ đúng là <code>Subscribe</code>.</span>
+<template class="st">&lt;form&gt;
+  &lt;input type="text" placeholder="Name"&gt;
+
+&lt;/form&gt;</template>
+<template class="ts">
+var btn = document.querySelector('form button');
+assert(btn, 'thêm một <button> trong form');
+assert(btn.textContent.trim() === 'Subscribe', 'chữ của nút phải đúng là "Subscribe"');
+</template>
+</div>
+
+<h4>4. Bố cục ngữ nghĩa</h4>
+<p>Bạn <i>có thể</i> dựng cả trang bằng các hộp trơn, nhưng HTML cho các phần tử <b>ngữ nghĩa</b> đặt tên cho các vùng của trang: <code>&lt;header&gt;</code> (thanh trên / tiêu đề), <code>&lt;nav&gt;</code> (liên kết điều hướng), <code>&lt;main&gt;</code> (nội dung chính), <code>&lt;section&gt;</code> (một khối gom nhóm) và <code>&lt;footer&gt;</code> (thanh dưới). Chúng hiển thị y như một hộp trơn nhưng nói cho trình duyệt, trình đọc màn hình và công cụ tìm kiếm biết <i>mỗi vùng có ý nghĩa gì</i>.</p>
+<figure class="diagram">
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans, sans-serif" font-size="13">
+  <rect x="20" y="15" width="360" height="34" fill="#121C30" stroke="#F5B942"/><text x="200" y="37" text-anchor="middle" fill="#F5B942">header</text>
+  <rect x="20" y="53" width="360" height="26" fill="#0E1626" stroke="#7FD1C0"/><text x="200" y="71" text-anchor="middle" fill="#7FD1C0">nav</text>
+  <rect x="20" y="83" width="360" height="80" fill="#0E1626" stroke="#22304C"/><text x="200" y="110" text-anchor="middle" fill="#E8E4D8">main</text>
+  <rect x="35" y="120" width="330" height="34" fill="#121C30" stroke="#22304C"/><text x="200" y="142" text-anchor="middle" fill="#8FA0BC">section</text>
+  <rect x="20" y="167" width="360" height="28" fill="#121C30" stroke="#E2604C"/><text x="200" y="186" text-anchor="middle" fill="#E2604C">footer</text>
+</svg>
+<figcaption>Bộ khung quen thuộc: header, nav, main (có section bên trong), footer.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 9.</b> Chạy bộ khung ngữ nghĩa này — trông đơn sơ, nhưng các vùng đều có ý nghĩa.</span>
+<template class="st">&lt;header&gt;&lt;h1&gt;My Site&lt;/h1&gt;&lt;/header&gt;
+&lt;nav&gt;Home · About&lt;/nav&gt;
+&lt;main&gt;
+  &lt;section&gt;&lt;p&gt;Welcome to the site.&lt;/p&gt;&lt;/section&gt;
+&lt;/main&gt;
+&lt;footer&gt;© 2026&lt;/footer&gt;</template>
+</div>
+<div class="ex" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 10.</b> Phần tử nào dành cho <b>nội dung chính</b> của trang?</span>
+<ol class="opts">
+<li><code>&lt;header&gt;</code></li>
+<li><code>&lt;nav&gt;</code></li>
+<li><code>&lt;main&gt;</code></li>
+<li><code>&lt;footer&gt;</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Thêm một phần chân. Dưới main, thêm một <code>&lt;footer&gt;</code> có chữ đúng là <code>© 2026 Dojo</code>.</span>
+<template class="st">&lt;header&gt;&lt;h1&gt;Dojo&lt;/h1&gt;&lt;/header&gt;
+&lt;main&gt;&lt;p&gt;Hello&lt;/p&gt;&lt;/main&gt;
+</template>
+<template class="ts">
+var f = document.querySelector('footer');
+assert(f, 'thêm một phần tử <footer>');
+assert(f.textContent.trim() === '© 2026 Dojo', 'footer phải ghi đúng "© 2026 Dojo"');
+</template>
+</div>
+
+<h4>5. Dựng cấu trúc cả trang</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Dựng bộ khung trang: một <code>&lt;header&gt;</code> chứa một <code>&lt;h1&gt;</code> ghi <code>Dojo Cafe</code>, một <code>&lt;nav&gt;</code> chứa một <code>&lt;ul&gt;</code> với hai <code>&lt;li&gt;</code> (<code>Home</code>, <code>Menu</code>), và một <code>&lt;main&gt;</code> chứa một <code>&lt;p&gt;</code> ghi <code>Freshly brewed.</code></span>
+<template class="st">&lt;header&gt;
+
+&lt;/header&gt;
+&lt;nav&gt;
+
+&lt;/nav&gt;
+&lt;main&gt;
+
+&lt;/main&gt;</template>
+<template class="ts">
+var h1 = document.querySelector('header h1');
+assert(h1 && h1.textContent.trim() === 'Dojo Cafe', 'header phải chứa một h1 ghi "Dojo Cafe"');
+var navItems = document.querySelectorAll('nav ul li');
+assert(navItems.length === 2, 'nav phải chứa một ul với hai mục li');
+assert(navItems[0].textContent.trim() === 'Home' && navItems[1].textContent.trim() === 'Menu', 'các mục nav phải là "Home" và "Menu"');
+var p = document.querySelector('main p');
+assert(p && p.textContent.trim() === 'Freshly brewed.', 'main phải chứa một p ghi "Freshly brewed."');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — phần lớn là thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 1.</b> Cặp nào lồng đúng: một danh sách giữ các mục của nó?</span>
+<ol class="opts">
+<li><code>&lt;li&gt;</code> giữ <code>&lt;ul&gt;</code></li>
+<li><code>&lt;ul&gt;</code> giữ <code>&lt;li&gt;</code></li>
+<li><code>&lt;tr&gt;</code> giữ <code>&lt;ul&gt;</code></li>
+<li><code>&lt;ol&gt;</code> giữ <code>&lt;td&gt;</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Dựng một <code>&lt;ul&gt;</code> với ba <code>&lt;li&gt;</code>: <code>Red</code>, <code>Green</code>, <code>Blue</code>.</span>
+<template class="st">&lt;ul&gt;
+
+&lt;/ul&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('ul li');
+assert(items.length === 3, 'ul cần đúng ba mục li');
+assert(items[0].textContent.trim() === 'Red' && items[1].textContent.trim() === 'Green' && items[2].textContent.trim() === 'Blue', 'các mục phải là Red, Green, Blue');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Thêm một ô nhập chữ với <code>placeholder</code> đúng là <code>Search…</code> trong form.</span>
+<template class="st">&lt;form&gt;
+
+  &lt;button&gt;Go&lt;/button&gt;
+&lt;/form&gt;</template>
+<template class="ts">
+var inp = document.querySelector('form input');
+assert(inp, 'thêm một <input> trong form');
+assert(inp.getAttribute('placeholder') === 'Search…', 'placeholder phải đúng là "Search…"');
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Làm bảng 2 hàng: một hàng tiêu đề với ô <code>&lt;th&gt;</code> <code>Name</code> và <code>Age</code>, rồi một hàng dữ liệu với ô <code>&lt;td&gt;</code> <code>Mai</code> và <code>20</code>.</span>
+<template class="st">&lt;table&gt;
+
+&lt;/table&gt;</template>
+<template class="ts">
+var rows = document.querySelectorAll('table tr');
+assert(rows.length === 2, 'bảng phải có hai hàng');
+var th = rows[0].querySelectorAll('th');
+assert(th.length === 2 && th[0].textContent.trim() === 'Name' && th[1].textContent.trim() === 'Age', 'hàng tiêu đề cần ô th "Name" và "Age"');
+var td = rows[1].querySelectorAll('td');
+assert(td.length === 2 && td[0].textContent.trim() === 'Mai' && td[1].textContent.trim() === '20', 'hàng dữ liệu cần ô td "Mai" và "20"');
+</template>
+</div>

@@ -1,0 +1,184 @@
+<h3>Lesson 13 — The DOM: select &amp; change elements</h3>
+<p>Here's where JavaScript starts to feel magic: it can reach into a live page and <b>change it</b> — swap text, recolour a box, add elements, hide things — all after the page has loaded. The bridge that makes this possible is the <b>DOM</b> (Document Object Model): the browser turns your HTML into a tree of <b>objects</b> that JavaScript can read and rewrite.</p>
+<p>Working with the DOM is always the same two-step dance: <b>select</b> the element you want, then <b>change</b> it. To select, you use <code>document.querySelector("…")</code> with a CSS selector — the exact same selectors you learned for CSS (<code>h1</code>, <code>.box</code>, <code>#title</code>). Once you have the element, you change its <b>text</b> (<code>.textContent</code>), its <b>HTML</b> (<code>.innerHTML</code>), its <b>style</b> (<code>.style.color</code>), or its <b>classes</b> (<code>.classList</code>).</p>
+<p>This is the most visual lesson yet — every exercise renders your change live in the preview. You'll grab elements and rewrite them on the fly. Select, change, watch it happen.</p>
+
+<h4>1. The page is a tree of objects</h4>
+<figure class="diagram">
+<svg viewBox="0 0 420 170" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <rect x="170" y="10" width="80" height="26" rx="5" fill="#121C30" stroke="#F5B942"/><text x="210" y="27" text-anchor="middle" fill="#F5B942">body</text>
+  <line x1="210" y1="36" x2="110" y2="70" stroke="#22304C"/><line x1="210" y1="36" x2="310" y2="70" stroke="#22304C"/>
+  <rect x="70" y="70" width="80" height="26" rx="5" fill="#101a2e" stroke="#7FD1C0"/><text x="110" y="87" text-anchor="middle" fill="#7FD1C0">h1</text>
+  <rect x="270" y="70" width="80" height="26" rx="5" fill="#101a2e" stroke="#7FD1C0"/><text x="310" y="87" text-anchor="middle" fill="#7FD1C0">div</text>
+  <line x1="310" y1="96" x2="260" y2="130" stroke="#22304C"/><line x1="310" y1="96" x2="360" y2="130" stroke="#22304C"/>
+  <rect x="220" y="130" width="80" height="26" rx="5" fill="#101a2e" stroke="#8FA0BC"/><text x="260" y="147" text-anchor="middle" fill="#8FA0BC">p</text>
+  <rect x="320" y="130" width="80" height="26" rx="5" fill="#101a2e" stroke="#8FA0BC"/><text x="360" y="147" text-anchor="middle" fill="#8FA0BC">button</text>
+</svg>
+<figcaption>The browser turns your HTML into a tree of element objects — the DOM.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Exercise 1.</b> Run this. A script changes the heading <i>after</i> the page loads — that's the DOM in action.</span>
+<template class="st">&lt;h1 id="title"&gt;Original&lt;/h1&gt;
+&lt;script&gt;
+  document.querySelector("#title").textContent = "Changed by JavaScript!";
+&lt;/script&gt;</template>
+</div>
+
+<h4>2. Selecting an element</h4>
+<p><code>document.querySelector("selector")</code> finds the <b>first</b> element matching a CSS selector and hands it back so you can work with it. <code>querySelector("h1")</code>, <code>querySelector(".box")</code>, <code>querySelector("#title")</code>.</p>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 2.</b> Which call selects the element with <code>id="title"</code>?</span>
+<ol class="opts">
+<li><code>document.querySelector("title")</code></li>
+<li><code>document.querySelector("#title")</code></li>
+<li><code>document.querySelector(".title")</code></li>
+<li><code>document.getTitle()</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> Select the <code>&lt;h1&gt;</code> and change its text. In the script, set the h1's <code>textContent</code> to <code>Welcome!</code></span>
+<template class="st">&lt;h1&gt;Old heading&lt;/h1&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1').textContent.trim() === 'Welcome!', 'set the h1 textContent to "Welcome!"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> Select by id. Change the element with <code>id="msg"</code> so its <code>textContent</code> is <code>Saved</code>.</span>
+<template class="st">&lt;p id="msg"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#msg').textContent.trim() === 'Saved', 'set #msg textContent to "Saved"');
+</template>
+</div>
+
+<h4>3. Changing text and HTML</h4>
+<p><code>.textContent</code> sets plain text. <code>.innerHTML</code> sets HTML — the browser parses it, so you can inject whole elements. Use <code>textContent</code> for words, <code>innerHTML</code> when you need tags.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Inject HTML. Set the <code>#box</code> element's <code>innerHTML</code> to <code>&lt;h2&gt;Hi&lt;/h2&gt;</code> — a real heading should appear inside it.</span>
+<template class="st">&lt;div id="box"&gt;&lt;/div&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var h2 = document.querySelector('#box h2');
+assert(h2 && h2.textContent.trim() === 'Hi', 'set #box innerHTML to "<h2>Hi</h2>"');
+</template>
+</div>
+
+<h4>4. Changing style</h4>
+<p>Every element has a <code>.style</code> you can write to. The property names are the CSS ones in camelCase: <code>.style.color</code>, <code>.style.backgroundColor</code>, <code>.style.fontSize</code>.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Recolour the heading. Set the <code>&lt;h1&gt;</code>'s <code>.style.color</code> to <code>red</code>.</span>
+<template class="st">&lt;h1&gt;Alert&lt;/h1&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1').style.color === 'red', "set the h1's style.color to 'red'");
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Set a background. Set the <code>#panel</code> element's <code>.style.backgroundColor</code> to <code>gold</code>.</span>
+<template class="st">&lt;div id="panel"&gt;Panel&lt;/div&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#panel').style.backgroundColor === 'gold', "set #panel style.backgroundColor to 'gold'");
+</template>
+</div>
+
+<h4>5. Classes and attributes</h4>
+<p>Instead of setting many styles by hand, add a ready-made class with <code>.classList.add("name")</code>. And change any attribute with <code>.setAttribute("attr", "value")</code> — handy for an image's <code>src</code> or a link's <code>href</code>.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Add a class. On the <code>#box</code> element, use <code>classList.add</code> to add the class <code>active</code>.</span>
+<template class="st">&lt;div id="box"&gt;Box&lt;/div&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#box').classList.contains('active'), "use classList.add('active') on #box");
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> Change an attribute. Set the image's <code>src</code> to <code>photo.jpg</code> using <code>setAttribute</code>.</span>
+<template class="st">&lt;img id="pic" alt="a photo"&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#pic').getAttribute('src') === 'photo.jpg', "setAttribute('src', 'photo.jpg') on the image");
+</template>
+</div>
+
+<h4>6. Put it together</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 10. ✍️ Your turn.</b> Read one element, write another. Take the text inside <code>#name</code> and place it into <code>#greeting</code> so it reads <code>Hi Mai</code> (use a template literal <code>Hi ${…}</code>).</span>
+<template class="st">&lt;span id="name"&gt;Mai&lt;/span&gt;
+&lt;p id="greeting"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#greeting').textContent.trim() === 'Hi Mai', 'read #name and set #greeting to "Hi Mai"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 11. ✍️ Your turn.</b> Style and text together. Select <code>#status</code>, set its <code>textContent</code> to <code>Online</code>, and its <code>.style.color</code> to <code>green</code>.</span>
+<template class="st">&lt;span id="status"&gt;…&lt;/span&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var el = document.querySelector('#status');
+assert(el.textContent.trim() === 'Online', 'set #status text to "Online"');
+assert(el.style.color === 'green', "set #status style.color to 'green'");
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 12. 🔥 Stretch — ✍️ your turn.</b> Fill a list from data. Loop over the <code>books</code> array and build the <code>#list</code>'s <code>innerHTML</code> as three <code>&lt;li&gt;</code> items (one per title). Three list items should appear.</span>
+<template class="st">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+let books = ["Dune", "Emma", "1984"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('#list li');
+assert(items.length === 3, 'the list should have three <li> items');
+assert(items[0].textContent.trim() === 'Dune' && items[1].textContent.trim() === 'Emma' && items[2].textContent.trim() === '1984', 'the items should be Dune, Emma, 1984 in order');
+</template>
+</div>
+
+<h4>🏠 Homework</h4>
+<p>Four take-home exercises, auto-graded — all hands-on. The last one is a stretch.</p>
+<div class="ex homework" data-kind="quiz" data-a="2"><span class="exq"><b>Exercise 1.</b> Which property changes the <b>plain text</b> inside an element?</span>
+<ol class="opts">
+<li><code>.style</code></li>
+<li><code>.classList</code></li>
+<li><code>.textContent</code></li>
+<li><code>.href</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️</b> Select the <code>#title</code> element and set its <code>textContent</code> to <code>My Blog</code>.</span>
+<template class="st">&lt;h1 id="title"&gt;…&lt;/h1&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#title').textContent.trim() === 'My Blog', 'set #title text to "My Blog"');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️</b> Select <code>#note</code>, set its <code>textContent</code> to <code>Warning</code> and its <code>.style.color</code> to <code>red</code>.</span>
+<template class="st">&lt;p id="note"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var el = document.querySelector('#note');
+assert(el.textContent.trim() === 'Warning', 'set #note text to "Warning"');
+assert(el.style.color === 'red', "set #note style.color to 'red'");
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Exercise 4. 🔥 Stretch — ✍️</b> Loop over the <code>tags</code> array and set <code>#tags</code>'s <code>innerHTML</code> to a <code>&lt;span&gt;</code> per tag. Three spans should appear.</span>
+<template class="st">&lt;div id="tags"&gt;&lt;/div&gt;
+&lt;script&gt;
+let tags = ["new", "sale", "hot"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+var spans = document.querySelectorAll('#tags span');
+assert(spans.length === 3, 'there should be three <span> tags');
+assert(spans[0].textContent.trim() === 'new' && spans[2].textContent.trim() === 'hot', 'the spans should contain the tag words in order');
+</template>
+</div>

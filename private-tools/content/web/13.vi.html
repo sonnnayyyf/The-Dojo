@@ -1,0 +1,184 @@
+<h3>Bài 13 — DOM: chọn &amp; thay đổi phần tử</h3>
+<p>Đây là lúc JavaScript bắt đầu thấy như phép màu: nó có thể vươn vào một trang đang sống và <b>thay đổi nó</b> — đổi chữ, đổi màu một hộp, thêm phần tử, ẩn thứ gì đó — tất cả sau khi trang đã tải. Cây cầu làm được điều này là <b>DOM</b> (Document Object Model): trình duyệt biến HTML của bạn thành một cây các <b>đối tượng (object)</b> mà JavaScript có thể đọc và viết lại.</p>
+<p>Làm việc với DOM luôn là điệu nhảy hai bước như nhau: <b>chọn (select)</b> phần tử bạn muốn, rồi <b>thay đổi</b> nó. Để chọn, bạn dùng <code>document.querySelector("…")</code> với một CSS selector — đúng những selector bạn đã học cho CSS (<code>h1</code>, <code>.box</code>, <code>#title</code>). Khi đã có phần tử, bạn đổi <b>chữ</b> (<code>.textContent</code>), <b>HTML</b> (<code>.innerHTML</code>), <b>kiểu</b> (<code>.style.color</code>), hoặc <b>class</b> (<code>.classList</code>).</p>
+<p>Đây là bài trực quan nhất từ trước tới giờ — mỗi bài tập hiển thị thay đổi của bạn ngay trong ô xem trước. Bạn sẽ tóm các phần tử và viết lại chúng ngay tức thì. Chọn, thay đổi, xem nó xảy ra.</p>
+
+<h4>1. Trang là một cây các object</h4>
+<figure class="diagram">
+<svg viewBox="0 0 420 170" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+  <rect x="170" y="10" width="80" height="26" rx="5" fill="#121C30" stroke="#F5B942"/><text x="210" y="27" text-anchor="middle" fill="#F5B942">body</text>
+  <line x1="210" y1="36" x2="110" y2="70" stroke="#22304C"/><line x1="210" y1="36" x2="310" y2="70" stroke="#22304C"/>
+  <rect x="70" y="70" width="80" height="26" rx="5" fill="#101a2e" stroke="#7FD1C0"/><text x="110" y="87" text-anchor="middle" fill="#7FD1C0">h1</text>
+  <rect x="270" y="70" width="80" height="26" rx="5" fill="#101a2e" stroke="#7FD1C0"/><text x="310" y="87" text-anchor="middle" fill="#7FD1C0">div</text>
+  <line x1="310" y1="96" x2="260" y2="130" stroke="#22304C"/><line x1="310" y1="96" x2="360" y2="130" stroke="#22304C"/>
+  <rect x="220" y="130" width="80" height="26" rx="5" fill="#101a2e" stroke="#8FA0BC"/><text x="260" y="147" text-anchor="middle" fill="#8FA0BC">p</text>
+  <rect x="320" y="130" width="80" height="26" rx="5" fill="#101a2e" stroke="#8FA0BC"/><text x="360" y="147" text-anchor="middle" fill="#8FA0BC">button</text>
+</svg>
+<figcaption>Trình duyệt biến HTML của bạn thành một cây các object phần tử — DOM.</figcaption>
+</figure>
+<div class="ex" data-kind="web"><span class="exq"><b>Bài tập 1.</b> Chạy cái này. Một script đổi tiêu đề <i>sau khi</i> trang tải — đó là DOM đang hoạt động.</span>
+<template class="st">&lt;h1 id="title"&gt;Original&lt;/h1&gt;
+&lt;script&gt;
+  document.querySelector("#title").textContent = "Changed by JavaScript!";
+&lt;/script&gt;</template>
+</div>
+
+<h4>2. Chọn một phần tử</h4>
+<p><code>document.querySelector("selector")</code> tìm phần tử <b>đầu tiên</b> khớp với một CSS selector và trao lại cho bạn để làm việc. <code>querySelector("h1")</code>, <code>querySelector(".box")</code>, <code>querySelector("#title")</code>.</p>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 2.</b> Lệnh nào chọn phần tử có <code>id="title"</code>?</span>
+<ol class="opts">
+<li><code>document.querySelector("title")</code></li>
+<li><code>document.querySelector("#title")</code></li>
+<li><code>document.querySelector(".title")</code></li>
+<li><code>document.getTitle()</code></li>
+</ol></div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Chọn <code>&lt;h1&gt;</code> và đổi chữ của nó. Trong script, gán <code>textContent</code> của h1 thành <code>Welcome!</code></span>
+<template class="st">&lt;h1&gt;Old heading&lt;/h1&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1').textContent.trim() === 'Welcome!', 'gán textContent của h1 thành "Welcome!"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Chọn theo id. Đổi phần tử có <code>id="msg"</code> sao cho <code>textContent</code> của nó là <code>Saved</code>.</span>
+<template class="st">&lt;p id="msg"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#msg').textContent.trim() === 'Saved', 'gán textContent của #msg thành "Saved"');
+</template>
+</div>
+
+<h4>3. Đổi chữ và HTML</h4>
+<p><code>.textContent</code> đặt chữ thuần. <code>.innerHTML</code> đặt HTML — trình duyệt phân tích nó, nên bạn có thể chèn cả phần tử. Dùng <code>textContent</code> cho từ ngữ, <code>innerHTML</code> khi cần thẻ.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Chèn HTML. Gán <code>innerHTML</code> của phần tử <code>#box</code> thành <code>&lt;h2&gt;Hi&lt;/h2&gt;</code> — một tiêu đề thật sẽ hiện bên trong nó.</span>
+<template class="st">&lt;div id="box"&gt;&lt;/div&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var h2 = document.querySelector('#box h2');
+assert(h2 && h2.textContent.trim() === 'Hi', 'gán innerHTML của #box thành "<h2>Hi</h2>"');
+</template>
+</div>
+
+<h4>4. Đổi kiểu</h4>
+<p>Mỗi phần tử có một <code>.style</code> bạn có thể ghi vào. Tên thuộc tính là tên CSS ở dạng camelCase: <code>.style.color</code>, <code>.style.backgroundColor</code>, <code>.style.fontSize</code>.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Đổi màu tiêu đề. Gán <code>.style.color</code> của <code>&lt;h1&gt;</code> thành <code>red</code>.</span>
+<template class="st">&lt;h1&gt;Alert&lt;/h1&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('h1').style.color === 'red', "gán style.color của h1 thành 'red'");
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Đặt một nền. Gán <code>.style.backgroundColor</code> của phần tử <code>#panel</code> thành <code>gold</code>.</span>
+<template class="st">&lt;div id="panel"&gt;Panel&lt;/div&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#panel').style.backgroundColor === 'gold', "gán style.backgroundColor của #panel thành 'gold'");
+</template>
+</div>
+
+<h4>5. Class và thuộc tính</h4>
+<p>Thay vì đặt nhiều style bằng tay, thêm một class dựng sẵn bằng <code>.classList.add("name")</code>. Và đổi bất kỳ thuộc tính nào bằng <code>.setAttribute("attr", "value")</code> — tiện cho <code>src</code> của ảnh hay <code>href</code> của liên kết.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Thêm một class. Trên phần tử <code>#box</code>, dùng <code>classList.add</code> để thêm class <code>active</code>.</span>
+<template class="st">&lt;div id="box"&gt;Box&lt;/div&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#box').classList.contains('active'), "dùng classList.add('active') trên #box");
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Đổi một thuộc tính. Gán <code>src</code> của ảnh thành <code>photo.jpg</code> bằng <code>setAttribute</code>.</span>
+<template class="st">&lt;img id="pic" alt="a photo"&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#pic').getAttribute('src') === 'photo.jpg', "setAttribute('src', 'photo.jpg') trên ảnh");
+</template>
+</div>
+
+<h4>6. Ghép lại</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 10. ✍️ Đến lượt bạn.</b> Đọc một phần tử, viết vào phần tử khác. Lấy chữ bên trong <code>#name</code> và đặt vào <code>#greeting</code> sao cho nó ghi <code>Hi Mai</code> (dùng template literal <code>Hi ${…}</code>).</span>
+<template class="st">&lt;span id="name"&gt;Mai&lt;/span&gt;
+&lt;p id="greeting"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#greeting').textContent.trim() === 'Hi Mai', 'đọc #name và gán #greeting thành "Hi Mai"');
+</template>
+</div>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 11. ✍️ Đến lượt bạn.</b> Kiểu và chữ cùng lúc. Chọn <code>#status</code>, gán <code>textContent</code> của nó thành <code>Online</code>, và <code>.style.color</code> thành <code>green</code>.</span>
+<template class="st">&lt;span id="status"&gt;…&lt;/span&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var el = document.querySelector('#status');
+assert(el.textContent.trim() === 'Online', 'gán chữ #status thành "Online"');
+assert(el.style.color === 'green', "gán style.color của #status thành 'green'");
+</template>
+</div>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 12. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Đổ đầy một danh sách từ dữ liệu. Lặp qua mảng <code>books</code> và dựng <code>innerHTML</code> của <code>#list</code> thành ba mục <code>&lt;li&gt;</code> (mỗi tựa một mục). Ba mục danh sách sẽ hiện ra.</span>
+<template class="st">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+let books = ["Dune", "Emma", "1984"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('#list li');
+assert(items.length === 3, 'danh sách phải có ba mục <li>');
+assert(items[0].textContent.trim() === 'Dune' && items[1].textContent.trim() === 'Emma' && items[2].textContent.trim() === '1984', 'các mục phải là Dune, Emma, 1984 theo thứ tự');
+</template>
+</div>
+
+<h4>🏠 Bài tập về nhà</h4>
+<p>Bốn bài mang về nhà, chấm tự động — tất cả đều thực hành. Bài cuối là bài nâng cao.</p>
+<div class="ex homework" data-kind="quiz" data-a="2"><span class="exq"><b>Bài tập 1.</b> Thuộc tính nào đổi <b>chữ thuần</b> bên trong một phần tử?</span>
+<ol class="opts">
+<li><code>.style</code></li>
+<li><code>.classList</code></li>
+<li><code>.textContent</code></li>
+<li><code>.href</code></li>
+</ol></div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️</b> Chọn phần tử <code>#title</code> và gán <code>textContent</code> của nó thành <code>My Blog</code>.</span>
+<template class="st">&lt;h1 id="title"&gt;…&lt;/h1&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#title').textContent.trim() === 'My Blog', 'gán chữ #title thành "My Blog"');
+</template>
+</div>
+<div class="ex homework" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️</b> Chọn <code>#note</code>, gán <code>textContent</code> của nó thành <code>Warning</code> và <code>.style.color</code> thành <code>red</code>.</span>
+<template class="st">&lt;p id="note"&gt;…&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var el = document.querySelector('#note');
+assert(el.textContent.trim() === 'Warning', 'gán chữ #note thành "Warning"');
+assert(el.style.color === 'red', "gán style.color của #note thành 'red'");
+</template>
+</div>
+<div class="ex homework stretch" data-kind="webjs"><span class="exq"><b>Bài tập 4. 🔥 Nâng cao — ✍️</b> Lặp qua mảng <code>tags</code> và gán <code>innerHTML</code> của <code>#tags</code> thành một <code>&lt;span&gt;</code> mỗi tag. Ba span sẽ hiện ra.</span>
+<template class="st">&lt;div id="tags"&gt;&lt;/div&gt;
+&lt;script&gt;
+let tags = ["new", "sale", "hot"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+var spans = document.querySelectorAll('#tags span');
+assert(spans.length === 3, 'phải có ba thẻ <span>');
+assert(spans[0].textContent.trim() === 'new' && spans[2].textContent.trim() === 'hot', 'các span phải chứa các từ tag theo thứ tự');
+</template>
+</div>
