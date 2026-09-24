@@ -1,0 +1,195 @@
+<h3>Bài 16 — Capstone: tự dựng ứng dụng web tương tác của bạn</h3>
+<p>Đây rồi — vạch đích. Qua mười lăm bài bạn đã học dựng cấu trúc trang bằng HTML, tạo kiểu và bố cục bằng CSS, và làm chúng sống dậy bằng JavaScript: biến, mảng, hàm, DOM, sự kiện, form. Một capstone là nơi những kỹ năng riêng lẻ đó hợp thành một thứ thật do chính bạn dựng, từ một tệp trống đến một ứng dụng chạy được. Đây là dự án bạn sẽ đem khoe.</p>
+<p>Để đưa bạn tới đó, phần lớn bài này là một quá trình dựng có hướng dẫn một ứng dụng tương tác kinh điển — một <b>Task Manager</b> (trình quản lý việc cần làm) — từng tính năng một, mỗi cái chấm trực tiếp: hiển thị danh sách từ dữ liệu, thêm mục khi bấm nút, kiểm tra form, đánh dấu đã xong, xóa, và giữ một bộ đếm sống. Đến cuối bạn sẽ đã luyện <i>mọi</i> bộ phận chuyển động của một ứng dụng nhỏ. Rồi bạn sẽ dựng capstone <b>của riêng mình</b> từ ba lựa chọn dự án và nộp nó.</p>
+<p>Khác các bài trước, capstone cuối của bạn được dựng trong <b>VS Code</b> (tệp thật, như một lập trình viên thật) và nộp cho giáo viên dưới dạng một tệp code kèm một ảnh chụp màn hình. Các bài tập trong trình duyệt dưới đây là những lượt tập của bạn; bản mô tả dự án ở cuối là sản phẩm thật cần nộp. Cùng dựng thứ gì đó bạn tự hào nào.</p>
+
+<h4>1. Hiển thị danh sách từ dữ liệu</h4>
+<p>Gần như mọi ứng dụng biến <b>dữ liệu</b> thành <b>DOM</b>. Lặp qua một mảng và dựng HTML. Đây là trái tim của một danh sách việc, một feed, một lưới sản phẩm.</p>
+<pre class="snippet">let tasks = ["Buy milk", "Call Mai"];
+let html = "";
+for (let t of tasks) { html += "&lt;li&gt;" + t + "&lt;/li&gt;"; }
+document.querySelector("#list").innerHTML = html;</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 1. ✍️ Đến lượt bạn.</b> Hiển thị các việc. Lặp qua mảng <code>tasks</code> và đổ vào <code>#list</code> một <code>&lt;li&gt;</code> cho mỗi việc (ba mục sẽ hiện ra).</span>
+<template class="st">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+let tasks = ["Buy milk", "Call Mai", "Read book"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('#list li');
+assert(items.length === 3, 'hiển thị một <li> cho mỗi việc trong ba việc');
+assert(items[0].textContent.trim() === 'Buy milk' && items[2].textContent.trim() === 'Read book', 'các mục phải khớp với các việc theo thứ tự');
+</template>
+</div>
+
+<h4>2. Thêm một mục khi bấm</h4>
+<p>Đọc giá trị của ô nhập, thêm nó vào trang. Gắn một listener <code>click</code> để nối thêm một <code>&lt;li&gt;</code> mới.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 2. ✍️ Đến lượt bạn.</b> Khi bấm <code>#add</code>, nối thêm một <code>&lt;li&gt;</code> mới vào <code>#list</code> với chữ là giá trị của <code>#task</code>. (Bộ chấm gõ "Water plants" rồi bấm.)</span>
+<template class="st">&lt;input id="task"&gt;
+&lt;button id="add"&gt;Add&lt;/button&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#task').value = 'Water plants';
+document.querySelector('#add').click();
+var items = document.querySelectorAll('#list li');
+assert(items.length === 1 && items[0].textContent.trim() === 'Water plants', 'bấm Add phải nối thêm một <li> với chữ trong ô nhập');
+</template>
+</div>
+
+<h4>3. Xử lý form &amp; kiểm tra dữ liệu</h4>
+<p>Một form thật gửi đi và phải từ chối ô trống. Dùng <code>e.preventDefault()</code> và kiểm tra giá trị trước khi thêm.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 3. ✍️ Đến lượt bạn.</b> Khi submit: gọi <code>e.preventDefault()</code>; nếu <code>#task</code> trống, đặt <code>#err</code> thành <code>Enter a task</code> và không thêm gì; ngược lại nối giá trị thành một <code>&lt;li&gt;</code>. (Bộ chấm thử trống trước, rồi "Study".)</span>
+<template class="st">&lt;form id="f"&gt;&lt;input id="task"&gt;&lt;button&gt;Add&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var f = document.querySelector('#f');
+document.querySelector('#task').value = '';
+f.dispatchEvent(new Event('submit', { cancelable: true }));
+assert(document.querySelector('#err').textContent.trim() === 'Enter a task', 'ô trống phải hiện "Enter a task"');
+assert(document.querySelectorAll('#list li').length === 0, 'không thêm gì khi trống');
+document.querySelector('#task').value = 'Study';
+f.dispatchEvent(new Event('submit', { cancelable: true }));
+assert(document.querySelectorAll('#list li').length === 1 && document.querySelector('#list li').textContent.trim() === 'Study', 'ô có chữ phải thêm một <li> "Study"');
+</template>
+</div>
+
+<h4>4. Đánh dấu một việc đã xong</h4>
+<p>Bấm một việc nên bật/tắt vẻ "đã xong". Thêm một class và để CSS tạo kiểu (gạch ngang). Ở đây bạn bật class khi bấm.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 4. ✍️ Đến lượt bạn.</b> Khi <code>&lt;li&gt;</code> được bấm, thêm class <code>done</code> vào nó. (Bộ chấm bấm việc đó.)</span>
+<template class="html">&lt;ul id="list"&gt;&lt;li id="t1"&gt;Buy milk&lt;/li&gt;&lt;/ul&gt;</template>
+<template class="css">.done { text-decoration: line-through; color: gray; }</template>
+<template class="js">// thêm một listener click vào #t1 để thêm class "done"
+</template>
+<template class="ts">
+document.querySelector('#t1').click();
+assert(document.querySelector('#t1').classList.contains('done'), 'bấm việc phải thêm class "done"');
+</template>
+</div>
+
+<h4>5. Xóa một việc</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 5. ✍️ Đến lượt bạn.</b> Bấm <code>#del</code> phải xóa <code>&lt;li&gt;</code> có id <code>t1</code> khỏi danh sách. (Dùng <code>.remove()</code>.)</span>
+<template class="st">&lt;ul id="list"&gt;&lt;li id="t1"&gt;Old task&lt;/li&gt;&lt;/ul&gt;
+&lt;button id="del"&gt;Delete&lt;/button&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#del').click();
+assert(!document.querySelector('#t1'), 'bấm Delete phải xóa việc');
+assert(document.querySelectorAll('#list li').length === 0, 'danh sách phải trống');
+</template>
+</div>
+
+<h4>6. Giữ một bộ đếm sống</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 6. ✍️ Đến lượt bạn.</b> Hiện có bao nhiêu việc. Đặt chữ của <code>#count</code> thành số <code>&lt;li&gt;</code> trong <code>#list</code> (có 2, nên phải ghi <code>2</code>).</span>
+<template class="st">&lt;ul id="list"&gt;&lt;li&gt;A&lt;/li&gt;&lt;li&gt;B&lt;/li&gt;&lt;/ul&gt;
+&lt;p id="count"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#count').textContent.trim() === '2', 'đặt #count thành số việc (2)');
+</template>
+</div>
+
+<h4>7. Thông báo khi trống</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 7. ✍️ Đến lượt bạn.</b> Ứng dụng tốt xử lý "chưa có gì". Nếu <code>#list</code> không có <code>&lt;li&gt;</code> nào, đặt <code>#msg</code> thành <code>No tasks yet</code>; ngược lại để trống. (Ở đây danh sách trống.)</span>
+<template class="st">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;p id="msg"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#msg').textContent.trim() === 'No tasks yet', 'hiện "No tasks yet" khi danh sách trống');
+</template>
+</div>
+
+<h4>8. Tạo kiểu cho ứng dụng</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 8. ✍️ Đến lượt bạn.</b> Làm ứng dụng trông chỉn chu. Trong <b>CSS</b>, cho <code>.app</code> là một cột flex với <code>gap</code> là <code>10px</code>, và cho <code>.task</code> một <code>padding</code> là <code>10px</code>.</span>
+<template class="html">&lt;div class="app"&gt;&lt;div class="task"&gt;Buy milk&lt;/div&gt;&lt;div class="task"&gt;Call Mai&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.app { }
+.task { background: #121C30; color: #E8E4D8; }</template>
+<template class="ts">
+var a = getComputedStyle(document.querySelector('.app'));
+assert(a.display === 'flex' && a.flexDirection === 'column', 'làm .app thành một cột flex');
+assert(a.gap === '10px', 'cho .app một gap là 10px');
+assert(getComputedStyle(document.querySelector('.task')).paddingTop === '10px', 'cho .task padding là 10px');
+</template>
+</div>
+
+<h4>9. Xóa ô nhập sau khi thêm</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Bài tập 9. ✍️ Đến lượt bạn.</b> Đánh bóng: sau khi bấm <code>#add</code>, nối giá trị thành một <code>&lt;li&gt;</code> <b>và</b> xóa <code>#task</code> (đặt value thành <code>""</code>). (Bộ chấm gõ "Jog" rồi bấm.)</span>
+<template class="st">&lt;input id="task"&gt;
+&lt;button id="add"&gt;Add&lt;/button&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#task').value = 'Jog';
+document.querySelector('#add').click();
+assert(document.querySelector('#list li') && document.querySelector('#list li').textContent.trim() === 'Jog', 'việc phải được thêm');
+assert(document.querySelector('#task').value === '', 'ô nhập phải được xóa sau khi thêm');
+</template>
+</div>
+
+<h4>10. Lên kế hoạch trước khi dựng</h4>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 10.</b> Với một ứng dụng tương tác nhỏ, thứ tự làm việc nào hợp lý nhất?</span>
+<ol class="opts">
+<li>Thêm animation trước, rồi mới quyết định ứng dụng làm gì</li>
+<li>Dựng cấu trúc bằng HTML, tạo kiểu bằng CSS, rồi nối hành vi bằng JavaScript</li>
+<li>Viết hết JavaScript trước khi có HTML nào</li>
+<li>Chỉ viết CSS</li>
+</ol></div>
+
+<h4>11. Cả ứng dụng, chạy được</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Bài tập 11. 🔥 Nâng cao — ✍️ đến lượt bạn.</b> Ghép một Task Manager chạy được. Khi submit <code>#f</code>: <code>e.preventDefault()</code>; nếu <code>#task</code> trống thì không làm gì; ngược lại nối giá trị thành một <code>&lt;li&gt;</code> vào <code>#list</code>, xóa ô nhập, và đặt <code>#count</code> thành số việc. (Bộ chấm thêm hai việc.)</span>
+<template class="html">&lt;form id="f"&gt;&lt;input id="task"&gt;&lt;button&gt;Add&lt;/button&gt;&lt;/form&gt;
+&lt;p id="count"&gt;0&lt;/p&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;</template>
+<template class="js">
+</template>
+<template class="ts">
+var f = document.querySelector('#f'), task = document.querySelector('#task');
+task.value = 'One'; f.dispatchEvent(new Event('submit', { cancelable: true }));
+task.value = 'Two'; f.dispatchEvent(new Event('submit', { cancelable: true }));
+var items = document.querySelectorAll('#list li');
+assert(items.length === 2 && items[0].textContent.trim() === 'One' && items[1].textContent.trim() === 'Two', 'cả hai việc phải được thêm theo thứ tự');
+assert(task.value === '', 'ô nhập phải xóa sau mỗi lần thêm');
+assert(document.querySelector('#count').textContent.trim() === '2', '#count phải ghi 2');
+</template>
+</div>
+
+<h4>🏠 Capstone của bạn — dựng trong VS Code &amp; nộp</h4>
+<p>Giờ tự dựng ứng dụng <b>của riêng bạn</b> từ đầu trong VS Code và nộp nó. Chọn <b>một</b> dự án bên dưới (hoặc tự nghĩ ra một cái tầm cỡ tương tự). Dựng nó bằng tệp thật, rồi gửi giáo viên (1) code của bạn và (2) một ảnh chụp màn hình nó đang chạy trong trình duyệt.</p>
+<p><b>Chọn một dự án:</b></p>
+<table class="res">
+<tr><th>Dự án</th><th>Làm gì</th><th>Bắt buộc dùng</th></tr>
+<tr><td><b>Task Manager</b></td><td>Thêm việc, đánh dấu đã xong, xóa, hiện bộ đếm sống.</td><td>form + kiểm tra dữ liệu, thêm/xóa qua sự kiện, hiển thị danh sách, một bộ đếm sống</td></tr>
+<tr><td><b>Ứng dụng Quiz</b></td><td>Hiện câu hỏi với các lựa chọn; người dùng chọn đáp án và thấy điểm cuối.</td><td>dữ liệu là mảng các object, sự kiện click, bộ đếm điểm, hiện kết quả ở cuối</td></tr>
+<tr><td><b>Thư viện ảnh / sản phẩm</b></td><td>Một lưới thẻ responsive; một ô tìm kiếm hoặc lọc thu hẹp thứ hiển thị.</td><td>CSS grid, một mảng mục hiển thị ra DOM, một sự kiện input để lọc</td></tr>
+</table>
+<p><b>Yêu cầu (mọi dự án):</b></p>
+<ol class="outcome" style="list-style:decimal;padding-left:22px">
+<li>Bộ khung tài liệu đúng: <code>&lt;!doctype html&gt;</code>, <code>&lt;head&gt;</code> với một <code>&lt;title&gt;</code>, và một <code>style.css</code> được liên kết.</li>
+<li>Cấu trúc ngữ nghĩa — một <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, và <code>&lt;footer&gt;</code>.</li>
+<li>Tạo kiểu bằng CSS do bạn viết: màu, khoảng cách, và một bố cục flexbox hoặc grid.</li>
+<li>Ít nhất một <b>sự kiện</b> (click, submit hoặc input) đổi trang qua JavaScript.</li>
+<li>Dữ liệu giữ trong một <b>mảng</b> và hiển thị ra DOM bằng một vòng lặp.</li>
+<li>Một chi tiết đẹp: một hiệu ứng hover, một transition, hoặc một thông báo khi trống.</li>
+</ol>
+<p><b>Cách dựng &amp; nộp:</b></p>
+<ol class="outcome" style="list-style:decimal;padding-left:22px">
+<li>Trong VS Code, tạo một thư mục dự án với <code>index.html</code>, <code>style.css</code> và <code>script.js</code> (liên kết CSS trong head và JS ngay trước <code>&lt;/body&gt;</code>).</li>
+<li>Dựng từng bước — cấu trúc trước, rồi kiểu, rồi hành vi — kiểm tra trong trình duyệt vừa làm vừa xem (bấm đúp <code>index.html</code> để mở).</li>
+<li>Khi nó chạy được, chụp một <b>ảnh màn hình</b> nó đang chạy.</li>
+<li>Gửi giáo viên phần code (ba tệp) <b>và</b> ảnh chụp qua Zalo. Dùng nút <b>🥋 Hỏi giáo viên</b> ở bài tập bất kỳ nếu bạn kẹt.</li>
+</ol>
+<p>Hoàn thành mười một bài tập chấm điểm ở trên để hoàn tất bài học — rồi đi làm capstone của bạn. Chúc mừng bạn đã tới cuối khóa học. 🎉</p>

@@ -1,0 +1,195 @@
+<h3>Lesson 16 — Capstone: build your own interactive web app</h3>
+<p>This is it — the finish line. Over fifteen lessons you learned to structure pages with HTML, style and lay them out with CSS, and bring them to life with JavaScript: variables, arrays, functions, the DOM, events, forms. A capstone is where those separate skills fuse into one real thing you built yourself, from an empty file to a working app. It's the project you'll show people.</p>
+<p>To get you there, most of this lesson is a guided build of a classic interactive app — a <b>Task Manager</b> — one feature at a time, each graded live: render a list from data, add items on a button click, validate a form, mark things done, delete them, and keep a live count. By the end you'll have practised <i>every</i> moving part of a small app. Then you'll build <b>your own</b> capstone from three project options and submit it.</p>
+<p>Unlike earlier lessons, your final capstone is built in <b>VS Code</b> (real files, like a real developer) and submitted to your teacher as a code file plus a screenshot. The in-browser exercises below are your training reps; the project brief at the bottom is the real deliverable. Let's build something you're proud of.</p>
+
+<h4>1. Render a list from data</h4>
+<p>Almost every app turns <b>data</b> into <b>DOM</b>. Loop over an array and build the HTML. This is the heart of a task list, a feed, a product grid.</p>
+<pre class="snippet">let tasks = ["Buy milk", "Call Mai"];
+let html = "";
+for (let t of tasks) { html += "&lt;li&gt;" + t + "&lt;/li&gt;"; }
+document.querySelector("#list").innerHTML = html;</pre>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 1. ✍️ Your turn.</b> Render the tasks. Loop over the <code>tasks</code> array and fill <code>#list</code> with one <code>&lt;li&gt;</code> per task (three items should appear).</span>
+<template class="st">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+let tasks = ["Buy milk", "Call Mai", "Read book"];
+
+&lt;/script&gt;</template>
+<template class="ts">
+var items = document.querySelectorAll('#list li');
+assert(items.length === 3, 'render one <li> for each of the three tasks');
+assert(items[0].textContent.trim() === 'Buy milk' && items[2].textContent.trim() === 'Read book', 'the items should match the tasks in order');
+</template>
+</div>
+
+<h4>2. Add an item on click</h4>
+<p>Read the input's value, add it to the page. Wire a <code>click</code> listener that appends a new <code>&lt;li&gt;</code>.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 2. ✍️ Your turn.</b> On clicking <code>#add</code>, append a new <code>&lt;li&gt;</code> to <code>#list</code> whose text is the value of <code>#task</code>. (The grader types "Water plants" and clicks.)</span>
+<template class="st">&lt;input id="task"&gt;
+&lt;button id="add"&gt;Add&lt;/button&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#task').value = 'Water plants';
+document.querySelector('#add').click();
+var items = document.querySelectorAll('#list li');
+assert(items.length === 1 && items[0].textContent.trim() === 'Water plants', 'clicking Add should append an <li> with the input text');
+</template>
+</div>
+
+<h4>3. Handle the form &amp; validate</h4>
+<p>A real form submits and must reject empty input. Use <code>e.preventDefault()</code> and check the value before adding.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 3. ✍️ Your turn.</b> On submit: call <code>e.preventDefault()</code>; if <code>#task</code> is empty, set <code>#err</code> to <code>Enter a task</code> and add nothing; otherwise append the value as an <code>&lt;li&gt;</code>. (The grader tests empty first, then "Study".)</span>
+<template class="st">&lt;form id="f"&gt;&lt;input id="task"&gt;&lt;button&gt;Add&lt;/button&gt;&lt;/form&gt;
+&lt;p id="err"&gt;&lt;/p&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+var f = document.querySelector('#f');
+document.querySelector('#task').value = '';
+f.dispatchEvent(new Event('submit', { cancelable: true }));
+assert(document.querySelector('#err').textContent.trim() === 'Enter a task', 'empty input should show "Enter a task"');
+assert(document.querySelectorAll('#list li').length === 0, 'nothing should be added when empty');
+document.querySelector('#task').value = 'Study';
+f.dispatchEvent(new Event('submit', { cancelable: true }));
+assert(document.querySelectorAll('#list li').length === 1 && document.querySelector('#list li').textContent.trim() === 'Study', 'a filled input should add an <li> "Study"');
+</template>
+</div>
+
+<h4>4. Mark a task done</h4>
+<p>Clicking a task should toggle a "done" look. Add a class and let CSS style it (line-through). Here you toggle the class on click.</p>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 4. ✍️ Your turn.</b> When the <code>&lt;li&gt;</code> is clicked, add the class <code>done</code> to it. (The grader clicks the task.)</span>
+<template class="html">&lt;ul id="list"&gt;&lt;li id="t1"&gt;Buy milk&lt;/li&gt;&lt;/ul&gt;</template>
+<template class="css">.done { text-decoration: line-through; color: gray; }</template>
+<template class="js">// add a click listener to #t1 that adds the "done" class
+</template>
+<template class="ts">
+document.querySelector('#t1').click();
+assert(document.querySelector('#t1').classList.contains('done'), 'clicking the task should add the "done" class');
+</template>
+</div>
+
+<h4>5. Delete a task</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 5. ✍️ Your turn.</b> Clicking <code>#del</code> should remove the <code>&lt;li&gt;</code> with id <code>t1</code> from the list. (Use <code>.remove()</code>.)</span>
+<template class="st">&lt;ul id="list"&gt;&lt;li id="t1"&gt;Old task&lt;/li&gt;&lt;/ul&gt;
+&lt;button id="del"&gt;Delete&lt;/button&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#del').click();
+assert(!document.querySelector('#t1'), 'clicking Delete should remove the task');
+assert(document.querySelectorAll('#list li').length === 0, 'the list should be empty');
+</template>
+</div>
+
+<h4>6. Keep a live count</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 6. ✍️ Your turn.</b> Show how many tasks there are. Set <code>#count</code>'s text to the number of <code>&lt;li&gt;</code> in <code>#list</code> (there are 2, so it should read <code>2</code>).</span>
+<template class="st">&lt;ul id="list"&gt;&lt;li&gt;A&lt;/li&gt;&lt;li&gt;B&lt;/li&gt;&lt;/ul&gt;
+&lt;p id="count"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#count').textContent.trim() === '2', 'set #count to the number of tasks (2)');
+</template>
+</div>
+
+<h4>7. An empty-state message</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 7. ✍️ Your turn.</b> Good apps handle "nothing yet". If <code>#list</code> has no <code>&lt;li&gt;</code>, set <code>#msg</code> to <code>No tasks yet</code>; otherwise leave it empty. (Here the list is empty.)</span>
+<template class="st">&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;p id="msg"&gt;&lt;/p&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+assert(document.querySelector('#msg').textContent.trim() === 'No tasks yet', 'show "No tasks yet" when the list is empty');
+</template>
+</div>
+
+<h4>8. Style the app</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 8. ✍️ Your turn.</b> Make the app look built. In the <b>CSS</b>, make <code>.app</code> a flex column with a <code>gap</code> of <code>10px</code>, and give <code>.task</code> a <code>padding</code> of <code>10px</code>.</span>
+<template class="html">&lt;div class="app"&gt;&lt;div class="task"&gt;Buy milk&lt;/div&gt;&lt;div class="task"&gt;Call Mai&lt;/div&gt;&lt;/div&gt;</template>
+<template class="css">.app { }
+.task { background: #121C30; color: #E8E4D8; }</template>
+<template class="ts">
+var a = getComputedStyle(document.querySelector('.app'));
+assert(a.display === 'flex' && a.flexDirection === 'column', 'make .app a flex column');
+assert(a.gap === '10px', 'give .app a gap of 10px');
+assert(getComputedStyle(document.querySelector('.task')).paddingTop === '10px', 'give .task padding of 10px');
+</template>
+</div>
+
+<h4>9. Clear the input after adding</h4>
+<div class="ex" data-kind="webjs"><span class="exq"><b>Exercise 9. ✍️ Your turn.</b> Polish: after clicking <code>#add</code>, append the value as an <code>&lt;li&gt;</code> <b>and</b> clear <code>#task</code> (set its value to <code>""</code>). (The grader types "Jog" and clicks.)</span>
+<template class="st">&lt;input id="task"&gt;
+&lt;button id="add"&gt;Add&lt;/button&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;
+&lt;script&gt;
+
+&lt;/script&gt;</template>
+<template class="ts">
+document.querySelector('#task').value = 'Jog';
+document.querySelector('#add').click();
+assert(document.querySelector('#list li') && document.querySelector('#list li').textContent.trim() === 'Jog', 'the task should be added');
+assert(document.querySelector('#task').value === '', 'the input should be cleared after adding');
+</template>
+</div>
+
+<h4>10. Plan before you build</h4>
+<div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 10.</b> For a small interactive app, which order of work is sanest?</span>
+<ol class="opts">
+<li>Add animations first, then decide what the app does</li>
+<li>Structure with HTML, style with CSS, then wire behaviour with JavaScript</li>
+<li>Write all the JavaScript before any HTML exists</li>
+<li>Only write CSS</li>
+</ol></div>
+
+<h4>11. The whole app, working</h4>
+<div class="ex stretch" data-kind="webjs"><span class="exq"><b>Exercise 11. 🔥 Stretch — ✍️ your turn.</b> Assemble a working Task Manager. On submitting <code>#f</code>: <code>e.preventDefault()</code>; if <code>#task</code> is empty do nothing; otherwise append its value as an <code>&lt;li&gt;</code> to <code>#list</code>, clear the input, and set <code>#count</code> to the number of tasks. (The grader adds two tasks.)</span>
+<template class="html">&lt;form id="f"&gt;&lt;input id="task"&gt;&lt;button&gt;Add&lt;/button&gt;&lt;/form&gt;
+&lt;p id="count"&gt;0&lt;/p&gt;
+&lt;ul id="list"&gt;&lt;/ul&gt;</template>
+<template class="js">
+</template>
+<template class="ts">
+var f = document.querySelector('#f'), task = document.querySelector('#task');
+task.value = 'One'; f.dispatchEvent(new Event('submit', { cancelable: true }));
+task.value = 'Two'; f.dispatchEvent(new Event('submit', { cancelable: true }));
+var items = document.querySelectorAll('#list li');
+assert(items.length === 2 && items[0].textContent.trim() === 'One' && items[1].textContent.trim() === 'Two', 'both tasks should be added in order');
+assert(task.value === '', 'the input should clear after each add');
+assert(document.querySelector('#count').textContent.trim() === '2', '#count should read 2');
+</template>
+</div>
+
+<h4>🏠 Your Capstone — build it in VS Code &amp; submit</h4>
+<p>Now build your <b>own</b> app from scratch in VS Code and submit it. Pick <b>one</b> project below (or invent your own of similar scope). Build it as real files, then send your teacher (1) your code and (2) a screenshot of it running in the browser.</p>
+<p><b>Choose one project:</b></p>
+<table class="res">
+<tr><th>Project</th><th>What it does</th><th>Must use</th></tr>
+<tr><td><b>Task Manager</b></td><td>Add tasks, mark them done, delete them, show a live count.</td><td>form + validation, add/delete on events, render a list, a live counter</td></tr>
+<tr><td><b>Quiz app</b></td><td>Show questions with options; the user picks answers and sees a final score.</td><td>data in an array of objects, click events, score counter, show result at the end</td></tr>
+<tr><td><b>Photo / product gallery</b></td><td>A responsive grid of cards; a search or filter box narrows what's shown.</td><td>CSS grid, an array of items rendered to the DOM, an input event that filters</td></tr>
+</table>
+<p><b>Requirements (every project):</b></p>
+<ol class="outcome" style="list-style:decimal;padding-left:22px">
+<li>A proper document skeleton: <code>&lt;!doctype html&gt;</code>, <code>&lt;head&gt;</code> with a <code>&lt;title&gt;</code>, and a linked <code>style.css</code>.</li>
+<li>Semantic structure — a <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, and <code>&lt;footer&gt;</code>.</li>
+<li>Styled with CSS you wrote: colours, spacing, and a flexbox or grid layout.</li>
+<li>At least one <b>event</b> (click, submit or input) that changes the page via JavaScript.</li>
+<li>Data held in an <b>array</b> and rendered to the DOM with a loop.</li>
+<li>One nice touch: a hover effect, a transition, or an empty-state message.</li>
+</ol>
+<p><b>How to build &amp; submit:</b></p>
+<ol class="outcome" style="list-style:decimal;padding-left:22px">
+<li>In VS Code, create a project folder with <code>index.html</code>, <code>style.css</code> and <code>script.js</code> (link the CSS in the head and the JS before <code>&lt;/body&gt;</code>).</li>
+<li>Build it step by step — structure first, then style, then behaviour — testing in the browser as you go (double-click <code>index.html</code> to open it).</li>
+<li>When it works, take a <b>screenshot</b> of it running.</li>
+<li>Send your teacher the code (the three files) <b>and</b> the screenshot on Zalo. Use the <b>🥋 Ask teacher</b> button on any exercise if you get stuck.</li>
+</ol>
+<p>Finish the eleven graded exercises above to complete the lesson — then go make your capstone. Congratulations on reaching the end of the course. 🎉</p>
