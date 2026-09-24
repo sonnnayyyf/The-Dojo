@@ -56,22 +56,24 @@ begin
     raise exception 'not_logged_in';
   end if;
 
-  select course, redeemed_by into v_course, v_redeemed
-  from public.codes where code = p_code;
+  -- Atomically claim an unredeemed code in one statement (no read-then-write race).
+  -- Two concurrent callers can't both win: only one UPDATE matches redeemed_by IS NULL.
+  update public.codes
+    set redeemed_by = auth.uid(), redeemed_at = now()
+    where code = p_code and redeemed_by is null
+    returning course into v_course;
 
   if v_course is null then
-    raise exception 'invalid_code';
-  end if;
+    -- either the code doesn't exist, or it's already redeemed (possibly by this same user)
+    select course, redeemed_by into v_course, v_redeemed
+    from public.codes where code = p_code;
 
-  -- already redeemed by someone else -> reject; by the same user -> idempotent success
-  if v_redeemed is not null and v_redeemed <> auth.uid() then
-    raise exception 'already_redeemed';
-  end if;
-
-  if v_redeemed is null then
-    update public.codes
-      set redeemed_by = auth.uid(), redeemed_at = now()
-      where code = p_code;
+    if v_course is null then
+      raise exception 'invalid_code';
+    elsif v_redeemed is distinct from auth.uid() then
+      raise exception 'already_redeemed';
+    end if;
+    -- else: already redeemed by this same user -> idempotent success, fall through
   end if;
 
   insert into public.entitlements(user_id, course)

@@ -65,14 +65,15 @@ const PAYMENT = {
   template: 'compact2',              // VietQR layout (shows amount + memo)
 };
 // Amount + short code per course (code goes into the transfer memo)
+// QA is not sold yet (lessons unfinished) — omitted so it can't be purchased.
 const CATALOG = {
   python: { code:'PYTHON', amount:2999000, vi:'Python căn bản',            en:'Python fundamentals' },
   web:    { code:'WEB',    amount:2999000, vi:'Lập trình Web căn bản',      en:'Web Programming Fundamentals' },
   sql:    { code:'SQL',    amount:2499000, vi:'SQL cho công việc dữ liệu',  en:'SQL for data work' },
-  qa:     { code:'QA',     amount:3499000, vi:'Kiểm thử phần mềm (QA)',     en:'QA / Software testing' },
 };
 
-const CID0 = (new URLSearchParams(location.search).get('c') || 'python').toLowerCase();
+const RAW_C0 = (new URLSearchParams(location.search).get('c') || 'python').toLowerCase();
+const CID0 = CATALOG[RAW_C0] ? RAW_C0 : 'python';
 
 const PAGE_I18N = {
 vi:{
@@ -186,7 +187,12 @@ window.onLang = function(){
   });
 };
 
-document.addEventListener('change', (e)=>{ if (e.target.id==='coCourse') refreshTotal(); });
+document.addEventListener('change', (e)=>{
+  if (e.target.id==='coCourse') { refreshTotal(); if (!document.getElementById('coQrCard').hidden) showQr(); }
+});
+document.addEventListener('input', (e)=>{
+  if (e.target.id==='coName' && !document.getElementById('coQrCard').hidden) showQr();
+});
 document.addEventListener('click', (e)=>{
   if (e.target.id==='coPay') showQr();
   if (e.target.id==='coSent') messageTeacher();

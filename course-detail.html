@@ -40,7 +40,9 @@
 <script src="app.js"></script>
 <script>
 // which course? ?c=python|sql|qa  (default python)
-const CID = (new URLSearchParams(location.search).get('c') || 'python').toLowerCase();
+const VALID_COURSES = ['python', 'web', 'sql', 'qa'];
+const RAW_CID = (new URLSearchParams(location.search).get('c') || 'python').toLowerCase();
+const CID = VALID_COURSES.includes(RAW_CID) ? RAW_CID : 'python';
 
 // shared UI strings (section headings, buttons)
 const PAGE_I18N = {
@@ -83,8 +85,8 @@ python:{ href:'python.html', price:{vi:'2.999.000₫',en:'2,999,000₫'},
     {t:'Dữ liệu & vòng lặp', r:'Buổi 5–8', items:['List và chỉ số','Vòng lặp for','Vòng lặp while, break/continue','Vòng lặp lồng nhau']},
     {t:'Công cụ thật', r:'Buổi 9–10', items:['Cài Python + VS Code','Đồ án nhỏ: trình quản lý việc cần làm']},
     {t:'Cấu trúc dữ liệu & hàm', r:'Buổi 11–14', items:['Dictionary','List of dict & dữ liệu lồng nhau','Hàm','Hàm nâng cao']},
-    {t:'Code vững chắc', r:'Buổi 15–18', items:['try/except','Tuple, unpacking, enumerate','Comprehension','Set & sắp xếp (sorted, key, lambda)']},
-    {t:'Tốt nghiệp', r:'Buổi 19–20', items:['Văn bản & file (split/join, module)','Đồ án tốt nghiệp: bộ phân tích log/văn bản']},
+    {t:'Code vững chắc', r:'Buổi 15–18', items:['try/except','Tuple, unpacking, enumerate','Set & sắp xếp cơ bản (sorted, min/max/sum)','Bộ công cụ xử lý văn bản (split/join/strip)']},
+    {t:'Tốt nghiệp', r:'Buổi 19–20', items:['Ôn tập & chuẩn bị đồ án','Đồ án tốt nghiệp: tự xây ứng dụng']},
    ],
    faq:[
     {q:'Tôi chưa biết gì về lập trình, học được không?', a:'Được — khóa thiết kế đúng cho người mới hoàn toàn. Mọi khái niệm bắt đầu từ số 0, đi từ vấn đề thật, không nhồi thuật ngữ.'},
@@ -103,8 +105,8 @@ python:{ href:'python.html', price:{vi:'2.999.000₫',en:'2,999,000₫'},
     {t:'Data & loops', r:'Lessons 5–8', items:['Lists and indexing','for loops','while loops, break/continue','Nested loops']},
     {t:'Real tools', r:'Lessons 9–10', items:['Install Python + VS Code','Mini-project: to-do / task manager']},
     {t:'Structuring data & functions', r:'Lessons 11–14', items:['Dictionaries','Lists of dicts & nested data','Functions','Functions in depth']},
-    {t:'Robust code', r:'Lessons 15–18', items:['try/except','Tuples, unpacking, enumerate','Comprehensions','Sets & sorting (sorted, key, lambda)']},
-    {t:'Capstone', r:'Lessons 19–20', items:['Text & files (split/join, modules)','Capstone: a log / text analyzer']},
+    {t:'Robust code', r:'Lessons 15–18', items:['try/except','Tuples, unpacking, enumerate','Sets & sorting basics (sorted, min/max/sum)','Text toolkit (split/join/strip)']},
+    {t:'Capstone', r:'Lessons 19–20', items:['Review & capstone prep','Capstone: build your own app']},
    ],
    faq:[
     {q:'I know nothing about coding — can I do this?', a:'Yes — it is designed for total beginners. Every concept starts from zero, problem-first, with no jargon dumped on you.'},
@@ -155,17 +157,16 @@ web:{ href:'web.html', price:{vi:'2.999.000₫',en:'2,999,000₫'},
 
 sql:{ href:'sql.html', price:{vi:'2.499.000₫',en:'2,499,000₫'},
  vi:{ title:'SQL cho công việc dữ liệu', tag:'Kỹ năng đứng sau mọi công việc phân tích và backend',
-   level:'Người mới · không cần biết lập trình', dur:'20 buổi · ~40 giờ', lessons:'20 bài',
+   level:'Người mới · không cần biết lập trình', dur:'15 buổi · ~30 giờ', lessons:'15 bài',
    lead:'Gần như mọi ứng dụng đều lưu dữ liệu trong cơ sở dữ liệu — và SQL là ngôn ngữ để hỏi chuyện với dữ liệu đó. Đây là một trong những kỹ năng dễ học nhưng giá trị nhất trong ngành tech. Bạn sẽ chạy SQL <b>thật</b> trên cơ sở dữ liệu mẫu ngay trong trình duyệt, viết truy vấn thật và thấy kết quả ngay.',
    outcomes:['Truy vấn dữ liệu với SELECT, WHERE, ORDER BY','Kết nối nhiều bảng bằng JOIN','Tổng hợp dữ liệu với GROUP BY và hàm tổng hợp','Lọc nhóm bằng HAVING','Trả lời câu hỏi nghiệp vụ bằng subquery','Đọc và hiểu một lược đồ cơ sở dữ liệu'],
    forWho:['Muốn làm phân tích dữ liệu hoặc backend','Đang làm Excel và muốn lên một bậc','Là tester/PO cần tự truy vấn dữ liệu','Không cần biết lập trình trước đó'],
    expect:['Chạy ngay trong trình duyệt — không cần cài database','Nên dành ~2 giờ tập trung cho mỗi buổi','Bài đọc tiếng Việt, câu lệnh viết bằng tiếng Anh','Có bài tập chấm ngay so với đáp án','Bạn luyện trên dữ liệu mẫu giống thực tế'],
    syllabus:[
-    {t:'Bắt đầu', r:'Buổi 1–4', items:['Cơ sở dữ liệu & bảng là gì','SELECT và cột','WHERE: lọc dữ liệu','ORDER BY & LIMIT']},
-    {t:'Tổng hợp', r:'Buổi 5–9', items:['Hàm tổng hợp (COUNT, SUM, AVG)','GROUP BY','HAVING','Biểu thức & CASE','Kiểu dữ liệu & NULL']},
-    {t:'Nhiều bảng', r:'Buổi 10–14', items:['Khóa chính & khóa ngoại','INNER JOIN','LEFT JOIN','Kết nối nhiều bảng','Bí danh & tự kết nối']},
-    {t:'Truy vấn nâng cao', r:'Buổi 15–18', items:['Subquery','IN / EXISTS','Truy vấn lồng trong SELECT','View & tổ chức truy vấn']},
-    {t:'Dự án', r:'Buổi 19–20', items:['Đồ án nhỏ: báo cáo bán hàng','Đồ án tốt nghiệp: trả lời bộ câu hỏi nghiệp vụ']},
+    {t:'Bắt đầu', r:'Buổi 1–4', items:['SELECT & WHERE: chọn và lọc dữ liệu','ORDER BY, LIMIT & DISTINCT','Tính toán trong SELECT & AS','Hàm tổng hợp (COUNT, SUM, AVG)']},
+    {t:'Nhóm & logic', r:'Buổi 5–8', items:['GROUP BY & HAVING','CASE WHEN (logic điều kiện)','Hàm xử lý chuỗi & số','Ngày tháng & thời gian']},
+    {t:'Kết nối bảng', r:'Buổi 9–11', items:['JOIN','LEFT JOIN & NULL','Subquery (truy vấn con)']},
+    {t:'Xây dựng & dự án', r:'Buổi 12–15', items:['Đồ án nhỏ: báo cáo bán hàng','INSERT, UPDATE & DELETE','CREATE TABLE & kiểu dữ liệu','Đồ án tốt nghiệp: phân tích khách hàng']},
    ],
    faq:[
     {q:'Tôi chưa từng lập trình, học SQL được không?', a:'Hoàn toàn được. SQL rất gần ngôn ngữ tự nhiên và là điểm khởi đầu tuyệt vời cho công việc dữ liệu.'},
@@ -173,17 +174,16 @@ sql:{ href:'sql.html', price:{vi:'2.499.000₫',en:'2,499,000₫'},
     {q:'SQL này dùng được ở đâu?', a:'Kiến thức chuẩn SQL áp dụng cho PostgreSQL, MySQL, SQL Server và hầu hết hệ quản trị bạn gặp trong công việc.'},
    ] },
  en:{ title:'SQL for Data Work', tag:'The skill behind every analyst and backend job',
-   level:'Beginners · no coding needed', dur:'20 lessons · ~40 hours', lessons:'20 lessons',
+   level:'Beginners · no coding needed', dur:'15 lessons · ~30 hours', lessons:'15 lessons',
    lead:'Almost every app stores its data in a database — and SQL is the language you use to ask that data questions. It is one of the easiest-to-learn yet most valuable skills in tech. You will run <b>real</b> SQL against sample databases right in your browser, write real queries and see results instantly.',
    outcomes:['Query data with SELECT, WHERE, ORDER BY','Combine tables with JOINs','Summarise data with GROUP BY and aggregates','Filter groups with HAVING','Answer business questions with subqueries','Read and understand a database schema'],
    forWho:['Want to move into data analysis or backend','Use Excel today and want to level up','Are a tester/PO who needs to query data','Have no prior programming experience'],
    expect:['Runs in the browser — no database to install','Plan ~2 focused hours per lesson','Read in Vietnamese, write SQL in English','Graded exercises checked against a reference','You practise on realistic sample data'],
    syllabus:[
-    {t:'Getting started', r:'Lessons 1–4', items:['What databases & tables are','SELECT and columns','WHERE: filtering rows','ORDER BY & LIMIT']},
-    {t:'Summarising', r:'Lessons 5–9', items:['Aggregates (COUNT, SUM, AVG)','GROUP BY','HAVING','Expressions & CASE','Data types & NULL']},
-    {t:'Multiple tables', r:'Lessons 10–14', items:['Primary & foreign keys','INNER JOIN','LEFT JOIN','Joining several tables','Aliases & self-joins']},
-    {t:'Advanced queries', r:'Lessons 15–18', items:['Subqueries','IN / EXISTS','Subqueries in SELECT','Views & organising queries']},
-    {t:'Projects', r:'Lessons 19–20', items:['Mini-project: a sales report','Capstone: answer a set of business questions']},
+    {t:'Getting started', r:'Lessons 1–4', items:['SELECT & WHERE: pick and filter rows','ORDER BY, LIMIT & DISTINCT','Calculations in SELECT & AS','Aggregates (COUNT, SUM, AVG)']},
+    {t:'Grouping & logic', r:'Lessons 5–8', items:['GROUP BY & HAVING','CASE WHEN (conditional logic)','Text & number functions','Dates & time']},
+    {t:'Joining tables', r:'Lessons 9–11', items:['JOIN','LEFT JOIN & NULL','Subqueries']},
+    {t:'Building & projects', r:'Lessons 12–15', items:['Mini-project: a sales report','INSERT, UPDATE & DELETE','CREATE TABLE & data types','Capstone: customer analysis']},
    ],
    faq:[
     {q:'I have never programmed — can I learn SQL?', a:'Absolutely. SQL reads close to plain language and is a great entry point into data work.'},
@@ -243,6 +243,14 @@ window.onLang = function(){
   const info = INFO[CID] || INFO.python;
   const d = info[LANG] || info.vi;
   const u = PAGE_I18N[LANG];
+  const soon = CID === 'qa'; // not for sale yet
+  const soonTxt = LANG === 'vi' ? 'Sắp ra mắt' : 'Coming soon';
+  const buyBtn = soon
+    ? `<span class="btn ghost disabled">${soonTxt}</span>`
+    : `<a class="btn ghost" href="checkout.html?c=${CID}">${u.b_buy}</a>`;
+  const buyBtn2 = soon
+    ? `<span class="btn ghost disabled">${soonTxt}</span>`
+    : `<a class="btn ghost" href="checkout.html?c=${CID}">${u.b_pricing}</a>`;
   document.title = d.title + ' — The Dojo';
 
   document.getElementById('cHero').innerHTML =
@@ -258,7 +266,7 @@ window.onLang = function(){
      <p class="cheroLead">${d.lead}</p>
      <div class="cbtns">
        <a class="btn" href="${info.href}">${u.b_try}</a>
-       <a class="btn ghost" href="checkout.html?c=${CID}">${u.b_buy}</a>
+       ${buyBtn}
        <button type="button" class="btn ghost" onclick="__dojoAskAbout()">${u.b_ask}</button>
      </div>
      <div class="freeNote">${u.free_note}</div>`;
@@ -276,7 +284,7 @@ window.onLang = function(){
     `<h2>${u.cta_h}</h2><p>${u.cta_p}</p>
      <div class="cbtns" style="justify-content:center">
        <a class="btn" href="${info.href}">${u.b_try}</a>
-       <a class="btn ghost" href="checkout.html?c=${CID}">${u.b_pricing}</a>
+       ${buyBtn2}
      </div>`;
 };
 </script>

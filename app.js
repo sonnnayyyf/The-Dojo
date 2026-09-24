@@ -505,7 +505,8 @@
 
   // ---------- progress (localStorage) ----------
   const Progress = {
-    key: (c) => `dojo_prog_${c}`,
+    // per-account namespace so two students on one browser never share saved work
+    key: (c) => `dojo_prog_${c}_${(Cloud.user && Cloud.user.id) || 'guest'}`,
     load(c) { try { return JSON.parse(localStorage.getItem(this.key(c))) || {}; } catch { return {}; } },
     save(c, d) { localStorage.setItem(this.key(c), JSON.stringify(d)); },
     entry(d, lesson) { return d[lesson] || (d[lesson] = { passed: [], total: 0 }); },
@@ -552,8 +553,11 @@
   const cloudSaveTimers = {};
   function queueCloudSave(courseId) {
     if (!Cloud.user) return;
+    const uid = Cloud.user.id; // bind this save to the user who typed it
     clearTimeout(cloudSaveTimers[courseId]);
-    cloudSaveTimers[courseId] = setTimeout(() => cloudSaveProgress(courseId, Progress.load(courseId)), 1200);
+    cloudSaveTimers[courseId] = setTimeout(() => {
+      if (Cloud.user && Cloud.user.id === uid) cloudSaveProgress(courseId, Progress.load(courseId));
+    }, 1200);
   }
 
   function initCoursePage() {

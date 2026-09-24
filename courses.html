@@ -70,14 +70,19 @@ en:{
 }};
 window.onLang=function(){
   const d=PAGE_I18N[LANG];
+  const soonTxt = LANG==='vi' ? 'Sắp ra mắt' : 'Coming soon';
   document.getElementById('courseCards').innerHTML=COURSES.map(c=>{
     const outcomes=d['c_'+c.id+'_o'].map(i=>'<li>'+i+'</li>').join('');
+    const soon = c.id==='qa';
+    const priceLine = soon
+      ? `<div class="price">${soonTxt}</div>`
+      : `<div class="price">${c.price[LANG]} <small style="color:var(--muted)">· ${d.c_price_note}</small></div>`;
     return `<div class="course">
      <h3>${d['c_'+c.id+'_t']}</h3>
-     <div class="price">${c.price[LANG]} <small style="color:var(--muted)">· ${d.c_price_note}</small></div>
+     ${priceLine}
      <p>${d['c_'+c.id+'_d']}</p>
      <ul class="outcome">${outcomes}</ul>
-     <div class="meta">${d.c_for}: ${d['c_'+c.id+'_for']} · ${d.c_free}</div>
+     <div class="meta">${d.c_for}: ${d['c_'+c.id+'_for']}${soon ? '' : ' · ' + d.c_free}</div>
      <a class="btn" href="course-detail.html?c=${c.id}">${d.c_go}</a>
    </div>`;
   }).join('');

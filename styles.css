@@ -15,6 +15,7 @@ button{font-family:var(--body);cursor:pointer}
 .btn{background:var(--amber);color:#1a1406;border:none;border-radius:9px;padding:10px 20px;font-weight:600;font-size:15px;display:inline-block}
 .btn:hover{filter:brightness(1.08);text-decoration:none}
 .btn.ghost{background:none;border:1px solid var(--line);color:var(--text);font-weight:500}
+.btn.disabled{background:var(--line);color:var(--muted);cursor:not-allowed;pointer-events:none;border-color:var(--line)}
 .btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 nav{position:sticky;top:0;z-index:5;background:rgba(11,18,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;gap:18px;padding:12px 18px;flex-wrap:wrap}

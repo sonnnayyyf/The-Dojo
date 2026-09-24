@@ -79,8 +79,13 @@ en:[
 ]};
 window.onLang=function(){
   const buyTxt = LANG==='vi' ? 'Mua khóa học' : 'Buy course';
+  const soonTxt = LANG==='vi' ? 'Sắp ra mắt' : 'Coming soon';
+  const SOON = ['qa']; // courses not ready to sell yet
   document.getElementById('courseCards').innerHTML=COURSES[LANG].map(p=>{
     const id=(p.cta[1].split('c=')[1]||'').trim();
+    const buy = SOON.includes(id)
+      ? `<span class="btn disabled">${soonTxt}</span>`
+      : `<a class="btn" href="checkout.html?c=${id}">${buyTxt}</a>`;
     return `
    <div class="plan">
      <h3>${p.h}</h3>
@@ -88,7 +93,7 @@ window.onLang=function(){
      <ul>${p.li.map(x=>'<li>'+x+'</li>').join('')}</ul>
      <div class="planBtns">
        <a class="btn ghost" href="course-detail.html?c=${id}">${p.cta[0]}</a>
-       <a class="btn" href="checkout.html?c=${id}">${buyTxt}</a>
+       ${buy}
      </div>
    </div>`;}).join('');
 };
