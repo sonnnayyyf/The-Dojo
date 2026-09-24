@@ -108,8 +108,15 @@
   SePay webhook → Supabase Edge Function → auto-grant) is a **future** add-on. `admin.html` tracks
   signups / owned courses / progress.
 - **Google sign-in only works on a deployed http(s) site, not `file://`.** Email/password works locally.
-- **Content is still plaintext** (not encrypted) during authoring, so "locked" lessons are previewable.
-  The real content-lock (encrypt lessons + deliver key only to entitled accounts) is a **launch task**.
+- **Content lock IS IMPLEMENTED (on the `hardening` branch).** Locked lessons are AES-GCM encrypted in
+  `python.html`/`sql.html`/`web.html` (lesson 1 stays free plaintext). Encrypt with
+  `node private-tools/lock-course.mjs <course>` — it writes the raw content key to
+  `private-tools/keys/<course>.ck` (gitignored). The key is delivered to entitled accounts via the
+  `get_course_key(course)` RPC (returns the key only if the caller owns that entitlement); `app.js`
+  fetches it (`ensureKey`) and decrypts in-browser. **To go live you must, in the Supabase SQL editor:**
+  (1) re-run `supabase-schema.sql` (adds `course_keys` + `get_course_key` + atomic `redeem_code`), and
+  (2) `insert into public.course_keys(course, content_key) values (...)` with each `keys/<course>.ck`
+  base64. Legacy code-based unlock (`KEYRING` + `issue-code.mjs`) still works offline as a fallback.
 
 ## 6. Status — DONE
 - **Python Fundamentals COMPLETE: Lessons 1–20** authored bilingual at the rich standard, built into
@@ -145,8 +152,8 @@
    **Python DSA / Algorithms** course, and **Web Programming Fundamentals** (15 lessons). Full outlines
    in **section 9**. Keep the Fundamentals course from bloating — push advanced topics to these.
    Do NOT start authoring any of them until the user confirms per-course.
-4. **Pre-launch:** encrypt lessons for real content-locking + wire content-key delivery via entitlement;
-   deploy (Netlify/Vercel/Cloudflare Pages); set Supabase Auth → Site URL + Redirect URLs for prod
+4. **Pre-launch:** content-lock is DONE (see §5) — just re-run the schema + insert each course key in
+   Supabase; deploy (Netlify/Vercel/Cloudflare Pages); set Supabase Auth → Site URL + Redirect URLs for prod
    (fixes the confirmation-link → `localhost:3000` "unreachable" landing; verification already succeeds
    server-side, only the redirect target is missing on `file://`); set up **Custom SMTP** (Resend/Brevo
    free tier) to remove the built-in email rate limit (~2–3/hr) and set a branded sender; edit the
