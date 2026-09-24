@@ -196,5 +196,45 @@ create policy "avatars_update_own" on storage.objects for update
 create policy "avatars_delete_own" on storage.objects for delete
   using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 
+-- ── CONTENT LOCK: per-course decryption key, delivered ONLY to entitled accounts ─────────
+-- Lessons are AES-GCM encrypted (see private-tools/lock-course.mjs). The raw content key lives
+-- here; clients can't read the table directly (RLS denies all), only the gated rpc returns it.
+create table if not exists public.course_keys (
+  course      text        primary key,
+  content_key text        not null,      -- base64 of the raw AES-GCM key (from keys/<course>.ck)
+  updated_at  timestamptz not null default now()
+);
+alter table public.course_keys enable row level security;
+-- no policies: RLS denies every direct client read/write. Only the SECURITY DEFINER rpc reads it.
+
+create or replace function public.get_course_key(p_course text)
+returns text
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare v_key text;
+begin
+  if auth.uid() is null then
+    return null;
+  end if;
+  -- only a student who owns this course gets the key
+  if not exists (
+    select 1 from public.entitlements
+    where user_id = auth.uid() and course = p_course
+  ) then
+    return null;
+  end if;
+  select content_key into v_key from public.course_keys where course = p_course;
+  return v_key;
+end;
+$$;
+grant execute on function public.get_course_key(text) to authenticated;
+
+-- ── STORE A COURSE KEY (run after locking a course; paste the base64 from keys/<course>.ck) ─
+-- insert into public.course_keys(course, content_key) values ('python', '<base64-key>')
+--   on conflict (course) do update set content_key = excluded.content_key, updated_at = now();
+
 -- ── ADD A CODE (you run this to create a code for a student who paid) ─────────────────────
 -- insert into public.codes(code, course, label) values ('K7XQ-9F3M-4WYT', 'python', 'Nguyen Van A');

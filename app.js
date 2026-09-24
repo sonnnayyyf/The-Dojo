@@ -393,6 +393,14 @@
     return (data || []).map((r) => r.course);
   }
 
+  // Content-lock: the per-course decryption key, delivered only to entitled accounts (RLS-gated rpc).
+  async function fetchCourseKey(course) {
+    const sb = await getSupabase();
+    if (!sb || !Cloud.user) return null;
+    try { const { data } = await sb.rpc('get_course_key', { p_course: course }); return data || null; }
+    catch { return null; }
+  }
+
   async function cloudLoadProgress(course) {
     const sb = await getSupabase();
     if (!sb || !Cloud.user) return null;
@@ -571,6 +579,13 @@
     function b64ToBytesSafe(b64) { return b64ToBytes(b64); }
     function isUnlocked() { return !!ckBytes || entitled; }
 
+    // Entitled accounts fetch the course's decryption key once, then cache it locally.
+    async function ensureKey() {
+      if (ckBytes || !entitled || !Cloud.user) return;
+      const b64 = await fetchCourseKey(course.id);
+      if (b64) { ckBytes = b64ToBytes(b64); try { localStorage.setItem(storeKey, b64); } catch { /* ignore */ } }
+    }
+
     let openIndex = null;
     let currentLabel = null;
 
@@ -658,6 +673,7 @@
             return;
           }
           entitled = true;
+          await ensureKey();
           err.style.display = 'none';
           currentLabel = Cloud.user.email || '';
           renderTop(currentLabel);
@@ -693,9 +709,18 @@
       const u = UI[LANG];
       const lesson = course.lessons[i];
       openIndex = i;
+      if (!ckBytes && entitled) await ensureKey();
       const html = await decryptLessonHtml(lesson, ckBytes);
       const viewer = document.getElementById('viewer');
       viewer.classList.add('show');
+      if (html == null && lesson.html == null) {
+        // entitled but key not available yet (e.g. course key not stored server-side)
+        viewer.innerHTML = `<button type="button" class="close">${u.close}</button>`
+          + `<p class="loadnote">${LANG === 'vi' ? 'Không tải được nội dung bài học. Hãy tải lại trang hoặc liên hệ giáo viên.' : 'Could not load this lesson. Try reloading or contact the teacher.'}</p>`;
+        viewer.querySelector('.close').addEventListener('click', () => { viewer.classList.remove('show'); viewer.innerHTML = ''; openIndex = null; });
+        viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
       viewer.innerHTML = `<button type="button" class="close">${u.close}</button>${html || ''}`;
       viewer.querySelector('.close').addEventListener('click', () => {
         viewer.classList.remove('show');
@@ -722,6 +747,7 @@
         try {
           const owned = await fetchEntitlements();
           entitled = owned.includes(course.id);
+          if (entitled) await ensureKey();
           if (!currentLabel) currentLabel = Cloud.user.email || '';
           const cloudData = await cloudLoadProgress(course.id);
           if (cloudData) Progress.merge(course.id, cloudData);
