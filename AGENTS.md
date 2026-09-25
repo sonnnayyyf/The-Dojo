@@ -33,9 +33,15 @@
 ## 2. Repo layout
 - `index.html`, `about.html`, `pricing.html`, `courses.html` (browse/list), `course-detail.html`
   (single course detail, `?c=<id>`), `checkout.html` (VietQR payment), `profile.html` (student info +
-  owned courses), `admin.html` (tutor-only dashboard) — marketing/app pages. i18n pattern: elements
-  have `data-t` / `data-t-html`, a page-local `const PAGE_I18N={vi:{...},en:{...}}`, and `window.onLang`
-  renders dynamic bits. `app.js` fills them.
+  owned courses), `admin.html` (tutor-only dashboard), `progress.html` (student progress; admin can view
+  any), `forgot-password.html` + `reset-password.html` (Supabase password recovery), `privacy.html`
+  (Privacy & Terms, no refunds) — marketing/app pages. i18n pattern: elements have `data-t` /
+  `data-t-html`, a page-local `const PAGE_I18N={vi:{...},en:{...}}`, and `window.onLang` renders dynamic
+  bits. `app.js` fills them.
+- **Deploy build:** `node private-tools/build-dist.mjs` copies ONLY an allowlisted public set into
+  `dist/` (never private-tools, student files, keys, docs) and **refuses to build if any sold course has
+  a plaintext paid lesson**. `netlify.toml` sets `command=node private-tools/build-dist.mjs`, `publish=dist`.
+  `dist/` is gitignored. Publish ONLY `dist/`.
 - `python.html` / `qa.html` / `sql.html` / `web.html` — course pages. Each embeds `const COURSE={...}`
   (the lessons array with bilingual titles + html) and a legacy `const KEYRING=[...]`. `app.js` renders it.
 - `app.js` — the whole engine, one IIFE. Nav/footer/i18n injection, course rendering, CodeMirror +
@@ -149,6 +155,18 @@
   (8) **Python runs in a terminable Web Worker** with a **Stop** button + 10s timeout (a `while True`
   loop no longer freezes the page). SQL “Try it” example blocks run via sql.js; “Show answer” shows only
   on the free Lesson 1. (SQL still runs on the main thread — low risk; worker-ize later if desired.)
+- **Hardening round 2 + launch prep DONE** (Astra review #2, branches `hardening2`/`launch-prep` → `main`):
+  content key is now **account-scoped** (`dojo_ck_<course>_<uid>`) and **cleared on logout**; a stale
+  editor save is discarded if the account changed mid-edit (auth-generation guard) and the open lesson
+  rebuilds on account switch; cloud progress **merges by timestamp** (newer wins, passes always union);
+  the Python worker has a **startup timeout + readiness rejection** (Stop-before-ready / CDN failure no
+  longer hang); checkout **keeps the selected course** on language toggle; schema **revokes PUBLIC execute**
+  on all SECURITY DEFINER fns + **drops `birth_year`** from the public profile; `lock-course` **refuses to
+  mint a new key when ciphertext already exists**; personal queries **filter by `user_id`** (admins don't
+  leak others' rows); **mobile** fixes (wrapping controls, scrollable tables/diagrams, compact nav).
+  **Password recovery** (`forgot-password.html` → reset email → `reset-password.html`), a **"Saving / Saved /
+  Not synced (Retry)"** sync-status on course pages, and a **Privacy & Terms** page (`privacy.html`,
+  purchases non-refundable) are live. `build-dist.mjs` + `netlify.toml` give a safe publish boundary.
 
 ## 7. Status — TODO / roadmap
 1. **Python Fundamentals (L1–L20) is done.** Do not re-author. If revisiting, keep it fundamentals-only:
@@ -163,23 +181,24 @@
    **Python DSA / Algorithms** course. Full outlines in **section 9**. (Web Programming Fundamentals is now
    DONE.) Keep the Fundamentals courses from bloating — push advanced topics to these.
    Do NOT start authoring any of them until the user confirms per-course.
-4. **Pre-launch:** content-lock is DONE (see §5) — just re-run the schema + insert each course key in
-   Supabase; deploy (Netlify/Vercel/Cloudflare Pages); set Supabase Auth → Site URL + Redirect URLs for prod
-   (fixes the confirmation-link → `localhost:3000` "unreachable" landing; verification already succeeds
-   server-side, only the redirect target is missing on `file://`); set up **Custom SMTP** (Resend/Brevo
-   free tier) to remove the built-in email rate limit (~2–3/hr) and set a branded sender; edit the
-   **Confirm signup** email template (free, no SMTP needed) with Dojo branding; consider PWA
-   (installable/offline). Then full account e2e test (signup → redeem → progress persists).
-5. **Accounts / payments — build now DONE, config pending:** checkout.html (VietQR), profile.html
-   (forced onboarding: name+phone required before using the site), admin.html (dashboard) are built.
-   **You must (a) re-run `private-tools/supabase-schema.sql` in the SQL editor** to create the
-   `profiles`/`admins` tables + policies + trigger, and **(b) make yourself admin** (`insert into
-   public.admins(user_id) values ('<uuid>')`). For local testing, turn OFF Authentication → Email
+4. **Pre-launch — the ONLY remaining blocker is deploying (user actions, not code).** Everything is
+   prepared: `build-dist.mjs` + `netlify.toml` publish a safe `dist/`. To go live: (a) connect the repo to
+   **Cloudflare Pages / Netlify** (build `node private-tools/build-dist.mjs`, output `dist`); (b) set
+   Supabase Auth → **Site URL + Redirect URLs** to the prod domain (add `/reset-password.html`,
+   `/profile.html`) — this fixes the confirmation/reset link → `localhost:3000` "unreachable" landing;
+   (c) re-run `supabase-schema.sql` + insert the 3 course keys (`keys/<course>.ck` base64); (d) set up
+   **Custom SMTP** (Resend/Brevo free tier) to remove the built-in email rate limit (~2–3/hr) + brand the
+   sender (the user WANTS this — do it at deploy). Then full e2e test on the live URL (signup → onboarding →
+   redeem → logout/switch → cross-device progress → password reset).
+5. **Accounts / payments — build DONE, config pending:** checkout.html (VietQR), profile.html
+   (forced onboarding: name+phone required before using the site), admin.html (dashboard), progress.html,
+   password recovery, privacy.html are all built. Schema has been **re-run by the user** (profiles/admins/
+   course_keys/policies/triggers live; keys inserted). For local testing, turn OFF Authentication → Email
    → "Confirm email" so signup logs in instantly on `file://`. Future: Casso/SePay webhook →
    Supabase Edge Function for auto-grant on payment.
-6. **Remaining launch polish (from the review):** add password recovery (Supabase reset-password email +
-   a reset page); write clear privacy + refund/access-terms copy (you now store name/phone + student code);
-   optionally worker-ize sql.js for parity with Python's Stop/timeout; a mobile pass on opened lessons.
+6. **Nice-to-have polish (deferred, not blockers):** worker-ize sql.js for parity with Python's Stop/timeout;
+   a true server-side progress merge (current is timestamp-based client merge) + fuller offline retry;
+   further mobile passes. Password recovery, privacy/terms, and the "Not synced" indicator are DONE.
 
 ## 8. Product decisions already made (don't relitigate)
 - General **IT/programming** theme (not finance/accounting).
