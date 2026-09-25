@@ -84,6 +84,7 @@ begin
 end;
 $$;
 grant execute on function public.redeem_code(text) to authenticated;
+revoke execute on function public.redeem_code(text) from public;
 
 -- ── OPTIONAL: manually grant a course to a user by email (run as project owner in SQL editor)
 -- select id from auth.users where email = 'student@example.com';
@@ -120,6 +121,7 @@ as $$
   select exists (select 1 from public.admins where user_id = auth.uid());
 $$;
 grant execute on function public.is_admin() to authenticated;
+revoke execute on function public.is_admin() from public;
 
 -- profiles: a user reads/writes their own row; an admin may read all
 drop policy if exists "profiles_select_own" on public.profiles;
@@ -168,17 +170,18 @@ alter table public.profiles add column if not exists avatar_url text;
 drop policy if exists "profiles_update_admin" on public.profiles;
 create policy "profiles_update_admin" on public.profiles for update using (public.is_admin());
 
--- read ONLY the non-sensitive fields of any profile (public profile pages; no email/phone)
+-- read ONLY the non-sensitive fields of any profile (public profile pages; no email/phone/birth year)
 create or replace function public.get_profile_public(p_user uuid)
-returns table (user_id uuid, full_name text, avatar_url text, birth_year text, experience text, goal text)
+returns table (user_id uuid, full_name text, avatar_url text, experience text, goal text)
 language sql
 security definer
 set search_path = public
 stable
 as $$
-  select user_id, full_name, avatar_url, birth_year, experience, goal
+  select user_id, full_name, avatar_url, experience, goal
   from public.profiles where user_id = p_user;
 $$;
+revoke execute on function public.get_profile_public(uuid) from public;
 grant execute on function public.get_profile_public(uuid) to authenticated;
 
 -- avatars storage bucket (public read); each user manages only their own folder (<uid>/…)
@@ -231,6 +234,7 @@ begin
 end;
 $$;
 grant execute on function public.get_course_key(text) to authenticated;
+revoke execute on function public.get_course_key(text) from public;
 
 -- ── STORE A COURSE KEY (run after locking a course; paste the base64 from keys/<course>.ck) ─
 -- insert into public.course_keys(course, content_key) values ('python', '<base64-key>')

@@ -130,11 +130,13 @@ function qrUrl(cid, name){
 
 function buildOptions(){
   const sel = document.getElementById('coCourse');
+  // keep the current selection across a language rebuild; fall back to the ?c= course
+  const current = sel.value && CATALOG[sel.value] ? sel.value : (CATALOG[CID0] ? CID0 : 'python');
   sel.innerHTML = Object.keys(CATALOG).map(id=>{
     const c = CATALOG[id];
     return `<option value="${id}">${c[LANG]} — ${fmtVnd(c.amount)}</option>`;
   }).join('');
-  sel.value = CATALOG[CID0] ? CID0 : 'python';
+  sel.value = current;
 }
 
 function refreshTotal(){

@@ -94,8 +94,8 @@ async function loadTarget(){
   }
   let courses = [];
   if (canPrivate) {
-    const q = sb.from('entitlements').select('course');
-    const { data } = isSelf ? await q : await q.eq('user_id', target);
+    // always filter by the profile's owner (admins can read all rows, so RLS alone isn't enough)
+    const { data } = await sb.from('entitlements').select('course').eq('user_id', isSelf ? self : target);
     courses = (data||[]).map(r=>r.course);
   }
   Object.assign(STATE, { target, isSelf, canEdit, canPrivate, prof, courses });

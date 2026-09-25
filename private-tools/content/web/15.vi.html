@@ -17,7 +17,9 @@ form.addEventListener("submit", function (e) {
 
 &lt;/script&gt;</template>
 <template class="ts">
-document.querySelector('form').dispatchEvent(new Event('submit'));
+var _e = new Event('submit', { cancelable: true });
+document.querySelector('form').dispatchEvent(_e);
+assert(_e.defaultPrevented, 'gọi e.preventDefault() để trang không tải lại');
 assert(document.querySelector('#out').textContent.trim() === 'Sent', 'khi submit, gán #out thành "Sent"');
 </template>
 </div>
@@ -117,7 +119,7 @@ assert(items[0].textContent.trim() === 'Dune' && items[2].textContent.trim() ===
   .then(data =&gt; {
     console.log(data);                 // giờ dùng dữ liệu
   });</pre>
-<p>Dữ liệu bạn nhận về là JSON — đúng thứ bạn vừa luyện parse ở trên. (Ô này không thể ra mạng, nên request thật là chuyện của trang đã triển khai, nhưng hình dạng luôn là như vậy.)</p>
+<p>Dữ liệu bạn nhận về là JSON — đúng thứ bạn vừa luyện parse ở trên. (Các bài tập này không gọi API thật — trên trang đã triển khai bạn sẽ trỏ <code>fetch</code> tới URL thật — nhưng hình dạng luôn là như vậy.)</p>
 <div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Bài tập 9.</b> Sau <code>fetch(url)</code>, bạn gọi gì để biến phần thân phản hồi thành một object dùng được?</span>
 <ol class="opts">
 <li>chỉ <code>response.text</code></li>
@@ -187,7 +189,9 @@ assert(err.textContent.trim() === 'Welcome', 'form hợp lệ → "Welcome"');
 
 &lt;/script&gt;</template>
 <template class="ts">
-document.querySelector('form').dispatchEvent(new Event('submit'));
+var _e = new Event('submit', { cancelable: true });
+document.querySelector('form').dispatchEvent(_e);
+assert(_e.defaultPrevented, 'gọi e.preventDefault() để trang không tải lại');
 assert(document.querySelector('#out').textContent.trim() === 'Thanks!', 'khi submit, gán #out thành "Thanks!"');
 </template>
 </div>

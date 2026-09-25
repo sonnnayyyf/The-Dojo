@@ -17,7 +17,9 @@ form.addEventListener("submit", function (e) {
 
 &lt;/script&gt;</template>
 <template class="ts">
-document.querySelector('form').dispatchEvent(new Event('submit'));
+var _e = new Event('submit', { cancelable: true });
+document.querySelector('form').dispatchEvent(_e);
+assert(_e.defaultPrevented, 'call e.preventDefault() so the page does not reload');
 assert(document.querySelector('#out').textContent.trim() === 'Sent', 'on submit, set #out to "Sent"');
 </template>
 </div>
@@ -117,7 +119,7 @@ assert(items[0].textContent.trim() === 'Dune' && items[2].textContent.trim() ===
   .then(data =&gt; {
     console.log(data);                 // now use the data
   });</pre>
-<p>The data you get back is JSON — exactly what you practised parsing above. (This box can't reach the network, so real requests are a deployed-site thing, but the shape is always this.)</p>
+<p>The data you get back is JSON — exactly what you practised parsing above. (These exercises don’t call a live API — on your own deployed site you’ll point <code>fetch</code> at a real URL — but the shape is always this.)</p>
 <div class="ex" data-kind="quiz" data-a="1"><span class="exq"><b>Exercise 9.</b> After <code>fetch(url)</code>, what do you call to turn the response body into a usable object?</span>
 <ol class="opts">
 <li><code>response.text</code> only</li>
@@ -187,7 +189,9 @@ assert(err.textContent.trim() === 'Welcome', 'valid form → "Welcome"');
 
 &lt;/script&gt;</template>
 <template class="ts">
-document.querySelector('form').dispatchEvent(new Event('submit'));
+var _e = new Event('submit', { cancelable: true });
+document.querySelector('form').dispatchEvent(_e);
+assert(_e.defaultPrevented, 'call e.preventDefault() so the page does not reload');
 assert(document.querySelector('#out').textContent.trim() === 'Thanks!', 'on submit, set #out to "Thanks!"');
 </template>
 </div>

@@ -125,6 +125,8 @@
   // ---------- accounts + cloud progress (Supabase) ----------
   const Cloud = { client: null, user: null, profile: null, isAdmin: false, ready: false };
   const authResolvedCbs = [];
+  // bumps whenever the signed-in account actually changes; used to cancel stale editor saves
+  let dojoAuthGen = 0, dojoLastUid;
   function fireAuthResolved() { authResolvedCbs.forEach((cb) => { try { cb(); } catch (e) {} }); }
 
   async function getSupabase() {
@@ -177,6 +179,8 @@
   }
 
   async function refreshAccountState() {
+    const uid = Cloud.user ? Cloud.user.id : null;
+    if (uid !== dojoLastUid) { dojoAuthGen++; dojoLastUid = uid; }
     if (Cloud.user) {
       await loadProfile();
       Cloud.isAdmin = await checkAdmin();
@@ -389,7 +393,7 @@
   async function fetchEntitlements() {
     const sb = await getSupabase();
     if (!sb || !Cloud.user) return [];
-    const { data } = await sb.from('entitlements').select('course');
+    const { data } = await sb.from('entitlements').select('course').eq('user_id', Cloud.user.id);
     return (data || []).map((r) => r.course);
   }
 
@@ -404,7 +408,7 @@
   async function cloudLoadProgress(course) {
     const sb = await getSupabase();
     if (!sb || !Cloud.user) return null;
-    const { data } = await sb.from('progress').select('data').eq('course', course).maybeSingle();
+    const { data } = await sb.from('progress').select('data').eq('course', course).eq('user_id', Cloud.user.id).maybeSingle();
     return data?.data || null;
   }
 
@@ -486,7 +490,7 @@
       run: 'Chạy', reset: 'Đặt lại', pass: 'Đạt', fail: 'Chưa đạt', loading: 'Đang tải môi trường chạy code…',
       showAnswer: 'Xem đáp án mẫu', hideAnswer: 'Ẩn đáp án mẫu', output: 'Kết quả in ra', tryAgain: 'Chưa đúng, thử lại nhé',
       askSensei: 'Hỏi giáo viên', tryExample: 'Chạy thử', outline: 'Nội dung bài học', done: 'Xong', stop: 'Dừng',
-      preview: 'Xem trước', webTimeout: 'Hết thời gian chạy — kiểm tra vòng lặp vô hạn?',
+      preview: 'Xem trước', webTimeout: 'Hết thời gian chạy — kiểm tra vòng lặp vô hạn?', loadFail: 'Không tải được trình chạy code — kiểm tra kết nối mạng.',
       senseiIntro: 'Viết câu hỏi của bạn — chúng tôi sẽ tự động kèm bài học và code của bạn.',
       questionPh: 'Bạn đang kẹt ở đâu?', sendZalo: 'Gửi qua Zalo', sendEmail: 'Gửi email',
       copied: 'Đã copy câu hỏi + code. Sang Zalo, dán (Ctrl+V) vào ô chat và gửi nhé!', progressLabel: 'Tiến độ' },
@@ -495,7 +499,7 @@
       run: 'Run', reset: 'Reset', pass: 'Pass', fail: 'Fail', loading: 'Loading the code runner…',
       showAnswer: 'Show sample answer', hideAnswer: 'Hide sample answer', output: 'Output', tryAgain: 'Not quite — try again',
       askSensei: 'Ask teacher', tryExample: 'Try it', outline: 'In this lesson', done: 'Done', stop: 'Stop',
-      preview: 'Preview', webTimeout: 'Run timed out — check for an infinite loop?',
+      preview: 'Preview', webTimeout: 'Run timed out — check for an infinite loop?', loadFail: 'Couldn\'t load the code runner — check your connection.',
       senseiIntro: 'Write your question — we\'ll attach the lesson and your code automatically.',
       questionPh: 'Where are you stuck?', sendZalo: 'Send via Zalo', sendEmail: 'Send email',
       copied: 'Question + code copied. Open Zalo, paste (Ctrl+V) into the chat and send!', progressLabel: 'Progress' },
@@ -521,7 +525,7 @@
     setTotal(c, lesson, total) { const d = this.load(c); this.entry(d, lesson).total = total; this.save(c, d); },
     markPassed(c, lesson, ex) {
       const d = this.load(c); const e = this.entry(d, lesson);
-      if (!e.passed.includes(ex)) { e.passed.push(ex); this.save(c, d); return true; }
+      if (!e.passed.includes(ex)) { e.passed.push(ex); e._t = Date.now(); this.save(c, d); return true; }
       return false;
     },
     passedCount(c, lesson) { const e = this.load(c)[lesson]; return e ? e.passed.length : 0; },
@@ -531,16 +535,17 @@
     // saved code the student typed, per exercise (like an autosaving doc)
     saveAnswer(c, lesson, ex, val) {
       const d = this.load(c); const e = this.entry(d, lesson);
-      (e.answers || (e.answers = {}))[ex] = val; this.save(c, d);
+      (e.answers || (e.answers = {}))[ex] = val; e._t = Date.now(); this.save(c, d);
     },
     getAnswer(c, lesson, ex) { const e = this.load(c)[lesson]; return e && e.answers ? e.answers[ex] : undefined; },
     // saved code in ungraded "try it" example blocks, per lesson
     saveExample(c, lesson, i, val) {
       const d = this.load(c); const e = this.entry(d, lesson);
-      (e.examples || (e.examples = {}))[i] = val; this.save(c, d);
+      (e.examples || (e.examples = {}))[i] = val; e._t = Date.now(); this.save(c, d);
     },
     getExample(c, lesson, i) { const e = this.load(c)[lesson]; return e && e.examples ? e.examples[i] : undefined; },
-    // Union incoming (cloud) progress into local so nothing already passed is lost.
+    // Union incoming (cloud) progress into local; per lesson the NEWER side wins its answers/examples,
+    // but completed exercises always union (a pass is never lost).
     merge(c, incoming) {
       if (!incoming || typeof incoming !== 'object') return;
       const d = this.load(c);
@@ -548,8 +553,14 @@
         const cur = this.entry(d, lesson);
         cur.total = Math.max(cur.total || 0, e.total || 0);
         for (const ex of (e.passed || [])) if (!cur.passed.includes(ex)) cur.passed.push(ex);
-        if (e.answers) cur.answers = Object.assign({}, e.answers, cur.answers || {});
-        if (e.examples) cur.examples = Object.assign({}, e.examples, cur.examples || {});
+        const incomingNewer = (e._t || 0) > (cur._t || 0);
+        if (e.answers) cur.answers = incomingNewer
+          ? Object.assign({}, cur.answers || {}, e.answers)
+          : Object.assign({}, e.answers, cur.answers || {});
+        if (e.examples) cur.examples = incomingNewer
+          ? Object.assign({}, cur.examples || {}, e.examples)
+          : Object.assign({}, e.examples, cur.examples || {});
+        cur._t = Math.max(cur._t || 0, e._t || 0);
       }
       this.save(c, d);
     },
@@ -570,20 +581,21 @@
 
   function initCoursePage() {
     const course = COURSE;
-    const storeKey = `dojo_ck_${course.id}`;
+    // Content key is bound to the signed-in account — never a browser-global cache (so logout re-locks).
+    const ckKeyFor = (uid) => `dojo_ck_${course.id}_${uid || 'guest'}`;
     let ckBytes = null;
     let entitled = false;
-    const stored = localStorage.getItem(storeKey);
-    if (stored) { try { ckBytes = b64ToBytesSafe(stored); } catch { ckBytes = null; } }
 
-    function b64ToBytesSafe(b64) { return b64ToBytes(b64); }
     function isUnlocked() { return !!ckBytes || entitled; }
 
-    // Entitled accounts fetch the course's decryption key once, then cache it locally.
+    // Entitled accounts fetch (or reuse the per-account cached) decryption key.
     async function ensureKey() {
       if (ckBytes || !entitled || !Cloud.user) return;
+      const uid = Cloud.user.id;
+      const cached = localStorage.getItem(ckKeyFor(uid));
+      if (cached) { try { ckBytes = b64ToBytes(cached); return; } catch { /* re-fetch below */ } }
       const b64 = await fetchCourseKey(course.id);
-      if (b64) { ckBytes = b64ToBytes(b64); try { localStorage.setItem(storeKey, b64); } catch { /* ignore */ } }
+      if (b64) { ckBytes = b64ToBytes(b64); try { localStorage.setItem(ckKeyFor(uid), b64); } catch { /* ignore */ } }
     }
 
     let openIndex = null;
@@ -697,8 +709,7 @@
         document.getElementById('unlockLogin')?.addEventListener('click', (ev) => { ev.preventDefault(); openAuthModal(); });
         return;
       }
-      ckBytes = result.ckBytes;
-      localStorage.setItem(storeKey, btoa(String.fromCharCode(...ckBytes)));
+      ckBytes = result.ckBytes; // legacy offline unlock: keep in memory only (no browser-global cache)
       err.style.display = 'none';
       currentLabel = result.label;
       renderTop(currentLabel);
@@ -754,9 +765,17 @@
         } catch { /* offline */ }
       } else {
         entitled = false;
+        ckBytes = null;        // logging out re-locks paid content on this browser
+        currentLabel = null;
       }
       renderTop(currentLabel);
       renderList();
+      if (openIndex != null) {
+        const l = course.lessons[openIndex];
+        const canView = l.kind === 'free' || l.html != null || isUnlocked();
+        if (canView) openLesson(openIndex);
+        else { const v = document.getElementById('viewer'); if (v) { v.classList.remove('show'); v.innerHTML = ''; } openIndex = null; }
+      }
     };
 
     renderTop(null);
@@ -886,7 +905,8 @@
       const saved = ctx && Progress.getExample(ctx.courseId, ctx.lessonNum, exampleIdx);
       wrap.querySelector('textarea').value = saved != null ? saved : codeText;
       pre.replaceWith(wrap);
-      const onChange = ctx ? debounce(() => { Progress.saveExample(ctx.courseId, ctx.lessonNum, exampleIdx, code.get()); queueCloudSave(ctx.courseId); }, 500) : undefined;
+      const gen = dojoAuthGen;
+      const onChange = ctx ? debounce(() => { if (gen !== dojoAuthGen) return; Progress.saveExample(ctx.courseId, ctx.lessonNum, exampleIdx, code.get()); queueCloudSave(ctx.courseId); }, 500) : undefined;
       const code = attachEditor(wrap.querySelector('textarea'), isSql ? 'text/x-sql' : 'python', onChange);
       const out = wrap.querySelector('.out');
 
@@ -923,7 +943,8 @@
           const err = r.error ? lastPyLine(r.error) : '';
           out.innerHTML = term + (err ? `<div class="verdict bad">${escapeHtml(err)}</div>` : (r.stdout.trim() ? '' : `<div class="term"><span class="lbl">${u.output}</span>(—)</div>`));
         } catch (ex) {
-          out.innerHTML = `<div class="verdict bad">${escapeHtml(u.webTimeout)}</div>`;
+          const m = /load/i.test(String(ex.message || ex)) ? u.loadFail : u.webTimeout;
+          out.innerHTML = `<div class="verdict bad">${escapeHtml(m)}</div>`;
         } finally { btn.disabled = false; stopBtn.hidden = true; }
       });
     });
@@ -1142,19 +1163,26 @@ def _dojo_lint(src):
     const src = `self.__HARNESS__ = ${JSON.stringify(PY_HARNESS)};\n` + PY_WORKER_SRC;
     const url = URL.createObjectURL(new Blob([src], { type: 'application/javascript' }));
     const w = new Worker(url);
-    let resolveReady;
-    pyWorkerReady = new Promise((res) => { resolveReady = res; });
+    let settled = false, rejectReady;
+    pyWorkerReady = new Promise((res, rej) => {
+      rejectReady = rej;
+      w.__resolveReady = () => { if (!settled) { settled = true; res(); } };
+    });
+    w.__failReady = (msg) => { if (!settled) { settled = true; rejectReady(new Error(msg || 'worker-load-failed')); } };
+    // If Pyodide never finishes loading (e.g. CDN blocked), fail instead of hanging forever.
+    const startupTimer = setTimeout(() => { if (!settled) killPyWorker('load-timeout'); }, 60000);
     w.onmessage = (e) => {
       const m = e.data;
       if (m.type === 'ready') {
-        resolveReady();
+        clearTimeout(startupTimer);
+        w.__resolveReady();
         pyEditors.forEach((ed) => { try { ed.performLint(); } catch { /* editor gone */ } });
         return;
       }
       const p = pyPending.get(m.id);
       if (p) { pyPending.delete(m.id); if (p.timer) clearTimeout(p.timer); p.resolve(m); }
     };
-    w.onerror = () => killPyWorker('worker-error');
+    w.onerror = () => { clearTimeout(startupTimer); killPyWorker('worker-error'); };
     pyWorker = w;
   }
 
@@ -1162,7 +1190,10 @@ def _dojo_lint(src):
 
   // Terminate the worker (kills any runaway code) and fail every in-flight job; it recreates lazily.
   function killPyWorker(reason) {
-    if (pyWorker) { try { pyWorker.terminate(); } catch { /* ignore */ } }
+    if (pyWorker) {
+      if (pyWorker.__failReady) pyWorker.__failReady(reason); // unblock anyone awaiting startup
+      try { pyWorker.terminate(); } catch { /* ignore */ }
+    }
     pyWorker = null; pyWorkerReady = null;
     pyPending.forEach((p) => { if (p.timer) clearTimeout(p.timer); p.reject(new Error(reason || 'stopped')); });
     pyPending.clear();
@@ -1222,7 +1253,8 @@ def _dojo_lint(src):
     const textarea = wrap.querySelector('textarea');
     const savedAns = Progress.getAnswer(ctx.courseId, ctx.lessonNum, exIndex);
     if (savedAns != null) textarea.value = savedAns;
-    const onChange = debounce(() => { Progress.saveAnswer(ctx.courseId, ctx.lessonNum, exIndex, code.get()); queueCloudSave(ctx.courseId); }, 500);
+    const exGen = dojoAuthGen;
+    const onChange = debounce(() => { if (exGen !== dojoAuthGen) return; Progress.saveAnswer(ctx.courseId, ctx.lessonNum, exIndex, code.get()); queueCloudSave(ctx.courseId); }, 500);
     const code = attachEditor(textarea, 'python', onChange);
     const out = wrap.querySelector('.out');
     const runBtn = wrap.querySelector('.run');
@@ -1256,7 +1288,8 @@ def _dojo_lint(src):
           `<div class="verdict ${okClass}">${label}${message ? ': ' + escapeHtml(message) : ''}</div>`;
         if (status === 'pass') recordPass(ex, ctx, exIndex);
       } catch (ex2) {
-        out.innerHTML = `<div class="verdict bad">${escapeHtml(u.webTimeout)}</div>`;
+        const m = /load/i.test(String(ex2.message || ex2)) ? u.loadFail : u.webTimeout;
+        out.innerHTML = `<div class="verdict bad">${escapeHtml(m)}</div>`;
       } finally {
         runBtn.disabled = false; stopBtn.hidden = true;
       }
@@ -1372,7 +1405,8 @@ def _dojo_lint(src):
     const textarea = wrap.querySelector('textarea');
     const savedAns = Progress.getAnswer(ctx.courseId, ctx.lessonNum, exIndex);
     if (savedAns != null) textarea.value = savedAns;
-    const onChange = debounce(() => { Progress.saveAnswer(ctx.courseId, ctx.lessonNum, exIndex, code.get()); queueCloudSave(ctx.courseId); }, 500);
+    const exGen = dojoAuthGen;
+    const onChange = debounce(() => { if (exGen !== dojoAuthGen) return; Progress.saveAnswer(ctx.courseId, ctx.lessonNum, exIndex, code.get()); queueCloudSave(ctx.courseId); }, 500);
     const code = attachEditor(textarea, 'text/x-sql', onChange);
     const out = wrap.querySelector('.out');
     addSenseiButton(wrap.querySelector('.exrun'), ctx, exLabelOf(ex, exIndex), code);
@@ -1535,7 +1569,8 @@ ${testCode}
     if (multi) { try { savedParts = savedRaw != null ? JSON.parse(savedRaw) : null; } catch { savedParts = null; } }
     else { savedSingle = savedRaw != null ? savedRaw : null; }
     let saveAll;
-    const onChange = debounce(() => { if (saveAll) saveAll(); }, 500);
+    const wgen = dojoAuthGen;
+    const onChange = debounce(() => { if (wgen !== dojoAuthGen) return; if (saveAll) saveAll(); }, 500);
 
     let editors; // [{ key, get/set, initial }] for multi, or single { get/set, initial }
     if (multi) {

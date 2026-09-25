@@ -1,0 +1,6 @@
+# Netlify: build the allowlisted dist/ and publish ONLY that (keeps private-tools, student
+# materials, docs and keys out of the deployed site). Cloudflare Pages: set the same command
+# and output directory in the dashboard.
+[build]
+  command = "node private-tools/build-dist.mjs"
+  publish = "dist"

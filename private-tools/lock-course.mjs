@@ -30,6 +30,18 @@ if (!fs.existsSync(htmlPath)) {
 }
 fs.mkdirSync(keyDir, { recursive: true });
 
+let html = loadCourseFile(htmlPath);
+const { value: course } = readConst(html, 'COURSE');
+
+// Safety: never mint a fresh key when ciphertext already exists — it would orphan those lessons.
+if (!fs.existsSync(keyPath) && course.lessons.some((l) => l.enc)) {
+  console.error(`ABORTING: ${courseId}.html already has encrypted lessons, but the content key`);
+  console.error(`  ${keyPath}`);
+  console.error('is missing. Generating a new key would make those lessons impossible to decrypt.');
+  console.error('Restore the original key file from your secure backup, then re-run.');
+  process.exit(1);
+}
+
 let ckKey, ckRawB64, isNewKey = false;
 if (fs.existsSync(keyPath)) {
   ckRawB64 = fs.readFileSync(keyPath, 'utf8').trim();
@@ -43,8 +55,6 @@ if (fs.existsSync(keyPath)) {
   console.log(`Generated new content key -> ${keyPath}\n(KEEP THIS FILE PRIVATE — never publish/upload it, and don't lose it: it's needed to issue future codes.)`);
 }
 
-let html = loadCourseFile(htmlPath);
-const { value: course } = readConst(html, 'COURSE');
 
 let locked = 0, alreadyLocked = 0, free = 0;
 for (const lesson of course.lessons) {

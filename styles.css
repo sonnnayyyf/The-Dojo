@@ -130,7 +130,7 @@ textarea.code:focus{outline:2px solid var(--amber-dim)}
 .CodeMirror{height:auto !important;border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:13.5px;line-height:1.55}
 .CodeMirror-scroll{min-height:64px !important}
 .CodeMirror-focused{outline:2px solid var(--amber-dim)}
-.exrun{margin-top:10px;display:flex;gap:8px}
+.exrun{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
 .out{margin-top:10px;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:13px;white-space:pre-wrap;max-height:240px;overflow:auto;display:none}
 .out.show{display:block}
 .out .ok{color:var(--jade)} .out .bad{color:var(--ember)}
@@ -305,6 +305,17 @@ textarea.coInput{resize:vertical}
 .pfPhoto{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:12.5px;color:var(--jade);border:1px solid var(--jade);border-radius:7px;padding:4px 10px;cursor:pointer}
 .pfPhotoMsg{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:8px}
 @media (max-width:640px){.pfGrid{grid-template-columns:1fr}}
+
+/* ---------- mobile: keep opened lessons within the viewport ---------- */
+@media (max-width:640px){
+  nav .wrap{gap:10px;padding:10px 14px}
+  nav .links{gap:10px;font-size:13px}
+  .viewer{overflow-x:hidden}
+  .viewer pre,.viewer table,table.res{display:block;max-width:100%;overflow-x:auto}
+  .viewer figure{max-width:100%;overflow-x:auto}
+  .viewer figure svg{max-width:100%;height:auto}
+  .exrun .btn{flex:1 1 auto}
+}
 
 /* ---------- progress detail page ---------- */
 .prCard{margin-bottom:18px}
