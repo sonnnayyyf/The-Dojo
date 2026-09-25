@@ -1,0 +1,10 @@
+{
+  "name": "the-dojo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Dojo — bilingual interactive coding-course platform (static site + Supabase).",
+  "scripts": {
+    "test": "node private-tools/test-app.mjs",
+    "build": "node private-tools/build-dist.mjs"
+  }
+}

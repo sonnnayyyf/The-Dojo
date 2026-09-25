@@ -423,10 +423,13 @@
     return data?.data || null;
   }
 
-  async function cloudSaveProgress(course, dataObj) {
+  async function cloudSaveProgress(course, dataObj, uid) {
+    const targetUid = uid || (Cloud.user && Cloud.user.id);
+    if (!targetUid) return false;
     const sb = await getSupabase();
-    if (!sb || !Cloud.user) return false;
-    const { error } = await sb.from('progress').upsert({ user_id: Cloud.user.id, course, data: dataObj, updated_at: new Date().toISOString() });
+    // if the account changed while awaiting the client, don't write A's data under B
+    if (!sb || !Cloud.user || Cloud.user.id !== targetUid) return false;
+    const { error } = await sb.from('progress').upsert({ user_id: targetUid, course, data: dataObj, updated_at: new Date().toISOString() });
     return !error;
   }
 
@@ -543,7 +546,7 @@
     setTotal(c, lesson, total) { const d = this.load(c); this.entry(d, lesson).total = total; this.save(c, d); },
     markPassed(c, lesson, ex) {
       const d = this.load(c); const e = this.entry(d, lesson);
-      if (!e.passed.includes(ex)) { e.passed.push(ex); e._t = Date.now(); this.save(c, d); return true; }
+      if (!e.passed.includes(ex)) { e.passed.push(ex); this.save(c, d); return true; }
       return false;
     },
     passedCount(c, lesson) { const e = this.load(c)[lesson]; return e ? e.passed.length : 0; },
@@ -553,32 +556,41 @@
     // saved code the student typed, per exercise (like an autosaving doc)
     saveAnswer(c, lesson, ex, val) {
       const d = this.load(c); const e = this.entry(d, lesson);
-      (e.answers || (e.answers = {}))[ex] = val; e._t = Date.now(); this.save(c, d);
+      (e.answers || (e.answers = {}))[ex] = val;
+      (e.answerTimes || (e.answerTimes = {}))[ex] = Date.now(); // per-answer timestamp for conflict-free merge
+      this.save(c, d);
     },
     getAnswer(c, lesson, ex) { const e = this.load(c)[lesson]; return e && e.answers ? e.answers[ex] : undefined; },
     // saved code in ungraded "try it" example blocks, per lesson
     saveExample(c, lesson, i, val) {
       const d = this.load(c); const e = this.entry(d, lesson);
-      (e.examples || (e.examples = {}))[i] = val; e._t = Date.now(); this.save(c, d);
+      (e.examples || (e.examples = {}))[i] = val;
+      (e.exampleTimes || (e.exampleTimes = {}))[i] = Date.now();
+      this.save(c, d);
     },
     getExample(c, lesson, i) { const e = this.load(c)[lesson]; return e && e.examples ? e.examples[i] : undefined; },
-    // Union incoming (cloud) progress into local; per lesson the NEWER side wins its answers/examples,
-    // but completed exercises always union (a pass is never lost).
+    // Union incoming (cloud) progress into local; per-key the NEWER write wins (by its own timestamp),
+    // and completed exercises always union (a pass is never lost).
     merge(c, incoming) {
       if (!incoming || typeof incoming !== 'object') return;
       const d = this.load(c);
+      const mergeMap = (cur, inc, mapKey, timeKey) => {
+        const incMap = inc[mapKey]; if (!incMap) return;
+        const curMap = cur[mapKey] || (cur[mapKey] = {});
+        const incT = inc[timeKey] || {}; const curT = cur[timeKey] || (cur[timeKey] = {});
+        for (const k of Object.keys(incMap)) {
+          if (!(k in curMap) || (incT[k] || 0) >= (curT[k] || 0)) {
+            curMap[k] = incMap[k];
+            curT[k] = Math.max(curT[k] || 0, incT[k] || 0);
+          }
+        }
+      };
       for (const [lesson, e] of Object.entries(incoming)) {
         const cur = this.entry(d, lesson);
         cur.total = Math.max(cur.total || 0, e.total || 0);
         for (const ex of (e.passed || [])) if (!cur.passed.includes(ex)) cur.passed.push(ex);
-        const incomingNewer = (e._t || 0) > (cur._t || 0);
-        if (e.answers) cur.answers = incomingNewer
-          ? Object.assign({}, cur.answers || {}, e.answers)
-          : Object.assign({}, e.answers, cur.answers || {});
-        if (e.examples) cur.examples = incomingNewer
-          ? Object.assign({}, cur.examples || {}, e.examples)
-          : Object.assign({}, e.examples, cur.examples || {});
-        cur._t = Math.max(cur._t || 0, e._t || 0);
+        mergeMap(cur, e, 'answers', 'answerTimes');
+        mergeMap(cur, e, 'examples', 'exampleTimes');
       }
       this.save(c, d);
     },
@@ -595,7 +607,7 @@
     clearTimeout(cloudSaveTimers[courseId]);
     cloudSaveTimers[courseId] = setTimeout(async () => {
       if (Cloud.user && Cloud.user.id === uid) {
-        const ok = await cloudSaveProgress(courseId, Progress.load(courseId));
+        const ok = await cloudSaveProgress(courseId, Progress.load(courseId), uid);
         setSyncStatus(ok ? 'saved' : 'error');
       }
     }, 1200);
@@ -611,13 +623,18 @@
     function isUnlocked() { return !!ckBytes || entitled; }
 
     // Entitled accounts fetch (or reuse the per-account cached) decryption key.
+    // Any result is discarded if the account or auth generation changed while awaiting.
     async function ensureKey() {
       if (ckBytes || !entitled || !Cloud.user) return;
       const uid = Cloud.user.id;
+      const gen = dojoAuthGen;
+      const stillCurrent = () => Cloud.user && Cloud.user.id === uid && dojoAuthGen === gen && entitled;
       const cached = localStorage.getItem(ckKeyFor(uid));
-      if (cached) { try { ckBytes = b64ToBytes(cached); return; } catch { /* re-fetch below */ } }
+      if (cached) { try { const b = b64ToBytes(cached); if (stillCurrent()) ckBytes = b; return; } catch { /* re-fetch below */ } }
       const b64 = await fetchCourseKey(course.id);
-      if (b64) { ckBytes = b64ToBytes(b64); try { localStorage.setItem(ckKeyFor(uid), b64); } catch { /* ignore */ } }
+      if (!b64 || !stillCurrent()) return; // delayed key after logout/switch → drop it
+      ckBytes = b64ToBytes(b64);
+      try { localStorage.setItem(ckKeyFor(uid), b64); } catch { /* ignore */ }
     }
 
     let openIndex = null;
@@ -793,18 +810,23 @@
     // When auth state changes: sync entitlement + cloud progress for this course.
     window.__dojoOnAuth = async () => {
       updateAccountUI();
+      const gen = dojoAuthGen;
+      // reset access state on EVERY account change; re-establish it only for the current user
+      ckBytes = null;
+      entitled = false;
       if (Cloud.user) {
         try {
           const owned = await fetchEntitlements();
+          if (gen !== dojoAuthGen) return;               // a newer account change superseded this run
           entitled = owned.includes(course.id);
           if (entitled) await ensureKey();
-          if (!currentLabel) currentLabel = Cloud.user.email || '';
+          if (gen !== dojoAuthGen) return;
+          currentLabel = Cloud.user.email || '';
           const cloudData = await cloudLoadProgress(course.id);
+          if (gen !== dojoAuthGen) return;
           if (cloudData) Progress.merge(course.id, cloudData);
         } catch { /* offline */ }
       } else {
-        entitled = false;
-        ckBytes = null;        // logging out re-locks paid content on this browser
         currentLabel = null;
       }
       renderTop(currentLabel);
@@ -862,8 +884,9 @@
     if (Progress.markPassed(ctx.courseId, ctx.lessonNum, exIndex)) {
       if (progressChangedHook) progressChangedHook();
       if (Cloud.user) {
+        const uid = Cloud.user.id;
         setSyncStatus('syncing');
-        cloudSaveProgress(ctx.courseId, Progress.load(ctx.courseId)).then((ok) => setSyncStatus(ok ? 'saved' : 'error'));
+        cloudSaveProgress(ctx.courseId, Progress.load(ctx.courseId), uid).then((ok) => setSyncStatus(ok ? 'saved' : 'error'));
       }
     }
   }
@@ -1317,6 +1340,7 @@ def _dojo_lint(src):
       out.innerHTML = `<span>${u.loading}</span>`;
       try {
         const r = await pyCall({ type: 'grade', code: code.get(), tests, lang: LANG }, 10000);
+        if (exGen !== dojoAuthGen) return; // account switched mid-grade → don't record for the new account
         let status = r.status, message = r.message || '';
         const stdout = r.stdout || '';
         if (status === 'error') message = lastPyLine(message);
@@ -1470,6 +1494,7 @@ def _dojo_lint(src):
       out.classList.add('show');
       out.innerHTML = `<span>${u.loading}</span>`;
       const [SQL, buf] = await Promise.all([getSqlJs(), getSeedBuffer()]);
+      if (exGen !== dojoAuthGen) return; // account switched mid-run → don't grade for the new account
       const studentRun = runQuery(SQL, buf, code.get());
       if (!studentRun.ok) {
         out.innerHTML = `<div class="bad">${escapeHtml(studentRun.error)}</div>`;
@@ -1669,6 +1694,7 @@ ${testCode}
         bodyFrag = editors.api.get();
       }
       const r = await runGradedWeb(iframe, bodyFrag, tests, headExtra);
+      if (wgen !== dojoAuthGen) return; // account switched mid-grade → don't record for the new account
       const okClass = r.pass ? 'ok' : 'bad';
       const label = r.pass ? u.pass : u.fail;
       const msg = r.pass ? '' : (hintMode ? (hintText || u.tryAgain) : r.message);

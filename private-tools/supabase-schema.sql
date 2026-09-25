@@ -84,7 +84,7 @@ begin
 end;
 $$;
 grant execute on function public.redeem_code(text) to authenticated;
-revoke execute on function public.redeem_code(text) from public;
+revoke execute on function public.redeem_code(text) from public, anon;
 
 -- ── OPTIONAL: manually grant a course to a user by email (run as project owner in SQL editor)
 -- select id from auth.users where email = 'student@example.com';
@@ -121,7 +121,7 @@ as $$
   select exists (select 1 from public.admins where user_id = auth.uid());
 $$;
 grant execute on function public.is_admin() to authenticated;
-revoke execute on function public.is_admin() from public;
+revoke execute on function public.is_admin() from public, anon;
 
 -- profiles: a user reads/writes their own row; an admin may read all
 drop policy if exists "profiles_select_own" on public.profiles;
@@ -183,7 +183,7 @@ as $$
   select user_id, full_name, avatar_url, experience, goal
   from public.profiles where user_id = p_user;
 $$;
-revoke execute on function public.get_profile_public(uuid) from public;
+revoke execute on function public.get_profile_public(uuid) from public, anon;
 grant execute on function public.get_profile_public(uuid) to authenticated;
 
 -- avatars storage bucket (public read); each user manages only their own folder (<uid>/…)
@@ -236,7 +236,7 @@ begin
 end;
 $$;
 grant execute on function public.get_course_key(text) to authenticated;
-revoke execute on function public.get_course_key(text) from public;
+revoke execute on function public.get_course_key(text) from public, anon;
 
 -- ── STORE A COURSE KEY (run after locking a course; paste the base64 from keys/<course>.ck) ─
 -- insert into public.course_keys(course, content_key) values ('python', '<base64-key>')
