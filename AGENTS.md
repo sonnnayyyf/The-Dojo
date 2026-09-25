@@ -167,6 +167,26 @@
   **Password recovery** (`forgot-password.html` → reset email → `reset-password.html`), a **"Saving / Saved /
   Not synced (Retry)"** sync-status on course pages, and a **Privacy & Terms** page (`privacy.html`,
   purchases non-refundable) are live. `build-dist.mjs` + `netlify.toml` give a safe publish boundary.
+- **Hardening round 3 DONE** (Astra review #3, branches `hardening3`/`server-merge` → `main`): the three
+  High-severity **account-boundary** bugs are fixed — (1) the content key + entitlement are **reset on every
+  auth change** (not just logout) and a **delayed key fetch is discarded** if the account or auth-generation
+  changed while awaiting (`ensureKey` captures uid+gen); (2) **grading completing after an account switch is
+  rejected** (py/sql/web handlers guard on `exGen !== dojoAuthGen`) and `cloudSaveProgress` **binds to a
+  captured uid** (re-checked after the await) so A's work can never be written under B; (3) progress merge now
+  uses **per-answer / per-example timestamps** (a lesson-wide `_t` no longer lets a quiz pass clobber a newer
+  answer). Schema **explicitly revokes `anon`** (not just `public`) on every SECURITY DEFINER fn. Privacy
+  **Terms now match checkout** (manual unlock-code delivery, non-refundable after the code is issued).
+  Added a **regression test** (`private-tools/test-app.mjs`, run `npm test`) covering the merge + per-account
+  isolation reproductions, plus a root `package.json` (`npm test` / `npm run build`).
+- **Server-side atomic progress merge DONE** (closes review #3's remaining caveat): new
+  **`merge_progress(course, data)`** RPC in `supabase-schema.sql` **locks the caller's row (`FOR UPDATE`)**
+  and merges the incoming blob into the stored one inside Postgres — passes union, each answer/example keeps
+  the newer per-key timestamp — so two devices saving at once **can't lose data** (no more last-writer-wins
+  upsert). `cloudSaveProgress` calls the RPC and **folds the authoritative merged blob back into local**.
+  Helper fns `_merge_lesson`/`_merge_timed` are `revoke`d from `public, anon`; the RPC is `security definer`,
+  granted only to `authenticated`, and only ever touches `auth.uid()`'s own row. **User must re-run
+  `supabase-schema.sql`** for the RPC + the round-3 `anon` revokes to take effect (until then, logged-in
+  saves show "Not synced" but local progress is still kept — no data loss).
 
 ## 7. Status — TODO / roadmap
 1. **Python Fundamentals (L1–L20) is done.** Do not re-author. If revisiting, keep it fundamentals-only:
@@ -197,7 +217,7 @@
    → "Confirm email" so signup logs in instantly on `file://`. Future: Casso/SePay webhook →
    Supabase Edge Function for auto-grant on payment.
 6. **Nice-to-have polish (deferred, not blockers):** worker-ize sql.js for parity with Python's Stop/timeout;
-   a true server-side progress merge (current is timestamp-based client merge) + fuller offline retry;
+   fuller offline retry queue. (**Server-side progress merge is now DONE** — `merge_progress` RPC, §6.)
    further mobile passes. Password recovery, privacy/terms, and the "Not synced" indicator are DONE.
 
 ## 8. Product decisions already made (don't relitigate)
