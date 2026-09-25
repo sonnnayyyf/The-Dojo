@@ -33,6 +33,7 @@
       explore: 'Khám phá', courses: 'Khóa học', pricing: 'Học phí', about: 'Giới thiệu',
       account: 'Tài khoản', login: 'Đăng nhập / Hồ sơ', buy: 'Mua khóa học',
       contact: 'Liên hệ',
+      privacy: 'Quyền riêng tư & Điều khoản',
       rights: 'Bảo lưu mọi quyền.',
     },
     en: {
@@ -40,6 +41,7 @@
       explore: 'Explore', courses: 'Courses', pricing: 'Pricing', about: 'About',
       account: 'Account', login: 'Log in / Profile', buy: 'Buy a course',
       contact: 'Contact',
+      privacy: 'Privacy & Terms',
       rights: 'All rights reserved.',
     },
   };
@@ -104,7 +106,7 @@
           <span>Email: ${email}</span>
         </div>
       </div>
-      <div class="wrap footBottom">© ${year} The Dojo. ${f.rights}</div></footer>`);
+      <div class="wrap footBottom">© ${year} The Dojo. ${f.rights} · <a href="privacy.html">${f.privacy}</a></div></footer>`);
   }
 
   function applyI18n() {
@@ -200,7 +202,7 @@
   function maybePromptProfile() {
     if (!Cloud.user) return;
     // hard onboarding gate: must fill name + phone before using anything else
-    if (!profileComplete() && PAGE_FILE !== 'profile.html') {
+    if (!profileComplete() && PAGE_FILE !== 'profile.html' && PAGE_FILE !== 'reset-password.html') {
       location.href = 'profile.html';
     }
   }
@@ -328,6 +330,7 @@
       <button class="btn" id="authSubmit">${vi ? 'Đăng nhập' : 'Log in'}</button>
       <div class="authErr" id="authErr"></div>
       <div class="authSwitch">
+        <span id="authForgot">${vi ? 'Quên mật khẩu?' : 'Forgot password?'}</span>
         <span id="authToggle">${vi ? 'Chưa có tài khoản? Đăng ký' : "No account? Sign up"}</span>
       </div>
     </div>`;
@@ -343,12 +346,24 @@
       if (!sb) { setErr('Cannot reach server.'); return; }
       await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href } });
     });
+    wrap.querySelector('#authForgot').addEventListener('click', async () => {
+      const email = wrap.querySelector('#authEmail').value.trim();
+      if (!email) { setErr(vi ? 'Nhập email của bạn để đặt lại mật khẩu.' : 'Enter your email to reset your password.'); return; }
+      const sb = await getSupabase();
+      if (!sb) { setErr('Cannot reach server.'); return; }
+      const dir = location.href.substring(0, location.href.lastIndexOf('/') + 1);
+      const redirectTo = dir.startsWith('http') ? dir + 'reset-password.html' : undefined;
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
+      if (error) { setErr(error.message); return; }
+      setErr(vi ? 'Đã gửi email đặt lại mật khẩu — kiểm tra hộp thư.' : 'Password reset email sent — check your inbox.');
+    });
     wrap.querySelector('#authToggle').addEventListener('click', () => {
       mode = mode === 'login' ? 'signup' : 'login';
       const isLogin = mode === 'login';
       wrap.querySelector('#authTitle').textContent = isLogin ? (vi ? 'Đăng nhập' : 'Log in') : (vi ? 'Đăng ký' : 'Sign up');
       wrap.querySelector('#authSubmit').textContent = isLogin ? (vi ? 'Đăng nhập' : 'Log in') : (vi ? 'Đăng ký' : 'Sign up');
       wrap.querySelector('#authPw2').hidden = isLogin;
+      wrap.querySelector('#authForgot').style.display = isLogin ? '' : 'none';
       wrap.querySelector('#authToggle').textContent = isLogin
         ? (vi ? 'Chưa có tài khoản? Đăng ký' : 'No account? Sign up')
         : (vi ? 'Đã có tài khoản? Đăng nhập' : 'Have an account? Log in');
@@ -414,9 +429,14 @@
 
   async function cloudSaveProgress(course, dataObj) {
     const sb = await getSupabase();
-    if (!sb || !Cloud.user) return;
-    await sb.from('progress').upsert({ user_id: Cloud.user.id, course, data: dataObj, updated_at: new Date().toISOString() });
+    if (!sb || !Cloud.user) return false;
+    const { error } = await sb.from('progress').upsert({ user_id: Cloud.user.id, course, data: dataObj, updated_at: new Date().toISOString() });
+    return !error;
   }
+
+  // course pages register a hook to show Saving… / Saved / Not synced
+  let syncStatusHook = null;
+  function setSyncStatus(s) { if (syncStatusHook) syncStatusHook(s); }
 
   // ---------- API for standalone pages (profile.html, admin.html) ----------
   window.DOJO_CLOUD = {
@@ -493,7 +513,8 @@
       preview: 'Xem trước', webTimeout: 'Hết thời gian chạy — kiểm tra vòng lặp vô hạn?', loadFail: 'Không tải được trình chạy code — kiểm tra kết nối mạng.',
       senseiIntro: 'Viết câu hỏi của bạn — chúng tôi sẽ tự động kèm bài học và code của bạn.',
       questionPh: 'Bạn đang kẹt ở đâu?', sendZalo: 'Gửi qua Zalo', sendEmail: 'Gửi email',
-      copied: 'Đã copy câu hỏi + code. Sang Zalo, dán (Ctrl+V) vào ô chat và gửi nhé!', progressLabel: 'Tiến độ' },
+      copied: 'Đã copy câu hỏi + code. Sang Zalo, dán (Ctrl+V) vào ô chat và gửi nhé!', progressLabel: 'Tiến độ',
+      syncing: 'Đang lưu…', saved: 'Đã lưu ✓', syncErr: 'Chưa đồng bộ', retry: 'Thử lại' },
     en: { locked: 'Locked', open: 'Unlocked', free: 'Free', unlockPh: 'Enter unlock code', unlockBtn: 'Unlock',
       badCode: 'Code is invalid or not for this course.', close: 'Close', unlockedAs: 'unlocked as: ',
       run: 'Run', reset: 'Reset', pass: 'Pass', fail: 'Fail', loading: 'Loading the code runner…',
@@ -502,7 +523,8 @@
       preview: 'Preview', webTimeout: 'Run timed out — check for an infinite loop?', loadFail: 'Couldn\'t load the code runner — check your connection.',
       senseiIntro: 'Write your question — we\'ll attach the lesson and your code automatically.',
       questionPh: 'Where are you stuck?', sendZalo: 'Send via Zalo', sendEmail: 'Send email',
-      copied: 'Question + code copied. Open Zalo, paste (Ctrl+V) into the chat and send!', progressLabel: 'Progress' },
+      copied: 'Question + code copied. Open Zalo, paste (Ctrl+V) into the chat and send!', progressLabel: 'Progress',
+      syncing: 'Saving…', saved: 'Saved ✓', syncErr: 'Not synced', retry: 'Retry' },
   };
 
   const BELTS = {
@@ -573,9 +595,13 @@
   function queueCloudSave(courseId) {
     if (!Cloud.user) return;
     const uid = Cloud.user.id; // bind this save to the user who typed it
+    setSyncStatus('syncing');
     clearTimeout(cloudSaveTimers[courseId]);
-    cloudSaveTimers[courseId] = setTimeout(() => {
-      if (Cloud.user && Cloud.user.id === uid) cloudSaveProgress(courseId, Progress.load(courseId));
+    cloudSaveTimers[courseId] = setTimeout(async () => {
+      if (Cloud.user && Cloud.user.id === uid) {
+        const ok = await cloudSaveProgress(courseId, Progress.load(courseId));
+        setSyncStatus(ok ? 'saved' : 'error');
+      }
     }, 1200);
   }
 
@@ -619,9 +645,26 @@
         bar = document.getElementById('courseProg');
       }
       bar.innerHTML = `<div class="pbar"><span style="width:${pct}%"></span></div>`
-        + `<span class="pnum">${u.progressLabel}: ${done}/${n} (${pct}%)</span>`;
+        + `<span class="pnum">${u.progressLabel}: ${done}/${n} (${pct}%)</span>`
+        + `<span class="syncStatus" id="syncStatus"></span>`;
       document.getElementById('courseSub').textContent = course.sub[LANG];
+      applySync(lastSync);
     }
+
+    let lastSync = null;
+    function applySync(s) {
+      const el = document.getElementById('syncStatus');
+      if (!el) return;
+      const u = UI[LANG];
+      if (s === 'syncing') { el.textContent = u.syncing; el.className = 'syncStatus sync'; }
+      else if (s === 'saved') { el.textContent = u.saved; el.className = 'syncStatus ok'; }
+      else if (s === 'error') {
+        el.innerHTML = `${u.syncErr} <a href="#" id="syncRetry">${u.retry}</a>`;
+        el.className = 'syncStatus err';
+        el.querySelector('#syncRetry').addEventListener('click', (e) => { e.preventDefault(); queueCloudSave(course.id); });
+      } else { el.textContent = ''; el.className = 'syncStatus'; }
+    }
+    syncStatusHook = (s) => { lastSync = s; applySync(s); };
 
     function renderList() {
       const u = UI[LANG];
@@ -822,7 +865,10 @@
     ex.classList.add('done');
     if (Progress.markPassed(ctx.courseId, ctx.lessonNum, exIndex)) {
       if (progressChangedHook) progressChangedHook();
-      if (Cloud.user) cloudSaveProgress(ctx.courseId, Progress.load(ctx.courseId)); // fire-and-forget
+      if (Cloud.user) {
+        setSyncStatus('syncing');
+        cloudSaveProgress(ctx.courseId, Progress.load(ctx.courseId)).then((ok) => setSyncStatus(ok ? 'saved' : 'error'));
+      }
     }
   }
 

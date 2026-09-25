@@ -83,6 +83,15 @@ section{padding:48px 0}
 .courseProg .pbar{flex:1;height:8px;background:var(--panel2);border:1px solid var(--line);border-radius:20px;overflow:hidden}
 .courseProg .pbar span{display:block;height:100%;background:var(--amber);transition:width .3s}
 .courseProg .pnum{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.syncStatus{font-family:var(--mono);font-size:11.5px;white-space:nowrap}
+.syncStatus.sync{color:var(--muted)} .syncStatus.ok{color:var(--jade)} .syncStatus.err{color:var(--ember)}
+.syncStatus.err a{color:var(--amber)}
+.legal{max-width:760px}
+.legal h3{font-family:var(--disp);font-size:18px;color:var(--amber);margin:22px 0 8px}
+.legal ul{list-style:none;margin:0}
+.legal li{position:relative;padding:5px 0 5px 18px;color:var(--muted);font-size:14.5px}
+.legal li::before{content:"\2014";position:absolute;left:0;color:var(--amber-dim)}
+.legal li b{color:var(--text)}
 .lrow .prog{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 7px}
 .lrow .prog.done{color:var(--jade);border-color:var(--jade)}
 .lessonOutline{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:6px 0 16px}
