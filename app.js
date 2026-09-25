@@ -485,7 +485,7 @@
       badCode: 'Mã không đúng hoặc không dùng cho khóa này.', close: 'Đóng', unlockedAs: 'đã mở khóa: ',
       run: 'Chạy', reset: 'Đặt lại', pass: 'Đạt', fail: 'Chưa đạt', loading: 'Đang tải môi trường chạy code…',
       showAnswer: 'Xem đáp án mẫu', hideAnswer: 'Ẩn đáp án mẫu', output: 'Kết quả in ra', tryAgain: 'Chưa đúng, thử lại nhé',
-      askSensei: 'Hỏi giáo viên', tryExample: 'Chạy thử', outline: 'Nội dung bài học', done: 'Xong',
+      askSensei: 'Hỏi giáo viên', tryExample: 'Chạy thử', outline: 'Nội dung bài học', done: 'Xong', stop: 'Dừng',
       preview: 'Xem trước', webTimeout: 'Hết thời gian chạy — kiểm tra vòng lặp vô hạn?',
       senseiIntro: 'Viết câu hỏi của bạn — chúng tôi sẽ tự động kèm bài học và code của bạn.',
       questionPh: 'Bạn đang kẹt ở đâu?', sendZalo: 'Gửi qua Zalo', sendEmail: 'Gửi email',
@@ -494,7 +494,7 @@
       badCode: 'Code is invalid or not for this course.', close: 'Close', unlockedAs: 'unlocked as: ',
       run: 'Run', reset: 'Reset', pass: 'Pass', fail: 'Fail', loading: 'Loading the code runner…',
       showAnswer: 'Show sample answer', hideAnswer: 'Hide sample answer', output: 'Output', tryAgain: 'Not quite — try again',
-      askSensei: 'Ask teacher', tryExample: 'Try it', outline: 'In this lesson', done: 'Done',
+      askSensei: 'Ask teacher', tryExample: 'Try it', outline: 'In this lesson', done: 'Done', stop: 'Stop',
       preview: 'Preview', webTimeout: 'Run timed out — check for an infinite loop?',
       senseiIntro: 'Write your question — we\'ll attach the lesson and your code automatically.',
       questionPh: 'Where are you stuck?', sendZalo: 'Send via Zalo', sendEmail: 'Send email',
@@ -852,7 +852,7 @@
   function attachEditor(textarea, mode, onChange) {
     const api = { get: () => textarea.value, set: (v) => { textarea.value = v; } };
     const isPy = mode === 'python';
-    if (isPy) getPyodide(); // warm up so the live syntax linter can run
+    if (isPy) ensurePyWorker(); // warm up so the live syntax linter can run
     if (onChange) textarea.addEventListener('input', onChange);
     getCM().then((CM) => {
       const opts = {
@@ -880,7 +880,7 @@
       const wrap = document.createElement('div');
       wrap.className = 'runex';
       wrap.innerHTML = `<textarea class="code"></textarea>
-        <div class="exrun"><button type="button" class="btn ghost run">▶ ${u.tryExample}</button></div>
+        <div class="exrun"><button type="button" class="btn ghost run">▶ ${u.tryExample}</button><button type="button" class="btn ghost stop" hidden>${u.stop}</button></div>
         <div class="out"></div>`;
       const saved = ctx && Progress.getExample(ctx.courseId, ctx.lessonNum, exampleIdx);
       wrap.querySelector('textarea').value = saved != null ? saved : codeText;
@@ -888,24 +888,23 @@
       const onChange = ctx ? debounce(() => { Progress.saveExample(ctx.courseId, ctx.lessonNum, exampleIdx, code.get()); queueCloudSave(ctx.courseId); }, 500) : undefined;
       const code = attachEditor(wrap.querySelector('textarea'), 'python', onChange);
       const out = wrap.querySelector('.out');
+      const stopBtn = wrap.querySelector('.stop');
+      stopBtn.addEventListener('click', () => pyStop());
       wrap.querySelector('.run').addEventListener('click', async (e) => {
         const btn = e.currentTarget;
-        btn.disabled = true;
+        btn.disabled = true; stopBtn.hidden = false;
         out.classList.add('show');
         out.innerHTML = `<span>${u.loading}</span>`;
         try {
-          const py = await getPyodide();
-          const ns = py.globals.get('dict')();
-          let stdout = '';
-          py.setStdout({ batched: (s) => { stdout += s + '\n'; } });
-          let err = '';
-          try { py.runPython(code.get(), { globals: ns }); } catch (ex2) { err = lastPyLine(ex2.message); }
-          ns.destroy();
-          const term = stdout.trim()
-            ? `<div class="term"><span class="lbl">${u.output}</span>${escapeHtml(stdout.replace(/\n$/, ''))}</div>`
+          const r = await pyCall({ type: 'run', code: code.get() }, 10000);
+          const term = r.stdout.trim()
+            ? `<div class="term"><span class="lbl">${u.output}</span>${escapeHtml(r.stdout.replace(/\n$/, ''))}</div>`
             : '';
-          out.innerHTML = term + (err ? `<div class="verdict bad">${escapeHtml(err)}</div>` : (stdout.trim() ? '' : `<div class="term"><span class="lbl">${u.output}</span>(—)</div>`));
-        } finally { btn.disabled = false; }
+          const err = r.error ? lastPyLine(r.error) : '';
+          out.innerHTML = term + (err ? `<div class="verdict bad">${escapeHtml(err)}</div>` : (r.stdout.trim() ? '' : `<div class="term"><span class="lbl">${u.output}</span>(—)</div>`));
+        } catch (ex) {
+          out.innerHTML = `<div class="verdict bad">${escapeHtml(u.webTimeout)}</div>`;
+        } finally { btn.disabled = false; stopBtn.hidden = true; }
       });
     });
   }
@@ -1064,46 +1063,120 @@ def _dojo_lint(src):
         return None
 `;
 
-  let pyodidePromise = null;
-  let pyReady = null;          // resolved Pyodide instance, for the live linter
-  const pyEditors = [];        // CodeMirror python editors to re-lint once Pyodide is ready
-  function getPyodide() {
-    if (!pyodidePromise) {
-      pyodidePromise = new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
-        s.onload = () => window.loadPyodide().then((py) => { py.runPython(PY_HARNESS); return py; }).then((py) => {
-          pyReady = py;
-          // Pyodide arrived after editors were created — run the linter on them now.
-          pyEditors.forEach((ed) => { try { ed.performLint(); } catch { /* editor gone */ } });
-          resolve(py);
-        }).catch(reject);
-        s.onerror = reject;
-        document.head.appendChild(s);
-      });
-    }
-    return pyodidePromise;
+  // ----- Pyodide runs in a Web Worker so a runaway loop (e.g. while True) can be terminated -----
+  const PY_WORKER_SRC = `
+    importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');
+    let pyodide;
+    (async () => {
+      pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+      pyodide.runPython(self.__HARNESS__);
+      postMessage({ type: 'ready' });
+    })();
+    self.onmessage = async (e) => {
+      const m = e.data;
+      try {
+        if (m.type === 'lint') {
+          const fn = pyodide.globals.get('_dojo_lint');
+          let lint = null;
+          try { const r = fn(m.code); if (r) { lint = r.toJs(); if (r.destroy) r.destroy(); } } finally { fn.destroy(); }
+          postMessage({ id: m.id, lint });
+          return;
+        }
+        if (m.type === 'run') {
+          let stdout = '', error = '';
+          const ns = pyodide.globals.get('dict')();
+          pyodide.setStdout({ batched: (s) => { stdout += s + '\\n'; } });
+          try { pyodide.runPython(m.code, { globals: ns }); } catch (ex) { error = String(ex.message || ex); }
+          ns.destroy();
+          postMessage({ id: m.id, stdout, error });
+          return;
+        }
+        if (m.type === 'grade') {
+          let stdout = '', status = 'pass', message = '';
+          const ns = pyodide.globals.get('dict')();
+          pyodide.setStdout({ batched: (s) => { stdout += s + '\\n'; } });
+          try { pyodide.runPython(m.code, { globals: ns }); } catch (ex) { status = 'error'; message = String(ex.message || ex); }
+          if (status === 'pass') {
+            ns.set('_OUT_', stdout);
+            const runner = pyodide.globals.get('_dojo_run_tests');
+            try { const fail = runner(m.tests, ns, m.lang); if (fail) { status = 'fail'; message = String(fail); } }
+            catch (ex) { status = 'error'; message = String(ex.message || ex); }
+            finally { runner.destroy(); }
+          }
+          ns.destroy();
+          postMessage({ id: m.id, status, stdout, message });
+          return;
+        }
+      } catch (ex) {
+        postMessage({ id: m.id, status: 'error', error: String(ex.message || ex), message: String(ex.message || ex) });
+      }
+    };
+  `;
+
+  const pyEditors = [];        // CodeMirror python editors to re-lint once the worker is ready
+  let pyWorker = null, pyWorkerReady = null;
+  const pyPending = new Map();
+  let pyNextId = 1;
+
+  function makePyWorker() {
+    const src = `self.__HARNESS__ = ${JSON.stringify(PY_HARNESS)};\n` + PY_WORKER_SRC;
+    const url = URL.createObjectURL(new Blob([src], { type: 'application/javascript' }));
+    const w = new Worker(url);
+    let resolveReady;
+    pyWorkerReady = new Promise((res) => { resolveReady = res; });
+    w.onmessage = (e) => {
+      const m = e.data;
+      if (m.type === 'ready') {
+        resolveReady();
+        pyEditors.forEach((ed) => { try { ed.performLint(); } catch { /* editor gone */ } });
+        return;
+      }
+      const p = pyPending.get(m.id);
+      if (p) { pyPending.delete(m.id); if (p.timer) clearTimeout(p.timer); p.resolve(m); }
+    };
+    w.onerror = () => killPyWorker('worker-error');
+    pyWorker = w;
   }
 
-  // Live syntax checker for CodeMirror: compiles the code via Pyodide and reports the first SyntaxError.
+  function ensurePyWorker() { if (!pyWorker) makePyWorker(); return pyWorkerReady; }
+
+  // Terminate the worker (kills any runaway code) and fail every in-flight job; it recreates lazily.
+  function killPyWorker(reason) {
+    if (pyWorker) { try { pyWorker.terminate(); } catch { /* ignore */ } }
+    pyWorker = null; pyWorkerReady = null;
+    pyPending.forEach((p) => { if (p.timer) clearTimeout(p.timer); p.reject(new Error(reason || 'stopped')); });
+    pyPending.clear();
+  }
+  function pyStop() { killPyWorker('stopped'); }
+
+  // Send a job to the Python worker; timeoutMs>0 kills a job that runs too long.
+  async function pyCall(msg, timeoutMs) {
+    await ensurePyWorker();
+    const id = pyNextId++;
+    const worker = pyWorker;
+    return new Promise((resolve, reject) => {
+      const timer = timeoutMs ? setTimeout(() => killPyWorker('timeout'), timeoutMs) : null;
+      pyPending.set(id, { resolve, reject, timer });
+      worker.postMessage({ ...msg, id });
+    });
+  }
+
+  // Live syntax checker for CodeMirror (async, via the worker's compile()).
   function pyLint(text, updateLinting) {
-    if (!pyReady) { updateLinting([]); return; }
-    const CM = window.CodeMirror;
-    const fn = pyReady.globals.get('_dojo_lint');
-    let res = null;
-    try {
-      const r = fn(text);
-      if (r) { res = r.toJs(); if (r.destroy) r.destroy(); }
-    } catch { res = null; } finally { fn.destroy(); }
-    if (!res) { updateLinting([]); return; }
-    const line = Math.max(0, (res[0] || 1) - 1);
-    const ch = Math.max(0, (res[1] || 1) - 1);
-    updateLinting([{
-      message: res[2] || 'Syntax error',
-      severity: 'error',
-      from: CM.Pos(line, ch),
-      to: CM.Pos(line, ch + 1),
-    }]);
+    ensurePyWorker();
+    pyCall({ type: 'lint', code: text }).then((m) => {
+      const res = m.lint;
+      if (!res) { updateLinting([]); return; }
+      const CM = window.CodeMirror;
+      const line = Math.max(0, (res[0] || 1) - 1);
+      const ch = Math.max(0, (res[1] || 1) - 1);
+      updateLinting([{
+        message: res[2] || 'Syntax error',
+        severity: 'error',
+        from: CM.Pos(line, ch),
+        to: CM.Pos(line, ch + 1),
+      }]);
+    }).catch(() => updateLinting([]));
   }
 
   function wirePyExercise(ex, ctx, exIndex) {
@@ -1121,6 +1194,7 @@ def _dojo_lint(src):
       <div class="exrun">
         <button type="button" class="btn run">${u.run}</button>
         <button type="button" class="btn ghost reset">${u.reset}</button>
+        <button type="button" class="btn ghost stop" hidden>${u.stop}</button>
       </div>
       <div class="out"></div>`;
     ex.appendChild(wrap);
@@ -1141,40 +1215,18 @@ def _dojo_lint(src):
       out.innerHTML = '';
     });
 
+    const stopBtn = wrap.querySelector('.stop');
+    stopBtn.addEventListener('click', () => pyStop());
     runBtn.addEventListener('click', async () => {
-      runBtn.disabled = true;
+      runBtn.disabled = true; stopBtn.hidden = false;
       out.classList.add('show');
       out.innerHTML = `<span>${u.loading}</span>`;
       try {
-        const pyodide = await getPyodide();
-        const ns = pyodide.globals.get('dict')();
-        let stdout = '';
-        pyodide.setStdout({ batched: (s) => { stdout += s + '\n'; } });
-        let status = 'pass', message = '';
-        try {
-          pyodide.runPython(code.get(), { globals: ns });
-        } catch (e) {
-          status = 'error';
-          message = lastPyLine(e.message);
-        }
-        if (status === 'pass') {
-          ns.set('_OUT_', stdout); // expose captured stdout so tests can assert on printed output
-          const runner = pyodide.globals.get('_dojo_run_tests');
-          try {
-            const failMsg = runner(tests, ns, LANG);
-            if (failMsg) {
-              status = 'fail';
-              // In hint mode, don't reveal the expected value — show a nudge instead.
-              message = hintMode ? (hintText || u.tryAgain) : String(failMsg);
-            }
-          } catch (e) {
-            status = 'error';
-            message = lastPyLine(e.message);
-          } finally {
-            runner.destroy();
-          }
-        }
-        ns.destroy();
+        const r = await pyCall({ type: 'grade', code: code.get(), tests, lang: LANG }, 10000);
+        let status = r.status, message = r.message || '';
+        const stdout = r.stdout || '';
+        if (status === 'error') message = lastPyLine(message);
+        else if (status === 'fail' && hintMode) message = hintText || u.tryAgain; // hide expected value in hint mode
         const okClass = status === 'pass' ? 'ok' : 'bad';
         const label = status === 'pass' ? u.pass : u.fail;
         const termHtml = stdout.trim()
@@ -1183,8 +1235,10 @@ def _dojo_lint(src):
         out.innerHTML = termHtml +
           `<div class="verdict ${okClass}">${label}${message ? ': ' + escapeHtml(message) : ''}</div>`;
         if (status === 'pass') recordPass(ex, ctx, exIndex);
+      } catch (ex2) {
+        out.innerHTML = `<div class="verdict bad">${escapeHtml(u.webTimeout)}</div>`;
       } finally {
-        runBtn.disabled = false;
+        runBtn.disabled = false; stopBtn.hidden = true;
       }
     });
   }
