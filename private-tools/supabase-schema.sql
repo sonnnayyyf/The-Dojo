@@ -171,6 +171,8 @@ drop policy if exists "profiles_update_admin" on public.profiles;
 create policy "profiles_update_admin" on public.profiles for update using (public.is_admin());
 
 -- read ONLY the non-sensitive fields of any profile (public profile pages; no email/phone/birth year)
+-- dropped first because the return type changed (an earlier version returned birth_year)
+drop function if exists public.get_profile_public(uuid);
 create or replace function public.get_profile_public(p_user uuid)
 returns table (user_id uuid, full_name text, avatar_url text, experience text, goal text)
 language sql

@@ -330,8 +330,11 @@
       <button class="btn" id="authSubmit">${vi ? 'Đăng nhập' : 'Log in'}</button>
       <div class="authErr" id="authErr"></div>
       <div class="authSwitch">
-        <span id="authForgot">${vi ? 'Quên mật khẩu?' : 'Forgot password?'}</span>
-        <span id="authToggle">${vi ? 'Chưa có tài khoản? Đăng ký' : "No account? Sign up"}</span>
+        <button type="button" class="authLink" id="authForgot">${vi ? 'Quên mật khẩu?' : 'Forgot password?'}</button>
+        <div class="authToggleRow">
+          <span id="authTogglePrompt">${vi ? 'Chưa có tài khoản?' : 'No account?'}</span>
+          <button type="button" class="authLink strong" id="authToggle">${vi ? 'Đăng ký' : 'Sign up'}</button>
+        </div>
       </div>
     </div>`;
     document.body.appendChild(wrap);
@@ -364,9 +367,12 @@
       wrap.querySelector('#authSubmit').textContent = isLogin ? (vi ? 'Đăng nhập' : 'Log in') : (vi ? 'Đăng ký' : 'Sign up');
       wrap.querySelector('#authPw2').hidden = isLogin;
       wrap.querySelector('#authForgot').style.display = isLogin ? '' : 'none';
+      wrap.querySelector('#authTogglePrompt').textContent = isLogin
+        ? (vi ? 'Chưa có tài khoản?' : 'No account?')
+        : (vi ? 'Đã có tài khoản?' : 'Have an account?');
       wrap.querySelector('#authToggle').textContent = isLogin
-        ? (vi ? 'Chưa có tài khoản? Đăng ký' : 'No account? Sign up')
-        : (vi ? 'Đã có tài khoản? Đăng nhập' : 'Have an account? Log in');
+        ? (vi ? 'Đăng ký' : 'Sign up')
+        : (vi ? 'Đăng nhập' : 'Log in');
       setErr('');
     });
     wrap.querySelector('#authSubmit').addEventListener('click', async () => {
