@@ -187,6 +187,18 @@
   granted only to `authenticated`, and only ever touches `auth.uid()`'s own row. **User must re-run
   `supabase-schema.sql`** for the RPC + the round-3 `anon` revokes to take effect (until then, logged-in
   saves show "Not synced" but local progress is still kept — no data loss).
+- **Hardening round 4 DONE** (Astra review #4, branch `hardening4` → `main`): (1) **first-save race** —
+  `merge_progress` now does `insert … on conflict do nothing` to create the row **before** `select … for
+  update`, so two concurrent first-savers on a brand-new (user,course) lock the *same* row instead of both
+  merging against `{}` and clobbering each other. (2) **delayed decryption after logout** — `openLesson`
+  now captures a **request id (`lessonReq`) + auth-gen** and re-checks both (plus `openIndex`) after
+  `ensureKey`/`decryptLessonHtml`; a decrypt that resolves after logout/account-switch/navigation/relang is
+  **discarded before touching the DOM** (paid HTML can't render into a stale view). (3) **legacy upgrade** —
+  both the JS `Progress.merge` and the SQL `_merge_timed` now honour the old **lesson-level `_t`** as a
+  per-answer/example **timestamp fallback**, so upgrading legacy data no longer lets an older cloud copy
+  overwrite newer local work on a missing-time tie; added an upgrade regression test. **Still open (needs a
+  real Postgres):** an end-to-end two-connection concurrency test of `merge_progress` — verified by code
+  inspection only (no local PostgreSQL runtime here); run it on HTTPS staging.
 
 ## 7. Status — TODO / roadmap
 1. **Python Fundamentals (L1–L20) is done.** Do not re-author. If revisiting, keep it fundamentals-only:
