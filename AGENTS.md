@@ -138,19 +138,30 @@
   6 CASE WHEN (conditional logic) · 7 Text & number functions · 8 Dates & time · 9 JOIN ·
   10 LEFT JOIN & NULL · 11 Subqueries · 12 Mini project: sales report · 13 INSERT, UPDATE & DELETE ·
   14 CREATE TABLE & data types · 15 Capstone: customer analysis.
+- **Web Programming Fundamentals COMPLETE: Lessons 1–16** (bilingual, built into `web.html`; live
+  HTML/CSS/JS previews + `webjs` auto-graders). Lesson 1 free, 2–16 locked/encrypted. Mini-project L9
+  (multi-page library site), capstone L16.
+- **Security-hardening pass DONE** (external review by “Astra”; all 8 findings fixed — see git history
+  branches `hardening`/`py-worker`, merged to `main`): (1) XSS — `?c=` course id is allow-listed;
+  (2) `ledger.csv` untracked; (3) progress is namespaced per account (`dojo_prog_<course>_<uid>`);
+  (4) **content lock** (see §5); (5) `redeem_code` is atomic; (6) checkout QR regenerates on input change;
+  (7) QA is **“Coming soon”** (not purchasable) + SQL catalog fixed to 15 + Python syllabus corrected;
+  (8) **Python runs in a terminable Web Worker** with a **Stop** button + 10s timeout (a `while True`
+  loop no longer freezes the page). SQL “Try it” example blocks run via sql.js; “Show answer” shows only
+  on the free Lesson 1. (SQL still runs on the main thread — low risk; worker-ize later if desired.)
 
 ## 7. Status — TODO / roadmap
 1. **Python Fundamentals (L1–L20) is done.** Do not re-author. If revisiting, keep it fundamentals-only:
    comprehensions, lambda/`key` sorting, OOP, generators, decorators etc. belong to the planned
    **Python Intermediate** / **Python Advanced** courses, not here.
-2. **Author QA** (12 lessons). **SQL is COMPLETE** — a 15-lesson fundamentals course, all lessons authored
-   bilingually (`private-tools/content/sql/NN.{vi,en}.html`) and built into `sql.html`. Advanced SQL
-   (UNION, CTEs, window functions, self-joins, indexes) is deferred to a future SQL Intermediate/Advanced
-   course. QA can be delegated to the **Dojo Builder** agent or the dedicated
+2. **Author QA** (12 lessons) — the ONLY unfinished course. It's gated **“Coming soon”** in the storefront
+   (not purchasable) until authored. **SQL is COMPLETE** (15-lesson fundamentals) and **Web is COMPLETE**
+   (16 lessons). Advanced SQL (UNION, CTEs, window functions, self-joins, indexes) is deferred to a future
+   SQL Intermediate/Advanced course. QA can be delegated to the **Dojo Builder** agent or the dedicated
    **SQL Course Builder** agent (`.github/agents/sql-course-builder.agent.md`) in a separate session.
-3. Planned follow-on courses — **Python Intermediate** (13 lessons), **Python Advanced**, a standalone
-   **Python DSA / Algorithms** course, and **Web Programming Fundamentals** (15 lessons). Full outlines
-   in **section 9**. Keep the Fundamentals course from bloating — push advanced topics to these.
+3. Planned follow-on courses — **Python Intermediate** (13 lessons), **Python Advanced**, and a standalone
+   **Python DSA / Algorithms** course. Full outlines in **section 9**. (Web Programming Fundamentals is now
+   DONE.) Keep the Fundamentals courses from bloating — push advanced topics to these.
    Do NOT start authoring any of them until the user confirms per-course.
 4. **Pre-launch:** content-lock is DONE (see §5) — just re-run the schema + insert each course key in
    Supabase; deploy (Netlify/Vercel/Cloudflare Pages); set Supabase Auth → Site URL + Redirect URLs for prod
@@ -166,6 +177,9 @@
    public.admins(user_id) values ('<uuid>')`). For local testing, turn OFF Authentication → Email
    → "Confirm email" so signup logs in instantly on `file://`. Future: Casso/SePay webhook →
    Supabase Edge Function for auto-grant on payment.
+6. **Remaining launch polish (from the review):** add password recovery (Supabase reset-password email +
+   a reset page); write clear privacy + refund/access-terms copy (you now store name/phone + student code);
+   optionally worker-ize sql.js for parity with Python's Stop/timeout; a mobile pass on opened lessons.
 
 ## 8. Product decisions already made (don't relitigate)
 - General **IT/programming** theme (not finance/accounting).
