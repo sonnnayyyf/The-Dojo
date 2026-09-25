@@ -429,8 +429,15 @@
     const sb = await getSupabase();
     // if the account changed while awaiting the client, don't write A's data under B
     if (!sb || !Cloud.user || Cloud.user.id !== targetUid) return false;
-    const { error } = await sb.from('progress').upsert({ user_id: targetUid, course, data: dataObj, updated_at: new Date().toISOString() });
-    return !error;
+    // server-side atomic merge (no lost update between devices); returns the merged blob
+    const { data, error } = await sb.rpc('merge_progress', { p_course: course, p_data: dataObj });
+    if (error) return false;
+    // fold the authoritative server result back into local — but only if still the same account
+    if (data && typeof data === 'object' && Cloud.user && Cloud.user.id === targetUid) {
+      Progress.merge(course, data);
+      if (progressChangedHook) progressChangedHook();
+    }
+    return true;
   }
 
   // course pages register a hook to show Saving… / Saved / Not synced

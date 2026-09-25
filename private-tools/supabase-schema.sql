@@ -86,6 +86,116 @@ $$;
 grant execute on function public.redeem_code(text) to authenticated;
 revoke execute on function public.redeem_code(text) from public, anon;
 
+-- ── SERVER-SIDE PROGRESS MERGE: mirrors the client merge, but atomically inside Postgres ──
+-- Plain upserts are last-writer-wins: two devices saving at once can lose data. This RPC locks
+-- the caller's row (FOR UPDATE) and merges the incoming blob into the stored one — passes always
+-- union, and each saved answer/example keeps whichever write has the newer timestamp. Returns the
+-- authoritative merged blob so the client can fold it back in. Mirrors Progress.merge in app.js.
+
+-- merge one timed map (answers/answerTimes or examples/exampleTimes): incoming wins on newer-or-equal ts.
+create or replace function public._merge_timed(base jsonb, inc jsonb, map_key text, time_key text)
+returns jsonb
+language plpgsql
+immutable
+set search_path = public
+as $$
+declare
+  inc_map jsonb := inc->map_key;
+  cur_map jsonb := coalesce(base->map_key, '{}'::jsonb);
+  cur_t   jsonb := coalesce(base->time_key, '{}'::jsonb);
+  inc_t   jsonb := coalesce(inc->time_key, '{}'::jsonb);
+  k       text;
+  inc_ts  numeric;
+  cur_ts  numeric;
+begin
+  if inc_map is null or jsonb_typeof(inc_map) <> 'object' then
+    return base;
+  end if;
+  for k in select jsonb_object_keys(inc_map) loop
+    inc_ts := coalesce((inc_t->>k)::numeric, 0);
+    cur_ts := coalesce((cur_t->>k)::numeric, 0);
+    if not (cur_map ? k) or inc_ts >= cur_ts then
+      cur_map := jsonb_set(cur_map, array[k], inc_map->k, true);
+      cur_t   := jsonb_set(cur_t, array[k], to_jsonb(greatest(cur_ts, inc_ts)), true);
+    end if;
+  end loop;
+  base := jsonb_set(base, array[map_key], cur_map, true);
+  base := jsonb_set(base, array[time_key], cur_t, true);
+  return base;
+end;
+$$;
+revoke execute on function public._merge_timed(jsonb, jsonb, text, text) from public, anon;
+
+-- merge one lesson entry: max(total), union(passed), then the two timed maps.
+create or replace function public._merge_lesson(cur jsonb, inc jsonb)
+returns jsonb
+language plpgsql
+immutable
+set search_path = public
+as $$
+declare
+  out_l  jsonb := cur;
+  passed jsonb := coalesce(cur->'passed', '[]'::jsonb);
+  v      jsonb;
+begin
+  out_l := jsonb_set(out_l, '{total}',
+    to_jsonb(greatest(coalesce((cur->>'total')::int, 0), coalesce((inc->>'total')::int, 0))), true);
+  if jsonb_typeof(inc->'passed') = 'array' then
+    for v in select * from jsonb_array_elements(inc->'passed') loop
+      if not (passed @> jsonb_build_array(v)) then
+        passed := passed || jsonb_build_array(v);
+      end if;
+    end loop;
+  end if;
+  out_l := jsonb_set(out_l, '{passed}', passed, true);
+  out_l := public._merge_timed(out_l, inc, 'answers', 'answerTimes');
+  out_l := public._merge_timed(out_l, inc, 'examples', 'exampleTimes');
+  return out_l;
+end;
+$$;
+revoke execute on function public._merge_lesson(jsonb, jsonb) from public, anon;
+
+create or replace function public.merge_progress(p_course text, p_data jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_uid  uuid := auth.uid();
+  v_out  jsonb;
+  lesson text;
+  inc_l  jsonb;
+begin
+  if v_uid is null then
+    raise exception 'not_logged_in';
+  end if;
+  if p_data is null or jsonb_typeof(p_data) <> 'object' then
+    p_data := '{}'::jsonb;
+  end if;
+
+  -- serialise concurrent writers on this row so neither loses the other's data
+  select data into v_out from public.progress
+    where user_id = v_uid and course = p_course for update;
+  v_out := coalesce(v_out, '{}'::jsonb);
+
+  for lesson, inc_l in select * from jsonb_each(p_data) loop
+    if jsonb_typeof(inc_l) = 'object' then
+      v_out := jsonb_set(v_out, array[lesson],
+        public._merge_lesson(coalesce(v_out->lesson, '{}'::jsonb), inc_l), true);
+    end if;
+  end loop;
+
+  insert into public.progress(user_id, course, data, updated_at)
+    values (v_uid, p_course, v_out, now())
+    on conflict (user_id, course) do update set data = excluded.data, updated_at = now();
+
+  return v_out;
+end;
+$$;
+grant execute on function public.merge_progress(text, jsonb) to authenticated;
+revoke execute on function public.merge_progress(text, jsonb) from public, anon;
+
 -- ── OPTIONAL: manually grant a course to a user by email (run as project owner in SQL editor)
 -- select id from auth.users where email = 'student@example.com';
 -- insert into public.entitlements(user_id, course) values ('<that-uuid>', 'python') on conflict do nothing;
