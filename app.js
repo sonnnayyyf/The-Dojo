@@ -874,20 +874,40 @@
 
   // Turns <pre class="run"> demo blocks into editable, runnable (ungraded) examples.
   function makeExamplesRunnable(root, ctx) {
+    const isSql = !!(ctx && ctx.courseId === 'sql');
     [...root.querySelectorAll('pre.run')].forEach((pre, exampleIdx) => {
       const u = UI[LANG];
       const codeText = pre.textContent.replace(/\n$/, '');
       const wrap = document.createElement('div');
       wrap.className = 'runex';
       wrap.innerHTML = `<textarea class="code"></textarea>
-        <div class="exrun"><button type="button" class="btn ghost run">▶ ${u.tryExample}</button><button type="button" class="btn ghost stop" hidden>${u.stop}</button></div>
+        <div class="exrun"><button type="button" class="btn ghost run">▶ ${u.tryExample}</button>${isSql ? '' : `<button type="button" class="btn ghost stop" hidden>${u.stop}</button>`}</div>
         <div class="out"></div>`;
       const saved = ctx && Progress.getExample(ctx.courseId, ctx.lessonNum, exampleIdx);
       wrap.querySelector('textarea').value = saved != null ? saved : codeText;
       pre.replaceWith(wrap);
       const onChange = ctx ? debounce(() => { Progress.saveExample(ctx.courseId, ctx.lessonNum, exampleIdx, code.get()); queueCloudSave(ctx.courseId); }, 500) : undefined;
-      const code = attachEditor(wrap.querySelector('textarea'), 'python', onChange);
+      const code = attachEditor(wrap.querySelector('textarea'), isSql ? 'text/x-sql' : 'python', onChange);
       const out = wrap.querySelector('.out');
+
+      if (isSql) {
+        // SQL demo: run the query against the seed DB and show the result table.
+        wrap.querySelector('.run').addEventListener('click', async (e) => {
+          const btn = e.currentTarget;
+          btn.disabled = true;
+          out.classList.add('show');
+          out.innerHTML = `<span>${u.loading}</span>`;
+          try {
+            const [SQL, buf] = await Promise.all([getSqlJs(), getSeedBuffer()]);
+            const r = runQuery(SQL, buf, code.get());
+            out.innerHTML = r.ok ? renderResultTable(r.res) : `<div class="verdict bad">${escapeHtml(r.error)}</div>`;
+          } catch (ex) {
+            out.innerHTML = `<div class="verdict bad">${escapeHtml(String(ex.message || ex))}</div>`;
+          } finally { btn.disabled = false; }
+        });
+        return;
+      }
+
       const stopBtn = wrap.querySelector('.stop');
       stopBtn.addEventListener('click', () => pyStop());
       wrap.querySelector('.run').addEventListener('click', async (e) => {
@@ -1344,7 +1364,7 @@ def _dojo_lint(src):
       <div class="exrun">
         <button type="button" class="btn run">${u.run}</button>
         <button type="button" class="btn ghost reset">${u.reset}</button>
-        ${ref ? `<button type="button" class="btn ghost showref">${u.showAnswer}</button>` : ''}
+        ${ref && ctx.lessonNum === 1 ? `<button type="button" class="btn ghost showref">${u.showAnswer}</button>` : ''}
       </div>
       <div class="out"></div>`;
     ex.appendChild(wrap);
