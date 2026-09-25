@@ -15,7 +15,8 @@ const dist = path.join(root, 'dist');
 
 // Explicit allowlist — anything not listed here is NOT published.
 const PAGES = ['index.html', 'about.html', 'pricing.html', 'courses.html', 'course-detail.html',
-  'checkout.html', 'profile.html', 'admin.html', 'progress.html', 'reset-password.html', 'privacy.html',
+  'checkout.html', 'profile.html', 'admin.html', 'progress.html', 'reset-password.html',
+  'forgot-password.html', 'privacy.html',
   'python.html', 'sql.html', 'web.html', 'qa.html'];
 const ASSETS = ['app.js', 'styles.css'];
 const SOLD = ['python', 'sql', 'web']; // courses actually for sale — must be encrypted (QA is "coming soon")

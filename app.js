@@ -349,17 +349,7 @@
       if (!sb) { setErr('Cannot reach server.'); return; }
       await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href } });
     });
-    wrap.querySelector('#authForgot').addEventListener('click', async () => {
-      const email = wrap.querySelector('#authEmail').value.trim();
-      if (!email) { setErr(vi ? 'Nhập email của bạn để đặt lại mật khẩu.' : 'Enter your email to reset your password.'); return; }
-      const sb = await getSupabase();
-      if (!sb) { setErr('Cannot reach server.'); return; }
-      const dir = location.href.substring(0, location.href.lastIndexOf('/') + 1);
-      const redirectTo = dir.startsWith('http') ? dir + 'reset-password.html' : undefined;
-      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
-      if (error) { setErr(error.message); return; }
-      setErr(vi ? 'Đã gửi email đặt lại mật khẩu — kiểm tra hộp thư.' : 'Password reset email sent — check your inbox.');
-    });
+    wrap.querySelector('#authForgot').addEventListener('click', () => { location.href = 'forgot-password.html'; });
     wrap.querySelector('#authToggle').addEventListener('click', () => {
       mode = mode === 'login' ? 'signup' : 'login';
       const isLogin = mode === 'login';
