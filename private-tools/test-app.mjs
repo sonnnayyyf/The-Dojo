@@ -51,4 +51,17 @@ sandbox.Cloud.user = { id: 'A' };
 assert.equal(P.getAnswer('python', 1, 0), 'newer phone answer', 'account A still sees its own data');
 ok('progress is isolated per account');
 
+// 4) Legacy upgrade: pre-timestamp data used a lesson-level `_t`. Merging two legacy copies must honour
+//    `_t` as a fallback, so NEWER local work is not overwritten by OLDER cloud work on a (missing-time) tie.
+sandbox.Cloud.user = { id: 'C' };
+mem.set('dojo_prog_python_C', JSON.stringify({ '5': { passed: [], total: 3, answers: { '0': 'newer local (legacy)' }, _t: 2000 } }));
+P.merge('python', { '5': { passed: [], total: 3, answers: { '0': 'older cloud (legacy)' }, _t: 1000 } });
+assert.equal(P.getAnswer('python', 5, 0), 'newer local (legacy)', 'older legacy cloud _t must NOT overwrite newer legacy local');
+// and the reverse: an older local legacy answer SHOULD be replaced by newer cloud legacy work
+mem.set('dojo_prog_python_C', JSON.stringify({ '6': { passed: [], total: 3, answers: { '0': 'older local (legacy)' }, _t: 1000 } }));
+P.merge('python', { '6': { passed: [], total: 3, answers: { '0': 'newer cloud (legacy)' }, _t: 3000 } });
+assert.equal(P.getAnswer('python', 6, 0), 'newer cloud (legacy)', 'newer legacy cloud _t should win');
+ok('legacy _t is honoured as a per-answer timestamp fallback on upgrade');
+
 console.log(`\n${passed} test group(s) passed.`);
+

@@ -104,6 +104,8 @@ declare
   cur_map jsonb := coalesce(base->map_key, '{}'::jsonb);
   cur_t   jsonb := coalesce(base->time_key, '{}'::jsonb);
   inc_t   jsonb := coalesce(inc->time_key, '{}'::jsonb);
+  inc_fb  numeric := coalesce((inc->>'_t')::numeric, 0);  -- legacy lesson-level fallback timestamp
+  cur_fb  numeric := coalesce((base->>'_t')::numeric, 0);
   k       text;
   inc_ts  numeric;
   cur_ts  numeric;
@@ -112,11 +114,13 @@ begin
     return base;
   end if;
   for k in select jsonb_object_keys(inc_map) loop
-    inc_ts := coalesce((inc_t->>k)::numeric, 0);
-    cur_ts := coalesce((cur_t->>k)::numeric, 0);
+    inc_ts := coalesce((inc_t->>k)::numeric, inc_fb);
+    cur_ts := coalesce((cur_t->>k)::numeric, case when cur_map ? k then cur_fb else 0 end);
     if not (cur_map ? k) or inc_ts >= cur_ts then
       cur_map := jsonb_set(cur_map, array[k], inc_map->k, true);
       cur_t   := jsonb_set(cur_t, array[k], to_jsonb(greatest(cur_ts, inc_ts)), true);
+    else
+      cur_t   := jsonb_set(cur_t, array[k], to_jsonb(cur_ts), true);  -- migrate legacy time so it survives
     end if;
   end loop;
   base := jsonb_set(base, array[map_key], cur_map, true);
@@ -173,6 +177,13 @@ begin
   if p_data is null or jsonb_typeof(p_data) <> 'object' then
     p_data := '{}'::jsonb;
   end if;
+
+  -- Ensure the row exists FIRST so concurrent first-savers lock the SAME row. Without this, two
+  -- requests for a brand-new (user,course) both merge against {} and the later insert's
+  -- ON CONFLICT DO UPDATE clobbers the earlier one (lost first save).
+  insert into public.progress(user_id, course, data)
+    values (v_uid, p_course, '{}'::jsonb)
+    on conflict (user_id, course) do nothing;
 
   -- serialise concurrent writers on this row so neither loses the other's data
   select data into v_out from public.progress

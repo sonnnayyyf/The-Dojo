@@ -585,10 +585,15 @@
         const incMap = inc[mapKey]; if (!incMap) return;
         const curMap = cur[mapKey] || (cur[mapKey] = {});
         const incT = inc[timeKey] || {}; const curT = cur[timeKey] || (cur[timeKey] = {});
+        const incFb = inc._t || 0; const curFb = cur._t || 0; // legacy lesson-level fallback timestamp
         for (const k of Object.keys(incMap)) {
-          if (!(k in curMap) || (incT[k] || 0) >= (curT[k] || 0)) {
+          const it = (k in incT) ? incT[k] : incFb;
+          const ct = (k in curT) ? curT[k] : ((k in curMap) ? curFb : 0);
+          if (!(k in curMap) || it >= ct) {
             curMap[k] = incMap[k];
-            curT[k] = Math.max(curT[k] || 0, incT[k] || 0);
+            curT[k] = Math.max(ct, it);
+          } else {
+            curT[k] = ct; // migrate legacy local time so it survives future saves
           }
         }
       };
@@ -645,6 +650,7 @@
     }
 
     let openIndex = null;
+    let lessonReq = 0; // bumped on every openLesson so a delayed decrypt can't render into a stale view
     let currentLabel = null;
 
     function hasLocked() { return course.lessons.some((l) => l.kind !== 'free' && l.html == null); }
@@ -783,8 +789,14 @@
       const u = UI[LANG];
       const lesson = course.lessons[i];
       openIndex = i;
+      // Invalidate any in-flight open if the account changes, we navigate/close, or re-open (relang).
+      const myReq = ++lessonReq;
+      const myGen = dojoAuthGen;
+      const stale = () => myReq !== lessonReq || myGen !== dojoAuthGen || openIndex !== i;
       if (!ckBytes && entitled) await ensureKey();
+      if (stale()) return;
       const html = await decryptLessonHtml(lesson, ckBytes);
+      if (stale()) return; // account switched / logged out / navigated away mid-decrypt: never render paid HTML
       const viewer = document.getElementById('viewer');
       viewer.classList.add('show');
       if (html == null && lesson.html == null) {
