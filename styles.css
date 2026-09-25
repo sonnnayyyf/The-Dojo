@@ -40,6 +40,8 @@ nav .links a.here{color:var(--amber)}
 .authLink{background:none;border:none;padding:0;margin:0;font:inherit;color:var(--amber);cursor:pointer}
 .authLink:hover{text-decoration:underline}
 .authLink.strong{font-weight:600}
+.authCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:64vh;text-align:center}
+.authCenter .coCard{text-align:left;width:100%}
 .hero{padding:64px 0 48px;border-bottom:1px solid var(--line);background:
  radial-gradient(700px 320px at 80% -10%, rgba(245,185,66,.08), transparent),
  linear-gradient(180deg,#0d1526,var(--ink))}
